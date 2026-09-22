@@ -1,1 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linemed - Termo de Entrega Online</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f6f8; margin: 0; padding: 20px; }
+    .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    h2 { color: #1a4d80; border-bottom: 2px solid #1a4d80; padding-bottom: 10px; margin-top: 0; }
+    .form-group { margin-bottom: 18px; }
+    label { font-weight: bold; display: block; margin-bottom: 6px; color: #333; }
+    input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+    .radio-group { display: flex; gap: 15px; margin-top: 5px; }
+    canvas { border: 1px solid #000; border-radius: 4px; background: #fff; cursor: crosshair; touch-action: none; }
+    .btn { background: #1a4d80; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
+    .btn:hover { background: #13385c; }
+    .btn-clear { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-top: 5px; }
+  </style>
+</head>
+<body>
 
+<div class="container">
+  <h2>LINEMED - Emissão de Termo de Entrega</h2>
+  
+  <form id="termoForm">
+    <div class="form-group">
+      <label for="cliente">Cliente / Locatário:</label>
+      <select id="cliente" required>
+        <option value="">Selecione o Cliente...</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="equipamento">Equipamento (TAG):</label>
+      <select id="equipamento" required>
+        <option value="">Selecione o Equipamento...</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Tipo de Operação:</label>
+      <div class="radio-group">
+        <label><input type="radio" name="tipo" value="LOCAÇÃO" checked> Locação</label>
+        <label><input type="radio" name="tipo" value="EMPRÉSTIMO"> Empréstimo</label>
+        <label><input type="radio" name="tipo" value="VENDA"> Venda</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Técnico Responsável:</label>
+      <input type="text" id="tecnico" placeholder="Nome do Técnico" required>
+    </div>
+
+    <div class="form-group">
+      <label>Assinatura do Recebedor:</label>
+      <canvas id="canvasAssinatura" width="400" height="160"></canvas>
+      <br>
+      <button type="button" class="btn-clear" onclick="limparAssinatura()">Limpar Assinatura</button>
+    </div>
+
+    <button type="submit" class="btn">Gerar Termo de Entrega (PDF)</button>
+  </form>
+</div>
+
+<script>
+  // Captura de Assinatura
+  const canvas = document.getElementById('canvasAssinatura');
+  const ctx = canvas.getContext('2d');
+  let desenhando = false;
+
+  function obterPosicao(e) {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  }
+
+  function iniciarDesenho(e) { desenhando = true; desenhar(e); }
+  function pararDesenho() { desenhando = false; ctx.beginPath(); }
+  function desenhar(e) {
+    if (!desenhando) return;
+    e.preventDefault();
+    const pos = obterPosicao(e);
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+  }
+
+  canvas.addEventListener('mousedown', iniciarDesenho);
+  canvas.addEventListener('mouseup', pararDesenho);
+  canvas.addEventListener('mousemove', desenhar);
+  canvas.addEventListener('touchstart', iniciarDesenho);
+  canvas.addEventListener('touchend', pararDesenho);
+  canvas.addEventListener('touchmove', desenhar);
+
+  function limparAssinatura() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+</script>
+
+</body>
+</html>
