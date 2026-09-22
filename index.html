@@ -3,68 +3,241 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Linemed - Termo de Entrega Online</title>
+  <title>LINEMED - Emissão de Termo de Entrega</title>
   <style>
-    body { font-family: Arial, sans-serif; background-color: #f4f6f8; margin: 0; padding: 20px; }
-    .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    body { font-family: Arial, sans-serif; background-color: #f4f6f8; margin: 0; padding: 20px; color: #333; }
+    .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     h2 { color: #1a4d80; border-bottom: 2px solid #1a4d80; padding-bottom: 10px; margin-top: 0; }
-    .form-group { margin-bottom: 18px; }
-    label { font-weight: bold; display: block; margin-bottom: 6px; color: #333; }
-    input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-    .radio-group { display: flex; gap: 15px; margin-top: 5px; }
+    .section-title { font-weight: bold; background: #e9ecef; padding: 8px 12px; margin: 20px 0 10px 0; border-left: 4px solid #1a4d80; }
+    .form-group { margin-bottom: 15px; }
+    label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 14px; }
+    input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+    .row { display: flex; gap: 15px; }
+    .col { flex: 1; }
+    .radio-group { display: flex; gap: 20px; margin-top: 8px; }
+    
+    /* Tabela de Acessórios */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f8f9fa; }
+    .td-center { text-align: center; }
+
+    /* Assinaturas */
     canvas { border: 1px solid #000; border-radius: 4px; background: #fff; cursor: crosshair; touch-action: none; }
-    .btn { background: #1a4d80; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
+    .signature-preview { height: 80px; border: 1px dashed #ccc; padding: 5px; display: flex; align-items: center; justify-content: center; background: #fafafa; }
+    .signature-preview img { max-height: 100%; max-width: 100%; }
+
+    /* Botões */
+    .btn { background: #1a4d80; color: white; border: none; padding: 14px 24px; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px; }
     .btn:hover { background: #13385c; }
-    .btn-clear { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-top: 5px; }
+    .btn-clear { background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 5px; }
+    .loading { text-align: center; font-weight: bold; color: #1a4d80; margin: 10px 0; }
   </style>
 </head>
 <body>
 
 <div class="container">
   <h2>LINEMED - Emissão de Termo de Entrega</h2>
-  
+  <div id="statusMsg" class="loading">Carregando dados da planilha...</div>
+
   <form id="termoForm">
+    <!-- SEÇÃO CLIENTE -->
+    <div class="section-title">1. Dados do Cliente / Locatário</div>
     <div class="form-group">
-      <label for="cliente">Cliente / Locatário:</label>
-      <select id="cliente" required>
-        <option value="">Selecione o Cliente...</option>
+      <label for="cliente">Selecione o Cliente:</label>
+      <select id="cliente" required disabled>
+        <option value="">Aguardando carregamento...</option>
       </select>
     </div>
 
+    <!-- SEÇÃO EQUIPAMENTO -->
+    <div class="section-title">2. Dados do Equipamento</div>
     <div class="form-group">
-      <label for="equipamento">Equipamento (TAG):</label>
-      <select id="equipamento" required>
-        <option value="">Selecione o Equipamento...</option>
+      <label for="equipamentoSelect">Buscar Equipamento (TAG / Série / Patrimônio):</label>
+      <select id="equipamentoSelect" required disabled onchange="selecionarEquipamento()">
+        <option value="">Aguardando carregamento...</option>
       </select>
+    </div>
+
+    <div class="row">
+      <div class="col form-group">
+        <label>Equipamento:</label>
+        <input type="text" id="eqNome" readonly placeholder="-">
+      </div>
+      <div class="col form-group">
+        <label>Série:</label>
+        <input type="text" id="eqSerie" readonly placeholder="-">
+      </div>
+      <div class="col form-group">
+        <label>Patrimônio:</label>
+        <input type="text" id="eqPatrimonio" readonly placeholder="-">
+      </div>
     </div>
 
     <div class="form-group">
       <label>Tipo de Operação:</label>
       <div class="radio-group">
-        <label><input type="radio" name="tipo" value="LOCAÇÃO" checked> Locação</label>
-        <label><input type="radio" name="tipo" value="EMPRÉSTIMO"> Empréstimo</label>
-        <label><input type="radio" name="tipo" value="VENDA"> Venda</label>
+        <label><input type="radio" name="tipoOperacao" value="LOCAÇÃO" checked> Locação</label>
+        <label><input type="radio" name="tipoOperacao" value="EMPRÉSTIMO"> Empréstimo</label>
+        <label><input type="radio" name="tipoOperacao" value="VENDA"> Venda</label>
       </div>
     </div>
 
-    <div class="form-group">
-      <label>Técnico Responsável:</label>
-      <input type="text" id="tecnico" placeholder="Nome do Técnico" required>
+    <!-- SEÇÃO ACESSÓRIOS / CHECKLIST -->
+    <div class="section-title">3. Checklist de Acessórios</div>
+    <table id="tabelaAcessorios">
+      <thead>
+        <tr>
+          <th style="width: 50px;" class="td-center">Item</th>
+          <th style="width: 80px;" class="td-center">Quant.</th>
+          <th>Descrição do Acessório</th>
+          <th style="width: 150px;" class="td-center">Conformidade</th>
+        </tr>
+      </thead>
+      <tbody id="corpoAcessorios">
+        <tr>
+          <td colspan="4" class="td-center" style="color: #777;">Selecione um equipamento para carregar os acessórios.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- SEÇÃO LIBERAÇÃO E ASSINATURAS -->
+    <div class="section-title">4. Liberação e Assinaturas</div>
+    <div class="row">
+      <div class="col form-group">
+        <label for="tecnicoSelect">Técnico Responsável:</label>
+        <select id="tecnicoSelect" required disabled onchange="carregarAssinaturaTecnico()">
+          <option value="">Aguardando carregamento...</option>
+        </select>
+        <label style="margin-top: 10px;">Assinatura do Técnico:</label>
+        <div class="signature-preview" id="previewTecnico">
+          <span style="color: #aaa; font-size: 12px;">Assinatura vinculada</span>
+        </div>
+      </div>
+
+      <div class="col form-group">
+        <label>Assinatura do Recebedor / Cliente:</label>
+        <canvas id="canvasAssinatura" width="380" height="130"></canvas>
+        <br>
+        <button type="button" class="btn-clear" onclick="limparAssinatura()">Limpar Assinatura</button>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label>Assinatura do Recebedor:</label>
-      <canvas id="canvasAssinatura" width="400" height="160"></canvas>
-      <br>
-      <button type="button" class="btn-clear" onclick="limparAssinatura()">Limpar Assinatura</button>
-    </div>
-
-    <button type="submit" class="btn">Gerar Termo de Entrega (PDF)</button>
+    <button type="submit" id="btnEnviar" class="btn" disabled>Gerar Termo de Entrega (PDF)</button>
   </form>
 </div>
 
 <script>
-  // Captura de Assinatura
+  // ATENÇÃO: Substitua a URL abaixo pela URL do seu Google Apps Script quando for implantado
+  const API_URL = "SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI";
+
+  let bancoDados = { clientes: [], equipamentos: [], usuarios: [] };
+
+  // Inicialização e Carga dos Dados da Planilha
+  window.onload = function() {
+    if (API_URL === "SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI") {
+      document.getElementById('statusMsg').innerHTML = "<span style='color:red;'>Insira a URL do Apps Script no arquivo index.html</span>";
+      return;
+    }
+
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => {
+        bancoDados = data;
+        popularSelects();
+        document.getElementById('statusMsg').style.display = 'none';
+        document.getElementById('btnEnviar').disabled = false;
+      })
+      .catch(err => {
+        document.getElementById('statusMsg').innerHTML = "<span style='color:red;'>Erro ao carregar dados da planilha.</span>";
+        console.error(err);
+      });
+  };
+
+  function popularSelects() {
+    // Clientes
+    const selCliente = document.getElementById('cliente');
+    selCliente.innerHTML = '<option value="">Selecione o Cliente...</option>';
+    bancoDados.clientes.forEach(c => {
+      selCliente.innerHTML += `<option value="${c}">${c}</option>`;
+    });
+    selCliente.disabled = false;
+
+    // Equipamentos
+    const selEq = document.getElementById('equipamentoSelect');
+    selEq.innerHTML = '<option value="">Selecione pela TAG, Série ou Patrimônio...</option>';
+    bancoDados.equipamentos.forEach((eq, idx) => {
+      selEq.innerHTML += `<option value="${idx}">TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie} | Patr: ${eq.patrimonio}</option>`;
+    });
+    selEq.disabled = false;
+
+    // Técnicos
+    const selTec = document.getElementById('tecnicoSelect');
+    selTec.innerHTML = '<option value="">Selecione o Técnico...</option>';
+    bancoDados.usuarios.forEach((u, idx) => {
+      selTec.innerHTML += `<option value="${idx}">${u.nome}</option>`;
+    });
+    selTec.disabled = false;
+  }
+
+  function selecionarEquipamento() {
+    const idx = document.getElementById('equipamentoSelect').value;
+    const tbody = document.getElementById('corpoAcessorios');
+    
+    if (idx === "") {
+      document.getElementById('eqNome').value = "";
+      document.getElementById('eqSerie').value = "";
+      document.getElementById('eqPatrimonio').value = "";
+      tbody.innerHTML = '<tr><td colspan="4" class="td-center" style="color: #777;">Selecione um equipamento para carregar os acessórios.</td></tr>';
+      return;
+    }
+
+    const eq = bancoDados.equipamentos[idx];
+    document.getElementById('eqNome').value = eq.nome;
+    document.getElementById('eqSerie').value = eq.serie;
+    document.getElementById('eqPatrimonio').value = eq.patrimonio;
+
+    // Carregar Acessórios
+    tbody.innerHTML = "";
+    if (eq.acessorios && eq.acessorios.length > 0) {
+      eq.acessorios.forEach((item, i) => {
+        tbody.innerHTML += `
+          <tr>
+            <td class="td-center">${i + 1}</td>
+            <td class="td-center"><input type="text" style="width: 50px; text-align: center;" value="1" id="qtd_${i}"></td>
+            <td>${item}</td>
+            <td class="td-center">
+              <select id="conf_${i}">
+                <option value="Conforme">Conforme</option>
+                <option value="Não Conforme">Não Conforme</option>
+                <option value="Não Possui">Não Possui</option>
+              </select>
+            </td>
+          </tr>`;
+      });
+    } else {
+      tbody.innerHTML = '<tr><td colspan="4" class="td-center" style="color: #777;">Nenhum acessório cadastrado para este equipamento.</td></tr>';
+    }
+  }
+
+  function carregarAssinaturaTecnico() {
+    const idx = document.getElementById('tecnicoSelect').value;
+    const divPreview = document.getElementById('previewTecnico');
+    
+    if (idx === "") {
+      divPreview.innerHTML = '<span style="color: #aaa; font-size: 12px;">Assinatura vinculada</span>';
+      return;
+    }
+
+    const user = bancoDados.usuarios[idx];
+    if (user.assinaturaUrl) {
+      divPreview.innerHTML = `<img src="${user.assinaturaUrl}" alt="Assinatura do Técnico">`;
+    } else {
+      divPreview.innerHTML = '<span style="color: #888; font-size: 12px;">Sem imagem cadastrada</span>';
+    }
+  }
+
+  // Lógica do Canvas de Assinatura do Cliente
   const canvas = document.getElementById('canvasAssinatura');
   const ctx = canvas.getContext('2d');
   let desenhando = false;
@@ -97,9 +270,63 @@
   canvas.addEventListener('touchend', pararDesenho);
   canvas.addEventListener('touchmove', desenhar);
 
-  function limparAssinatura() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
+  function limparAssinatura() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+  // Envio do Formulário
+  document.getElementById('termoForm').onsubmit = function(e) {
+    e.preventDefault();
+
+    const idxEq = document.getElementById('equipamentoSelect').value;
+    const eqSelected = bancoDados.equipamentos[idxEq];
+    const idxTec = document.getElementById('tecnicoSelect').value;
+    const tecSelected = bancoDados.usuarios[idxTec];
+
+    // Coleta dos Acessórios
+    let listaAcessorios = [];
+    if (eqSelected.acessorios) {
+      eqSelected.acessorios.forEach((item, i) => {
+        listaAcessorios.push({
+          item: i + 1,
+          qtd: document.getElementById(`qtd_${i}`).value,
+          descricao: item,
+          conformidade: document.getElementById(`conf_${i}`).value
+        });
+      });
+    }
+
+    const payload = {
+      cliente: document.getElementById('cliente').value,
+      equipamento: eqSelected,
+      tipoOperacao: document.querySelector('input[name="tipoOperacao"]:checked').value,
+      acessorios: listaAcessorios,
+      tecnico: tecSelected,
+      assinaturaCliente: canvas.toDataURL()
+    };
+
+    document.getElementById('btnEnviar').disabled = true;
+    document.getElementById('btnEnviar').innerText = "Gerando PDF...";
+
+    fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(res => {
+      if(res.status === "sucesso") {
+        alert("Termo gerado com sucesso! Protocolo: " + res.protocolo);
+        location.reload();
+      } else {
+        alert("Erro ao gerar termo: " + res.mensagem);
+        document.getElementById('btnEnviar').disabled = false;
+        document.getElementById('btnEnviar').innerText = "Gerar Termo de Entrega (PDF)";
+      }
+    })
+    .catch(err => {
+      alert("Erro de comunicação com o servidor.");
+      document.getElementById('btnEnviar').disabled = false;
+      document.getElementById('btnEnviar').innerText = "Gerar Termo de Entrega (PDF)";
+    });
+  };
 </script>
 
 </body>
