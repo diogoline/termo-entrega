@@ -128,15 +128,16 @@
 </div>
 
 <script>
-  // ATENÇÃO: Substitua a URL abaixo pela URL do seu Google Apps Script quando for implantado
+  // COLE AQUI A URL DO APP DA WEB GERADA NO PASSO DE IMPLANTAÇÃO DO GOOGLE APPS SCRIPT
+  // O link correto deve começar obrigatoriamente com: https://script.google.com/macros/s/
   const API_URL = "SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI";
 
   let bancoDados = { clientes: [], equipamentos: [], usuarios: [] };
 
   // Inicialização e Carga dos Dados da Planilha
   window.onload = function() {
-    if (API_URL === "SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI") {
-      document.getElementById('statusMsg').innerHTML = "<span style='color:red;'>Insira a URL do Apps Script no arquivo index.html</span>";
+    if (!API_URL.startsWith("https://script.google.com/macros/s/")) {
+      document.getElementById('statusMsg').innerHTML = "<span style='color:red;'>URL inválida! Cole a URL gerada no Apps Script (deve começar com https://script.google.com/macros/s/)</span>";
       return;
     }
 
@@ -149,7 +150,7 @@
         document.getElementById('btnEnviar').disabled = false;
       })
       .catch(err => {
-        document.getElementById('statusMsg').innerHTML = "<span style='color:red;'>Erro ao carregar dados da planilha.</span>";
+        document.getElementById('statusMsg').innerHTML = "<span style='color:red;'>Erro ao carregar dados da planilha. Verifique a implantação do Apps Script.</span>";
         console.error(err);
       });
   };
