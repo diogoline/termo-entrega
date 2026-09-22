@@ -128,16 +128,15 @@
 </div>
 
 <script>
-  // COLE AQUI A URL DO APP DA WEB GERADA NO PASSO DE IMPLANTAÇÃO DO GOOGLE APPS SCRIPT
-  // O link correto deve começar obrigatoriamente com: https://script.google.com/macros/s/
-  const API_URL = "SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI";
+  // URL DO GOOGLE APPS SCRIPT
+  const API_URL = "https://script.google.com/macros/s/AKfycbyN23fA40M1clyf2Qd03C_Cq1Dvd4iC0_5O_0SLLC2kG44fRlhv1E0mXG2wAAtc_QfJ/exec";
 
   let bancoDados = { clientes: [], equipamentos: [], usuarios: [] };
 
   // Inicialização e Carga dos Dados da Planilha
   window.onload = function() {
     if (!API_URL.startsWith("https://script.google.com/macros/s/")) {
-      document.getElementById('statusMsg').innerHTML = "<span style='color:red;'>URL inválida! Cole a URL gerada no Apps Script (deve começar com https://script.google.com/macros/s/)</span>";
+      document.getElementById('statusMsg').innerHTML = "<span style='color:red;'>URL inválida! Cole a URL gerada no Apps Script</span>";
       return;
     }
 
@@ -314,7 +313,7 @@
     .then(res => res.json())
     .then(res => {
       if(res.status === "sucesso") {
-        alert("Termo gerado com sucesso! Protocolo: " + res.protocolo);
+        alert("Termo gerado com sucesso!\n\nProtocolo: " + res.protocolo + "\n\nO PDF foi salvo no seu Google Drive.");
         location.reload();
       } else {
         alert("Erro ao gerar termo: " + res.mensagem);
