@@ -18,7 +18,7 @@
     .nav-tab { padding: 10px 20px; font-size: 14px; font-weight: bold; border: none; background: #e2e8f0; color: #475569; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
     .nav-tab.active { background: #1a4d80; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-    /* Estritura das Telas */
+    /* Estrutura das Telas */
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
@@ -259,11 +259,12 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
     
-    // CONFIGURAÇÃO DO WHATSAPP DO SUPORTE (INSERIR O NÚMERO COM DDD EX: 5511999999999)
+    // CONFIGURAÇÃO DO WHATSAPP DO SUPORTE
     const NUMERO_WHATSAPP_SUPORTE = "5511970116092";
 
     let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [] };
     let equipamentoSelecionado = null;
+    let carregandoSilencioso = false;
 
     function carregarDadosPlanilha(data) {
       if (data && !data.erro) {
@@ -273,20 +274,40 @@
         badge.innerText = "Conectado";
         badge.classList.add('connected');
 
-        popularAutocomplete();
+        // Apenas popula as listas dropdowns se for a carga inicial (preserva a digitação do operador)
+        if (!carregandoSilencioso) {
+          popularAutocomplete();
+        }
+        
+        // Atualiza a tabela da aba de Consulta em tempo real sem piscar a tela
         renderizarTabelaTermos(bancoDados.termosEmitidos);
       } else {
         document.getElementById('statusBadge').innerText = "Erro nos Dados";
       }
     }
 
+    // Busca atualizações em segundo plano sem recarregar a tela
+    function buscarAtualizacoesSilenciosas() {
+      carregandoSilencioso = true;
+      const script = document.createElement('script');
+      script.src = API_URL + "?callback=carregarDadosPlanilha&t=" + new Date().getTime();
+      script.onload = function() {
+        script.remove();
+      };
+      document.body.appendChild(script);
+    }
+
     window.onload = function() {
+      // 1. Carga Inicial
       const script = document.createElement('script');
       script.src = API_URL + "?callback=carregarDadosPlanilha";
       script.onerror = function() {
         document.getElementById('statusBadge').innerText = "Erro na Conexão";
       };
       document.body.appendChild(script);
+
+      // 2. Temporizador para sincronizar dados a cada 10 segundos silenciosamente
+      setInterval(buscarAtualizacoesSilenciosas, 10000);
     };
 
     function toggleChat() {
@@ -361,7 +382,21 @@
         return;
       }
 
-      lista.forEach(t => {
+      // Se o utilizador estiver usando o campo de filtro, mantém a filtragem ativa
+      const filtroVal = document.getElementById('filtroTermos').value.toLowerCase().trim();
+      let dadosExibir = lista;
+      
+      if (filtroVal) {
+        dadosExibir = lista.filter(t => 
+          t.protocolo.toLowerCase().includes(filtroVal) ||
+          t.cliente.toLowerCase().includes(filtroVal) ||
+          t.tag.toLowerCase().includes(filtroVal) ||
+          t.equipamento.toLowerCase().includes(filtroVal) ||
+          t.tecnico.toLowerCase().includes(filtroVal)
+        );
+      }
+
+      dadosExibir.forEach(t => {
         tbody.innerHTML += `
           <tr>
             <td class="td-center"><b>${t.protocolo}</b></td>
@@ -380,21 +415,7 @@
     }
 
     function filtrarTabelaTermos() {
-      const termo = document.getElementById('filtroTermos').value.toLowerCase().trim();
-      if (!termo) {
-        renderizarTabelaTermos(bancoDados.termosEmitidos);
-        return;
-      }
-
-      const filtrados = bancoDados.termosEmitidos.filter(t => 
-        t.protocolo.toLowerCase().includes(termo) ||
-        t.cliente.toLowerCase().includes(termo) ||
-        t.tag.toLowerCase().includes(termo) ||
-        t.equipamento.toLowerCase().includes(termo) ||
-        t.tecnico.toLowerCase().includes(termo)
-      );
-
-      renderizarTabelaTermos(filtrados);
+      renderizarTabelaTermos(bancoDados.termosEmitidos);
     }
 
     function autoPreencherEquipamento() {
