@@ -1,519 +1,197 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LINEMED - Emissão de Termo de Entrega</title>
-  <style>
-    :root {
-      --primary: #003366;
-      --primary-hover: #002244;
-      --bg-color: #f0f4f8;
-      --card-bg: #ffffff;
-      --border-color: #d1d5db;
-      --text-color: #1f2937;
-      --accent: #2563eb;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 10px;
-    }
-
-    .app-card {
-      background: var(--card-bg);
-      width: 100%;
-      max-width: 1280px;
-      height: 98vh;
-      max-height: 900px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    /* Header Slim */
-    header {
-      background: var(--primary);
-      color: white;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    header h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.5px; }
-    .status-badge { font-size: 0.75rem; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; }
-
-    /* Grid Layout sem rolagem */
-    form {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto 1fr auto;
-      gap: 12px;
-      padding: 12px;
-      height: calc(100% - 40px);
-    }
-
-    .card-section {
-      background: #fafafa;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .section-title {
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--primary);
-      margin-bottom: 8px;
-      border-bottom: 2px solid var(--primary);
-      padding-bottom: 3px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .form-row { display: flex; gap: 8px; margin-bottom: 6px; }
-    .form-group { flex: 1; display: flex; flex-direction: column; }
+function doGet(e) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
     
-    label { font-size: 0.72rem; font-weight: 600; color: #4b5563; margin-bottom: 2px; }
+    var sheetClientes = ss.getSheetByName("CLIENTE");
+    var sheetEquip = ss.getSheetByName("EQUIP");
+    var sheetUsuarios = ss.getSheetByName("USUÁRIOS");
     
-    input[type="text"], select {
-      width: 100%;
-      padding: 5px 8px;
-      border: 1px solid var(--border-color);
-      border-radius: 5px;
-      font-size: 0.8rem;
-      outline: none;
-      transition: all 0.2s;
+    // 1. Leitura dos Clientes
+    var clientes = [];
+    if (sheetClientes && sheetClientes.getLastRow() > 1) {
+      var valsC = sheetClientes.getRange(2, 1, sheetClientes.getLastRow() - 1, 1).getValues();
+      clientes = valsC.flat().map(function(c) { return c.toString().trim(); }).filter(String);
     }
-
-    input[type="text"]:focus, select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(37,99,235,0.1);
-    }
-
-    /* Radio buttons inline */
-    .radio-group { display: flex; gap: 15px; align-items: center; height: 100%; }
-    .radio-option { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; cursor: pointer; }
-
-    /* Datalist / Pesquisa estilo Autocomplete */
-    .search-box { position: relative; }
-
-    /* Tabela de Acessórios Ajustada */
-    .table-container {
-      flex: 1;
-      overflow-y: auto;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      background: #fff;
-    }
-
-    table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
-    th, td { border-bottom: 1px solid #e5e7eb; padding: 4px 6px; text-align: left; }
-    th { background: #f3f4f6; color: #374151; font-weight: 600; position: sticky; top: 0; }
-    .td-center { text-align: center; }
-
-    /* Área de Assinaturas compactas */
-    .sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 100%; }
-    .sig-box { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fff; border: 1px dashed var(--border-color); border-radius: 6px; padding: 4px; position: relative; }
     
-    canvas { width: 100%; height: 80px; border-radius: 4px; cursor: crosshair; touch-action: none; }
-    .sig-preview { width: 100%; height: 80px; display: flex; align-items: center; justify-content: center; }
-    .sig-preview img { max-height: 100%; max-width: 100%; object-fit: contain; }
-
-    .btn-clear {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 2px 6px;
-      font-size: 0.65rem;
-      border-radius: 3px;
-      cursor: pointer;
-    }
-
-    /* Botão Principal */
-    .footer-action {
-      grid-column: span 2;
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .btn-submit {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px 24px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      border-radius: 6px;
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.2s;
-    }
-
-    .btn-submit:hover { background: var(--primary-hover); }
-    .btn-submit:disabled { background: #9ca3af; cursor: not-allowed; }
-  </style>
-</head>
-<body>
-
-<div class="app-card">
-  <header>
-    <h1>LINEMED | Gestão de Termos de Entrega & Higienização</h1>
-    <span id="statusBadge" class="status-badge">Conectando...</span>
-  </header>
-
-  <form id="termoForm">
-    
-    <!-- ESQUERDA: CLIENTE & EQUIPAMENTO -->
-    <div style="display: flex; flex-direction: column; gap: 10px;">
-      
-      <!-- 1. CLIENTE -->
-      <div class="card-section">
-        <div class="section-title">1. Cliente / Locatário</div>
-        <div class="form-group">
-          <label for="cliente">Selecione o Cliente</label>
-          <select id="cliente" required disabled>
-            <option value="">Aguardando carregamento...</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- 2. EQUIPAMENTO COM BUSCA MULTI-CAMPO -->
-      <div class="card-section" style="flex: 1;">
-        <div class="section-title">2. Identificação do Equipamento</div>
-        
-        <div class="form-group" style="margin-bottom: 8px;">
-          <label for="inputBusca">Pesquisar Equipamento (TAG, Série ou Patrimônio)</label>
-          <input type="text" id="inputBusca" list="listaEquipamentos" placeholder="Digite TAG, Série ou Patrimônio..." disabled oninput="onPesquisaEquipamento()">
-          <datalist id="listaEquipamentos"></datalist>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>TAG</label>
-            <input type="text" id="eqTag" readonly style="background:#eef2f6;">
-          </div>
-          <div class="form-group">
-            <label>Nº de Série</label>
-            <input type="text" id="eqSerie" readonly style="background:#eef2f6;">
-          </div>
-          <div class="form-group">
-            <label>Patrimônio</label>
-            <input type="text" id="eqPatrimonio" readonly style="background:#eef2f6;">
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group" style="flex: 2;">
-            <label>Equipamento</label>
-            <input type="text" id="eqNome" readonly style="background:#eef2f6; font-weight: bold;">
-          </div>
-          <div class="form-group">
-            <label>Modelo</label>
-            <input type="text" id="eqModelo" readonly style="background:#eef2f6;">
-          </div>
-          <div class="form-group">
-            <label>Fabricante</label>
-            <input type="text" id="eqFabricante" readonly style="background:#eef2f6;">
-          </div>
-        </div>
-
-        <div class="form-group" style="margin-top: 5px;">
-          <label>Operação</label>
-          <div class="radio-group">
-            <label class="radio-option"><input type="radio" name="tipoOperacao" value="LOCAÇÃO" checked> Locação</label>
-            <label class="radio-option"><input type="radio" name="tipoOperacao" value="EMPRÉSTIMO"> Empréstimo</label>
-            <label class="radio-option"><input type="radio" name="tipoOperacao" value="VENDA"> Venda</label>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- DIREITA: ACESSÓRIOS & ASSINATURAS -->
-    <div style="display: flex; flex-direction: column; gap: 10px;">
-      
-      <!-- 3. CHECKLIST ACESSÓRIOS -->
-      <div class="card-section" style="flex: 1;">
-        <div class="section-title">3. Checklist de Acessórios</div>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 35px;" class="td-center">#</th>
-                <th style="width: 50px;" class="td-center">Qtd</th>
-                <th>Descrição do Acessório</th>
-                <th style="width: 120px;" class="td-center">Conformidade</th>
-              </tr>
-            </thead>
-            <tbody id="corpoAcessorios">
-              <tr>
-                <td colspan="4" class="td-center" style="color: #9ca3af; padding: 20px;">Selecione um equipamento para visualizar os acessórios.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- 4. LIBERAÇÃO & ASSINATURAS -->
-      <div class="card-section">
-        <div class="section-title">4. Liberação e Assinaturas</div>
-        <div class="sig-grid">
+    // 2. Leitura dos Equipamentos
+    var equipamentos = [];
+    if (sheetEquip && sheetEquip.getLastRow() > 1) {
+      var valsE = sheetEquip.getRange(2, 1, sheetEquip.getLastRow() - 1, 7).getValues();
+      for (var i = 0; i < valsE.length; i++) {
+        if (valsE[i][0] || valsE[i][1] || valsE[i][2] || valsE[i][3]) {
+          var rawAcessorios = valsE[i][6] ? valsE[i][6].toString() : "";
+          var listaAcess = rawAcessorios.split(/\r?\n|,/).map(function(s) { return s.trim(); }).filter(String);
           
-          <!-- TÉCNICO -->
-          <div class="sig-box">
-            <div class="form-group" style="width: 100%; margin-bottom: 4px;">
-              <select id="tecnicoSelect" required disabled onchange="carregarAssinaturaTecnico()">
-                <option value="">Selecione o Técnico...</option>
-              </select>
-            </div>
-            <div class="sig-preview" id="previewTecnico">
-              <span style="color: #cbd5e1; font-size: 0.7rem;">Assinatura do Técnico</span>
-            </div>
-          </div>
-
-          <!-- CLIENTE (CANVAS) -->
-          <div class="sig-box">
-            <button type="button" class="btn-clear" onclick="limparAssinatura()">Limpar</button>
-            <span style="font-size: 0.65rem; color: #64748b; margin-bottom: 2px;">Assinatura do Cliente / Recebedor</span>
-            <canvas id="canvasAssinatura" width="280" height="75"></canvas>
-          </div>
-
-        </div>
-      </div>
-
-    </div>
-
-    <!-- RODAPÉ - BOTÃO ÚNICO -->
-    <div class="footer-action">
-      <button type="submit" id="btnEnviar" class="btn-submit" disabled>Gerar Termo Duplo PDF (Entrega + Higienização)</button>
-    </div>
-
-  </form>
-</div>
-
-<script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
-
-  let bancoDados = { clientes: [], equipamentos: [], usuarios: [] };
-  let equipamentoSelecionado = null;
-
-  window.onload = function() {
-    fetch(API_URL)
-      .then(res => res.json())
-      .then(data => {
-        bancoDados = data;
-        popularCampos();
-        document.getElementById('statusBadge').innerText = "Conectado";
-        document.getElementById('statusBadge').style.background = "#22c55e";
-        document.getElementById('btnEnviar').disabled = false;
-      })
-      .catch(err => {
-        document.getElementById('statusBadge').innerText = "Erro de Conexão";
-        document.getElementById('statusBadge').style.background = "#ef4444";
-        console.error(err);
-      });
-  };
-
-  function popularCampos() {
-    // 1. Clientes
-    const selCliente = document.getElementById('cliente');
-    selCliente.innerHTML = '<option value="">Selecione o Cliente...</option>';
-    if (bancoDados.clientes) {
-      bancoDados.clientes.forEach(c => {
-        selCliente.innerHTML += `<option value="${c}">${c}</option>`;
-      });
+          equipamentos.push({
+            tag: valsE[i][0] ? valsE[i][0].toString().trim() : "",
+            serie: valsE[i][1] ? valsE[i][1].toString().trim() : "",
+            patrimonio: valsE[i][2] ? valsE[i][2].toString().trim() : "",
+            nome: valsE[i][3] ? valsE[i][3].toString().trim() : "",
+            modelo: valsE[i][4] ? valsE[i][4].toString().trim() : "",
+            fabricante: valsE[i][5] ? valsE[i][5].toString().trim() : "",
+            acessorios: listaAcess
+          });
+        }
+      }
     }
-    selCliente.disabled = false;
-
-    // 2. Equipamentos (Datalist Autocomplete)
-    const dataList = document.getElementById('listaEquipamentos');
-    dataList.innerHTML = "";
-    if (bancoDados.equipamentos) {
-      bancoDados.equipamentos.forEach((eq, idx) => {
-        dataList.innerHTML += `<option value="${eq.tag} | ${eq.nome} | Série: ${eq.serie} | Patr: ${eq.patrimonio}" data-idx="${idx}"></option>`;
-      });
-    }
-    document.getElementById('inputBusca').disabled = false;
-
-    // 3. Usuários / Técnicos
-    const selTec = document.getElementById('tecnicoSelect');
-    selTec.innerHTML = '<option value="">Selecione o Técnico...</option>';
-    if (bancoDados.usuarios) {
-      bancoDados.usuarios.forEach((u, idx) => {
-        selTec.innerHTML += `<option value="${idx}">${u.nome}</option>`;
-      });
-    }
-    selTec.disabled = false;
-  }
-
-  function onPesquisaEquipamento() {
-    const val = document.getElementById('inputBusca').value;
-    if (!val) return limparCamposEquipamento();
-
-    // Busca o equipamento correspondente no banco
-    const eqEncontrado = bancoDados.equipamentos.find(eq => 
-      val.includes(eq.tag) || val.includes(eq.serie) || val.includes(eq.patrimonio)
-    );
-
-    if (eqEncontrado) {
-      equipamentoSelecionado = eqEncontrado;
-      document.getElementById('eqTag').value = eqEncontrado.tag || "";
-      document.getElementById('eqSerie').value = eqEncontrado.serie || "";
-      document.getElementById('eqPatrimonio').value = eqEncontrado.patrimonio || "";
-      document.getElementById('eqNome').value = eqEncontrado.nome || "";
-      document.getElementById('eqModelo').value = eqEncontrado.modelo || "";
-      document.getElementById('eqFabricante').value = eqEncontrado.fabricante || "";
-
-      renderAcessorios(eqEncontrado.acessorios);
-    }
-  }
-
-  function limparCamposEquipamento() {
-    equipamentoSelecionado = null;
-    ['eqTag', 'eqSerie', 'eqPatrimonio', 'eqNome', 'eqModelo', 'eqFabricante'].forEach(id => {
-      document.getElementById(id).value = "";
-    });
-    document.getElementById('corpoAcessorios').innerHTML = '<tr><td colspan="4" class="td-center" style="color: #9ca3af; padding: 20px;">Selecione um equipamento para visualizar os acessórios.</td></tr>';
-  }
-
-  function renderAcessorios(acessorios) {
-    const tbody = document.getElementById('corpoAcessorios');
-    tbody.innerHTML = "";
-
-    if (acessorios && acessorios.length > 0) {
-      acessorios.forEach((item, i) => {
-        tbody.innerHTML += `
-          <tr>
-            <td class="td-center">${i + 1}</td>
-            <td class="td-center"><input type="text" style="width: 35px; text-align: center; padding: 2px;" value="1" id="qtd_${i}"></td>
-            <td>${item}</td>
-            <td class="td-center">
-              <select id="conf_${i}" style="padding: 2px; font-size: 0.7rem;">
-                <option value="Conforme">Conforme</option>
-                <option value="Não Conforme">Não Conforme</option>
-                <option value="Não Possui">Não Possui</option>
-              </select>
-            </td>
-          </tr>`;
-      });
-    } else {
-      tbody.innerHTML = '<tr><td colspan="4" class="td-center" style="color: #9ca3af; padding: 10px;">Sem acessórios cadastrados.</td></tr>';
-    }
-  }
-
-  function carregarAssinaturaTecnico() {
-    const idx = document.getElementById('tecnicoSelect').value;
-    const divPreview = document.getElementById('previewTecnico');
     
-    if (idx === "") {
-      divPreview.innerHTML = '<span style="color: #cbd5e1; font-size: 0.7rem;">Assinatura do Técnico</span>';
-      return;
+    // 3. Leitura dos Usuários
+    var usuarios = [];
+    if (sheetUsuarios && sheetUsuarios.getLastRow() > 1) {
+      var valsU = sheetUsuarios.getRange(2, 1, sheetUsuarios.getLastRow() - 1, 2).getValues();
+      for (var j = 0; j < valsU.length; j++) {
+        var nomeTecnico = valsU[j][0] ? valsU[j][0].toString().trim() : "";
+        if (nomeTecnico) {
+          usuarios.push({
+            nome: nomeTecnico,
+            assinaturaUrl: valsU[j][1] ? valsU[j][1].toString().trim() : ""
+          });
+        }
+      }
     }
-
-    const user = bancoDados.usuarios[idx];
-    if (user && user.assinaturaUrl) {
-      divPreview.innerHTML = `<img src="${user.assinaturaUrl}" alt="Assinatura">`;
-    } else {
-      divPreview.innerHTML = '<span style="color: #ef4444; font-size: 0.7rem;">Sem assinatura cadastrada</span>';
-    }
-  }
-
-  // Canvas Logic
-  const canvas = document.getElementById('canvasAssinatura');
-  const ctx = canvas.getContext('2d');
-  let desenhando = false;
-
-  function obterPosicao(e) {
-    const rect = canvas.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    return { x: clientX - rect.left, y: clientY - rect.top };
-  }
-
-  function iniciarDesenho(e) { desenhando = true; desenhar(e); }
-  function pararDesenho() { desenhando = false; ctx.beginPath(); }
-  function desenhar(e) {
-    if (!desenhando) return;
-    e.preventDefault();
-    const pos = obterPosicao(e);
-    ctx.lineWidth = 1.5;
-    ctx.lineCap = 'round';
-    ctx.lineTo(pos.x, pos.y);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y);
-  }
-
-  canvas.addEventListener('mousedown', iniciarDesenho);
-  canvas.addEventListener('mouseup', pararDesenho);
-  canvas.addEventListener('mousemove', desenhar);
-  canvas.addEventListener('touchstart', iniciarDesenho);
-  canvas.addEventListener('touchend', pararDesenho);
-  canvas.addEventListener('touchmove', desenhar);
-
-  function limparAssinatura() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
-
-  // Submit
-  document.getElementById('termoForm').onsubmit = function(e) {
-    e.preventDefault();
-
-    if (!equipamentoSelecionado) {
-      alert("Selecione um equipamento válido!");
-      return;
-    }
-
-    const idxTec = document.getElementById('tecnicoSelect').value;
-    const tecSelected = bancoDados.usuarios[idxTec];
-
-    let listaAcessorios = [];
-    if (equipamentoSelecionado.acessorios) {
-      equipamentoSelecionado.acessorios.forEach((item, i) => {
-        listaAcessorios.push({
-          item: i + 1,
-          qtd: document.getElementById(`qtd_${i}`).value,
-          descricao: item,
-          conformidade: document.getElementById(`conf_${i}`).value
-        });
-      });
-    }
-
-    const payload = {
-      cliente: document.getElementById('cliente').value,
-      equipamento: equipamentoSelecionado,
-      tipoOperacao: document.querySelector('input[name="tipoOperacao"]:checked').value,
-      acessorios: listaAcessorios,
-      tecnico: tecSelected,
-      assinaturaCliente: canvas.toDataURL()
+    
+    var data = {
+      clientes: clientes,
+      equipamentos: equipamentos,
+      usuarios: usuarios
     };
 
-    const btn = document.getElementById('btnEnviar');
-    btn.disabled = true;
-    btn.innerText = "Gerando PDF...";
+    var payload = JSON.stringify(data);
 
-    fetch(API_URL, {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    })
-    .then(res => res.json())
-    .then(res => {
-      if(res.status === "sucesso") {
-        alert("Termo emitido com sucesso!\n\nProtocolo: " + res.protocolo);
-        location.reload();
+    // Suporte a JSONP obrigatorio para desbloquear o navegador
+    if (e && e.parameter && e.parameter.callback) {
+      return ContentService.createTextOutput(e.parameter.callback + "(" + payload + ")")
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+
+    return ContentService.createTextOutput(payload)
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    var errPayload = JSON.stringify({ erro: err.toString() });
+    if (e && e.parameter && e.parameter.callback) {
+      return ContentService.createTextOutput(e.parameter.callback + "(" + errPayload + ")")
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    return ContentService.createTextOutput(errPayload).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doPost(e) {
+  try {
+    var dados = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    
+    var sheetTermos = ss.getSheetByName("TERMOS_EMITIDOS");
+    if (!sheetTermos) {
+      sheetTermos = ss.insertSheet("TERMOS_EMITIDOS");
+      sheetTermos.appendRow(["Protocolo", "Data/Hora", "Cliente", "TAG", "Equipamento", "Tipo", "Técnico", "Link PDF"]);
+    }
+    
+    var numSeq = sheetTermos.getLastRow();
+    var protocolo = "PT" + ("0000" + numSeq).slice(-4);
+    var dataHora = Utilities.formatDate(new Date(), "GMT-3", "dd/MM/yyyy HH:mm:ss");
+    
+    var pastas = DriveApp.getFoldersByName("TERMOS DE ENTREGA PDF");
+    var pastaPDF = pastas.hasNext() ? pastas.next() : DriveApp.createFolder("TERMOS DE ENTREGA PDF");
+    
+    var linhasAcessorios = "";
+    if (dados.acessorios && dados.acessorios.length > 0) {
+      dados.acessorios.forEach(function(ac) {
+        linhasAcessorios += "<tr>" +
+          "<td style='text-align:center; border:1px solid #000;'>" + ac.item + "</td>" +
+          "<td style='text-align:center; border:1px solid #000;'>" + ac.qtd + "</td>" +
+          "<td style='border:1px solid #000; padding-left:4px;'>" + ac.descricao + "</td>" +
+          "<td style='text-align:center; border:1px solid #000;'>" + ac.conformidade + "</td>" +
+          "</tr>";
+      });
+    } else {
+      linhasAcessorios = "<tr><td colspan='4' style='text-align:center; border:1px solid #000;'>Sem acessórios registrados</td></tr>";
+    }
+
+    var htmlContent = "<html><head><style>" +
+      "@page { size: A4 landscape; margin: 8mm; }" +
+      "body { font-family: Arial, sans-serif; font-size: 10px; margin: 0; padding: 0; }" +
+      ".container { display: table; width: 100%; table-layout: fixed; }" +
+      ".col { display: table-cell; width: 49%; vertical-align: top; padding: 4px; box-sizing: border-box; }" +
+      ".col-sep { display: table-cell; width: 2%; }" +
+      ".box { border: 1px solid #000; padding: 4px; margin-bottom: 4px; }" +
+      "table { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 9px; }" +
+      "th { border: 1px solid #000; background: #eee; text-align: center; }" +
+      "td { border: 1px solid #000; padding: 2px; }" +
+      ".header-title { font-weight: bold; font-size: 11px; text-align: center; border-bottom: 1px solid #000; padding-bottom: 2px; margin-bottom: 4px; }" +
+      "</style></head><body>" +
+      "<div class='container'>" +
+      "<div class='col'>" +
+        "<div class='box'>" +
+          "<table style='border:none;'>" +
+            "<tr><td style='border:none;'><b>" + dataHora + "</b></td><td style='border:none; text-align:right;'><b>Protocolo: " + protocolo + "</b></td></tr>" +
+            "<tr><td colspan='2' style='border:none;'><b>Cliente/Locatário:</b> " + dados.cliente + "</td></tr>" +
+            "<tr><td style='border:none;'><b>TAG:</b> " + dados.equipamento.tag + "</td><td style='border:none;'><b>Equipamento:</b> " + dados.equipamento.nome + "</td></tr>" +
+            "<tr><td style='border:none;'><b>Série:</b> " + dados.equipamento.serie + "</td><td style='border:none;'><b>Patrimônio:</b> " + dados.equipamento.patrimonio + "</td></tr>" +
+            "<tr><td colspan='2' style='border:none;'><b>Operação:</b> " + dados.tipoOperacao + "</td></tr>" +
+          "</table>" +
+        "</div>" +
+        "<table>" +
+          "<thead><tr><th style='width:30px;'>Item</th><th style='width:40px;'>Quant.</th><th>Descrição</th><th style='width:80px;'>Conformidade</th></tr></thead>" +
+          "<tbody>" + linhasAcessorios + "</tbody>" +
+        "</table>" +
+        "<div class='box' style='margin-top:10px;'>" +
+          "<b>Liberado para entrega</b><br>" +
+          "<b>Técnico:</b> " + dados.tecnico.nome + "<br>" +
+          "<hr>" +
+          "<b>Assinatura do Recebedor:</b><br>" +
+          "<img src='" + dados.assinaturaCliente + "' style='height:45px;'/>" +
+        "</div>" +
+      "</div>" +
+      "<div class='col-sep'></div>" +
+      "<div class='col'>" +
+        "<div class='header-title'>TERMO DE RESPONSABILIDADE DE HIGIENIZAÇÃO</div>" +
+        "<div class='box'>" +
+          "<table style='border:none;'>" +
+            "<tr><td style='border:none;'><b>Data:</b> " + dataHora + "</td><td style='border:none; text-align:right;'><b>Protocolo:</b> " + protocolo + "</td></tr>" +
+            "<tr><td colspan='2' style='border:none;'><b>Cliente:</b> " + dados.cliente + "</td></tr>" +
+            "<tr><td style='border:none;'><b>TAG:</b> " + dados.equipamento.tag + "</td><td style='border:none;'><b>Equipamento:</b> " + dados.equipamento.nome + "</td></tr>" +
+            "<tr><td style='border:none;'><b>Série:</b> " + dados.equipamento.serie + "</td><td style='border:none;'><b>Patrimônio:</b> " + dados.equipamento.patrimonio + "</td></tr>" +
+          "</table>" +
+        "</div>" +
+        "<table>" +
+          "<thead><tr><th style='width:40px;'>Qtd</th><th>Descrição</th></tr></thead>" +
+          "<tbody>" + linhasAcessorios + "</tbody>" +
+        "</table>" +
+        "<div style='margin-top:10px; font-size:8px; text-align:justify;'>" +
+          "A empresa <b>Linemed Comércio e Manutenção de Equipamentos Hospitalares</b> declara para os devidos fins que todos os equipamentos e acessórios descritos acima foram devidamente higienizados e desinfectados conforme as normas sanitárias vigentes." +
+        "</div>" +
+      "</div>" +
+      "</div></body></html>";
+
+    var blob = Utilities.newBlob(htmlContent, "text/html", "Termo_" + protocolo + ".html");
+    var arquivoPDF = pastaPDF.createFile(blob.getAs("application/pdf")).setName("Termo_Entrega_" + protocolo + "_" + dados.equipamento.tag + ".pdf");
+    arquivoPDF.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    
+    var urlPDF = arquivoPDF.getUrl();
+
+    sheetTermos.appendRow([
+      protocolo,
+      dataHora,
+      dados.cliente,
+      dados.equipamento.tag,
+      dados.equipamento.nome,
+      dados.tipoOperacao,
+      dados.tecnico.nome,
+      urlPDF
+    ]);
+
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "sucesso",
+      protocolo: protocolo,
+      pdfUrl: urlPDF
+    })).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "erro",
+      mensagem: err.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
