@@ -6,7 +6,7 @@
   <title>LINEMED - Gestão de Termos</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #f0f2f5; color: #333; min-height: 100vh; display: flex; flex-direction: column; padding: 16px; overflow-x: hidden; }
+    body { background-color: #f0f2f5; color: #333; min-height: 100vh; display: flex; flex-direction: column; padding: 16px; padding-bottom: 60px; overflow-x: hidden; }
     
     /* Header e Navegação por Abas */
     .header { background-color: #1a4d80; color: white; padding: 14px 24px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; box-shadow: 0 3px 6px rgba(0,0,0,0.12); }
@@ -60,6 +60,25 @@
 
     .btn-pdf { background: #28a745; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 12px; display: inline-block; }
     .btn-pdf:hover { background: #218838; }
+
+    /* RODAPÉ DO SISTEMA */
+    .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-top: 2px solid #2563eb; }
+    .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
+    .system-footer a:hover { text-decoration: underline; }
+
+    /* CHAT WIDGET FLUTUANTE */
+    .chat-widget-btn { position: fixed; bottom: 45px; right: 20px; background: #25d366; color: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.25); z-index: 101; transition: transform 0.2s; }
+    .chat-widget-btn:hover { transform: scale(1.08); }
+    
+    .chat-box { display: none; position: fixed; bottom: 105px; right: 20px; width: 300px; background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 102; overflow: hidden; border: 1px solid #e2e8f0; }
+    .chat-box.active { display: block; animation: fadeIn 0.2s ease-in-out; }
+    .chat-header { background: #075e54; color: white; padding: 12px 16px; font-weight: bold; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+    .chat-header span { cursor: pointer; font-size: 16px; }
+    .chat-body { padding: 14px; font-size: 12px; color: #444; }
+    .chat-body textarea { width: 100%; height: 70px; border: 1px solid #ccc; border-radius: 6px; padding: 8px; font-size: 12px; margin-top: 8px; resize: none; }
+    .chat-body button { background: #25d366; color: white; border: none; padding: 8px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
@@ -216,8 +235,32 @@
     </div>
   </div>
 
+  <!-- WIDGET DE CHAT (WHATSAPP) -->
+  <button type="button" class="chat-widget-btn" onclick="toggleChat()" title="Suporte / Dúvidas">💬</button>
+  
+  <div id="chatBox" class="chat-box">
+    <div class="chat-header">
+      💬 Suporte Técnico Linemed
+      <span onclick="toggleChat()">✕</span>
+    </div>
+    <div class="chat-body">
+      Precisa de ajuda ou encontrou algum problema no sistema? Digite sua mensagem abaixo:
+      <textarea id="msgChat" placeholder="Ex: Tive dúvidas ao cadastrar o equipamento LMD..."></textarea>
+      <button type="button" onclick="enviarWhatsApp()">Iniciar Conversa no WhatsApp</button>
+    </div>
+  </div>
+
+  <!-- RODAPÉ CORPORATIVO DO SISTEMA -->
+  <footer class="system-footer">
+    <div><b>LINEMED TME</b> v2.0 | Sistema de Gestão de Termos</div>
+    <div>Suporte / TI: <a href="mailto:manutencao@linemedhospitalar.com.br">manutencao@linemedhospitalar.com.br</a></div>
+  </footer>
+
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
+    
+    // CONFIGURAÇÃO DO WHATSAPP DO SUPORTE (INSERIR O NÚMERO COM DDD EX: 5511999999999)
+    const NUMERO_WHATSAPP_SUPORTE = "551158513087";
 
     let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [] };
     let equipamentoSelecionado = null;
@@ -245,6 +288,18 @@
       };
       document.body.appendChild(script);
     };
+
+    function toggleChat() {
+      const box = document.getElementById('chatBox');
+      box.classList.toggle('active');
+    }
+
+    function enviarWhatsApp() {
+      const msg = document.getElementById('msgChat').value.trim();
+      const textoFinal = encodeURIComponent("Olá Suporte Linemed! " + (msg ? msg : "Preciso de auxílio no sistema de termos."));
+      window.open(`https://wa.me/${NUMERO_WHATSAPP_SUPORTE}?text=${textoFinal}`, '_blank');
+      toggleChat();
+    }
 
     function mudarAba(nomeAba) {
       document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
@@ -514,7 +569,6 @@
       .then(res => res.json())
       .then(res => {
         if(res.status === "sucesso") {
-          // Pergunta de Impressão Direta
           const querImprimir = confirm("Termo gerado com sucesso!\n\nProtocolo: " + res.protocolo + "\n\nDeseja IMPRIMIR o documento agora?");
           
           if (querImprimir && res.pdfUrl) {
