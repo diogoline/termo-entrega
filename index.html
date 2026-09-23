@@ -6,46 +6,47 @@
   <title>LINEMED - Gestão de Termos</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #f0f2f5; color: #333; height: 100vh; display: flex; flex-direction: column; padding: 10px; overflow: hidden; }
+    body { background-color: #f0f2f5; color: #333; min-height: 100vh; display: flex; flex-direction: column; padding: 16px; overflow-x: hidden; }
     
     /* Header */
-    .header { background-color: #1a4d80; color: white; padding: 10px 20px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .header h1 { font-size: 18px; font-weight: 600; }
-    .status-badge { background-color: #ffc107; color: #333; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; transition: all 0.3s; }
+    .header { background-color: #1a4d80; color: white; padding: 14px 24px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; box-shadow: 0 3px 6px rgba(0,0,0,0.12); }
+    .header h1 { font-size: 20px; font-weight: 600; }
+    .status-badge { background-color: #ffc107; color: #333; padding: 6px 14px; border-radius: 16px; font-size: 13px; font-weight: bold; transition: all 0.3s; }
     .status-badge.connected { background-color: #28a745; color: white; }
 
     /* Layout Principal em Grid */
-    .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; min-height: 0; }
-    .card { background: white; border-radius: 6px; padding: 12px; border: 1px solid #e0e0e0; display: flex; flex-direction: column; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .card-title { font-size: 13px; font-weight: bold; color: #1a4d80; text-transform: uppercase; border-bottom: 2px solid #1a4d80; padding-bottom: 4px; margin-bottom: 8px; }
+    .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; flex: 1; }
+    .card { background: white; border-radius: 8px; padding: 16px; border: 1px solid #dcdcdc; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0,0,0,0.06); }
+    .card-title { font-size: 14px; font-weight: bold; color: #1a4d80; text-transform: uppercase; border-bottom: 2px solid #1a4d80; padding-bottom: 6px; margin-bottom: 12px; }
 
-    /* Formulários e Inputs */
-    .form-row { display: flex; gap: 8px; margin-bottom: 8px; }
+    /* Formulários e Inputs Aumentados */
+    .form-row { display: flex; gap: 12px; margin-bottom: 12px; }
     .form-group { flex: 1; display: flex; flex-direction: column; }
-    label { font-size: 11px; font-weight: 600; color: #555; margin-bottom: 2px; }
-    input[type="text"], select { width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; background: #fff; }
-    input[readonly] { background-color: #f8f9fa; color: #495057; }
+    label { font-size: 12px; font-weight: 700; color: #444; margin-bottom: 4px; text-transform: uppercase; }
+    input[type="text"], select { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; background: #fff; transition: border-color 0.2s; }
+    input[type="text"]:focus, select:focus { border-color: #1a4d80; outline: none; }
+    input[readonly] { background-color: #f8f9fa; color: #333; font-weight: 600; }
     
-    .radio-group { display: flex; gap: 15px; align-items: center; padding: 4px 0; }
-    .radio-group label { font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .radio-group { display: flex; gap: 20px; align-items: center; padding: 6px 0; }
+    .radio-group label { font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 
     /* Tabela de Acessórios */
-    .table-container { flex: 1; overflow-y: auto; border: 1px solid #eee; border-radius: 4px; }
-    table { width: 100%; border-collapse: collapse; font-size: 11px; }
-    th { background: #f1f3f5; color: #333; padding: 6px; text-align: left; position: sticky; top: 0; border-bottom: 1px solid #ddd; }
-    td { padding: 5px 6px; border-bottom: 1px solid #eee; }
+    .table-container { flex: 1; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 6px; min-height: 200px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { background: #e9ecef; color: #1a4d80; padding: 10px; text-align: left; position: sticky; top: 0; border-bottom: 2px solid #ced4da; font-weight: bold; }
+    td { padding: 8px 10px; border-bottom: 1px solid #eee; vertical-align: middle; }
     .td-center { text-align: center; }
 
     /* Assinaturas */
-    .signature-container { display: flex; gap: 10px; margin-top: 5px; }
-    .sig-box { flex: 1; border: 1px dashed #ccc; border-radius: 4px; padding: 6px; background: #fafafa; text-align: center; position: relative; }
-    .sig-box canvas { width: 100%; height: 80px; background: white; border: 1px solid #ddd; border-radius: 3px; cursor: crosshair; touch-action: none; }
-    .sig-preview { height: 50px; border: 1px solid #ddd; border-radius: 4px; background: #fff; display: flex; align-items: center; justify-content: center; margin-top: 4px; padding: 2px; }
+    .signature-container { display: flex; gap: 12px; margin-top: 8px; }
+    .sig-box { flex: 1; border: 1px dashed #bbb; border-radius: 6px; padding: 10px; background: #fafafa; text-align: center; position: relative; }
+    .sig-box canvas { width: 100%; height: 110px; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: crosshair; touch-action: none; }
+    .sig-preview { height: 60px; border: 1px solid #ccc; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; margin-top: 6px; padding: 4px; }
     .sig-preview img { max-height: 100%; max-width: 100%; object-fit: contain; }
-    .btn-clear { position: absolute; right: 8px; top: 8px; background: #dc3545; color: white; border: none; padding: 2px 6px; border-radius: 3px; font-size: 10px; cursor: pointer; }
+    .btn-clear { position: absolute; right: 12px; top: 12px; background: #dc3545; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
     /* Botão Principal */
-    .btn-submit { background: #1a4d80; color: white; border: none; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 8px; width: 100%; text-transform: uppercase; transition: background 0.2s; }
+    .btn-submit { background: #1a4d80; color: white; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 12px; width: 100%; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     .btn-submit:hover { background: #13385c; }
     .btn-submit:disabled { background: #6c757d; cursor: not-allowed; }
   </style>
@@ -60,7 +61,7 @@
   <form id="termoForm" class="main-grid" onsubmit="gerarTermo(event)">
     
     <!-- COLUNA ESQUERDA: CLIENTE E EQUIPAMENTO -->
-    <div style="display: flex; flex-direction: column; gap: 10px;">
+    <div style="display: flex; flex-direction: column; gap: 16px;">
       
       <!-- 1. CLIENTE -->
       <div class="card">
@@ -76,7 +77,7 @@
       <div class="card" style="flex: 1;">
         <div class="card-title">2. Identificação do Equipamento</div>
         
-        <div class="form-group" style="margin-bottom: 8px;">
+        <div class="form-group" style="margin-bottom: 12px;">
           <label>Pesquisar Equipamento (Digite a TAG, Série ou Patrimônio):</label>
           <input type="text" id="buscaEquipamento" list="listEquipamentos" placeholder="Ex: LMD-4654 ou 2329918..." oninput="autoPreencherEquipamento()" disabled required>
           <datalist id="listEquipamentos"></datalist>
@@ -94,7 +95,7 @@
           <div class="form-group"><label>Fabricante:</label><input type="text" id="eqFabricante" readonly placeholder="-"></div>
         </div>
 
-        <div class="form-group" style="margin-top: 4px;">
+        <div class="form-group" style="margin-top: 6px;">
           <label>Operação:</label>
           <div class="radio-group">
             <label><input type="radio" name="tipoOperacao" value="LOCAÇÃO" checked> Locação</label>
@@ -107,7 +108,7 @@
     </div>
 
     <!-- COLUNA DIREITA: ACESSÓRIOS, ASSINATURAS E BOTÃO -->
-    <div style="display: flex; flex-direction: column; gap: 10px;">
+    <div style="display: flex; flex-direction: column; gap: 16px;">
       
       <!-- 3. CHECKLIST -->
       <div class="card" style="flex: 1;">
@@ -116,15 +117,15 @@
           <table>
             <thead>
               <tr>
-                <th class="td-center" style="width: 30px;">#</th>
-                <th class="td-center" style="width: 50px;">Qtd</th>
+                <th class="td-center" style="width: 40px;">#</th>
+                <th class="td-center" style="width: 60px;">Qtd</th>
                 <th>Descrição do Acessório</th>
-                <th class="td-center" style="width: 110px;">Conformidade</th>
+                <th class="td-center" style="width: 130px;">Conformidade</th>
               </tr>
             </thead>
             <tbody id="corpoAcessorios">
               <tr>
-                <td colspan="4" class="td-center" style="color: #888; padding: 20px;">Selecione um equipamento para visualizar os acessórios.</td>
+                <td colspan="4" class="td-center" style="color: #888; padding: 24px;">Selecione um equipamento para visualizar os acessórios.</td>
               </tr>
             </tbody>
           </table>
@@ -141,8 +142,8 @@
             <option value="">Selecione o técnico...</option>
           </select>
           
-          <div class="sig-preview" id="previewTecnico" style="margin-top: 4px;">
-            <span style="color: #aaa; font-size: 11px;">Assinatura do Técnico</span>
+          <div class="sig-preview" id="previewTecnico">
+            <span style="color: #aaa; font-size: 12px;">Assinatura do Técnico</span>
           </div>
         </div>
 
@@ -150,7 +151,7 @@
           <div class="sig-box">
             <label>Assinatura do Recebedor / Cliente:</label>
             <button type="button" class="btn-clear" onclick="limparAssinatura()">Limpar</button>
-            <canvas id="canvasAssinatura" width="400" height="80"></canvas>
+            <canvas id="canvasAssinatura" width="500" height="110"></canvas>
           </div>
         </div>
 
@@ -215,7 +216,7 @@
       }
       document.getElementById('buscaEquipamento').disabled = false;
 
-      // 3. Técnicos (Select direto para vincular com perfeição a assinatura)
+      // 3. Técnicos
       const selTec = document.getElementById('selectTecnico');
       selTec.innerHTML = '<option value="">Selecione o técnico...</option>';
       if (bancoDados.usuarios) {
@@ -272,10 +273,10 @@
             tbody.innerHTML += `
               <tr>
                 <td class="td-center">${i + 1}</td>
-                <td class="td-center"><input type="text" style="width: 40px; text-align: center; padding: 2px;" value="1" id="qtd_${i}"></td>
+                <td class="td-center"><input type="text" style="width: 45px; text-align: center; padding: 4px;" value="1" id="qtd_${i}"></td>
                 <td>${item}</td>
                 <td class="td-center">
-                  <select id="conf_${i}" style="padding: 2px;">
+                  <select id="conf_${i}" style="padding: 4px;">
                     <option value="Conforme">Conforme</option>
                     <option value="Não Conforme">Não Conforme</option>
                     <option value="Não Possui">Não Possui</option>
@@ -284,7 +285,7 @@
               </tr>`;
           });
         } else {
-          tbody.innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 15px;">Nenhum acessório registrado para este equipamento na aba EQUIP.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 20px;">Nenhum acessório registrado para este equipamento na aba EQUIP.</td></tr>';
         }
       }
     }
@@ -297,7 +298,7 @@
       document.getElementById('eqNome').value = "-";
       document.getElementById('eqModelo').value = "-";
       document.getElementById('eqFabricante').value = "-";
-      document.getElementById('corpoAcessorios').innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 20px;">Selecione um equipamento para visualizar os acessórios.</td></tr>';
+      document.getElementById('corpoAcessorios').innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 24px;">Selecione um equipamento para visualizar os acessórios.</td></tr>';
     }
 
     function exibirAssinaturaTecnico() {
@@ -305,7 +306,7 @@
       const divPrev = document.getElementById('previewTecnico');
 
       if (idxTec === "" || !bancoDados.usuarios) {
-        divPrev.innerHTML = '<span style="color: #aaa; font-size: 11px;">Assinatura do Técnico</span>';
+        divPrev.innerHTML = '<span style="color: #aaa; font-size: 12px;">Assinatura do Técnico</span>';
         return;
       }
 
@@ -313,7 +314,7 @@
       if (tec && tec.assinaturaUrl && tec.assinaturaUrl.length > 20) {
         divPrev.innerHTML = `<img src="${tec.assinaturaUrl}" alt="Assinatura de ${tec.nome}">`;
       } else {
-        divPrev.innerHTML = '<span style="color: #888; font-size: 11px;">Assinatura carregada no servidor</span>';
+        divPrev.innerHTML = '<span style="color: #888; font-size: 12px;">Assinatura carregada no servidor</span>';
       }
     }
 
