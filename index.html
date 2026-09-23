@@ -1,197 +1,160 @@
-function doGet(e) {
-  try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LINEMED - Gestão de Termos</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f0f2f5; color: #333; height: 100vh; display: flex; flex-direction: column; padding: 10px; overflow: hidden; }
     
-    var sheetClientes = ss.getSheetByName("CLIENTE");
-    var sheetEquip = ss.getSheetByName("EQUIP");
-    var sheetUsuarios = ss.getSheetByName("USUÁRIOS");
+    /* Header */
+    .header { background-color: #1a4d80; color: white; padding: 10px 20px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .header h1 { font-size: 18px; font-weight: 600; }
+    .status-badge { background-color: #ffc107; color: #333; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+
+    /* Layout Principal em Grid */
+    .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; min-height: 0; }
+    .card { background: white; border-radius: 6px; padding: 12px; border: 1px solid #e0e0e0; display: flex; flex-direction: column; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .card-title { font-size: 13px; font-weight: bold; color: #1a4d80; text-transform: uppercase; border-bottom: 2px solid #1a4d80; padding-bottom: 4px; margin-bottom: 8px; }
+
+    /* Formulários e Inputs */
+    .form-row { display: flex; gap: 8px; margin-bottom: 8px; }
+    .form-group { flex: 1; display: flex; flex-direction: column; }
+    label { font-size: 11px; font-weight: 600; color: #555; margin-bottom: 2px; }
+    input[type="text"], select { width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; background: #fff; }
+    input[readonly] { background-color: #f8f9fa; color: #495057; }
     
-    // 1. Leitura dos Clientes
-    var clientes = [];
-    if (sheetClientes && sheetClientes.getLastRow() > 1) {
-      var valsC = sheetClientes.getRange(2, 1, sheetClientes.getLastRow() - 1, 1).getValues();
-      clientes = valsC.flat().map(function(c) { return c.toString().trim(); }).filter(String);
-    }
+    .radio-group { display: flex; gap: 15px; align-items: center; padding: 4px 0; }
+    .radio-group label { font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+
+    /* Tabela de Acessórios */
+    .table-container { flex: 1; overflow-y: auto; border: 1px solid #eee; border-radius: 4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    th { background: #f1f3f5; color: #333; padding: 6px; text-align: left; position: sticky; top: 0; border-bottom: 1px solid #ddd; }
+    td { padding: 5px 6px; border-bottom: 1px solid #eee; }
+    .td-center { text-align: center; }
+
+    /* Assinaturas */
+    .signature-container { display: flex; gap: 10px; margin-top: 5px; }
+    .sig-box { flex: 1; border: 1px dashed #ccc; border-radius: 4px; padding: 6px; background: #fafafa; text-align: center; position: relative; }
+    .sig-box canvas { width: 100%; height: 75px; background: white; border: 1px solid #ddd; border-radius: 3px; cursor: crosshair; }
+    .btn-clear { position: absolute; right: 8px; top: 8px; background: #dc3545; color: white; border: none; padding: 2px 6px; border-radius: 3px; font-size: 10px; cursor: pointer; }
+
+    /* Botão Principal */
+    .btn-submit { background: #1a4d80; color: white; border: none; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 8px; width: 100%; text-transform: uppercase; transition: background 0.2s; }
+    .btn-submit:hover { background: #13385c; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>LINEMED | Gestão de Termos de Entrega & Higienização</h1>
+    <span id="statusBadge" class="status-badge">Aguardando Conexão</span>
+  </div>
+
+  <form id="termoForm" class="main-grid" onsubmit="return false;">
     
-    // 2. Leitura dos Equipamentos
-    var equipamentos = [];
-    if (sheetEquip && sheetEquip.getLastRow() > 1) {
-      var valsE = sheetEquip.getRange(2, 1, sheetEquip.getLastRow() - 1, 7).getValues();
-      for (var i = 0; i < valsE.length; i++) {
-        if (valsE[i][0] || valsE[i][1] || valsE[i][2] || valsE[i][3]) {
-          var rawAcessorios = valsE[i][6] ? valsE[i][6].toString() : "";
-          var listaAcess = rawAcessorios.split(/\r?\n|,/).map(function(s) { return s.trim(); }).filter(String);
-          
-          equipamentos.push({
-            tag: valsE[i][0] ? valsE[i][0].toString().trim() : "",
-            serie: valsE[i][1] ? valsE[i][1].toString().trim() : "",
-            patrimonio: valsE[i][2] ? valsE[i][2].toString().trim() : "",
-            nome: valsE[i][3] ? valsE[i][3].toString().trim() : "",
-            modelo: valsE[i][4] ? valsE[i][4].toString().trim() : "",
-            fabricante: valsE[i][5] ? valsE[i][5].toString().trim() : "",
-            acessorios: listaAcess
-          });
-        }
-      }
-    }
-    
-    // 3. Leitura dos Usuários
-    var usuarios = [];
-    if (sheetUsuarios && sheetUsuarios.getLastRow() > 1) {
-      var valsU = sheetUsuarios.getRange(2, 1, sheetUsuarios.getLastRow() - 1, 2).getValues();
-      for (var j = 0; j < valsU.length; j++) {
-        var nomeTecnico = valsU[j][0] ? valsU[j][0].toString().trim() : "";
-        if (nomeTecnico) {
-          usuarios.push({
-            nome: nomeTecnico,
-            assinaturaUrl: valsU[j][1] ? valsU[j][1].toString().trim() : ""
-          });
-        }
-      }
-    }
-    
-    var data = {
-      clientes: clientes,
-      equipamentos: equipamentos,
-      usuarios: usuarios
-    };
+    <!-- COLUNA ESQUERDA: CLIENTE E EQUIPAMENTO -->
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      
+      <!-- 1. CLIENTE -->
+      <div class="card">
+        <div class="card-title">1. Cliente / Locatário</div>
+        <div class="form-group">
+          <label for="cliente">Selecione o Cliente:</label>
+          <select id="cliente" required>
+            <option value="">Aguardando carregamento...</option>
+          </select>
+        </div>
+      </div>
 
-    var payload = JSON.stringify(data);
+      <!-- 2. EQUIPAMENTO -->
+      <div class="card" style="flex: 1;">
+        <div class="card-title">2. Identificação do Equipamento</div>
+        
+        <div class="form-group" style="margin-bottom: 8px;">
+          <label>Pesquisar Equipamento (Digite TAG, Série ou Patrimônio):</label>
+          <input type="text" id="buscaEquipamento" placeholder="Ex: LMD-4654 ou 2329918..." oninput="filtrarEquipamentos()">
+          <select id="equipamentoSelect" required onchange="selecionarEquipamento()" style="margin-top: 4px;">
+            <option value="">Selecione na lista filtrada...</option>
+          </select>
+        </div>
 
-    // Suporte a JSONP obrigatorio para desbloquear o navegador
-    if (e && e.parameter && e.parameter.callback) {
-      return ContentService.createTextOutput(e.parameter.callback + "(" + payload + ")")
-        .setMimeType(ContentService.MimeType.JAVASCRIPT);
-    }
+        <div class="form-row">
+          <div class="form-group"><label>TAG:</label><input type="text" id="eqTag" readonly placeholder="-"></div>
+          <div class="form-group"><label>Nº de Série:</label><input type="text" id="eqSerie" readonly placeholder="-"></div>
+          <div class="form-group"><label>Patrimônio:</label><input type="text" id="eqPatrimonio" readonly placeholder="-"></div>
+        </div>
 
-    return ContentService.createTextOutput(payload)
-      .setMimeType(ContentService.MimeType.JSON);
+        <div class="form-row">
+          <div class="form-group"><label>Equipamento:</label><input type="text" id="eqNome" readonly placeholder="-"></div>
+          <div class="form-group"><label>Modelo:</label><input type="text" id="eqModelo" readonly placeholder="-"></div>
+          <div class="form-group"><label>Fabricante:</label><input type="text" id="eqFabricante" readonly placeholder="-"></div>
+        </div>
 
-  } catch (err) {
-    var errPayload = JSON.stringify({ erro: err.toString() });
-    if (e && e.parameter && e.parameter.callback) {
-      return ContentService.createTextOutput(e.parameter.callback + "(" + errPayload + ")")
-        .setMimeType(ContentService.MimeType.JAVASCRIPT);
-    }
-    return ContentService.createTextOutput(errPayload).setMimeType(ContentService.MimeType.JSON);
-  }
-}
+        <div class="form-group" style="margin-top: 4px;">
+          <label>Operação:</label>
+          <div class="radio-group">
+            <label><input type="radio" name="tipoOperacao" value="LOCAÇÃO" checked> Locação</label>
+            <label><input type="radio" name="tipoOperacao" value="EMPRÉSTIMO"> Empréstimo</label>
+            <label><input type="radio" name="tipoOperacao" value="VENDA"> Venda</label>
+          </div>
+        </div>
+      </div>
 
-function doPost(e) {
-  try {
-    var dados = JSON.parse(e.postData.contents);
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    
-    var sheetTermos = ss.getSheetByName("TERMOS_EMITIDOS");
-    if (!sheetTermos) {
-      sheetTermos = ss.insertSheet("TERMOS_EMITIDOS");
-      sheetTermos.appendRow(["Protocolo", "Data/Hora", "Cliente", "TAG", "Equipamento", "Tipo", "Técnico", "Link PDF"]);
-    }
-    
-    var numSeq = sheetTermos.getLastRow();
-    var protocolo = "PT" + ("0000" + numSeq).slice(-4);
-    var dataHora = Utilities.formatDate(new Date(), "GMT-3", "dd/MM/yyyy HH:mm:ss");
-    
-    var pastas = DriveApp.getFoldersByName("TERMOS DE ENTREGA PDF");
-    var pastaPDF = pastas.hasNext() ? pastas.next() : DriveApp.createFolder("TERMOS DE ENTREGA PDF");
-    
-    var linhasAcessorios = "";
-    if (dados.acessorios && dados.acessorios.length > 0) {
-      dados.acessorios.forEach(function(ac) {
-        linhasAcessorios += "<tr>" +
-          "<td style='text-align:center; border:1px solid #000;'>" + ac.item + "</td>" +
-          "<td style='text-align:center; border:1px solid #000;'>" + ac.qtd + "</td>" +
-          "<td style='border:1px solid #000; padding-left:4px;'>" + ac.descricao + "</td>" +
-          "<td style='text-align:center; border:1px solid #000;'>" + ac.conformidade + "</td>" +
-          "</tr>";
-      });
-    } else {
-      linhasAcessorios = "<tr><td colspan='4' style='text-align:center; border:1px solid #000;'>Sem acessórios registrados</td></tr>";
-    }
+    </div>
 
-    var htmlContent = "<html><head><style>" +
-      "@page { size: A4 landscape; margin: 8mm; }" +
-      "body { font-family: Arial, sans-serif; font-size: 10px; margin: 0; padding: 0; }" +
-      ".container { display: table; width: 100%; table-layout: fixed; }" +
-      ".col { display: table-cell; width: 49%; vertical-align: top; padding: 4px; box-sizing: border-box; }" +
-      ".col-sep { display: table-cell; width: 2%; }" +
-      ".box { border: 1px solid #000; padding: 4px; margin-bottom: 4px; }" +
-      "table { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 9px; }" +
-      "th { border: 1px solid #000; background: #eee; text-align: center; }" +
-      "td { border: 1px solid #000; padding: 2px; }" +
-      ".header-title { font-weight: bold; font-size: 11px; text-align: center; border-bottom: 1px solid #000; padding-bottom: 2px; margin-bottom: 4px; }" +
-      "</style></head><body>" +
-      "<div class='container'>" +
-      "<div class='col'>" +
-        "<div class='box'>" +
-          "<table style='border:none;'>" +
-            "<tr><td style='border:none;'><b>" + dataHora + "</b></td><td style='border:none; text-align:right;'><b>Protocolo: " + protocolo + "</b></td></tr>" +
-            "<tr><td colspan='2' style='border:none;'><b>Cliente/Locatário:</b> " + dados.cliente + "</td></tr>" +
-            "<tr><td style='border:none;'><b>TAG:</b> " + dados.equipamento.tag + "</td><td style='border:none;'><b>Equipamento:</b> " + dados.equipamento.nome + "</td></tr>" +
-            "<tr><td style='border:none;'><b>Série:</b> " + dados.equipamento.serie + "</td><td style='border:none;'><b>Patrimônio:</b> " + dados.equipamento.patrimonio + "</td></tr>" +
-            "<tr><td colspan='2' style='border:none;'><b>Operação:</b> " + dados.tipoOperacao + "</td></tr>" +
-          "</table>" +
-        "</div>" +
-        "<table>" +
-          "<thead><tr><th style='width:30px;'>Item</th><th style='width:40px;'>Quant.</th><th>Descrição</th><th style='width:80px;'>Conformidade</th></tr></thead>" +
-          "<tbody>" + linhasAcessorios + "</tbody>" +
-        "</table>" +
-        "<div class='box' style='margin-top:10px;'>" +
-          "<b>Liberado para entrega</b><br>" +
-          "<b>Técnico:</b> " + dados.tecnico.nome + "<br>" +
-          "<hr>" +
-          "<b>Assinatura do Recebedor:</b><br>" +
-          "<img src='" + dados.assinaturaCliente + "' style='height:45px;'/>" +
-        "</div>" +
-      "</div>" +
-      "<div class='col-sep'></div>" +
-      "<div class='col'>" +
-        "<div class='header-title'>TERMO DE RESPONSABILIDADE DE HIGIENIZAÇÃO</div>" +
-        "<div class='box'>" +
-          "<table style='border:none;'>" +
-            "<tr><td style='border:none;'><b>Data:</b> " + dataHora + "</td><td style='border:none; text-align:right;'><b>Protocolo:</b> " + protocolo + "</td></tr>" +
-            "<tr><td colspan='2' style='border:none;'><b>Cliente:</b> " + dados.cliente + "</td></tr>" +
-            "<tr><td style='border:none;'><b>TAG:</b> " + dados.equipamento.tag + "</td><td style='border:none;'><b>Equipamento:</b> " + dados.equipamento.nome + "</td></tr>" +
-            "<tr><td style='border:none;'><b>Série:</b> " + dados.equipamento.serie + "</td><td style='border:none;'><b>Patrimônio:</b> " + dados.equipamento.patrimonio + "</td></tr>" +
-          "</table>" +
-        "</div>" +
-        "<table>" +
-          "<thead><tr><th style='width:40px;'>Qtd</th><th>Descrição</th></tr></thead>" +
-          "<tbody>" + linhasAcessorios + "</tbody>" +
-        "</table>" +
-        "<div style='margin-top:10px; font-size:8px; text-align:justify;'>" +
-          "A empresa <b>Linemed Comércio e Manutenção de Equipamentos Hospitalares</b> declara para os devidos fins que todos os equipamentos e acessórios descritos acima foram devidamente higienizados e desinfectados conforme as normas sanitárias vigentes." +
-        "</div>" +
-      "</div>" +
-      "</div></body></html>";
+    <!-- COLUNA DIREITA: ACESSÓRIOS, ASSINATURAS E BOTÃO -->
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      
+      <!-- 3. CHECKLIST -->
+      <div class="card" style="flex: 1;">
+        <div class="card-title">3. Checklist de Acessórios</div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th class="td-center" style="width: 30px;">#</th>
+                <th class="td-center" style="width: 50px;">Qtd</th>
+                <th>Descrição do Acessório</th>
+                <th class="td-center" style="width: 110px;">Conformidade</th>
+              </tr>
+            </thead>
+            <tbody id="corpoAcessorios">
+              <tr>
+                <td colspan="4" class="td-center" style="color: #888; padding: 20px;">Selecione um equipamento para visualizar os acessórios.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-    var blob = Utilities.newBlob(htmlContent, "text/html", "Termo_" + protocolo + ".html");
-    var arquivoPDF = pastaPDF.createFile(blob.getAs("application/pdf")).setName("Termo_Entrega_" + protocolo + "_" + dados.equipamento.tag + ".pdf");
-    arquivoPDF.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    
-    var urlPDF = arquivoPDF.getUrl();
+      <!-- 4. LIBERAÇÃO E ASSINATURAS -->
+      <div class="card">
+        <div class="card-title">4. Liberação e Assinaturas</div>
+        
+        <div class="form-group">
+          <label>Técnico Responsável:</label>
+          <select id="tecnicoSelect" required>
+            <option value="">Selecione o Técnico...</option>
+          </select>
+        </div>
 
-    sheetTermos.appendRow([
-      protocolo,
-      dataHora,
-      dados.cliente,
-      dados.equipamento.tag,
-      dados.equipamento.nome,
-      dados.tipoOperacao,
-      dados.tecnico.nome,
-      urlPDF
-    ]);
+        <div class="signature-container">
+          <div class="sig-box">
+            <label>Assinatura do Recebedor / Cliente:</label>
+            <button type="button" class="btn-clear" onclick="limparAssinatura()">Limpar</button>
+            <canvas id="canvasAssinatura"></canvas>
+          </div>
+        </div>
 
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "sucesso",
-      protocolo: protocolo,
-      pdfUrl: urlPDF
-    })).setMimeType(ContentService.MimeType.JSON);
+        <button type="button" id="btnEnviar" class="btn-submit">Gerar Termo Duplo PDF (Entrega + Higienização)</button>
+      </div>
 
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "erro",
-      mensagem: err.toString()
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
+    </div>
+
+  </form>
+
+</body>
+</html>
