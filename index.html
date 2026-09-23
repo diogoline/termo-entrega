@@ -111,7 +111,7 @@
       
       <!-- 3. CHECKLIST -->
       <div class="card" style="flex: 1;">
-        <div class="card-title">3. Lista de Acessórios (Aba EQUIP - Coluna G)</div>
+        <div class="card-title">3. Lista de Acessórios</div>
         <div class="table-container">
           <table>
             <thead>
@@ -190,7 +190,7 @@
     };
 
     function popularAutocomplete() {
-      // 1. Datalist Clientes
+      // 1. Clientes
       const listC = document.getElementById('listClientes');
       listC.innerHTML = "";
       if (bancoDados.clientes) {
@@ -202,7 +202,7 @@
       }
       document.getElementById('inputCliente').disabled = false;
 
-      // 2. Datalist Equipamentos
+      // 2. Equipamentos
       const listE = document.getElementById('listEquipamentos');
       listE.innerHTML = "";
       if (bancoDados.equipamentos) {
@@ -214,7 +214,7 @@
       }
       document.getElementById('buscaEquipamento').disabled = false;
 
-      // 3. Datalist Técnicos
+      // 3. Técnicos
       const listT = document.getElementById('listTecnicos');
       listT.innerHTML = "";
       if (bancoDados.usuarios) {
@@ -238,7 +238,6 @@
         return;
       }
 
-      // Procura correspondência exata ou por substring
       const eq = bancoDados.equipamentos.find(item => {
         const strFormatada = `tag: ${item.tag} | ${item.nome} | série: ${item.serie}`.toLowerCase();
         return strFormatada === val || 
@@ -256,10 +255,22 @@
         document.getElementById('eqModelo').value = eq.modelo || "-";
         document.getElementById('eqFabricante').value = eq.fabricante || "-";
 
-        // Monta Acessórios da Coluna G
+        // Processa acessórios e separa por ';'
+        let listaAcess = [];
+        if (Array.isArray(eq.acessorios)) {
+          eq.acessorios.forEach(itemStr => {
+            if (typeof itemStr === 'string') {
+              const partes = itemStr.split(';').map(s => s.trim()).filter(String);
+              listaAcess = listaAcess.concat(partes);
+            }
+          });
+        } else if (typeof eq.acessorios === 'string') {
+          listaAcess = eq.acessorios.split(';').map(s => s.trim()).filter(String);
+        }
+
         tbody.innerHTML = "";
-        if (eq.acessorios && eq.acessorios.length > 0) {
-          eq.acessorios.forEach((item, i) => {
+        if (listaAcess.length > 0) {
+          listaAcess.forEach((item, i) => {
             tbody.innerHTML += `
               <tr>
                 <td class="td-center">${i + 1}</td>
@@ -356,16 +367,20 @@
       const tecSelected = bancoDados.usuarios ? bancoDados.usuarios.find(u => u.nome === nomeTecnico) || { nome: nomeTecnico } : { nome: nomeTecnico };
 
       let listaAcessorios = [];
-      if (equipamentoSelecionado.acessorios) {
-        equipamentoSelecionado.acessorios.forEach((item, i) => {
+      const trs = document.querySelectorAll('#corpoAcessorios tr');
+      trs.forEach((tr, i) => {
+        const qtdEl = document.getElementById(`qtd_${i}`);
+        const confEl = document.getElementById(`conf_${i}`);
+        if (qtdEl && confEl) {
+          const desc = tr.children[2].textContent;
           listaAcessorios.push({
             item: i + 1,
-            qtd: document.getElementById(`qtd_${i}`).value,
-            descricao: item,
-            conformidade: document.getElementById(`conf_${i}`).value
+            qtd: qtdEl.value,
+            descricao: desc,
+            conformidade: confEl.value
           });
-        });
-      }
+        }
+      });
 
       const payload = {
         cliente: document.getElementById('inputCliente').value,
