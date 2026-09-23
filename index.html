@@ -11,7 +11,8 @@
     /* Header */
     .header { background-color: #1a4d80; color: white; padding: 10px 20px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     .header h1 { font-size: 18px; font-weight: 600; }
-    .status-badge { background-color: #ffc107; color: #333; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+    .status-badge { background-color: #ffc107; color: #333; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; transition: all 0.3s; }
+    .status-badge.connected { background-color: #28a745; color: white; }
 
     /* Layout Principal em Grid */
     .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; min-height: 0; }
@@ -38,22 +39,23 @@
     /* Assinaturas */
     .signature-container { display: flex; gap: 10px; margin-top: 5px; }
     .sig-box { flex: 1; border: 1px dashed #ccc; border-radius: 4px; padding: 6px; background: #fafafa; text-align: center; position: relative; }
-    .sig-box canvas { width: 100%; height: 75px; background: white; border: 1px solid #ddd; border-radius: 3px; cursor: crosshair; }
+    .sig-box canvas { width: 100%; height: 75px; background: white; border: 1px solid #ddd; border-radius: 3px; cursor: crosshair; touch-action: none; }
     .btn-clear { position: absolute; right: 8px; top: 8px; background: #dc3545; color: white; border: none; padding: 2px 6px; border-radius: 3px; font-size: 10px; cursor: pointer; }
 
     /* Botão Principal */
     .btn-submit { background: #1a4d80; color: white; border: none; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 8px; width: 100%; text-transform: uppercase; transition: background 0.2s; }
     .btn-submit:hover { background: #13385c; }
+    .btn-submit:disabled { background: #6c757d; cursor: not-allowed; }
   </style>
 </head>
 <body>
 
   <div class="header">
     <h1>LINEMED | Gestão de Termos de Entrega & Higienização</h1>
-    <span id="statusBadge" class="status-badge">Aguardando Conexão</span>
+    <span id="statusBadge" class="status-badge">Conectando...</span>
   </div>
 
-  <form id="termoForm" class="main-grid" onsubmit="return false;">
+  <form id="termoForm" class="main-grid" onsubmit="gerarTermo(event)">
     
     <!-- COLUNA ESQUERDA: CLIENTE E EQUIPAMENTO -->
     <div style="display: flex; flex-direction: column; gap: 10px;">
@@ -63,8 +65,8 @@
         <div class="card-title">1. Cliente / Locatário</div>
         <div class="form-group">
           <label for="cliente">Selecione o Cliente:</label>
-          <select id="cliente" required>
-            <option value="">Aguardando carregamento...</option>
+          <select id="cliente" required disabled>
+            <option value="">Aguardando conexão...</option>
           </select>
         </div>
       </div>
@@ -75,8 +77,8 @@
         
         <div class="form-group" style="margin-bottom: 8px;">
           <label>Pesquisar Equipamento (Digite TAG, Série ou Patrimônio):</label>
-          <input type="text" id="buscaEquipamento" placeholder="Ex: LMD-4654 ou 2329918..." oninput="filtrarEquipamentos()">
-          <select id="equipamentoSelect" required onchange="selecionarEquipamento()" style="margin-top: 4px;">
+          <input type="text" id="buscaEquipamento" placeholder="Ex: LMD-4654 ou 2329918..." oninput="filtrarEquipamentos()" disabled>
+          <select id="equipamentoSelect" required onchange="selecionarEquipamento()" style="margin-top: 4px;" disabled>
             <option value="">Selecione na lista filtrada...</option>
           </select>
         </div>
@@ -110,7 +112,7 @@
       
       <!-- 3. CHECKLIST -->
       <div class="card" style="flex: 1;">
-        <div class="card-title">3. Checklist de Acessórios</div>
+        <div class="card-title">3. Lista de Acessórios</div>
         <div class="table-container">
           <table>
             <thead>
@@ -136,25 +138,245 @@
         
         <div class="form-group">
           <label>Técnico Responsável:</label>
-          <select id="tecnicoSelect" required>
+          <select id="tecnicoSelect" required disabled>
             <option value="">Selecione o Técnico...</option>
           </select>
         </div>
 
         <div class="signature-container">
           <div class="sig-box">
-            <label>Assinatura do Recebedor / Cliente:</label>
+            <label>Assinatura do Recebedor/Cliente:</label>
             <button type="button" class="btn-clear" onclick="limparAssinatura()">Limpar</button>
             <canvas id="canvasAssinatura"></canvas>
           </div>
         </div>
 
-        <button type="button" id="btnEnviar" class="btn-submit">Gerar Termo Duplo PDF (Entrega + Higienização)</button>
+        <button type="submit" id="btnEnviar" class="btn-submit" disabled>Gerar Termo Duplo PDF (Entrega + Higienização)</button>
       </div>
 
     </div>
 
   </form>
 
+  <!-- LÓGICA DE CONEXÃO COM O GOOGLE APPS SCRIPT -->
+  <script>
+    // SEU LINK DO GOOGLE APPS SCRIPT INSERIDO AQUI:
+    const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
+
+    let bancoDados = { clientes: [], equipamentos: [], usuarios: [] };
+
+    // Função global que recebe os dados via JSONP (evita bloqueio CORS do navegador)
+    function carregarDadosPlanilha(data) {
+      if (data && !data.erro) {
+        bancoDados = data;
+        
+        // Atualiza a pílula de status para Verde
+        const badge = document.getElementById('statusBadge');
+        badge.innerText = "Conectado";
+        badge.classList.add('connected');
+
+        popularCampos();
+      } else {
+        document.getElementById('statusBadge').innerText = "Erro nos Dados";
+      }
+    }
+
+    // Dispara a requisição JSONP ao carregar a página
+    window.onload = function() {
+      const script = document.createElement('script');
+      script.src = API_URL + "?callback=carregarDadosPlanilha";
+      script.onerror = function() {
+        document.getElementById('statusBadge').innerText = "Erro na Conexão";
+      };
+      document.body.appendChild(script);
+    };
+
+    function popularCampos() {
+      // 1. Clientes
+      const selCliente = document.getElementById('cliente');
+      selCliente.innerHTML = '<option value="">Selecione o Cliente...</option>';
+      if (bancoDados.clientes) {
+        bancoDados.clientes.forEach(c => {
+          selCliente.innerHTML += `<option value="${c}">${c}</option>`;
+        });
+      }
+      selCliente.disabled = false;
+
+      // 2. Equipamentos
+      document.getElementById('buscaEquipamento').disabled = false;
+      document.getElementById('equipamentoSelect').disabled = false;
+      filtrarEquipamentos();
+
+      // 3. Técnicos
+      const selTec = document.getElementById('tecnicoSelect');
+      selTec.innerHTML = '<option value="">Selecione o Técnico...</option>';
+      if (bancoDados.usuarios) {
+        bancoDados.usuarios.forEach((u, idx) => {
+          selTec.innerHTML += `<option value="${idx}">${u.nome}</option>`;
+        });
+      }
+      selTec.disabled = false;
+      document.getElementById('btnEnviar').disabled = false;
+    }
+
+    function filtrarEquipamentos() {
+      const termo = document.getElementById('buscaEquipamento').value.toLowerCase();
+      const selEq = document.getElementById('equipamentoSelect');
+      selEq.innerHTML = '<option value="">Selecione um equipamento...</option>';
+
+      if (!bancoDados.equipamentos) return;
+
+      bancoDados.equipamentos.forEach((eq, idx) => {
+        const texto = `${eq.tag} ${eq.nome} ${eq.serie} ${eq.patrimonio}`.toLowerCase();
+        if (texto.includes(termo)) {
+          selEq.innerHTML += `<option value="${idx}">TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}</option>`;
+        }
+      });
+    }
+
+    function selecionarEquipamento() {
+      const idx = document.getElementById('equipamentoSelect').value;
+      const tbody = document.getElementById('corpoAcessorios');
+
+      if (idx === "") {
+        document.getElementById('eqTag').value = "-";
+        document.getElementById('eqSerie').value = "-";
+        document.getElementById('eqPatrimonio').value = "-";
+        document.getElementById('eqNome').value = "-";
+        document.getElementById('eqModelo').value = "-";
+        document.getElementById('eqFabricante').value = "-";
+        tbody.innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 20px;">Selecione um equipamento para visualizar os acessórios.</td></tr>';
+        return;
+      }
+
+      const eq = bancoDados.equipamentos[idx];
+      document.getElementById('eqTag').value = eq.tag || "-";
+      document.getElementById('eqSerie').value = eq.serie || "-";
+      document.getElementById('eqPatrimonio').value = eq.patrimonio || "-";
+      document.getElementById('eqNome').value = eq.nome || "-";
+      document.getElementById('eqModelo').value = eq.modelo || "-";
+      document.getElementById('eqFabricante').value = eq.fabricante || "-";
+
+      // Monta os Acessórios
+      tbody.innerHTML = "";
+      if (eq.acessorios && eq.acessorios.length > 0) {
+        eq.acessorios.forEach((item, i) => {
+          tbody.innerHTML += `
+            <tr>
+              <td class="td-center">${i + 1}</td>
+              <td class="td-center"><input type="text" style="width: 40px; text-align: center; padding: 2px;" value="1" id="qtd_${i}"></td>
+              <td>${item}</td>
+              <td class="td-center">
+                <select id="conf_${i}" style="padding: 2px;">
+                  <option value="Conforme">Conforme</option>
+                  <option value="Não Conforme">Não Conforme</option>
+                  <option value="Não Possui">Não Possui</option>
+                </select>
+              </td>
+            </tr>`;
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 15px;">Nenhum acessório registrado para este equipamento.</td></tr>';
+      }
+    }
+
+    // Configuração do Canvas de Assinatura
+    const canvas = document.getElementById('canvasAssinatura');
+    const ctx = canvas.getContext('2d');
+    let desenhando = false;
+
+    function ajustarCanvas() {
+      canvas.width = canvas.parentElement.clientWidth - 14;
+      canvas.height = 75;
+    }
+    window.addEventListener('resize', ajustarCanvas);
+    setTimeout(ajustarCanvas, 200);
+
+    function obterPosicao(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    function iniciarDesenho(e) { desenhando = true; desenhar(e); }
+    function pararDesenho() { desenhando = false; ctx.beginPath(); }
+    function desenhar(e) {
+      if (!desenhando) return;
+      e.preventDefault();
+      const pos = obterPosicao(e);
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+    }
+
+    canvas.addEventListener('mousedown', iniciarDesenho);
+    canvas.addEventListener('mouseup', pararDesenho);
+    canvas.addEventListener('mousemove', desenhar);
+    canvas.addEventListener('touchstart', iniciarDesenho);
+    canvas.addEventListener('touchend', pararDesenho);
+    canvas.addEventListener('touchmove', desenhar);
+
+    function limparAssinatura() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+    // Envio do Formulário para Gerar o PDF
+    function gerarTermo(e) {
+      e.preventDefault();
+
+      const idxEq = document.getElementById('equipamentoSelect').value;
+      const eqSelected = bancoDados.equipamentos[idxEq];
+      const idxTec = document.getElementById('tecnicoSelect').value;
+      const tecSelected = bancoDados.usuarios[idxTec];
+
+      let listaAcessorios = [];
+      if (eqSelected && eqSelected.acessorios) {
+        eqSelected.acessorios.forEach((item, i) => {
+          listaAcessorios.push({
+            item: i + 1,
+            qtd: document.getElementById(`qtd_${i}`).value,
+            descricao: item,
+            conformidade: document.getElementById(`conf_${i}`).value
+          });
+        });
+      }
+
+      const payload = {
+        cliente: document.getElementById('cliente').value,
+        equipamento: eqSelected,
+        tipoOperacao: document.querySelector('input[name="tipoOperacao"]:checked').value,
+        acessorios: listaAcessorios,
+        tecnico: tecSelected,
+        assinaturaCliente: canvas.toDataURL()
+      };
+
+      const btn = document.getElementById('btnEnviar');
+      btn.disabled = true;
+      btn.innerText = "GERANDO PDF NO DRIVE...";
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(res => {
+        if(res.status === "sucesso") {
+          alert("Termo gerado com sucesso!\n\nProtocolo: " + res.protocolo + "\n\nO PDF foi salvo na pasta do Google Drive.");
+          location.reload();
+        } else {
+          alert("Erro ao gerar termo: " + res.mensagem);
+          btn.disabled = false;
+          btn.innerText = "GERAR TERMO DUPLO PDF (ENTREGA + HIGIENIZAÇÃO)";
+        }
+      })
+      .catch(err => {
+        alert("Erro de comunicação com o servidor.");
+        btn.disabled = false;
+        btn.innerText = "GERAR TERMO DUPLO PDF (ENTREGA + HIGIENIZAÇÃO)";
+      });
+    }
+  </script>
 </body>
 </html>
