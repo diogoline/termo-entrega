@@ -264,7 +264,6 @@
 
     let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [] };
     let equipamentoSelecionado = null;
-    let carregandoSilencioso = false;
 
     function carregarDadosPlanilha(data) {
       if (data && !data.erro) {
@@ -274,12 +273,10 @@
         badge.innerText = "Conectado";
         badge.classList.add('connected');
 
-        // Apenas popula as listas dropdowns se for a carga inicial (preserva a digitação do operador)
-        if (!carregandoSilencioso) {
-          popularAutocomplete();
-        }
+        // Popula as listas e habilita os campos de formulário
+        popularAutocomplete();
         
-        // Atualiza a tabela da aba de Consulta em tempo real sem piscar a tela
+        // Atualiza a tabela da aba de Consulta
         renderizarTabelaTermos(bancoDados.termosEmitidos);
       } else {
         document.getElementById('statusBadge').innerText = "Erro nos Dados";
@@ -288,7 +285,6 @@
 
     // Busca atualizações em segundo plano sem recarregar a tela
     function buscarAtualizacoesSilenciosas() {
-      carregandoSilencioso = true;
       const script = document.createElement('script');
       script.src = API_URL + "?callback=carregarDadosPlanilha&t=" + new Date().getTime();
       script.onload = function() {
@@ -306,8 +302,8 @@
       };
       document.body.appendChild(script);
 
-      // 2. Temporizador para sincronizar dados a cada 10 segundos silenciosamente
-      setInterval(buscarAtualizacoesSilenciosas, 10000);
+      // 2. Temporizador para sincronizar dados a cada 15 segundos
+      setInterval(buscarAtualizacoesSilenciosas, 15000);
     };
 
     function toggleChat() {
@@ -338,43 +334,47 @@
     function popularAutocomplete() {
       // 1. Clientes
       const listC = document.getElementById('listClientes');
-      listC.innerHTML = "";
-      if (bancoDados.clientes) {
+      if (listC && bancoDados.clientes) {
+        listC.innerHTML = "";
         bancoDados.clientes.forEach(c => {
           const opt = document.createElement('option');
           opt.value = c;
           listC.appendChild(opt);
         });
+        document.getElementById('inputCliente').disabled = false;
       }
-      document.getElementById('inputCliente').disabled = false;
 
       // 2. Equipamentos
       const listE = document.getElementById('listEquipamentos');
-      listE.innerHTML = "";
-      if (bancoDados.equipamentos) {
+      if (listE && bancoDados.equipamentos) {
+        listE.innerHTML = "";
         bancoDados.equipamentos.forEach(eq => {
           const opt = document.createElement('option');
           opt.value = `TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}`;
           listE.appendChild(opt);
         });
+        document.getElementById('buscaEquipamento').disabled = false;
       }
-      document.getElementById('buscaEquipamento').disabled = false;
 
       // 3. Técnicos
       const selTec = document.getElementById('selectTecnico');
-      selTec.innerHTML = '<option value="">Selecione o técnico...</option>';
-      if (bancoDados.usuarios) {
+      if (selTec && bancoDados.usuarios) {
+        const valAtual = selTec.value;
+        selTec.innerHTML = '<option value="">Selecione o técnico...</option>';
         bancoDados.usuarios.forEach((u, idx) => {
           selTec.innerHTML += `<option value="${idx}">${u.nome}</option>`;
         });
+        selTec.value = valAtual;
+        selTec.disabled = false;
       }
-      selTec.disabled = false;
 
       document.getElementById('btnEnviar').disabled = false;
     }
 
     function renderizarTabelaTermos(lista) {
       const tbody = document.getElementById('corpoTermos');
+      if (!tbody) return;
+
       tbody.innerHTML = "";
 
       if (!lista || lista.length === 0) {
@@ -382,7 +382,6 @@
         return;
       }
 
-      // Se o utilizador estiver usando o campo de filtro, mantém a filtragem ativa
       const filtroVal = document.getElementById('filtroTermos').value.toLowerCase().trim();
       let dadosExibir = lista;
       
