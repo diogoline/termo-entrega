@@ -40,7 +40,7 @@
     .signature-container { display: flex; gap: 10px; margin-top: 5px; }
     .sig-box { flex: 1; border: 1px dashed #ccc; border-radius: 4px; padding: 6px; background: #fafafa; text-align: center; position: relative; }
     .sig-box canvas { width: 100%; height: 80px; background: white; border: 1px solid #ddd; border-radius: 3px; cursor: crosshair; touch-action: none; }
-    .sig-preview { height: 45px; border: 1px solid #eee; border-radius: 3px; background: #fff; display: flex; align-items: center; justify-content: center; margin-top: 4px; }
+    .sig-preview { height: 50px; border: 1px solid #ddd; border-radius: 4px; background: #fff; display: flex; align-items: center; justify-content: center; margin-top: 4px; padding: 2px; }
     .sig-preview img { max-height: 100%; max-width: 100%; object-fit: contain; }
     .btn-clear { position: absolute; right: 8px; top: 8px; background: #dc3545; color: white; border: none; padding: 2px 6px; border-radius: 3px; font-size: 10px; cursor: pointer; }
 
@@ -137,8 +137,9 @@
         
         <div class="form-group">
           <label>Técnico Responsável:</label>
-          <input type="text" id="inputTecnico" list="listTecnicos" placeholder="Digite ou selecione o técnico..." oninput="exibirAssinaturaTecnico()" required disabled>
-          <datalist id="listTecnicos"></datalist>
+          <select id="selectTecnico" onchange="exibirAssinaturaTecnico()" required disabled>
+            <option value="">Selecione o técnico...</option>
+          </select>
           
           <div class="sig-preview" id="previewTecnico" style="margin-top: 4px;">
             <span style="color: #aaa; font-size: 11px;">Assinatura do Técnico</span>
@@ -214,17 +215,15 @@
       }
       document.getElementById('buscaEquipamento').disabled = false;
 
-      // 3. Técnicos
-      const listT = document.getElementById('listTecnicos');
-      listT.innerHTML = "";
+      // 3. Técnicos (Select direto para vincular com perfeição a assinatura)
+      const selTec = document.getElementById('selectTecnico');
+      selTec.innerHTML = '<option value="">Selecione o técnico...</option>';
       if (bancoDados.usuarios) {
-        bancoDados.usuarios.forEach(u => {
-          const opt = document.createElement('option');
-          opt.value = u.nome;
-          listT.appendChild(opt);
+        bancoDados.usuarios.forEach((u, idx) => {
+          selTec.innerHTML += `<option value="${idx}">${u.nome}</option>`;
         });
       }
-      document.getElementById('inputTecnico').disabled = false;
+      selTec.disabled = false;
 
       document.getElementById('btnEnviar').disabled = false;
     }
@@ -255,7 +254,6 @@
         document.getElementById('eqModelo').value = eq.modelo || "-";
         document.getElementById('eqFabricante').value = eq.fabricante || "-";
 
-        // Processa acessórios e separa por ';'
         let listaAcess = [];
         if (Array.isArray(eq.acessorios)) {
           eq.acessorios.forEach(itemStr => {
@@ -303,23 +301,23 @@
     }
 
     function exibirAssinaturaTecnico() {
-      const nomeTec = document.getElementById('inputTecnico').value.trim();
+      const idxTec = document.getElementById('selectTecnico').value;
       const divPrev = document.getElementById('previewTecnico');
 
-      if (!nomeTec || !bancoDados.usuarios) {
+      if (idxTec === "" || !bancoDados.usuarios) {
         divPrev.innerHTML = '<span style="color: #aaa; font-size: 11px;">Assinatura do Técnico</span>';
         return;
       }
 
-      const tec = bancoDados.usuarios.find(u => u.nome.toLowerCase() === nomeTec.toLowerCase());
-      if (tec && tec.assinaturaUrl) {
+      const tec = bancoDados.usuarios[idxTec];
+      if (tec && tec.assinaturaUrl && tec.assinaturaUrl.length > 20) {
         divPrev.innerHTML = `<img src="${tec.assinaturaUrl}" alt="Assinatura de ${tec.nome}">`;
       } else {
-        divPrev.innerHTML = '<span style="color: #888; font-size: 11px;">Sem assinatura cadastrada</span>';
+        divPrev.innerHTML = '<span style="color: #888; font-size: 11px;">Assinatura carregada no servidor</span>';
       }
     }
 
-    // Assinatura Canvas
+    // Canvas de Assinatura
     const canvas = document.getElementById('canvasAssinatura');
     const ctx = canvas.getContext('2d');
     let desenhando = false;
@@ -363,8 +361,8 @@
         return;
       }
 
-      const nomeTecnico = document.getElementById('inputTecnico').value;
-      const tecSelected = bancoDados.usuarios ? bancoDados.usuarios.find(u => u.nome === nomeTecnico) || { nome: nomeTecnico } : { nome: nomeTecnico };
+      const idxTec = document.getElementById('selectTecnico').value;
+      const tecSelected = bancoDados.usuarios[idxTec] || { nome: "Técnico" };
 
       let listaAcessorios = [];
       const trs = document.querySelectorAll('#corpoAcessorios tr');
