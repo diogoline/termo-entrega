@@ -77,9 +77,9 @@
         
         <div class="form-group" style="margin-bottom: 8px;">
           <label>Pesquisar Equipamento (Digite TAG, Série ou Patrimônio):</label>
-          <input type="text" id="buscaEquipamento" placeholder="Ex: LMD-4654 ou 2329918..." oninput="filtrarEquipamentos()" disabled>
+          <input type="text" id="buscaEquipamento" placeholder="Digite para filtrar (ex: LMD-1226)..." oninput="filtrarEquipamentos()" disabled>
           <select id="equipamentoSelect" required onchange="selecionarEquipamento()" style="margin-top: 4px;" disabled>
-            <option value="">Selecione na lista filtrada...</option>
+            <option value="">Digite acima para buscar...</option>
           </select>
         </div>
 
@@ -163,6 +163,7 @@
 
     let bancoDados = { clientes: [], equipamentos: [], usuarios: [] };
 
+    // JSONP Callback Otimizado
     function carregarDadosPlanilha(data) {
       if (data && !data.erro) {
         bancoDados = data;
@@ -178,13 +179,6 @@
     }
 
     window.onload = function() {
-      // Ajusta largura do canvas no carregamento inicial apenas
-      const cvs = document.getElementById('canvasAssinatura');
-      if (cvs && cvs.parentElement) {
-        cvs.width = cvs.parentElement.clientWidth - 16;
-      }
-
-      // Requisição dos dados
       const script = document.createElement('script');
       script.src = API_URL + "?callback=carregarDadosPlanilha";
       script.onerror = function() {
@@ -196,44 +190,87 @@
     function popularCampos() {
       // 1. Clientes
       const selCliente = document.getElementById('cliente');
-      selCliente.innerHTML = '<option value="">Selecione o Cliente...</option>';
+      const fragCliente = document.createDocumentFragment();
+      
+      const optDefault = document.createElement('option');
+      optDefault.value = "";
+      optDefault.textContent = "Selecione o Cliente...";
+      fragCliente.appendChild(optDefault);
+
       if (bancoDados.clientes) {
         bancoDados.clientes.forEach(c => {
-          selCliente.innerHTML += `<option value="${c}">${c}</option>`;
+          const opt = document.createElement('option');
+          opt.value = c;
+          opt.textContent = c;
+          fragCliente.appendChild(opt);
         });
       }
+      selCliente.innerHTML = "";
+      selCliente.appendChild(fragCliente);
       selCliente.disabled = false;
 
-      // 2. Equipamentos
+      // 2. Habilita Equipamento
       document.getElementById('buscaEquipamento').disabled = false;
       document.getElementById('equipamentoSelect').disabled = false;
       filtrarEquipamentos();
 
       // 3. Técnicos
       const selTec = document.getElementById('tecnicoSelect');
-      selTec.innerHTML = '<option value="">Selecione o Técnico...</option>';
+      const fragTec = document.createDocumentFragment();
+      
+      const optTecDefault = document.createElement('option');
+      optTecDefault.value = "";
+      optTecDefault.textContent = "Selecione o Técnico...";
+      fragTec.appendChild(optTecDefault);
+
       if (bancoDados.usuarios) {
         bancoDados.usuarios.forEach((u, idx) => {
-          selTec.innerHTML += `<option value="${idx}">${u.nome}</option>`;
+          const opt = document.createElement('option');
+          opt.value = idx;
+          opt.textContent = u.nome;
+          fragTec.appendChild(opt);
         });
       }
+      selTec.innerHTML = "";
+      selTec.appendChild(fragTec);
       selTec.disabled = false;
+
       document.getElementById('btnEnviar').disabled = false;
     }
 
+    // Busca ultra-rápida sem congelar a tela
     function filtrarEquipamentos() {
-      const termo = document.getElementById('buscaEquipamento').value.toLowerCase();
+      const termo = document.getElementById('buscaEquipamento').value.toLowerCase().trim();
       const selEq = document.getElementById('equipamentoSelect');
-      selEq.innerHTML = '<option value="">Selecione um equipamento...</option>';
+      const fragment = document.createDocumentFragment();
 
-      if (!bancoDados.equipamentos) return;
+      const optDefault = document.createElement('option');
+      optDefault.value = "";
+      optDefault.textContent = termo ? "Selecione na lista de resultados..." : "Digite acima para pesquisar...";
+      fragment.appendChild(optDefault);
 
-      bancoDados.equipamentos.forEach((eq, idx) => {
-        const texto = `${eq.tag} ${eq.nome} ${eq.serie} ${eq.patrimonio}`.toLowerCase();
-        if (texto.includes(termo)) {
-          selEq.innerHTML += `<option value="${idx}">TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}</option>`;
+      if (bancoDados.equipamentos && bancoDados.equipamentos.length > 0) {
+        let contador = 0;
+        const maxResultados = 50; // Limite de visualização para manter a navegação instantânea
+
+        for (let idx = 0; idx < bancoDados.equipamentos.length; idx++) {
+          const eq = bancoDados.equipamentos[idx];
+          const texto = `${eq.tag} ${eq.nome} ${eq.serie} ${eq.patrimonio}`.toLowerCase();
+
+          if (!termo || texto.includes(termo)) {
+            const opt = document.createElement('option');
+            opt.value = idx;
+            opt.textContent = `TAG: ${eq.tag || 'S/N'} | ${eq.nome || 'Equipamento'} | Série: ${eq.serie || 'S/N'}`;
+            fragment.appendChild(opt);
+
+            contador++;
+            if (contador >= maxResultados) break; // Evita sobrecarga de memória
+          }
         }
-      });
+      }
+
+      selEq.innerHTML = "";
+      selEq.appendChild(fragment);
     }
 
     function selecionarEquipamento() {
@@ -259,7 +296,7 @@
       document.getElementById('eqModelo').value = eq.modelo || "-";
       document.getElementById('eqFabricante').value = eq.fabricante || "-";
 
-      // Monta os Acessórios
+      // Monta Acessórios
       tbody.innerHTML = "";
       if (eq.acessorios && eq.acessorios.length > 0) {
         eq.acessorios.forEach((item, i) => {
@@ -282,7 +319,7 @@
       }
     }
 
-    // Assinatura Canvas (Versão Estável)
+    // Assinatura Canvas
     const canvas = document.getElementById('canvasAssinatura');
     const ctx = canvas.getContext('2d');
     let desenhando = false;
