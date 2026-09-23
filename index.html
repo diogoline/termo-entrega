@@ -40,6 +40,8 @@
     .signature-container { display: flex; gap: 10px; margin-top: 5px; }
     .sig-box { flex: 1; border: 1px dashed #ccc; border-radius: 4px; padding: 6px; background: #fafafa; text-align: center; position: relative; }
     .sig-box canvas { width: 100%; height: 80px; background: white; border: 1px solid #ddd; border-radius: 3px; cursor: crosshair; touch-action: none; }
+    .sig-preview { height: 45px; border: 1px solid #eee; border-radius: 3px; background: #fff; display: flex; align-items: center; justify-content: center; margin-top: 4px; }
+    .sig-preview img { max-height: 100%; max-width: 100%; object-fit: contain; }
     .btn-clear { position: absolute; right: 8px; top: 8px; background: #dc3545; color: white; border: none; padding: 2px 6px; border-radius: 3px; font-size: 10px; cursor: pointer; }
 
     /* Botão Principal */
@@ -64,10 +66,9 @@
       <div class="card">
         <div class="card-title">1. Cliente / Locatário</div>
         <div class="form-group">
-          <label for="cliente">Selecione o Cliente:</label>
-          <select id="cliente" required disabled>
-            <option value="">Aguardando conexão...</option>
-          </select>
+          <label for="inputCliente">Buscar / Selecionar Cliente:</label>
+          <input type="text" id="inputCliente" list="listClientes" placeholder="Digite o nome do cliente..." required disabled>
+          <datalist id="listClientes"></datalist>
         </div>
       </div>
 
@@ -76,11 +77,9 @@
         <div class="card-title">2. Identificação do Equipamento</div>
         
         <div class="form-group" style="margin-bottom: 8px;">
-          <label>Pesquisar Equipamento (Digite TAG, Série ou Patrimônio):</label>
-          <input type="text" id="buscaEquipamento" placeholder="Digite para filtrar (ex: LMD-1226)..." oninput="filtrarEquipamentos()" disabled>
-          <select id="equipamentoSelect" required onchange="selecionarEquipamento()" style="margin-top: 4px;" disabled>
-            <option value="">Digite acima para buscar...</option>
-          </select>
+          <label>Pesquisar Equipamento (Digite a TAG, Série ou Patrimônio):</label>
+          <input type="text" id="buscaEquipamento" list="listEquipamentos" placeholder="Ex: LMD-4654 ou 2329918..." oninput="autoPreencherEquipamento()" disabled required>
+          <datalist id="listEquipamentos"></datalist>
         </div>
 
         <div class="form-row">
@@ -112,7 +111,7 @@
       
       <!-- 3. CHECKLIST -->
       <div class="card" style="flex: 1;">
-        <div class="card-title">3. Lista de Acessórios</div>
+        <div class="card-title">3. Lista de Acessórios (Aba EQUIP - Coluna G)</div>
         <div class="table-container">
           <table>
             <thead>
@@ -138,14 +137,17 @@
         
         <div class="form-group">
           <label>Técnico Responsável:</label>
-          <select id="tecnicoSelect" required disabled>
-            <option value="">Selecione o Técnico...</option>
-          </select>
+          <input type="text" id="inputTecnico" list="listTecnicos" placeholder="Digite ou selecione o técnico..." oninput="exibirAssinaturaTecnico()" required disabled>
+          <datalist id="listTecnicos"></datalist>
+          
+          <div class="sig-preview" id="previewTecnico" style="margin-top: 4px;">
+            <span style="color: #aaa; font-size: 11px;">Assinatura do Técnico</span>
+          </div>
         </div>
 
         <div class="signature-container">
           <div class="sig-box">
-            <label>Assinatura do Recebedor/Cliente:</label>
+            <label>Assinatura do Recebedor / Cliente:</label>
             <button type="button" class="btn-clear" onclick="limparAssinatura()">Limpar</button>
             <canvas id="canvasAssinatura" width="400" height="80"></canvas>
           </div>
@@ -162,8 +164,8 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
 
     let bancoDados = { clientes: [], equipamentos: [], usuarios: [] };
+    let equipamentoSelecionado = null;
 
-    // JSONP Callback Otimizado
     function carregarDadosPlanilha(data) {
       if (data && !data.erro) {
         bancoDados = data;
@@ -172,7 +174,7 @@
         badge.innerText = "Conectado";
         badge.classList.add('connected');
 
-        popularCampos();
+        popularAutocomplete();
       } else {
         document.getElementById('statusBadge').innerText = "Erro nos Dados";
       }
@@ -187,135 +189,122 @@
       document.body.appendChild(script);
     };
 
-    function popularCampos() {
-      // 1. Clientes
-      const selCliente = document.getElementById('cliente');
-      const fragCliente = document.createDocumentFragment();
-      
-      const optDefault = document.createElement('option');
-      optDefault.value = "";
-      optDefault.textContent = "Selecione o Cliente...";
-      fragCliente.appendChild(optDefault);
-
+    function popularAutocomplete() {
+      // 1. Datalist Clientes
+      const listC = document.getElementById('listClientes');
+      listC.innerHTML = "";
       if (bancoDados.clientes) {
         bancoDados.clientes.forEach(c => {
           const opt = document.createElement('option');
           opt.value = c;
-          opt.textContent = c;
-          fragCliente.appendChild(opt);
+          listC.appendChild(opt);
         });
       }
-      selCliente.innerHTML = "";
-      selCliente.appendChild(fragCliente);
-      selCliente.disabled = false;
+      document.getElementById('inputCliente').disabled = false;
 
-      // 2. Habilita Equipamento
-      document.getElementById('buscaEquipamento').disabled = false;
-      document.getElementById('equipamentoSelect').disabled = false;
-      filtrarEquipamentos();
-
-      // 3. Técnicos
-      const selTec = document.getElementById('tecnicoSelect');
-      const fragTec = document.createDocumentFragment();
-      
-      const optTecDefault = document.createElement('option');
-      optTecDefault.value = "";
-      optTecDefault.textContent = "Selecione o Técnico...";
-      fragTec.appendChild(optTecDefault);
-
-      if (bancoDados.usuarios) {
-        bancoDados.usuarios.forEach((u, idx) => {
+      // 2. Datalist Equipamentos
+      const listE = document.getElementById('listEquipamentos');
+      listE.innerHTML = "";
+      if (bancoDados.equipamentos) {
+        bancoDados.equipamentos.forEach(eq => {
           const opt = document.createElement('option');
-          opt.value = idx;
-          opt.textContent = u.nome;
-          fragTec.appendChild(opt);
+          opt.value = `TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}`;
+          listE.appendChild(opt);
         });
       }
-      selTec.innerHTML = "";
-      selTec.appendChild(fragTec);
-      selTec.disabled = false;
+      document.getElementById('buscaEquipamento').disabled = false;
+
+      // 3. Datalist Técnicos
+      const listT = document.getElementById('listTecnicos');
+      listT.innerHTML = "";
+      if (bancoDados.usuarios) {
+        bancoDados.usuarios.forEach(u => {
+          const opt = document.createElement('option');
+          opt.value = u.nome;
+          listT.appendChild(opt);
+        });
+      }
+      document.getElementById('inputTecnico').disabled = false;
 
       document.getElementById('btnEnviar').disabled = false;
     }
 
-    // Busca ultra-rápida sem congelar a tela
-    function filtrarEquipamentos() {
-      const termo = document.getElementById('buscaEquipamento').value.toLowerCase().trim();
-      const selEq = document.getElementById('equipamentoSelect');
-      const fragment = document.createDocumentFragment();
-
-      const optDefault = document.createElement('option');
-      optDefault.value = "";
-      optDefault.textContent = termo ? "Selecione na lista de resultados..." : "Digite acima para pesquisar...";
-      fragment.appendChild(optDefault);
-
-      if (bancoDados.equipamentos && bancoDados.equipamentos.length > 0) {
-        let contador = 0;
-        const maxResultados = 50; // Limite de visualização para manter a navegação instantânea
-
-        for (let idx = 0; idx < bancoDados.equipamentos.length; idx++) {
-          const eq = bancoDados.equipamentos[idx];
-          const texto = `${eq.tag} ${eq.nome} ${eq.serie} ${eq.patrimonio}`.toLowerCase();
-
-          if (!termo || texto.includes(termo)) {
-            const opt = document.createElement('option');
-            opt.value = idx;
-            opt.textContent = `TAG: ${eq.tag || 'S/N'} | ${eq.nome || 'Equipamento'} | Série: ${eq.serie || 'S/N'}`;
-            fragment.appendChild(opt);
-
-            contador++;
-            if (contador >= maxResultados) break; // Evita sobrecarga de memória
-          }
-        }
-      }
-
-      selEq.innerHTML = "";
-      selEq.appendChild(fragment);
-    }
-
-    function selecionarEquipamento() {
-      const idx = document.getElementById('equipamentoSelect').value;
+    function autoPreencherEquipamento() {
+      const val = document.getElementById('buscaEquipamento').value.toLowerCase().trim();
       const tbody = document.getElementById('corpoAcessorios');
 
-      if (idx === "") {
-        document.getElementById('eqTag').value = "-";
-        document.getElementById('eqSerie').value = "-";
-        document.getElementById('eqPatrimonio').value = "-";
-        document.getElementById('eqNome').value = "-";
-        document.getElementById('eqModelo').value = "-";
-        document.getElementById('eqFabricante').value = "-";
-        tbody.innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 20px;">Selecione um equipamento para visualizar os acessórios.</td></tr>';
+      if (!val || !bancoDados.equipamentos) {
+        limparCamposEquipamento();
         return;
       }
 
-      const eq = bancoDados.equipamentos[idx];
-      document.getElementById('eqTag').value = eq.tag || "-";
-      document.getElementById('eqSerie').value = eq.serie || "-";
-      document.getElementById('eqPatrimonio').value = eq.patrimonio || "-";
-      document.getElementById('eqNome').value = eq.nome || "-";
-      document.getElementById('eqModelo').value = eq.modelo || "-";
-      document.getElementById('eqFabricante').value = eq.fabricante || "-";
+      // Procura correspondência exata ou por substring
+      const eq = bancoDados.equipamentos.find(item => {
+        const strFormatada = `tag: ${item.tag} | ${item.nome} | série: ${item.serie}`.toLowerCase();
+        return strFormatada === val || 
+               item.tag.toLowerCase() === val || 
+               item.serie.toLowerCase() === val || 
+               item.patrimonio.toLowerCase() === val;
+      });
 
-      // Monta Acessórios
-      tbody.innerHTML = "";
-      if (eq.acessorios && eq.acessorios.length > 0) {
-        eq.acessorios.forEach((item, i) => {
-          tbody.innerHTML += `
-            <tr>
-              <td class="td-center">${i + 1}</td>
-              <td class="td-center"><input type="text" style="width: 40px; text-align: center; padding: 2px;" value="1" id="qtd_${i}"></td>
-              <td>${item}</td>
-              <td class="td-center">
-                <select id="conf_${i}" style="padding: 2px;">
-                  <option value="Conforme">Conforme</option>
-                  <option value="Não Conforme">Não Conforme</option>
-                  <option value="Não Possui">Não Possui</option>
-                </select>
-              </td>
-            </tr>`;
-        });
+      if (eq) {
+        equipamentoSelecionado = eq;
+        document.getElementById('eqTag').value = eq.tag || "-";
+        document.getElementById('eqSerie').value = eq.serie || "-";
+        document.getElementById('eqPatrimonio').value = eq.patrimonio || "-";
+        document.getElementById('eqNome').value = eq.nome || "-";
+        document.getElementById('eqModelo').value = eq.modelo || "-";
+        document.getElementById('eqFabricante').value = eq.fabricante || "-";
+
+        // Monta Acessórios da Coluna G
+        tbody.innerHTML = "";
+        if (eq.acessorios && eq.acessorios.length > 0) {
+          eq.acessorios.forEach((item, i) => {
+            tbody.innerHTML += `
+              <tr>
+                <td class="td-center">${i + 1}</td>
+                <td class="td-center"><input type="text" style="width: 40px; text-align: center; padding: 2px;" value="1" id="qtd_${i}"></td>
+                <td>${item}</td>
+                <td class="td-center">
+                  <select id="conf_${i}" style="padding: 2px;">
+                    <option value="Conforme">Conforme</option>
+                    <option value="Não Conforme">Não Conforme</option>
+                    <option value="Não Possui">Não Possui</option>
+                  </select>
+                </td>
+              </tr>`;
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 15px;">Nenhum acessório registrado para este equipamento na aba EQUIP.</td></tr>';
+        }
+      }
+    }
+
+    function limparCamposEquipamento() {
+      equipamentoSelecionado = null;
+      document.getElementById('eqTag').value = "-";
+      document.getElementById('eqSerie').value = "-";
+      document.getElementById('eqPatrimonio').value = "-";
+      document.getElementById('eqNome').value = "-";
+      document.getElementById('eqModelo').value = "-";
+      document.getElementById('eqFabricante').value = "-";
+      document.getElementById('corpoAcessorios').innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 20px;">Selecione um equipamento para visualizar os acessórios.</td></tr>';
+    }
+
+    function exibirAssinaturaTecnico() {
+      const nomeTec = document.getElementById('inputTecnico').value.trim();
+      const divPrev = document.getElementById('previewTecnico');
+
+      if (!nomeTec || !bancoDados.usuarios) {
+        divPrev.innerHTML = '<span style="color: #aaa; font-size: 11px;">Assinatura do Técnico</span>';
+        return;
+      }
+
+      const tec = bancoDados.usuarios.find(u => u.nome.toLowerCase() === nomeTec.toLowerCase());
+      if (tec && tec.assinaturaUrl) {
+        divPrev.innerHTML = `<img src="${tec.assinaturaUrl}" alt="Assinatura de ${tec.nome}">`;
       } else {
-        tbody.innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 15px;">Nenhum acessório registrado para este equipamento.</td></tr>';
+        divPrev.innerHTML = '<span style="color: #888; font-size: 11px;">Sem assinatura cadastrada</span>';
       }
     }
 
@@ -358,14 +347,17 @@
     function gerarTermo(e) {
       e.preventDefault();
 
-      const idxEq = document.getElementById('equipamentoSelect').value;
-      const eqSelected = bancoDados.equipamentos[idxEq];
-      const idxTec = document.getElementById('tecnicoSelect').value;
-      const tecSelected = bancoDados.usuarios[idxTec];
+      if (!equipamentoSelecionado) {
+        alert("Selecione um equipamento válido na lista de pesquisa.");
+        return;
+      }
+
+      const nomeTecnico = document.getElementById('inputTecnico').value;
+      const tecSelected = bancoDados.usuarios ? bancoDados.usuarios.find(u => u.nome === nomeTecnico) || { nome: nomeTecnico } : { nome: nomeTecnico };
 
       let listaAcessorios = [];
-      if (eqSelected && eqSelected.acessorios) {
-        eqSelected.acessorios.forEach((item, i) => {
+      if (equipamentoSelecionado.acessorios) {
+        equipamentoSelecionado.acessorios.forEach((item, i) => {
           listaAcessorios.push({
             item: i + 1,
             qtd: document.getElementById(`qtd_${i}`).value,
@@ -376,8 +368,8 @@
       }
 
       const payload = {
-        cliente: document.getElementById('cliente').value,
-        equipamento: eqSelected,
+        cliente: document.getElementById('inputCliente').value,
+        equipamento: equipamentoSelecionado,
         tipoOperacao: document.querySelector('input[name="tipoOperacao"]:checked').value,
         acessorios: listaAcessorios,
         tecnico: tecSelected,
