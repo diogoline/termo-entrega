@@ -106,12 +106,11 @@
   <div id="abaEmissao" class="tab-content active">
     <form id="termoForm" class="main-grid" onsubmit="gerarTermo(event)">
       
+      <input type="hidden" id="reqVinculadaProtocolo" value="">
+
       <!-- COLUNA ESQUERDA: CLIENTE E EQUIPAMENTO -->
       <div style="display: flex; flex-direction: column; gap: 16px;">
         
-        <!-- Campo oculto para salvar vínculo com Requisição -->
-        <input type="hidden" id="reqVinculadaProtocolo" value="">
-
         <!-- 1. CLIENTE -->
         <div class="card">
           <div class="card-title">1. Cliente / Locatário</div>
@@ -261,6 +260,15 @@
           </div>
 
           <div class="form-group" style="margin-bottom: 12px;">
+            <label>Operação:</label>
+            <div class="radio-group">
+              <label><input type="radio" name="reqOperacao" value="LOCAÇÃO" checked> Locação</label>
+              <label><input type="radio" name="reqOperacao" value="EMPRÉSTIMO"> Empréstimo</label>
+              <label><input type="radio" name="reqOperacao" value="VENDA"> Venda</label>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
             <label>Equipamento a Substituir (TAG / Nome atual no cliente):</label>
             <input type="text" id="reqEqAntigo" placeholder="Ex: LMD-5384 - Ventilador Pulmonar com defeito" required>
           </div>
@@ -275,7 +283,7 @@
             <textarea id="reqMotivo" style="height: 60px;" placeholder="Ex: Falha na bateria interna, solicitar troca urgente."></textarea>
           </div>
 
-          <button type="submit" id="btnSalvarReq" class="btn-submit">Enviar Requisição para a Qualidade</button>
+          <button type="submit" id="btnSalvarReq" class="btn-submit">Enviar Requisição e Gerar PDF</button>
         </form>
       </div>
 
@@ -290,9 +298,9 @@
                 <th class="td-center">Req #</th>
                 <th>Data</th>
                 <th>Cliente</th>
-                <th>Equip. Solicitado</th>
+                <th>Operação</th>
                 <th class="td-center">Status</th>
-                <th class="td-center">Ação Qualidade</th>
+                <th class="td-center">PDF / Ação</th>
               </tr>
             </thead>
             <tbody id="corpoRequisicoes">
@@ -487,16 +495,19 @@
       lista.forEach(r => {
         const isPendente = r.status.toUpperCase() === "PENDENTE";
         const badgeClass = isPendente ? "badge-pendente" : "badge-atendido";
+        
+        const linkPdfReq = r.pdfUrlReq ? `<a href="${r.pdfUrlReq}" target="_blank" class="btn-pdf" style="background:#1a4d80; margin-right:4px;">📄 REQ</a>` : '';
+        
         const btnAcao = isPendente ? 
-          `<button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${r.cliente}')">Atender & Gerar Termo</button>` : 
-          `<span style="color:#28a745; font-weight:bold;">Termo: ${r.protocoloTermo}</span>`;
+          `${linkPdfReq}<button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${r.cliente}', '${r.operacao}')">Atender</button>` : 
+          `${linkPdfReq}<span style="color:#28a745; font-weight:bold;">Termo: ${r.protocoloTermo}</span>`;
 
         tbody.innerHTML += `
           <tr>
             <td class="td-center"><b>${r.protocolo}</b></td>
             <td>${r.dataHora}</td>
             <td>${r.cliente}</td>
-            <td>${r.equipamentoSolicitado}</td>
+            <td><b>${r.operacao}</b></td>
             <td class="td-center"><span class="badge-status ${badgeClass}">${r.status}</span></td>
             <td class="td-center">${btnAcao}</td>
           </tr>
@@ -504,9 +515,13 @@
       });
     }
 
-    function atenderRequisicao(protReq, cliente) {
+    function atenderRequisicao(protReq, cliente, operacao) {
       document.getElementById('reqVinculadaProtocolo').value = protReq;
       document.getElementById('inputCliente').value = cliente;
+      
+      const radioOp = document.querySelector(`input[name="tipoOperacao"][value="${operacao}"]`);
+      if (radioOp) radioOp.checked = true;
+
       mudarAba('emissao');
       alert(`Requisição ${protReq} selecionada para atendimento!\n\nSelecione agora o equipamento e os acessórios para gerar o Termo de Entrega.`);
     }
@@ -515,11 +530,12 @@
       e.preventDefault();
       const btn = document.getElementById('btnSalvarReq');
       btn.disabled = true;
-      btn.innerText = "ENVIANDO SOLICITAÇÃO...";
+      btn.innerText = "GERANDO PDF DA REQUISIÇÃO...";
 
       const payload = {
         acao: "CRIAR_REQUISICAO",
         cliente: document.getElementById('reqCliente').value,
+        operacao: document.querySelector('input[name="reqOperacao"]:checked').value,
         equipamentoAntigo: document.getElementById('reqEqAntigo').value,
         equipamentoSolicitado: document.getElementById('reqEqSolicitado').value,
         motivo: document.getElementById('reqMotivo').value,
@@ -533,21 +549,24 @@
       .then(res => res.json())
       .then(res => {
         if (res.status === "sucesso") {
-          alert("Requisição enviada com sucesso para a Qualidade!\n\nProtocolo: " + res.protocoloReq);
+          const querAbrir = confirm("Requisição gerada com sucesso!\n\nProtocolo: " + res.protocoloReq + "\n\nDeseja ABRIR O PDF da Requisição agora?");
+          if (querAbrir && res.pdfUrlReq) {
+            window.open(res.pdfUrlReq, '_blank');
+          }
           document.getElementById('formReq').reset();
           btn.disabled = false;
-          btn.innerText = "Enviar Requisição para a Qualidade";
+          btn.innerText = "Enviar Requisição e Gerar PDF";
           buscarAtualizacoesSilenciosas();
         } else {
           alert("Erro ao criar requisição.");
           btn.disabled = false;
-          btn.innerText = "Enviar Requisição para a Qualidade";
+          btn.innerText = "Enviar Requisição e Gerar PDF";
         }
       })
       .catch(err => {
         alert("Erro na comunicação com o servidor.");
         btn.disabled = false;
-        btn.innerText = "Enviar Requisição para a Qualidade";
+        btn.innerText = "Enviar Requisição e Gerar PDF";
       });
     }
 
