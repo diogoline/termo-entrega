@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LINEMED - Gestão de Termos</title>
+  <title>LINEMED - Gestão de Termos e Requisições</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #f0f2f5; color: #333; min-height: 100vh; display: flex; flex-direction: column; padding: 16px; padding-bottom: 60px; overflow-x: hidden; }
@@ -31,8 +31,8 @@
     .form-row { display: flex; gap: 12px; margin-bottom: 12px; }
     .form-group { flex: 1; display: flex; flex-direction: column; }
     label { font-size: 12px; font-weight: 700; color: #444; margin-bottom: 4px; text-transform: uppercase; }
-    input[type="text"], select { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; background: #fff; transition: border-color 0.2s; }
-    input[type="text"]:focus, select:focus { border-color: #1a4d80; outline: none; }
+    input[type="text"], select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; background: #fff; transition: border-color 0.2s; }
+    input[type="text"]:focus, select:focus, textarea:focus { border-color: #1a4d80; outline: none; }
     input[readonly] { background-color: #f8f9fa; color: #333; font-weight: 600; }
     
     .radio-group { display: flex; gap: 20px; align-items: center; padding: 6px 0; }
@@ -53,13 +53,20 @@
     .sig-preview img { max-height: 100%; max-width: 100%; object-fit: contain; }
     .btn-clear { position: absolute; right: 12px; top: 12px; background: #dc3545; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
-    /* Botão Principal e Links */
+    /* Botões e Badges de Status */
     .btn-submit { background: #1a4d80; color: white; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     .btn-submit:hover { background: #13385c; }
     .btn-submit:disabled { background: #6c757d; cursor: not-allowed; }
 
     .btn-pdf { background: #28a745; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 12px; display: inline-block; }
     .btn-pdf:hover { background: #218838; }
+
+    .btn-atender { background: #e0a800; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
+    .btn-atender:hover { background: #c69500; }
+
+    .badge-status { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+    .badge-pendente { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+    .badge-atendido { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
 
     /* RODAPÉ DO SISTEMA */
     .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-top: 2px solid #2563eb; }
@@ -92,6 +99,7 @@
   <div class="nav-tabs">
     <button type="button" class="nav-tab active" onclick="mudarAba('emissao')">📝 Emitir Novo Termo</button>
     <button type="button" class="nav-tab" onclick="mudarAba('consulta')">🔍 Consultar Termos Emitidos</button>
+    <button type="button" class="nav-tab" onclick="mudarAba('requisicoes')">📋 Requisições Internas</button>
   </div>
 
   <!-- ABA 1: EMISSÃO DE TERMO -->
@@ -101,6 +109,9 @@
       <!-- COLUNA ESQUERDA: CLIENTE E EQUIPAMENTO -->
       <div style="display: flex; flex-direction: column; gap: 16px;">
         
+        <!-- Campo oculto para salvar vínculo com Requisição -->
+        <input type="hidden" id="reqVinculadaProtocolo" value="">
+
         <!-- 1. CLIENTE -->
         <div class="card">
           <div class="card-title">1. Cliente / Locatário</div>
@@ -235,6 +246,67 @@
     </div>
   </div>
 
+  <!-- ABA 3: REQUISIÇÕES INTERNAS DE EQUIPAMENTO -->
+  <div id="abaRequisicoes" class="tab-content">
+    <div class="main-grid">
+      
+      <!-- FORMULÁRIO DE NOVA REQUISIÇÃO (ADMINISTRATIVO) -->
+      <div class="card">
+        <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
+        <form id="formReq" onsubmit="salvarRequisicao(event)">
+          
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Cliente / Locatário Solicitante:</label>
+            <input type="text" id="reqCliente" list="listClientes" placeholder="Selecione ou digite o cliente..." required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Equipamento a Substituir (TAG / Nome atual no cliente):</label>
+            <input type="text" id="reqEqAntigo" placeholder="Ex: LMD-5384 - Ventilador Pulmonar com defeito" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Equipamento Solicitado para a Qualidade enviar:</label>
+            <input type="text" id="reqEqSolicitado" placeholder="Ex: Ventilador Pulmonar (Modelo X)" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Motivo / Observações da Troca:</label>
+            <textarea id="reqMotivo" style="height: 60px;" placeholder="Ex: Falha na bateria interna, solicitar troca urgente."></textarea>
+          </div>
+
+          <button type="submit" id="btnSalvarReq" class="btn-submit">Enviar Requisição para a Qualidade</button>
+        </form>
+      </div>
+
+      <!-- PAINEL E HISTÓRICO DE REQUISIÇÕES -->
+      <div class="card">
+        <div class="card-title">Acompanhamento de Solicitações</div>
+        
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th class="td-center">Req #</th>
+                <th>Data</th>
+                <th>Cliente</th>
+                <th>Equip. Solicitado</th>
+                <th class="td-center">Status</th>
+                <th class="td-center">Ação Qualidade</th>
+              </tr>
+            </thead>
+            <tbody id="corpoRequisicoes">
+              <tr>
+                <td colspan="6" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- WIDGET DE CHAT (WHATSAPP) -->
   <button type="button" class="chat-widget-btn" onclick="toggleChat()" title="Suporte / Dúvidas">💬</button>
   
@@ -258,11 +330,9 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
-    
-    // CONFIGURAÇÃO DO WHATSAPP DO SUPORTE
     const NUMERO_WHATSAPP_SUPORTE = "5511970116092";
 
-    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [] };
+    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [] };
     let equipamentoSelecionado = null;
 
     function carregarDadosPlanilha(data) {
@@ -273,28 +343,22 @@
         badge.innerText = "Conectado";
         badge.classList.add('connected');
 
-        // Popula as listas e habilita os campos de formulário
         popularAutocomplete();
-        
-        // Atualiza a tabela da aba de Consulta
         renderizarTabelaTermos(bancoDados.termosEmitidos);
+        renderizarTabelaRequisicoes(bancoDados.requisicoes);
       } else {
         document.getElementById('statusBadge').innerText = "Erro nos Dados";
       }
     }
 
-    // Busca atualizações em segundo plano sem recarregar a tela
     function buscarAtualizacoesSilenciosas() {
       const script = document.createElement('script');
       script.src = API_URL + "?callback=carregarDadosPlanilha&t=" + new Date().getTime();
-      script.onload = function() {
-        script.remove();
-      };
+      script.onload = function() { script.remove(); };
       document.body.appendChild(script);
     }
 
     window.onload = function() {
-      // 1. Carga Inicial
       const script = document.createElement('script');
       script.src = API_URL + "?callback=carregarDadosPlanilha";
       script.onerror = function() {
@@ -302,13 +366,11 @@
       };
       document.body.appendChild(script);
 
-      // 2. Temporizador para sincronizar dados a cada 15 segundos
       setInterval(buscarAtualizacoesSilenciosas, 15000);
     };
 
     function toggleChat() {
-      const box = document.getElementById('chatBox');
-      box.classList.toggle('active');
+      document.getElementById('chatBox').classList.toggle('active');
     }
 
     function enviarWhatsApp() {
@@ -325,14 +387,16 @@
       if (nomeAba === 'emissao') {
         document.querySelectorAll('.nav-tab')[0].classList.add('active');
         document.getElementById('abaEmissao').classList.add('active');
-      } else {
+      } else if (nomeAba === 'consulta') {
         document.querySelectorAll('.nav-tab')[1].classList.add('active');
         document.getElementById('abaConsulta').classList.add('active');
+      } else if (nomeAba === 'requisicoes') {
+        document.querySelectorAll('.nav-tab')[2].classList.add('active');
+        document.getElementById('abaRequisicoes').classList.add('active');
       }
     }
 
     function popularAutocomplete() {
-      // 1. Clientes
       const listC = document.getElementById('listClientes');
       if (listC && bancoDados.clientes) {
         listC.innerHTML = "";
@@ -344,7 +408,6 @@
         document.getElementById('inputCliente').disabled = false;
       }
 
-      // 2. Equipamentos
       const listE = document.getElementById('listEquipamentos');
       if (listE && bancoDados.equipamentos) {
         listE.innerHTML = "";
@@ -356,7 +419,6 @@
         document.getElementById('buscaEquipamento').disabled = false;
       }
 
-      // 3. Técnicos
       const selTec = document.getElementById('selectTecnico');
       if (selTec && bancoDados.usuarios) {
         const valAtual = selTec.value;
@@ -374,7 +436,6 @@
     function renderizarTabelaTermos(lista) {
       const tbody = document.getElementById('corpoTermos');
       if (!tbody) return;
-
       tbody.innerHTML = "";
 
       if (!lista || lista.length === 0) {
@@ -413,9 +474,84 @@
       });
     }
 
-    function filtrarTabelaTermos() {
-      renderizarTabelaTermos(bancoDados.termosEmitidos);
+    function renderizarTabelaRequisicoes(lista) {
+      const tbody = document.getElementById('corpoRequisicoes');
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      if (!lista || lista.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição registrada.</td></tr>';
+        return;
+      }
+
+      lista.forEach(r => {
+        const isPendente = r.status.toUpperCase() === "PENDENTE";
+        const badgeClass = isPendente ? "badge-pendente" : "badge-atendido";
+        const btnAcao = isPendente ? 
+          `<button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${r.cliente}')">Atender & Gerar Termo</button>` : 
+          `<span style="color:#28a745; font-weight:bold;">Termo: ${r.protocoloTermo}</span>`;
+
+        tbody.innerHTML += `
+          <tr>
+            <td class="td-center"><b>${r.protocolo}</b></td>
+            <td>${r.dataHora}</td>
+            <td>${r.cliente}</td>
+            <td>${r.equipamentoSolicitado}</td>
+            <td class="td-center"><span class="badge-status ${badgeClass}">${r.status}</span></td>
+            <td class="td-center">${btnAcao}</td>
+          </tr>
+        `;
+      });
     }
+
+    function atenderRequisicao(protReq, cliente) {
+      document.getElementById('reqVinculadaProtocolo').value = protReq;
+      document.getElementById('inputCliente').value = cliente;
+      mudarAba('emissao');
+      alert(`Requisição ${protReq} selecionada para atendimento!\n\nSelecione agora o equipamento e os acessórios para gerar o Termo de Entrega.`);
+    }
+
+    function salvarRequisicao(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSalvarReq');
+      btn.disabled = true;
+      btn.innerText = "ENVIANDO SOLICITAÇÃO...";
+
+      const payload = {
+        acao: "CRIAR_REQUISICAO",
+        cliente: document.getElementById('reqCliente').value,
+        equipamentoAntigo: document.getElementById('reqEqAntigo').value,
+        equipamentoSolicitado: document.getElementById('reqEqSolicitado').value,
+        motivo: document.getElementById('reqMotivo').value,
+        solicitante: "ADMINISTRATIVO"
+      };
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === "sucesso") {
+          alert("Requisição enviada com sucesso para a Qualidade!\n\nProtocolo: " + res.protocoloReq);
+          document.getElementById('formReq').reset();
+          btn.disabled = false;
+          btn.innerText = "Enviar Requisição para a Qualidade";
+          buscarAtualizacoesSilenciosas();
+        } else {
+          alert("Erro ao criar requisição.");
+          btn.disabled = false;
+          btn.innerText = "Enviar Requisição para a Qualidade";
+        }
+      })
+      .catch(err => {
+        alert("Erro na comunicação com o servidor.");
+        btn.disabled = false;
+        btn.innerText = "Enviar Requisição para a Qualidade";
+      });
+    }
+
+    function filtrarTabelaTermos() { renderizarTabelaTermos(bancoDados.termosEmitidos); }
 
     function autoPreencherEquipamento() {
       const val = document.getElementById('buscaEquipamento').value.toLowerCase().trim();
@@ -428,10 +564,7 @@
 
       const eq = bancoDados.equipamentos.find(item => {
         const strFormatada = `tag: ${item.tag} | ${item.nome} | série: ${item.serie}`.toLowerCase();
-        return strFormatada === val || 
-               item.tag.toLowerCase() === val || 
-               item.serie.toLowerCase() === val || 
-               item.patrimonio.toLowerCase() === val;
+        return strFormatada === val || item.tag.toLowerCase() === val || item.serie.toLowerCase() === val || item.patrimonio.toLowerCase() === val;
       });
 
       if (eq) {
@@ -541,7 +674,6 @@
 
     function limparAssinatura() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
-    // Envio do Formulário + Confirmação de Impressão
     function gerarTermo(e) {
       e.preventDefault();
 
@@ -575,7 +707,8 @@
         tipoOperacao: document.querySelector('input[name="tipoOperacao"]:checked').value,
         acessorios: listaAcessorios,
         tecnico: tecSelected,
-        assinaturaCliente: canvas.toDataURL()
+        assinaturaCliente: canvas.toDataURL(),
+        protocoloReq: document.getElementById('reqVinculadaProtocolo').value
       };
 
       const btn = document.getElementById('btnEnviar');
@@ -590,14 +723,10 @@
       .then(res => {
         if(res.status === "sucesso") {
           const querImprimir = confirm("Termo gerado com sucesso!\n\nProtocolo: " + res.protocolo + "\n\nDeseja IMPRIMIR o documento agora?");
-          
           if (querImprimir && res.pdfUrl) {
             const win = window.open(res.pdfUrl, '_blank');
-            if (win) {
-              win.focus();
-            }
+            if (win) { win.focus(); }
           }
-          
           location.reload();
         } else {
           alert("Erro ao gerar termo: " + res.mensagem);
