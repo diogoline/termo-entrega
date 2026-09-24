@@ -64,11 +64,21 @@
     .btn-atender { background: #e0a800; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; white-space: nowrap; }
     .btn-atender:hover { background: #c69500; }
 
+    .btn-negar { background: #dc3545; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+    .btn-negar:hover { background: #bd2130; }
+
     .badge-status { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; display: inline-block; }
     .badge-pendente { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
     .badge-atendido { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .badge-recusado { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
 
     .action-group { display: flex; gap: 6px; justify-content: center; align-items: center; }
+
+    /* MODAL / POP-UP MOTIVO DE RECUSA */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.active { display: flex; }
+    .modal-box { background: white; padding: 20px; border-radius: 8px; width: 400px; max-width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .modal-title { font-size: 15px; font-weight: bold; color: #dc3545; margin-bottom: 12px; }
 
     /* RODAPÉ DO SISTEMA */
     .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-top: 2px solid #2563eb; }
@@ -247,10 +257,9 @@
     </div>
   </div>
 
-  <!-- ABA 3: REQUISIÇÕES INTERNAS DE EQUIPAMENTO (LAYOUT VERTICAL OTIMIZADO) -->
+  <!-- ABA 3: REQUISIÇÕES INTERNAS DE EQUIPAMENTO -->
   <div id="abaRequisicoes" class="tab-content">
     
-    <!-- 1. FORMULÁRIO COMPACTO NO TOPO -->
     <div class="card">
       <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
       <form id="formReq" onsubmit="salvarRequisicao(event)">
@@ -292,7 +301,6 @@
       </form>
     </div>
 
-    <!-- 2. TABELA COMPLETA E AMPLA EM BAIXO -->
     <div class="card">
       <div class="card-title">Acompanhamento de Solicitações</div>
       
@@ -306,7 +314,7 @@
               <th>Equipamento Solicitado</th>
               <th class="td-center" style="width: 100px;">Operação</th>
               <th class="td-center" style="width: 100px;">Status</th>
-              <th class="td-center" style="width: 180px;">Ações / Qualidade</th>
+              <th class="td-center" style="width: 220px;">Ações / Qualidade</th>
             </tr>
           </thead>
           <tbody id="corpoRequisicoes">
@@ -318,6 +326,21 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- POP-UP / MODAL DE RECUSA DA QUALIDADE -->
+  <div id="modalRecusa" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-title">Recusar Requisição <span id="modalProtReq"></span></div>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label>Motivo da Recusa / Indisponibilidade:</label>
+        <textarea id="motivoRecusaTexto" style="height: 80px;" placeholder="Ex: Equipamento sem estoque no momento ou em manutenção..."></textarea>
+      </div>
+      <div style="display: flex; gap: 8px; justify-content: flex-end;">
+        <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalRecusa()">Cancelar</button>
+        <button type="button" class="btn-negar" onclick="confirmarRecusaQualidade()">Confirmar Recusa</button>
+      </div>
+    </div>
   </div>
 
   <!-- WIDGET DE CHAT (WHATSAPP) -->
@@ -347,6 +370,7 @@
 
     let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [] };
     let equipamentoSelecionado = null;
+    let protocoloReqEmRecusa = null;
 
     function carregarDadosPlanilha(data) {
       if (data && !data.erro) {
@@ -364,6 +388,7 @@
       }
     }
 
+    // ATUALIZAÇÃO SILENCIOSA ULTRA-RÁPIDA A CADA 5 SEGUNDOS (SEM PISCAR A TELA)
     function buscarAtualizacoesSilenciosas() {
       const script = document.createElement('script');
       script.src = API_URL + "?callback=carregarDadosPlanilha&t=" + new Date().getTime();
@@ -379,7 +404,8 @@
       };
       document.body.appendChild(script);
 
-      setInterval(buscarAtualizacoesSilenciosas, 15000);
+      // Temporizador de 5 segundos em segundo plano
+      setInterval(buscarAtualizacoesSilenciosas, 5000);
     };
 
     function toggleChat() {
@@ -498,14 +524,28 @@
       }
 
       lista.forEach(r => {
-        const isPendente = r.status.toUpperCase() === "PENDENTE";
-        const badgeClass = isPendente ? "badge-pendente" : "badge-atendido";
+        const st = r.status.toUpperCase();
+        const isPendente = st === "PENDENTE";
+        const isRecusado = st === "RECUSADO";
+
+        let badgeClass = "badge-pendente";
+        if (st === "ATENDIDO") badgeClass = "badge-atendido";
+        if (isRecusado) badgeClass = "badge-recusado";
         
         const linkPdfReq = r.pdfUrlReq ? `<a href="${r.pdfUrlReq}" target="_blank" class="btn-pdf" style="background:#1a4d80;">📄 REQ</a>` : '';
         
-        const btnAcao = isPendente ? 
-          `<div class="action-group">${linkPdfReq}<button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${r.cliente}', '${r.operacao}')">Atender</button></div>` : 
-          `<div class="action-group">${linkPdfReq}<span style="color:#28a745; font-weight:bold; font-size:12px;">Termo: ${r.protocoloTermo}</span></div>`;
+        let btnAcao = "";
+        if (isPendente) {
+          btnAcao = `<div class="action-group">
+            ${linkPdfReq}
+            <button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${r.cliente}', '${r.operacao}')">Atender</button>
+            <button type="button" class="btn-negar" onclick="abrirModalRecusa('${r.protocolo}')">Negar</button>
+          </div>`;
+        } else if (isRecusado) {
+          btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#dc3545; font-weight:bold; font-size:11px;">Recusado pela Qualidade</span></div>`;
+        } else {
+          btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#28a745; font-weight:bold; font-size:12px;">Termo: ${r.protocoloTermo}</span></div>`;
+        }
 
         tbody.innerHTML += `
           <tr>
@@ -519,6 +559,48 @@
           </tr>
         `;
       });
+    }
+
+    function abrirModalRecusa(protReq) {
+      protocoloReqEmRecusa = protReq;
+      document.getElementById('modalProtReq').innerText = protReq;
+      document.getElementById('motivoRecusaTexto').value = "";
+      document.getElementById('modalRecusa').classList.add('active');
+    }
+
+    function fecharModalRecusa() {
+      protocoloReqEmRecusa = null;
+      document.getElementById('modalRecusa').classList.remove('active');
+    }
+
+    function confirmarRecusaQualidade() {
+      const motivo = document.getElementById('motivoRecusaTexto').value.trim();
+      if (!motivo) {
+        alert("Por favor, digite o motivo da recusa.");
+        return;
+      }
+
+      const payload = {
+        acao: "RECUSAR_REQUISICAO",
+        protocoloReq: protocoloReqEmRecusa,
+        motivoRecusa: motivo
+      };
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === "sucesso") {
+          alert("Requisição " + protocoloReqEmRecusa + " recusada com sucesso.");
+          fecharModalRecusa();
+          buscarAtualizacoesSilenciosas();
+        } else {
+          alert("Erro ao recusar requisição.");
+        }
+      })
+      .catch(err => alert("Erro na comunicação com o servidor."));
     }
 
     function atenderRequisicao(protReq, cliente, operacao) {
