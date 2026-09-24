@@ -54,19 +54,21 @@
     .btn-clear { position: absolute; right: 12px; top: 12px; background: #dc3545; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
     /* Botões e Badges de Status */
-    .btn-submit { background: #1a4d80; color: white; border: none; padding: 14px; font-size: 15px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .btn-submit { background: #1a4d80; color: white; border: none; padding: 12px 18px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     .btn-submit:hover { background: #13385c; }
     .btn-submit:disabled { background: #6c757d; cursor: not-allowed; }
 
-    .btn-pdf { background: #28a745; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 12px; display: inline-block; }
+    .btn-pdf { background: #28a745; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 12px; display: inline-block; white-space: nowrap; }
     .btn-pdf:hover { background: #218838; }
 
-    .btn-atender { background: #e0a800; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
+    .btn-atender { background: #e0a800; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; white-space: nowrap; }
     .btn-atender:hover { background: #c69500; }
 
-    .badge-status { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+    .badge-status { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; display: inline-block; }
     .badge-pendente { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
     .badge-atendido { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+
+    .action-group { display: flex; gap: 6px; justify-content: center; align-items: center; }
 
     /* RODAPÉ DO SISTEMA */
     .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-top: 2px solid #2563eb; }
@@ -203,7 +205,7 @@
             </div>
           </div>
 
-          <button type="submit" id="btnEnviar" class="btn-submit" style="margin-top: 12px;" disabled>Gerar Termo Duplo PDF (Entrega + Higienização)</button>
+          <button type="submit" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;" disabled>Gerar Termo Duplo PDF (Entrega + Higienização)</button>
         </div>
 
       </div>
@@ -245,21 +247,20 @@
     </div>
   </div>
 
-  <!-- ABA 3: REQUISIÇÕES INTERNAS DE EQUIPAMENTO -->
+  <!-- ABA 3: REQUISIÇÕES INTERNAS DE EQUIPAMENTO (LAYOUT VERTICAL OTIMIZADO) -->
   <div id="abaRequisicoes" class="tab-content">
-    <div class="main-grid">
-      
-      <!-- FORMULÁRIO DE NOVA REQUISIÇÃO (ADMINISTRATIVO) -->
-      <div class="card">
-        <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
-        <form id="formReq" onsubmit="salvarRequisicao(event)">
-          
-          <div class="form-group" style="margin-bottom: 12px;">
+    
+    <!-- 1. FORMULÁRIO COMPACTO NO TOPO -->
+    <div class="card">
+      <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
+      <form id="formReq" onsubmit="salvarRequisicao(event)">
+        
+        <div class="form-row">
+          <div class="form-group" style="flex: 2;">
             <label>Cliente / Locatário Solicitante:</label>
             <input type="text" id="reqCliente" list="listClientes" placeholder="Selecione ou digite o cliente..." required>
           </div>
-
-          <div class="form-group" style="margin-bottom: 12px;">
+          <div class="form-group" style="flex: 1;">
             <label>Operação:</label>
             <div class="radio-group">
               <label><input type="radio" name="reqOperacao" value="LOCAÇÃO" checked> Locação</label>
@@ -267,52 +268,56 @@
               <label><input type="radio" name="reqOperacao" value="VENDA"> Venda</label>
             </div>
           </div>
+        </div>
 
-          <div class="form-group" style="margin-bottom: 12px;">
+        <div class="form-row">
+          <div class="form-group">
             <label>Equipamento a Substituir (TAG / Nome atual no cliente):</label>
             <input type="text" id="reqEqAntigo" placeholder="Ex: LMD-5384 - Ventilador Pulmonar com defeito" required>
           </div>
-
-          <div class="form-group" style="margin-bottom: 12px;">
+          <div class="form-group">
             <label>Equipamento Solicitado para a Qualidade enviar:</label>
             <input type="text" id="reqEqSolicitado" placeholder="Ex: Ventilador Pulmonar (Modelo X)" required>
           </div>
-
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>Motivo / Observações da Troca:</label>
-            <textarea id="reqMotivo" style="height: 60px;" placeholder="Ex: Falha na bateria interna, solicitar troca urgente."></textarea>
-          </div>
-
-          <button type="submit" id="btnSalvarReq" class="btn-submit">Enviar Requisição e Gerar PDF</button>
-        </form>
-      </div>
-
-      <!-- PAINEL E HISTÓRICO DE REQUISIÇÕES -->
-      <div class="card">
-        <div class="card-title">Acompanhamento de Solicitações</div>
-        
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th class="td-center">Req #</th>
-                <th>Data</th>
-                <th>Cliente</th>
-                <th>Operação</th>
-                <th class="td-center">Status</th>
-                <th class="td-center">PDF / Ação</th>
-              </tr>
-            </thead>
-            <tbody id="corpoRequisicoes">
-              <tr>
-                <td colspan="6" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
-      </div>
 
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Motivo / Observações da Troca:</label>
+          <input type="text" id="reqMotivo" placeholder="Ex: Falha na bateria interna, solicitar troca urgente.">
+        </div>
+
+        <div style="text-align: right;">
+          <button type="submit" id="btnSalvarReq" class="btn-submit">Enviar Requisição e Gerar PDF</button>
+        </div>
+      </form>
     </div>
+
+    <!-- 2. TABELA COMPLETA E AMPLA EM BAIXO -->
+    <div class="card">
+      <div class="card-title">Acompanhamento de Solicitações</div>
+      
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th class="td-center" style="width: 80px;">Req #</th>
+              <th style="width: 130px;">Data / Hora</th>
+              <th>Cliente / Locatário</th>
+              <th>Equipamento Solicitado</th>
+              <th class="td-center" style="width: 100px;">Operação</th>
+              <th class="td-center" style="width: 100px;">Status</th>
+              <th class="td-center" style="width: 180px;">Ações / Qualidade</th>
+            </tr>
+          </thead>
+          <tbody id="corpoRequisicoes">
+            <tr>
+              <td colspan="7" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 
   <!-- WIDGET DE CHAT (WHATSAPP) -->
@@ -488,7 +493,7 @@
       tbody.innerHTML = "";
 
       if (!lista || lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição registrada.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição registrada.</td></tr>';
         return;
       }
 
@@ -496,18 +501,19 @@
         const isPendente = r.status.toUpperCase() === "PENDENTE";
         const badgeClass = isPendente ? "badge-pendente" : "badge-atendido";
         
-        const linkPdfReq = r.pdfUrlReq ? `<a href="${r.pdfUrlReq}" target="_blank" class="btn-pdf" style="background:#1a4d80; margin-right:4px;">📄 REQ</a>` : '';
+        const linkPdfReq = r.pdfUrlReq ? `<a href="${r.pdfUrlReq}" target="_blank" class="btn-pdf" style="background:#1a4d80;">📄 REQ</a>` : '';
         
         const btnAcao = isPendente ? 
-          `${linkPdfReq}<button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${r.cliente}', '${r.operacao}')">Atender</button>` : 
-          `${linkPdfReq}<span style="color:#28a745; font-weight:bold;">Termo: ${r.protocoloTermo}</span>`;
+          `<div class="action-group">${linkPdfReq}<button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${r.cliente}', '${r.operacao}')">Atender</button></div>` : 
+          `<div class="action-group">${linkPdfReq}<span style="color:#28a745; font-weight:bold; font-size:12px;">Termo: ${r.protocoloTermo}</span></div>`;
 
         tbody.innerHTML += `
           <tr>
             <td class="td-center"><b>${r.protocolo}</b></td>
             <td>${r.dataHora}</td>
             <td>${r.cliente}</td>
-            <td><b>${r.operacao}</b></td>
+            <td>${r.equipamentoSolicitado}</td>
+            <td class="td-center"><b>${r.operacao}</b></td>
             <td class="td-center"><span class="badge-status ${badgeClass}">${r.status}</span></td>
             <td class="td-center">${btnAcao}</td>
           </tr>
