@@ -72,8 +72,19 @@
     .badge-atendido { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .badge-recusado { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
 
-    /* Alinhamento estrito em linha única para os botões de ação */
     .action-group { display: flex; gap: 4px; justify-content: center; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
+
+    /* Estilos da Tela de Início */
+    .welcome-hero { background: linear-gradient(135deg, #1a4d80 0%, #0f2b48 100%); color: white; border-radius: 12px; padding: 32px 24px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .welcome-hero h2 { font-size: 24px; margin-bottom: 8px; }
+    .welcome-hero p { font-size: 14px; opacity: 0.9; max-width: 800px; line-height: 1.5; }
+    
+    .quick-actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .quick-card { background: white; border-radius: 8px; padding: 20px; border: 1px solid #e2e8f0; text-align: center; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+    .quick-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); border-color: #1a4d80; }
+    .quick-icon { font-size: 32px; margin-bottom: 10px; }
+    .quick-title { font-size: 15px; font-weight: bold; color: #1a4d80; margin-bottom: 6px; }
+    .quick-desc { font-size: 12px; color: #64748b; line-height: 1.4; }
 
     /* Estilos do Dashboard */
     .dash-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
@@ -123,16 +134,206 @@
     <span id="statusBadge" class="status-badge">Conectando...</span>
   </div>
 
-  <!-- NAVEGAÇÃO ENTRE ABAS -->
+  <!-- NAVEGAÇÃO REORGANIZADA POR ORDEM LÓGICA -->
   <div class="nav-tabs">
-    <button type="button" class="nav-tab active" onclick="mudarAba('emissao')">📝 Emitir Novo Termo</button>
-    <button type="button" class="nav-tab" onclick="mudarAba('consulta')">🔍 Consultar Termos Emitidos</button>
-    <button type="button" class="nav-tab" onclick="mudarAba('requisicoes')">📋 Requisições Internas</button>
+    <button type="button" class="nav-tab active" onclick="mudarAba('inicio')">🏠 Início</button>
     <button type="button" class="nav-tab" onclick="mudarAba('dashboard')">📊 Dashboard & Métricas</button>
+    <button type="button" class="nav-tab" onclick="mudarAba('requisicoes')">📋 Requisições Internas</button>
+    <button type="button" class="nav-tab" onclick="mudarAba('emissao')">📝 Emitir Novo Termo</button>
+    <button type="button" class="nav-tab" onclick="mudarAba('consulta')">🔍 Consultar Termos Emitidos</button>
   </div>
 
-  <!-- ABA 1: EMISSÃO DE TERMO -->
-  <div id="abaEmissao" class="tab-content active">
+  <!-- ABA 0: TELA DE INÍCIO / BOAS-VINDAS -->
+  <div id="abaInicio" class="tab-content active">
+    <div class="welcome-hero">
+      <h2>Bem-vindo ao LINEMED TME v2.0</h2>
+      <p>Sistema integrado para gestão de movimentação de equipamentos médicos, controle de requisições do setor administrativo, separação pela Qualidade e emissão de Termos de Entrega e Higienização com assinatura digital.</p>
+    </div>
+
+    <div class="quick-actions-grid">
+      <div class="quick-card" onclick="mudarAba('dashboard')">
+        <div class="quick-icon">📊</div>
+        <div class="quick-title">Dashboard & Métricas</div>
+        <div class="quick-desc">Acompanhe indicadores gerais de movimentação, volume por hospital e famílias de equipamentos em tempo real.</div>
+      </div>
+
+      <div class="quick-card" onclick="mudarAba('requisicoes')">
+        <div class="quick-icon">📋</div>
+        <div class="quick-title">Requisições Internas</div>
+        <div class="quick-desc">Solicite substituições de equipamentos para a Qualidade ou atenda pedidos pendentes no estoque.</div>
+      </div>
+
+      <div class="quick-card" onclick="mudarAba('emissao')">
+        <div class="quick-icon">📝</div>
+        <div class="quick-title">Emitir Novo Termo</div>
+        <div class="quick-desc">Gere o Termo Duplo em PDF (Entrega + Higienização) com checklist de acessórios e assinaturas.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABA 1: DASHBOARD DE MÉTRICAS COM FILTRO DE PERÍODO -->
+  <div id="abaDashboard" class="tab-content">
+    
+    <!-- BARRA DE FILTRO DO DASHBOARD -->
+    <div class="card" style="margin-bottom: 16px;">
+      <div class="card-title">
+        <span>Filtro de Período das Métricas</span>
+      </div>
+      <div class="form-row" style="align-items: center; margin-bottom: 0;">
+        <div class="form-group" style="flex: 1;">
+          <label>Selecione o Mês / Ano:</label>
+          <input type="month" id="dashFiltroMes" onchange="atualizarDashboard()">
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label>Modo de Período:</label>
+          <select id="dashModoPeriodo" onchange="alternarModoDash()">
+            <option value="MES">Apenas o Mês Selecionado</option>
+            <option value="GERAL">Todo o Histórico (Geral)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARDS DE MÉTRICAS SUPERIORES -->
+    <div class="dash-metrics">
+      <div class="metric-card">
+        <div class="metric-title">Total de Requisições</div>
+        <div class="metric-value" id="dashTotalReq">0</div>
+      </div>
+      <div class="metric-card yellow">
+        <div class="metric-title">Pendentes de Envio</div>
+        <div class="metric-value" id="dashPendentes">0</div>
+      </div>
+      <div class="metric-card green">
+        <div class="metric-title">Atendidas pela Qualidade</div>
+        <div class="metric-value" id="dashAtendidos">0</div>
+      </div>
+      <div class="metric-card red">
+        <div class="metric-title">Recusadas / Negadas</div>
+        <div class="metric-value" id="dashRecusados">0</div>
+      </div>
+    </div>
+
+    <!-- GRÁFICOS E QUANTITATIVO POR CLIENTE -->
+    <div class="dash-charts-grid">
+      <div class="card">
+        <div class="card-title">Top Clientes em Demandas de Troca</div>
+        <div id="chartClientes" style="padding-top: 10px;">
+          <div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Demandas por Família de Equipamentos</div>
+        <div id="chartFamilias" style="padding-top: 10px;">
+          <div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ABA 2: REQUISIÇÕES INTERNAS DE EQUIPAMENTO -->
+  <div id="abaRequisicoes" class="tab-content">
+    
+    <!-- FORMULÁRIO DE NOVA REQUISIÇÃO -->
+    <div class="card">
+      <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
+      <form id="formReq" onsubmit="salvarRequisicao(event)">
+        
+        <div class="form-row">
+          <div class="form-group" style="flex: 2;">
+            <label>Cliente / Locatário Solicitante:</label>
+            <input type="text" id="reqCliente" list="listClientes" placeholder="Selecione ou digite o cliente..." required>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>Operação:</label>
+            <div class="radio-group">
+              <label><input type="radio" name="reqOperacao" value="LOCAÇÃO" checked> Locação</label>
+              <label><input type="radio" name="reqOperacao" value="EMPRÉSTIMO"> Empréstimo</label>
+              <label><input type="radio" name="reqOperacao" value="VENDA"> Venda</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Equipamento a Substituir (TAG / Nome atual no cliente):</label>
+            <input type="text" id="reqEqAntigo" placeholder="Ex: LMD-5384 - Ventilador Pulmonar com defeito" required>
+          </div>
+          <div class="form-group">
+            <label>Equipamento Solicitado para a Qualidade enviar:</label>
+            <input type="text" id="reqEqSolicitado" placeholder="Ex: Ventilador Pulmonar (Modelo X)" required>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Motivo / Observações da Troca:</label>
+          <input type="text" id="reqMotivo" placeholder="Ex: Falha na bateria interna, solicitar troca urgente.">
+        </div>
+
+        <div style="text-align: right;">
+          <button type="submit" id="btnSalvarReq" class="btn-submit">Enviar Requisição e Gerar PDF</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ACOMPANHAMENTO DE SOLICITAÇÕES -->
+    <div class="card">
+      <div class="card-title">
+        <span>Acompanhamento de Solicitações</span>
+      </div>
+
+      <!-- BARRA DE FILTROS -->
+      <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
+        <div class="form-group" style="flex: 1;">
+          <label>Filtrar por Status:</label>
+          <select id="filtroStatusReq" onchange="filtrarRequisicoes()">
+            <option value="TODOS">Todos os Status</option>
+            <option value="PENDENTE">Apenas Pendentes</option>
+            <option value="ATENDIDO">Apenas Atendidos</option>
+            <option value="RECUSADO">Apenas Recusados</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="flex: 1;">
+          <label>Filtrar por Mês/Ano:</label>
+          <input type="month" id="filtroMesReq" onchange="filtrarRequisicoes()">
+        </div>
+
+        <div class="form-group" style="flex: 2;">
+          <label>Buscar na Tabela (Cliente, Req # ou Equipamento):</label>
+          <input type="text" id="filtroTextoReq" oninput="filtrarRequisicoes()" placeholder="Digite para buscar...">
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th class="td-center" style="width: 75px;">Req #</th>
+              <th style="width: 120px;">Data / Hora</th>
+              <th>Cliente / Locatário</th>
+              <th>Equipamento Solicitado</th>
+              <th>Motivo / Obs.</th>
+              <th class="td-center" style="width: 85px;">Operação</th>
+              <th class="td-center" style="width: 90px;">Status</th>
+              <th class="td-center" style="width: 210px;">Ações / Qualidade</th>
+            </tr>
+          </thead>
+          <tbody id="corpoRequisicoes">
+            <tr>
+              <td colspan="8" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ABA 3: EMISSÃO DE TERMO -->
+  <div id="abaEmissao" class="tab-content">
     <form id="termoForm" class="main-grid" onsubmit="gerarTermo(event)">
       
       <input type="hidden" id="reqVinculadaProtocolo" value="">
@@ -240,7 +441,7 @@
     </form>
   </div>
 
-  <!-- ABA 2: CONSULTA DE TERMOS EMITIDOS -->
+  <!-- ABA 4: CONSULTA DE TERMOS EMITIDOS -->
   <div id="abaConsulta" class="tab-content">
     <div class="card">
       <div class="card-title">Histórico e Consulta de Termos Gerados</div>
@@ -272,147 +473,6 @@
         </table>
       </div>
     </div>
-  </div>
-
-  <!-- ABA 3: REQUISIÇÕES INTERNAS DE EQUIPAMENTO -->
-  <div id="abaRequisicoes" class="tab-content">
-    
-    <!-- FORMULÁRIO DE NOVA REQUISIÇÃO -->
-    <div class="card">
-      <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
-      <form id="formReq" onsubmit="salvarRequisicao(event)">
-        
-        <div class="form-row">
-          <div class="form-group" style="flex: 2;">
-            <label>Cliente / Locatário Solicitante:</label>
-            <input type="text" id="reqCliente" list="listClientes" placeholder="Selecione ou digite o cliente..." required>
-          </div>
-          <div class="form-group" style="flex: 1;">
-            <label>Operação:</label>
-            <div class="radio-group">
-              <label><input type="radio" name="reqOperacao" value="LOCAÇÃO" checked> Locação</label>
-              <label><input type="radio" name="reqOperacao" value="EMPRÉSTIMO"> Empréstimo</label>
-              <label><input type="radio" name="reqOperacao" value="VENDA"> Venda</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Equipamento a Substituir (TAG / Nome atual no cliente):</label>
-            <input type="text" id="reqEqAntigo" placeholder="Ex: LMD-5384 - Ventilador Pulmonar com defeito" required>
-          </div>
-          <div class="form-group">
-            <label>Equipamento Solicitado para a Qualidade enviar:</label>
-            <input type="text" id="reqEqSolicitado" placeholder="Ex: Ventilador Pulmonar (Modelo X)" required>
-          </div>
-        </div>
-
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label>Motivo / Observações da Troca:</label>
-          <input type="text" id="reqMotivo" placeholder="Ex: Falha na bateria interna, solicitar troca urgente.">
-        </div>
-
-        <div style="text-align: right;">
-          <button type="submit" id="btnSalvarReq" class="btn-submit">Enviar Requisição e Gerar PDF</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- ACOMPANHAMENTO DE SOLICITAÇÕES COM FILTROS AVANÇADOS -->
-    <div class="card">
-      <div class="card-title">
-        <span>Acompanhamento de Solicitações</span>
-      </div>
-
-      <!-- BARRA DE FILTROS -->
-      <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
-        <div class="form-group" style="flex: 1;">
-          <label>Filtrar por Status:</label>
-          <select id="filtroStatusReq" onchange="filtrarRequisicoes()">
-            <option value="TODOS">Todos os Status</option>
-            <option value="PENDENTE">Apenas Pendentes</option>
-            <option value="ATENDIDO">Apenas Atendidos</option>
-            <option value="RECUSADO">Apenas Recusados</option>
-          </select>
-        </div>
-
-        <div class="form-group" style="flex: 1;">
-          <label>Filtrar por Mês/Ano:</label>
-          <input type="month" id="filtroMesReq" onchange="filtrarRequisicoes()">
-        </div>
-
-        <div class="form-group" style="flex: 2;">
-          <label>Buscar na Tabela (Cliente, Req # ou Equipamento):</label>
-          <input type="text" id="filtroTextoReq" oninput="filtrarRequisicoes()" placeholder="Digite para buscar...">
-        </div>
-      </div>
-      
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th class="td-center" style="width: 75px;">Req #</th>
-              <th style="width: 120px;">Data / Hora</th>
-              <th>Cliente / Locatário</th>
-              <th>Equipamento Solicitado</th>
-              <th>Motivo / Obs.</th>
-              <th class="td-center" style="width: 85px;">Operação</th>
-              <th class="td-center" style="width: 90px;">Status</th>
-              <th class="td-center" style="width: 210px;">Ações / Qualidade</th>
-            </tr>
-          </thead>
-          <tbody id="corpoRequisicoes">
-            <tr>
-              <td colspan="8" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ABA 4: DASHBOARD DE MÉTRICAS -->
-  <div id="abaDashboard" class="tab-content">
-    
-    <!-- CARDS DE MÉTRICAS SUPERIORES -->
-    <div class="dash-metrics">
-      <div class="metric-card">
-        <div class="metric-title">Total de Requisições</div>
-        <div class="metric-value" id="dashTotalReq">0</div>
-      </div>
-      <div class="metric-card yellow">
-        <div class="metric-title">Pendentes de Envio</div>
-        <div class="metric-value" id="dashPendentes">0</div>
-      </div>
-      <div class="metric-card green">
-        <div class="metric-title">Atendidas pela Qualidade</div>
-        <div class="metric-value" id="dashAtendidos">0</div>
-      </div>
-      <div class="metric-card red">
-        <div class="metric-title">Recusadas / Negadas</div>
-        <div class="metric-value" id="dashRecusados">0</div>
-      </div>
-    </div>
-
-    <!-- GRÁFICOS VISUAIS -->
-    <div class="dash-charts-grid">
-      <div class="card">
-        <div class="card-title">Solicitações por Família de Equipamentos</div>
-        <div id="chartFamilias" style="padding-top: 10px;">
-          <div style="color:#888; text-align:center; padding: 20px;">Sem dados suficientes.</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Distribuição por Tipo de Operação</div>
-        <div id="chartOperacoes" style="padding-top: 10px;">
-          <div style="color:#888; text-align:center; padding: 20px;">Sem dados suficientes.</div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <!-- POP-UP / MODAL DE RECUSA DA QUALIDADE -->
@@ -484,10 +544,10 @@
     }
 
     window.onload = function() {
-      // Definir mês atual no campo de filtro por padrão (YYYY-MM)
       const hoje = new Date();
       const mesFormatado = hoje.getFullYear() + "-" + String(hoje.getMonth() + 1).padStart(2, '0');
       document.getElementById('filtroMesReq').value = mesFormatado;
+      document.getElementById('dashFiltroMes').value = mesFormatado;
 
       const script = document.createElement('script');
       script.src = API_URL + "?callback=carregarDadosPlanilha";
@@ -514,19 +574,22 @@
       document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-      if (nomeAba === 'emissao') {
+      if (nomeAba === 'inicio') {
         document.querySelectorAll('.nav-tab')[0].classList.add('active');
-        document.getElementById('abaEmissao').classList.add('active');
-      } else if (nomeAba === 'consulta') {
+        document.getElementById('abaInicio').classList.add('active');
+      } else if (nomeAba === 'dashboard') {
         document.querySelectorAll('.nav-tab')[1].classList.add('active');
-        document.getElementById('abaConsulta').classList.add('active');
+        document.getElementById('abaDashboard').classList.add('active');
+        atualizarDashboard();
       } else if (nomeAba === 'requisicoes') {
         document.querySelectorAll('.nav-tab')[2].classList.add('active');
         document.getElementById('abaRequisicoes').classList.add('active');
-      } else if (nomeAba === 'dashboard') {
+      } else if (nomeAba === 'emissao') {
         document.querySelectorAll('.nav-tab')[3].classList.add('active');
-        document.getElementById('abaDashboard').classList.add('active');
-        atualizarDashboard();
+        document.getElementById('abaEmissao').classList.add('active');
+      } else if (nomeAba === 'consulta') {
+        document.querySelectorAll('.nav-tab')[4].classList.add('active');
+        document.getElementById('abaConsulta').classList.add('active');
       }
     }
 
@@ -612,23 +675,20 @@
       if (!bancoDados || !bancoDados.requisicoes) return;
 
       const statusFiltro = document.getElementById('filtroStatusReq').value;
-      const mesFiltro = document.getElementById('filtroMesReq').value; // YYYY-MM
+      const mesFiltro = document.getElementById('filtroMesReq').value;
       const textoFiltro = document.getElementById('filtroTextoReq').value.toLowerCase().trim();
 
       let filtradas = bancoDados.requisicoes.filter(r => {
-        // 1. Filtro por Status
         if (statusFiltro !== "TODOS" && r.status.toUpperCase() !== statusFiltro) return false;
 
-        // 2. Filtro por Mês/Ano (Data dd/mm/yyyy hh:mm)
         if (mesFiltro && r.dataHora) {
-          const partesData = r.dataHora.split(' ')[0].split('/'); // [dd, mm, yyyy]
+          const partesData = r.dataHora.split(' ')[0].split('/');
           if (partesData.length === 3) {
             const anoMesReg = `${partesData[2]}-${partesData[1].padStart(2, '0')}`;
             if (anoMesReg !== mesFiltro) return false;
           }
         }
 
-        // 3. Filtro de Texto
         if (textoFiltro) {
           const matchProt = r.protocolo.toLowerCase().includes(textoFiltro);
           const matchCli = r.cliente.toLowerCase().includes(textoFiltro);
@@ -692,15 +752,38 @@
       });
     }
 
+    function alternarModoDash() {
+      const modo = document.getElementById('dashModoPeriodo').value;
+      document.getElementById('dashFiltroMes').disabled = (modo === "GERAL");
+      atualizarDashboard();
+    }
+
     function atualizarDashboard() {
       if (!bancoDados || !bancoDados.requisicoes) return;
 
-      const reqs = bancoDados.requisicoes;
+      const modo = document.getElementById('dashModoPeriodo').value;
+      const mesFiltro = document.getElementById('dashFiltroMes').value;
+
+      let reqs = bancoDados.requisicoes;
+
+      // Filtrar por Mês se modo for "MES"
+      if (modo === "MES" && mesFiltro) {
+        reqs = reqs.filter(r => {
+          if (!r.dataHora) return false;
+          const partesData = r.dataHora.split(' ')[0].split('/');
+          if (partesData.length === 3) {
+            const anoMesReg = `${partesData[2]}-${partesData[1].padStart(2, '0')}`;
+            return anoMesReg === mesFiltro;
+          }
+          return false;
+        });
+      }
+
       document.getElementById('dashTotalReq').innerText = reqs.length;
 
       let pendentes = 0, atendidos = 0, recusados = 0;
+      let clientesMap = {};
       let familiasMap = {};
-      let operacoesMap = { "LOCAÇÃO": 0, "EMPRÉSTIMO": 0, "VENDA": 0 };
 
       reqs.forEach(r => {
         const st = r.status.toUpperCase();
@@ -708,8 +791,8 @@
         else if (st === "ATENDIDO") atendidos++;
         else if (st === "RECUSADO") recusados++;
 
-        const op = (r.operacao || "LOCAÇÃO").toUpperCase();
-        operacoesMap[op] = (operacoesMap[op] || 0) + 1;
+        const cli = (r.cliente || "OUTROS").toUpperCase();
+        clientesMap[cli] = (clientesMap[cli] || 0) + 1;
 
         const eq = (r.equipamentoSolicitado || "OUTROS").toUpperCase();
         familiasMap[eq] = (familiasMap[eq] || 0) + 1;
@@ -719,37 +802,45 @@
       document.getElementById('dashAtendidos').innerText = atendidos;
       document.getElementById('dashRecusados').innerText = recusados;
 
+      // Renderizar Gráfico/Tabela de Top Clientes
+      const divCli = document.getElementById('chartClientes');
+      divCli.innerHTML = "";
+      const maxCli = Math.max(...Object.values(clientesMap), 1);
+
+      if (Object.keys(clientesMap).length === 0) {
+        divCli.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">Sem solicitações registradas no período.</div>';
+      } else {
+        Object.keys(clientesMap).forEach(cli => {
+          const qtd = clientesMap[cli];
+          const pct = Math.round((qtd / maxCli) * 100);
+          divCli.innerHTML += `
+            <div class="bar-container">
+              <div class="bar-label"><span>${cli}</span><span>${qtd} req</span></div>
+              <div class="bar-bg"><div class="bar-fill" style="width: ${pct}%; background:#2563eb;"></div></div>
+            </div>
+          `;
+        });
+      }
+
       // Renderizar Gráfico de Famílias
       const divFam = document.getElementById('chartFamilias');
       divFam.innerHTML = "";
       const maxFam = Math.max(...Object.values(familiasMap), 1);
 
-      Object.keys(familiasMap).forEach(fam => {
-        const qtd = familiasMap[fam];
-        const pct = Math.round((qtd / maxFam) * 100);
-        divFam.innerHTML += `
-          <div class="bar-container">
-            <div class="bar-label"><span>${fam}</span><span>${qtd} req</span></div>
-            <div class="bar-bg"><div class="bar-fill" style="width: ${pct}%;"></div></div>
-          </div>
-        `;
-      });
-
-      // Renderizar Gráfico de Operações
-      const divOp = document.getElementById('chartOperacoes');
-      divOp.innerHTML = "";
-      const maxOp = Math.max(...Object.values(operacoesMap), 1);
-
-      Object.keys(operacoesMap).forEach(op => {
-        const qtd = operacoesMap[op];
-        const pct = Math.round((qtd / maxOp) * 100);
-        divOp.innerHTML += `
-          <div class="bar-container">
-            <div class="bar-label"><span>${op}</span><span>${qtd} req</span></div>
-            <div class="bar-bg"><div class="bar-fill" style="width: ${pct}%; background:#2563eb;"></div></div>
-          </div>
-        `;
-      });
+      if (Object.keys(familiasMap).length === 0) {
+        divFam.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">Sem solicitações registradas no período.</div>';
+      } else {
+        Object.keys(familiasMap).forEach(fam => {
+          const qtd = familiasMap[fam];
+          const pct = Math.round((qtd / maxFam) * 100);
+          divFam.innerHTML += `
+            <div class="bar-container">
+              <div class="bar-label"><span>${fam}</span><span>${qtd} req</span></div>
+              <div class="bar-bg"><div class="bar-fill" style="width: ${pct}%;"></div></div>
+            </div>
+          `;
+        });
+      }
     }
 
     function abrirModalRecusa(protReq) {
