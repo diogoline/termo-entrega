@@ -14,8 +14,8 @@
     .status-badge { background-color: #ffc107; color: #333; padding: 6px 14px; border-radius: 16px; font-size: 13px; font-weight: bold; transition: all 0.3s; }
     .status-badge.connected { background-color: #28a745; color: white; }
 
-    .nav-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
-    .nav-tab { padding: 10px 20px; font-size: 14px; font-weight: bold; border: none; background: #e2e8f0; color: #475569; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+    .nav-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .nav-tab { padding: 10px 18px; font-size: 13px; font-weight: bold; border: none; background: #e2e8f0; color: #475569; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
     .nav-tab.active { background: #1a4d80; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
     /* Estrutura das Telas */
@@ -25,13 +25,13 @@
     /* Layout Principal em Grid (Emissão) */
     .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .card { background: white; border-radius: 8px; padding: 16px; border: 1px solid #dcdcdc; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0,0,0,0.06); margin-bottom: 16px; }
-    .card-title { font-size: 14px; font-weight: bold; color: #1a4d80; text-transform: uppercase; border-bottom: 2px solid #1a4d80; padding-bottom: 6px; margin-bottom: 12px; }
+    .card-title { font-size: 14px; font-weight: bold; color: #1a4d80; text-transform: uppercase; border-bottom: 2px solid #1a4d80; padding-bottom: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
 
     /* Formulários e Inputs */
     .form-row { display: flex; gap: 12px; margin-bottom: 12px; }
     .form-group { flex: 1; display: flex; flex-direction: column; }
     label { font-size: 12px; font-weight: 700; color: #444; margin-bottom: 4px; text-transform: uppercase; }
-    input[type="text"], select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; background: #fff; transition: border-color 0.2s; }
+    input[type="text"], input[type="month"], select, textarea { width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; background: #fff; transition: border-color 0.2s; }
     input[type="text"]:focus, select:focus, textarea:focus { border-color: #1a4d80; outline: none; }
     input[readonly] { background-color: #f8f9fa; color: #333; font-weight: 600; }
     
@@ -39,10 +39,10 @@
     .radio-group label { font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 
     /* Tabelas */
-    .table-container { overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 6px; min-height: 200px; max-height: 450px; }
+    .table-container { overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 6px; min-height: 200px; max-height: 500px; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { background: #e9ecef; color: #1a4d80; padding: 10px; text-align: left; position: sticky; top: 0; border-bottom: 2px solid #ced4da; font-weight: bold; }
-    td { padding: 8px 10px; border-bottom: 1px solid #eee; vertical-align: middle; }
+    th { background: #e9ecef; color: #1a4d80; padding: 10px 8px; text-align: left; position: sticky; top: 0; border-bottom: 2px solid #ced4da; font-weight: bold; font-size: 12px; }
+    td { padding: 8px 8px; border-bottom: 1px solid #eee; vertical-align: middle; font-size: 12px; }
     .td-center { text-align: center; }
 
     /* Assinaturas */
@@ -58,21 +58,37 @@
     .btn-submit:hover { background: #13385c; }
     .btn-submit:disabled { background: #6c757d; cursor: not-allowed; }
 
-    .btn-pdf { background: #28a745; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 12px; display: inline-block; white-space: nowrap; }
-    .btn-pdf:hover { background: #218838; }
+    .btn-pdf { background: #1a4d80; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; height: 28px; }
+    .btn-pdf:hover { background: #13385c; }
 
-    .btn-atender { background: #e0a800; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+    .btn-atender { background: #e0a800; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 28px; display: inline-flex; align-items: center; justify-content: center; }
     .btn-atender:hover { background: #c69500; }
 
-    .btn-negar { background: #dc3545; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+    .btn-negar { background: #dc3545; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 28px; display: inline-flex; align-items: center; justify-content: center; }
     .btn-negar:hover { background: #bd2130; }
 
-    .badge-status { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; display: inline-block; }
+    .badge-status { padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; display: inline-block; text-align: center; }
     .badge-pendente { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
     .badge-atendido { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .badge-recusado { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
 
-    .action-group { display: flex; gap: 6px; justify-content: center; align-items: center; }
+    /* Alinhamento estrito em linha única para os botões de ação */
+    .action-group { display: flex; gap: 4px; justify-content: center; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
+
+    /* Estilos do Dashboard */
+    .dash-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
+    .metric-card { background: white; padding: 16px; border-radius: 8px; border: 1px solid #dcdcdc; border-left: 5px solid #1a4d80; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .metric-card.yellow { border-left-color: #ffc107; }
+    .metric-card.green { border-left-color: #28a745; }
+    .metric-card.red { border-left-color: #dc3545; }
+    .metric-title { font-size: 12px; font-weight: bold; color: #64748b; text-transform: uppercase; }
+    .metric-value { font-size: 24px; font-weight: bold; color: #1e293b; margin-top: 4px; }
+
+    .dash-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .bar-container { margin-bottom: 10px; }
+    .bar-label { display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; color: #475569; margin-bottom: 3px; }
+    .bar-bg { background: #e2e8f0; height: 18px; border-radius: 9px; overflow: hidden; }
+    .bar-fill { background: #1a4d80; height: 100%; border-radius: 9px; transition: width 0.5s; }
 
     /* MODAL / POP-UP MOTIVO DE RECUSA */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
@@ -112,6 +128,7 @@
     <button type="button" class="nav-tab active" onclick="mudarAba('emissao')">📝 Emitir Novo Termo</button>
     <button type="button" class="nav-tab" onclick="mudarAba('consulta')">🔍 Consultar Termos Emitidos</button>
     <button type="button" class="nav-tab" onclick="mudarAba('requisicoes')">📋 Requisições Internas</button>
+    <button type="button" class="nav-tab" onclick="mudarAba('dashboard')">📊 Dashboard & Métricas</button>
   </div>
 
   <!-- ABA 1: EMISSÃO DE TERMO -->
@@ -260,6 +277,7 @@
   <!-- ABA 3: REQUISIÇÕES INTERNAS DE EQUIPAMENTO -->
   <div id="abaRequisicoes" class="tab-content">
     
+    <!-- FORMULÁRIO DE NOVA REQUISIÇÃO -->
     <div class="card">
       <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
       <form id="formReq" onsubmit="salvarRequisicao(event)">
@@ -301,28 +319,97 @@
       </form>
     </div>
 
+    <!-- ACOMPANHAMENTO DE SOLICITAÇÕES COM FILTROS AVANÇADOS -->
     <div class="card">
-      <div class="card-title">Acompanhamento de Solicitações</div>
+      <div class="card-title">
+        <span>Acompanhamento de Solicitações</span>
+      </div>
+
+      <!-- BARRA DE FILTROS -->
+      <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
+        <div class="form-group" style="flex: 1;">
+          <label>Filtrar por Status:</label>
+          <select id="filtroStatusReq" onchange="filtrarRequisicoes()">
+            <option value="TODOS">Todos os Status</option>
+            <option value="PENDENTE">Apenas Pendentes</option>
+            <option value="ATENDIDO">Apenas Atendidos</option>
+            <option value="RECUSADO">Apenas Recusados</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="flex: 1;">
+          <label>Filtrar por Mês/Ano:</label>
+          <input type="month" id="filtroMesReq" onchange="filtrarRequisicoes()">
+        </div>
+
+        <div class="form-group" style="flex: 2;">
+          <label>Buscar na Tabela (Cliente, Req # ou Equipamento):</label>
+          <input type="text" id="filtroTextoReq" oninput="filtrarRequisicoes()" placeholder="Digite para buscar...">
+        </div>
+      </div>
       
       <div class="table-container">
         <table>
           <thead>
             <tr>
-              <th class="td-center" style="width: 80px;">Req #</th>
-              <th style="width: 130px;">Data / Hora</th>
+              <th class="td-center" style="width: 75px;">Req #</th>
+              <th style="width: 120px;">Data / Hora</th>
               <th>Cliente / Locatário</th>
               <th>Equipamento Solicitado</th>
-              <th class="td-center" style="width: 100px;">Operação</th>
-              <th class="td-center" style="width: 100px;">Status</th>
-              <th class="td-center" style="width: 220px;">Ações / Qualidade</th>
+              <th>Motivo / Obs.</th>
+              <th class="td-center" style="width: 85px;">Operação</th>
+              <th class="td-center" style="width: 90px;">Status</th>
+              <th class="td-center" style="width: 210px;">Ações / Qualidade</th>
             </tr>
           </thead>
           <tbody id="corpoRequisicoes">
             <tr>
-              <td colspan="7" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td>
+              <td colspan="8" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td>
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ABA 4: DASHBOARD DE MÉTRICAS -->
+  <div id="abaDashboard" class="tab-content">
+    
+    <!-- CARDS DE MÉTRICAS SUPERIORES -->
+    <div class="dash-metrics">
+      <div class="metric-card">
+        <div class="metric-title">Total de Requisições</div>
+        <div class="metric-value" id="dashTotalReq">0</div>
+      </div>
+      <div class="metric-card yellow">
+        <div class="metric-title">Pendentes de Envio</div>
+        <div class="metric-value" id="dashPendentes">0</div>
+      </div>
+      <div class="metric-card green">
+        <div class="metric-title">Atendidas pela Qualidade</div>
+        <div class="metric-value" id="dashAtendidos">0</div>
+      </div>
+      <div class="metric-card red">
+        <div class="metric-title">Recusadas / Negadas</div>
+        <div class="metric-value" id="dashRecusados">0</div>
+      </div>
+    </div>
+
+    <!-- GRÁFICOS VISUAIS -->
+    <div class="dash-charts-grid">
+      <div class="card">
+        <div class="card-title">Solicitações por Família de Equipamentos</div>
+        <div id="chartFamilias" style="padding-top: 10px;">
+          <div style="color:#888; text-align:center; padding: 20px;">Sem dados suficientes.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Distribuição por Tipo de Operação</div>
+        <div id="chartOperacoes" style="padding-top: 10px;">
+          <div style="color:#888; text-align:center; padding: 20px;">Sem dados suficientes.</div>
+        </div>
       </div>
     </div>
 
@@ -382,13 +469,13 @@
 
         popularAutocomplete();
         renderizarTabelaTermos(bancoDados.termosEmitidos);
-        renderizarTabelaRequisicoes(bancoDados.requisicoes);
+        filtrarRequisicoes();
+        atualizarDashboard();
       } else {
         document.getElementById('statusBadge').innerText = "Erro nos Dados";
       }
     }
 
-    // ATUALIZAÇÃO SILENCIOSA ULTRA-RÁPIDA A CADA 5 SEGUNDOS (SEM PISCAR A TELA)
     function buscarAtualizacoesSilenciosas() {
       const script = document.createElement('script');
       script.src = API_URL + "?callback=carregarDadosPlanilha&t=" + new Date().getTime();
@@ -397,6 +484,11 @@
     }
 
     window.onload = function() {
+      // Definir mês atual no campo de filtro por padrão (YYYY-MM)
+      const hoje = new Date();
+      const mesFormatado = hoje.getFullYear() + "-" + String(hoje.getMonth() + 1).padStart(2, '0');
+      document.getElementById('filtroMesReq').value = mesFormatado;
+
       const script = document.createElement('script');
       script.src = API_URL + "?callback=carregarDadosPlanilha";
       script.onerror = function() {
@@ -404,7 +496,6 @@
       };
       document.body.appendChild(script);
 
-      // Temporizador de 5 segundos em segundo plano
       setInterval(buscarAtualizacoesSilenciosas, 5000);
     };
 
@@ -432,6 +523,10 @@
       } else if (nomeAba === 'requisicoes') {
         document.querySelectorAll('.nav-tab')[2].classList.add('active');
         document.getElementById('abaRequisicoes').classList.add('active');
+      } else if (nomeAba === 'dashboard') {
+        document.querySelectorAll('.nav-tab')[3].classList.add('active');
+        document.getElementById('abaDashboard').classList.add('active');
+        atualizarDashboard();
       }
     }
 
@@ -513,13 +608,48 @@
       });
     }
 
+    function filtrarRequisicoes() {
+      if (!bancoDados || !bancoDados.requisicoes) return;
+
+      const statusFiltro = document.getElementById('filtroStatusReq').value;
+      const mesFiltro = document.getElementById('filtroMesReq').value; // YYYY-MM
+      const textoFiltro = document.getElementById('filtroTextoReq').value.toLowerCase().trim();
+
+      let filtradas = bancoDados.requisicoes.filter(r => {
+        // 1. Filtro por Status
+        if (statusFiltro !== "TODOS" && r.status.toUpperCase() !== statusFiltro) return false;
+
+        // 2. Filtro por Mês/Ano (Data dd/mm/yyyy hh:mm)
+        if (mesFiltro && r.dataHora) {
+          const partesData = r.dataHora.split(' ')[0].split('/'); // [dd, mm, yyyy]
+          if (partesData.length === 3) {
+            const anoMesReg = `${partesData[2]}-${partesData[1].padStart(2, '0')}`;
+            if (anoMesReg !== mesFiltro) return false;
+          }
+        }
+
+        // 3. Filtro de Texto
+        if (textoFiltro) {
+          const matchProt = r.protocolo.toLowerCase().includes(textoFiltro);
+          const matchCli = r.cliente.toLowerCase().includes(textoFiltro);
+          const matchEq = r.equipamentoSolicitado.toLowerCase().includes(textoFiltro);
+          const matchMotivo = (r.motivo || "").toLowerCase().includes(textoFiltro);
+          if (!matchProt && !matchCli && !matchEq && !matchMotivo) return false;
+        }
+
+        return true;
+      });
+
+      renderizarTabelaRequisicoes(filtradas);
+    }
+
     function renderizarTabelaRequisicoes(lista) {
       const tbody = document.getElementById('corpoRequisicoes');
       if (!tbody) return;
       tbody.innerHTML = "";
 
       if (!lista || lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição registrada.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição encontrada para os filtros selecionados.</td></tr>';
         return;
       }
 
@@ -532,7 +662,7 @@
         if (st === "ATENDIDO") badgeClass = "badge-atendido";
         if (isRecusado) badgeClass = "badge-recusado";
         
-        const linkPdfReq = r.pdfUrlReq ? `<a href="${r.pdfUrlReq}" target="_blank" class="btn-pdf" style="background:#1a4d80;">📄 REQ</a>` : '';
+        const linkPdfReq = r.pdfUrlReq ? `<a href="${r.pdfUrlReq}" target="_blank" class="btn-pdf">📄 REQ</a>` : '';
         
         let btnAcao = "";
         if (isPendente) {
@@ -542,9 +672,9 @@
             <button type="button" class="btn-negar" onclick="abrirModalRecusa('${r.protocolo}')">Negar</button>
           </div>`;
         } else if (isRecusado) {
-          btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#dc3545; font-weight:bold; font-size:11px;">Recusado pela Qualidade</span></div>`;
+          btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#dc3545; font-weight:bold; font-size:11px;">Recusado</span></div>`;
         } else {
-          btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#28a745; font-weight:bold; font-size:12px;">Termo: ${r.protocoloTermo}</span></div>`;
+          btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#28a745; font-weight:bold; font-size:11px;">Termo: ${r.protocoloTermo}</span></div>`;
         }
 
         tbody.innerHTML += `
@@ -552,11 +682,72 @@
             <td class="td-center"><b>${r.protocolo}</b></td>
             <td>${r.dataHora}</td>
             <td>${r.cliente}</td>
-            <td>${r.equipamentoSolicitado}</td>
+            <td><b>${r.equipamentoSolicitado}</b></td>
+            <td style="color:#555; font-style:italic;">${r.motivo || "-"}</td>
             <td class="td-center"><b>${r.operacao}</b></td>
             <td class="td-center"><span class="badge-status ${badgeClass}">${r.status}</span></td>
             <td class="td-center">${btnAcao}</td>
           </tr>
+        `;
+      });
+    }
+
+    function atualizarDashboard() {
+      if (!bancoDados || !bancoDados.requisicoes) return;
+
+      const reqs = bancoDados.requisicoes;
+      document.getElementById('dashTotalReq').innerText = reqs.length;
+
+      let pendentes = 0, atendidos = 0, recusados = 0;
+      let familiasMap = {};
+      let operacoesMap = { "LOCAÇÃO": 0, "EMPRÉSTIMO": 0, "VENDA": 0 };
+
+      reqs.forEach(r => {
+        const st = r.status.toUpperCase();
+        if (st === "PENDENTE") pendentes++;
+        else if (st === "ATENDIDO") atendidos++;
+        else if (st === "RECUSADO") recusados++;
+
+        const op = (r.operacao || "LOCAÇÃO").toUpperCase();
+        operacoesMap[op] = (operacoesMap[op] || 0) + 1;
+
+        const eq = (r.equipamentoSolicitado || "OUTROS").toUpperCase();
+        familiasMap[eq] = (familiasMap[eq] || 0) + 1;
+      });
+
+      document.getElementById('dashPendentes').innerText = pendentes;
+      document.getElementById('dashAtendidos').innerText = atendidos;
+      document.getElementById('dashRecusados').innerText = recusados;
+
+      // Renderizar Gráfico de Famílias
+      const divFam = document.getElementById('chartFamilias');
+      divFam.innerHTML = "";
+      const maxFam = Math.max(...Object.values(familiasMap), 1);
+
+      Object.keys(familiasMap).forEach(fam => {
+        const qtd = familiasMap[fam];
+        const pct = Math.round((qtd / maxFam) * 100);
+        divFam.innerHTML += `
+          <div class="bar-container">
+            <div class="bar-label"><span>${fam}</span><span>${qtd} req</span></div>
+            <div class="bar-bg"><div class="bar-fill" style="width: ${pct}%;"></div></div>
+          </div>
+        `;
+      });
+
+      // Renderizar Gráfico de Operações
+      const divOp = document.getElementById('chartOperacoes');
+      divOp.innerHTML = "";
+      const maxOp = Math.max(...Object.values(operacoesMap), 1);
+
+      Object.keys(operacoesMap).forEach(op => {
+        const qtd = operacoesMap[op];
+        const pct = Math.round((qtd / maxOp) * 100);
+        divOp.innerHTML += `
+          <div class="bar-container">
+            <div class="bar-label"><span>${op}</span><span>${qtd} req</span></div>
+            <div class="bar-bg"><div class="bar-fill" style="width: ${pct}%; background:#2563eb;"></div></div>
+          </div>
         `;
       });
     }
