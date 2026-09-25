@@ -667,6 +667,7 @@
                 <option value="PREVENTIVA">PREVENTIVA</option>
                 <option value="CALIBRAÇÃO">CALIBRAÇÃO</option>
                 <option value="INSPEÇÃO">INSPEÇÃO / HIGIENIZAÇÃO</option>
+                <option value="OFICINA">OFICINA</option>
               </select>
             </div>
             <div class="form-group" style="flex: 1;">
@@ -787,7 +788,7 @@
 
   </div>
 
-  <!-- MODAL / POP-UP ESPELHO DE VISUALIZAÇÃO E REABERTURA/FECHAMENTO DE O.S. -->
+  <!-- MODAL ESPELHO DA O.S. (EDITÁVEL) -->
   <div id="modalOS" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-title">
@@ -805,6 +806,17 @@
       </div>
 
       <div class="form-group" style="margin-bottom: 10px;">
+        <label>Tipo de Manutenção:</label>
+        <select id="mOSTipoManutencao">
+          <option value="CORRETIVA">CORRETIVA</option>
+          <option value="PREVENTIVA">PREVENTIVA</option>
+          <option value="CALIBRAÇÃO">CALIBRAÇÃO</option>
+          <option value="INSPEÇÃO">INSPEÇÃO / HIGIENIZAÇÃO</option>
+          <option value="OFICINA">OFICINA</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 10px;">
         <label>Diagnóstico Técnico:</label>
         <textarea id="mOSDiagnostico" style="height: 60px;"></textarea>
       </div>
@@ -814,7 +826,7 @@
         <textarea id="mOSServico" style="height: 60px;"></textarea>
       </div>
 
-      <!-- GALERIA ORGANIZADA DE ANEXOS / FOTOS EM MINIATURAS LADO A LADO -->
+      <!-- GALERIA ORGANIZADA DE ANEXOS / FOTOS -->
       <div style="margin-bottom: 16px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
         <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
           <span style="font-size: 11px; font-weight: 700; color: #444; text-transform: uppercase;">Anexos & Fotos da Manutenção:</span>
@@ -827,13 +839,13 @@
         </div>
       </div>
 
-      <!-- BOTÃO DINÂMICO DE REABRIR OU ENCERRAR O.S. -->
+      <!-- BOTÃO DE AÇÃO DINÂMICO E BOTÃO FECHAR RENOMEADO -->
       <div style="display: flex; gap: 8px; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 12px;">
         <button type="button" id="btnAcaoOSModal" class="btn-negar" style="background:#d97706;" onclick="alternarAcaoOS()">🔓 Reabrir O.S.</button>
         
         <div style="display: flex; gap: 8px;">
           <a id="btnPdfOSModal" href="#" target="_blank" class="btn-pdf">🖨️ Imprimir PDF</a>
-          <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalOS()">Fechar Window</button>
+          <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalOS()">Fechar</button>
         </div>
       </div>
     </div>
@@ -886,7 +898,6 @@
     let osSelecionadaModal = null;
     let usuarioLogado = null;
 
-    /* AUXILIAR: CONVERTE LINK DE VISUALIZAÇÃO DO DRIVE EM LINK DIRETO DE IMAGEM RAW */
     function converterUrlDriveParaImagem(url) {
       if (!url) return "";
       const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
@@ -896,7 +907,6 @@
       return url;
     }
 
-    /* CONTROLE DOS DROPDOWNS DO MENU */
     function toggleMenuDropdown(event, dropId) {
       event.stopPropagation();
       const el = document.getElementById(dropId);
@@ -916,7 +926,6 @@
       fecharTodosDropdowns();
     });
 
-    /* --- CONTROLE DE LOGIN E SESSÃO PERMANENTE --- */
     function verificarSessao() {
       const sessaoSalva = localStorage.getItem("dmasys_usuario");
       if (sessaoSalva) {
@@ -1038,7 +1047,6 @@
       setInterval(buscarAtualizacoesSilenciosas, 5000);
     };
 
-    /* LÓGICA DE NOTIFICAÇÕES (SINO) */
     function toggleNotifications() {
       const dropdown = document.getElementById('notifDropdown');
       dropdown.classList.toggle('active');
@@ -1096,7 +1104,6 @@
       toggleChat();
     }
 
-    /* NAVEGAÇÃO DE ABAS */
     function mudarAba(nomeAba) {
       fecharTodosDropdowns();
       document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
@@ -1168,7 +1175,6 @@
       document.getElementById('btnEnviar').disabled = false;
     }
 
-    /* RENDERIZAÇÃO E FILTRO DE O.S. */
     function renderizarTabelaOS() {
       const tbody = document.getElementById('corpoOS');
       if (!tbody) return;
@@ -1229,7 +1235,6 @@
       });
     }
 
-    /* ESPELHO E AÇÕES DA O.S. */
     function abrirModalOS(protocoloOS) {
       if (!bancoDados || !bancoDados.ordensServico) return;
 
@@ -1245,10 +1250,13 @@
       document.getElementById('mOSTag').innerText = os.tag;
       document.getElementById('mOSEquip').innerText = os.equipamento;
       document.getElementById('mOSTecnico').innerText = os.tecnico;
+      
+      const selTipo = document.getElementById('mOSTipoManutencao');
+      selTipo.value = (os.tipoManutencao || "CORRETIVA").toUpperCase();
+
       document.getElementById('mOSDiagnostico').value = os.diagnosticoTecnico || "";
       document.getElementById('mOSServico').value = os.servicoRealizado || "";
 
-      // Alterna o botão de Ação entre REABRIR ou ENCERRAR conforme o status
       const btnAcao = document.getElementById('btnAcaoOSModal');
       if (os.status.toUpperCase() === "CONCLUÍDA") {
         btnAcao.innerText = "🔓 Reabrir O.S.";
@@ -1266,7 +1274,6 @@
         btnPdf.style.display = "none";
       }
 
-      // Renderização organizada das fotos em miniaturas lado a lado
       const divGaleria = document.getElementById('mOSGaleria');
       divGaleria.innerHTML = "";
       
@@ -1298,17 +1305,18 @@
       if (!osSelecionadaModal) return;
 
       const st = osSelecionadaModal.status.toUpperCase();
+      const tipo = document.getElementById('mOSTipoManutencao').value;
       const diag = document.getElementById('mOSDiagnostico').value;
       const serv = document.getElementById('mOSServico').value;
 
       if (st === "CONCLUÍDA") {
-        // REABRIR A O.S.
-        const confirma = confirm(`Deseja REABRIR a Ordem de Serviço ${osSelecionadaModal.protocoloOS}?\n\nIsso alterará a situação para ABERTA / PARADO no sistema.`);
+        const confirma = confirm(`Deseja REABRIR a Ordem de Serviço ${osSelecionadaModal.protocoloOS}?\n\nIsso alterará a situação para ABERTA no sistema.`);
         if (!confirma) return;
 
         const payload = {
           acao: "REABRIR_OS",
           protocoloOS: osSelecionadaModal.protocoloOS,
+          novoTipo: tipo,
           novoDiagnostico: diag,
           novoServico: serv
         };
@@ -1330,8 +1338,7 @@
         .catch(err => alert("Erro na comunicação com o servidor."));
 
       } else {
-        // ENCERRAR A O.S. E GERAR NOVO PDF
-        const confirma = confirm(`Deseja ENCERRAR a Ordem de Serviço ${osSelecionadaModal.protocoloOS}?\n\nO laudo atualizado e todas as fotos anexadas serão salvos no relatório PDF.`);
+        const confirma = confirm(`Deseja ENCERRAR a Ordem de Serviço ${osSelecionadaModal.protocoloOS}?\n\nO laudo e o tipo de manutenção selecionados serão salvos no relatório PDF.`);
         if (!confirma) return;
 
         const btnAcao = document.getElementById('btnAcaoOSModal');
@@ -1341,6 +1348,7 @@
         const payload = {
           acao: "FECHAR_OS",
           protocoloOS: osSelecionadaModal.protocoloOS,
+          novoTipo: tipo,
           novoDiagnostico: diag,
           novoServico: serv
         };
@@ -1913,7 +1921,6 @@
       }
     }
 
-    // Canvas de Assinatura
     const canvas = document.getElementById('canvasAssinatura');
     const ctx = canvas.getContext('2d');
     let desenhando = false;
