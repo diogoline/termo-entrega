@@ -588,13 +588,24 @@
     let protocoloReqEmRecusa = null;
     let usuarioLogado = null;
 
-    /* --- CONTROLE DE LOGIN E SESSÃO --- */
+    /* --- CONTROLE DE LOGIN E SESSÃO PERMANENTE (LOCALSTORAGE) --- */
     function verificarSessao() {
-      const sessaoSalva = sessionStorage.getItem("dmasys_usuario");
+      const sessaoSalva = localStorage.getItem("dmasys_usuario");
       if (sessaoSalva) {
         usuarioLogado = JSON.parse(sessaoSalva);
         document.getElementById('loginOverlay').style.display = "none";
         document.getElementById('appContainer').style.display = "block";
+
+        if (bancoDados && bancoDados.usuarios && bancoDados.usuarios.length > 0) {
+          const selTec = document.getElementById('selectTecnico');
+          if (selTec) {
+            const idx = bancoDados.usuarios.findIndex(u => u.nome.toLowerCase() === usuarioLogado.nome.toLowerCase());
+            if (idx !== -1) {
+              selTec.value = idx;
+              exibirAssinaturaTecnico();
+            }
+          }
+        }
       } else {
         document.getElementById('loginOverlay').style.display = "flex";
         document.getElementById('appContainer').style.display = "none";
@@ -613,7 +624,7 @@
       }
 
       if (!bancoDados || !bancoDados.usuarios || bancoDados.usuarios.length === 0) {
-        divErro.innerText = "Carregando dados... Tente novamente em alguns segundos.";
+        divErro.innerText = "Carregando dados do servidor... Tente novamente em alguns segundos.";
         divErro.style.display = "block";
         return;
       }
@@ -625,12 +636,13 @@
       if (encontrado) {
         divErro.style.display = "none";
         usuarioLogado = encontrado;
-        sessionStorage.setItem("dmasys_usuario", JSON.stringify(encontrado));
+        
+        // Salva persistentemente para não perder ao dar F5
+        localStorage.setItem("dmasys_usuario", JSON.stringify(encontrado));
         
         document.getElementById('loginOverlay').style.display = "none";
         document.getElementById('appContainer').style.display = "block";
 
-        // Preenche o técnico responsável com o usuário logado se houver correspondência
         const selTec = document.getElementById('selectTecnico');
         if (selTec && bancoDados.usuarios) {
           const idx = bancoDados.usuarios.findIndex(u => u.nome.toLowerCase() === encontrado.nome.toLowerCase());
@@ -646,7 +658,7 @@
     }
 
     function efetuarLogout() {
-      sessionStorage.removeItem("dmasys_usuario");
+      localStorage.removeItem("dmasys_usuario");
       window.location.reload();
     }
 
@@ -677,6 +689,9 @@
     }
 
     window.onload = function() {
+      // Executa a verificação imediatamente ao carregar a página
+      verificarSessao();
+
       const hoje = new Date();
       const mesFormatado = hoje.getFullYear() + "-" + String(hoje.getMonth() + 1).padStart(2, '0');
       document.getElementById('filtroMesReq').value = mesFormatado;
