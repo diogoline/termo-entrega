@@ -39,7 +39,7 @@
     .notif-item-title { font-size: 12px; font-weight: bold; color: #1e293b; display: flex; justify-content: space-between; }
     .notif-item-sub { font-size: 11px; color: #64748b; margin-top: 2px; }
 
-    /* NAVEGAÇÃO REORGANIZADA POR MENUS DROPDOWN */
+    /* NAVEGAÇÃO POR MENUS DROPDOWN */
     .nav-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
     .nav-tab { padding: 8px 14px; font-size: 13px; font-weight: 700; border: none; background: #f1f5f9; color: #334155; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
     .nav-tab:hover { background: #e2e8f0; }
@@ -278,9 +278,15 @@
         <button type="button" class="nav-tab" id="btnNavCadastros" onclick="toggleMenuDropdown(event, 'dropCadastros')">➕ Cadastros ▾</button>
         <div class="dropdown-content">
           <button type="button" onclick="mudarAba('cad_equipamento')">💉 Cadastrar Novo Equipamento</button>
+          <button type="button" onclick="mudarAba('cad_auxiliares')">🏷️ Nomenclaturas Padrão</button>
         </div>
       </div>
     </div>
+
+    <!-- DATALISTS DE NOMENCLATURAS PADRONIZADAS -->
+    <datalist id="listDescricoesPadrao"></datalist>
+    <datalist id="listModelosPadrao"></datalist>
+    <datalist id="listFabricantesPadrao"></datalist>
 
     <!-- ABA 0: TELA DE INÍCIO -->
     <div id="abaInicio" class="tab-content active">
@@ -400,7 +406,7 @@
             </div>
             <div class="form-group">
               <label>Equipamento Solicitado para a Qualidade enviar:</label>
-              <input type="text" id="reqEqSolicitado" placeholder="Ex: Ventilador Pulmonar (Modelo X)" required>
+              <input type="text" id="reqEqSolicitado" list="listDescricoesPadrao" placeholder="Ex: MONITOR MULTIPARAMÉTRICO" required>
             </div>
           </div>
 
@@ -742,7 +748,7 @@
       </div>
     </div>
 
-    <!-- ABA 7: CADASTRO DE NOVO EQUIPAMENTO -->
+    <!-- ABA 7: CADASTRO DE NOVO EQUIPAMENTO NA ABA EQUIP -->
     <div id="abaCadEquipamento" class="tab-content">
       <div class="card">
         <div class="card-title">Cadastrar Novo Equipamento (Aba EQUIP)</div>
@@ -764,16 +770,16 @@
 
           <div class="form-row">
             <div class="form-group" style="flex: 2;">
-              <label>Nome do Equipamento:</label>
-              <input type="text" id="cadNome" placeholder="Ex: VENTILADOR PULMONAR" required>
+              <label>Nome do Equipamento (Descrição Padronizada):</label>
+              <input type="text" id="cadNome" list="listDescricoesPadrao" placeholder="Selecione ou digite o nome..." required>
             </div>
             <div class="form-group" style="flex: 1;">
-              <label>Modelo:</label>
-              <input type="text" id="cadModelo" placeholder="Ex: RUAH" required>
+              <label>Modelo (Padronizado):</label>
+              <input type="text" id="cadModelo" list="listModelosPadrao" placeholder="Selecione ou digite o modelo..." required>
             </div>
             <div class="form-group" style="flex: 1;">
-              <label>Fabricante:</label>
-              <input type="text" id="cadFabricante" placeholder="Ex: CMOS DRAKE" required>
+              <label>Fabricante (Padronizado):</label>
+              <input type="text" id="cadFabricante" list="listFabricantesPadrao" placeholder="Selecione ou digite o fabricante..." required>
             </div>
           </div>
 
@@ -786,6 +792,69 @@
             <button type="submit" id="btnSalvarCadEquip" class="btn-submit">Salvar Equipamento na Planilha</button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- ABA 8: CADASTRO DE NOMENCLATURAS PADRÃO (DESCRICAO, MODELO, FABRICANTE) -->
+    <div id="abaCadAuxiliares" class="tab-content">
+      <div class="card">
+        <div class="card-title">Gerenciar Nomenclaturas Padronizadas</div>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 16px;">Cadastre aqui os termos oficiais para evitar divergências na hora de cadastrar equipamentos no sistema.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+          
+          <!-- CADASTRO DE DESCRIÇÕES -->
+          <div style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="font-weight: bold; color: #1a4d80; font-size: 13px; margin-bottom: 10px;">1. Descrição / Nome do Ativo</div>
+            <div class="form-group" style="margin-bottom: 10px;">
+              <label>Nova Descrição:</label>
+              <input type="text" id="novoAuxDescricao" placeholder="Ex: MONITOR MULTIPARAMÉTRICO">
+            </div>
+            <button type="button" class="btn-submit" style="width: 100%; padding: 8px;" onclick="salvarAuxiliar('DESCRICAO')">➕ Cadastrar Descrição</button>
+            
+            <div style="margin-top: 14px;">
+              <label>Cadastrados:</label>
+              <div id="listaAuxDescricao" style="max-height: 200px; overflow-y: auto; background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; font-size: 11px;">
+                <!-- Lista preenchida via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- CADASTRO DE MODELOS -->
+          <div style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="font-weight: bold; color: #1a4d80; font-size: 13px; margin-bottom: 10px;">2. Modelo do Equipamento</div>
+            <div class="form-group" style="margin-bottom: 10px;">
+              <label>Novo Modelo:</label>
+              <input type="text" id="novoAuxModelo" placeholder="Ex: RUAH">
+            </div>
+            <button type="button" class="btn-submit" style="width: 100%; padding: 8px;" onclick="salvarAuxiliar('MODELO')">➕ Cadastrar Modelo</button>
+            
+            <div style="margin-top: 14px;">
+              <label>Cadastrados:</label>
+              <div id="listaAuxModelo" style="max-height: 200px; overflow-y: auto; background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; font-size: 11px;">
+                <!-- Lista preenchida via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- CADASTRO DE FABRICANTES -->
+          <div style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="font-weight: bold; color: #1a4d80; font-size: 13px; margin-bottom: 10px;">3. Fabricante / Marca</div>
+            <div class="form-group" style="margin-bottom: 10px;">
+              <label>Novo Fabricante:</label>
+              <input type="text" id="novoAuxFabricante" placeholder="Ex: CMOS DRAKE">
+            </div>
+            <button type="button" class="btn-submit" style="width: 100%; padding: 8px;" onclick="salvarAuxiliar('FABRICANTE')">➕ Cadastrar Fabricante</button>
+            
+            <div style="margin-top: 14px;">
+              <label>Cadastrados:</label>
+              <div id="listaAuxFabricante" style="max-height: 200px; overflow-y: auto; background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; font-size: 11px;">
+                <!-- Lista preenchida via JS -->
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
 
@@ -892,7 +961,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
     const NUMERO_WHATSAPP_SUPORTE = "5511970116092";
 
-    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [] };
+    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], descricoesPadrao: [], modelosPadrao: [], fabricantesPadrao: [] };
     let equipamentoSelecionado = null;
     let osEquipamentoSelecionado = null;
     let protocoloReqEmRecusa = null;
@@ -980,6 +1049,79 @@
           </div>
         `;
       });
+    }
+
+    function renderizarListasAuxiliares() {
+      // Datalists para autocomplete
+      const dlDesc = document.getElementById('listDescricoesPadrao');
+      const dlMod = document.getElementById('listModelosPadrao');
+      const dlFab = document.getElementById('listFabricantesPadrao');
+
+      if (dlDesc) {
+        dlDesc.innerHTML = "";
+        (bancoDados.descricoesPadrao || []).forEach(d => dlDesc.innerHTML += `<option value="${d}">`);
+      }
+      if (dlMod) {
+        dlMod.innerHTML = "";
+        (bancoDados.modelosPadrao || []).forEach(m => dlMod.innerHTML += `<option value="${m}">`);
+      }
+      if (dlFab) {
+        dlFab.innerHTML = "";
+        (bancoDados.fabricantesPadrao || []).forEach(f => dlFab.innerHTML += `<option value="${f}">`);
+      }
+
+      // Caixas de visualização na tela de cadastro auxiliar
+      const divDesc = document.getElementById('listaAuxDescricao');
+      const divMod = document.getElementById('listaAuxModelo');
+      const divFab = document.getElementById('listaAuxFabricante');
+
+      if (divDesc) {
+        divDesc.innerHTML = (bancoDados.descricoesPadrao || []).map(d => `<div style="padding: 3px 0; border-bottom: 1px solid #f1f5f9;">• ${d}</div>`).join('') || '<div style="color:#aaa;">Nenhum item</div>';
+      }
+      if (divMod) {
+        divMod.innerHTML = (bancoDados.modelosPadrao || []).map(m => `<div style="padding: 3px 0; border-bottom: 1px solid #f1f5f9;">• ${m}</div>`).join('') || '<div style="color:#aaa;">Nenhum item</div>';
+      }
+      if (divFab) {
+        divFab.innerHTML = (bancoDados.fabricantesPadrao || []).map(f => `<div style="padding: 3px 0; border-bottom: 1px solid #f1f5f9;">• ${f}</div>`).join('') || '<div style="color:#aaa;">Nenhum item</div>';
+      }
+    }
+
+    function salvarAuxiliar(tipo) {
+      let campoId = 'novoAuxDescricao';
+      if (tipo === 'MODELO') campoId = 'novoAuxModelo';
+      if (tipo === 'FABRICANTE') campoId = 'novoAuxFabricante';
+
+      const inputEl = document.getElementById(campoId);
+      const val = inputEl.value.trim().toUpperCase();
+
+      if (!val) {
+        alert("Por favor, digite o nome para cadastrar.");
+        return;
+      }
+
+      const payload = {
+        acao: "CRIAR_AUXILIAR",
+        tipo: tipo,
+        valor: val
+      };
+
+      inputEl.value = "";
+      alert(`Cadastrando "${val}" na lista oficial...`);
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === "sucesso") {
+          alert("Nomenclatura cadastrada com sucesso!");
+          buscarAtualizacoesSilenciosas();
+        } else {
+          alert("Erro ao salvar nomenclatura.");
+        }
+      })
+      .catch(err => alert("Erro na comunicação com o servidor."));
     }
 
     function verificarSessao() {
@@ -1074,6 +1216,7 @@
         atualizarDashboard();
         atualizarNotificacoes();
         renderizarUsuariosOnline();
+        renderizarListasAuxiliares();
         verificarSessao();
       } else {
         document.getElementById('statusBadge').innerText = "Erro nos Dados";
@@ -1103,7 +1246,7 @@
       document.body.appendChild(script);
 
       setInterval(buscarAtualizacoesSilenciosas, 5000);
-      setInterval(enviarHeartbeat, 60000); // 1 minuto para total estabilidade
+      setInterval(enviarHeartbeat, 60000);
     };
 
     function toggleNotifications() {
@@ -1196,6 +1339,9 @@
       } else if (nomeAba === 'cad_equipamento') {
         document.getElementById('btnNavCadastros').classList.add('active');
         document.getElementById('abaCadEquipamento').classList.add('active');
+      } else if (nomeAba === 'cad_auxiliares') {
+        document.getElementById('btnNavCadastros').classList.add('active');
+        document.getElementById('abaCadAuxiliares').classList.add('active');
       }
     }
 
