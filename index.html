@@ -16,7 +16,7 @@
     .status-badge { background-color: #ffc107; color: #333; padding: 6px 14px; border-radius: 16px; font-size: 13px; font-weight: bold; transition: all 0.3s; }
     .status-badge.connected { background-color: #28a745; color: white; }
 
-    /* ÍCONE DE NOTIFICAÇÃO (SINO) */
+    /* ÍCONE DE NOTIFICAÇÃO (SINO) E USUÁRIOS */
     .notification-btn { background: rgba(255,255,255,0.15); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: background 0.2s; }
     .notification-btn:hover { background: rgba(255,255,255,0.25); }
     
@@ -29,7 +29,7 @@
       100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
     }
 
-    /* DROPDOWN DE NOTIFICAÇÕES */
+    /* DROPDOWNS DO CABEÇALHO */
     .notification-dropdown { display: none; position: absolute; top: 50px; right: 0; width: 320px; background: white; color: #333; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); z-index: 200; border: 1px solid #e2e8f0; overflow: hidden; }
     .notification-dropdown.active { display: block; animation: fadeIn 0.2s ease-in-out; }
     .notif-header { background: #f8fafc; padding: 10px 14px; font-size: 12px; font-weight: bold; color: #1a4d80; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
@@ -150,7 +150,7 @@
     .modal-box { background: white; padding: 24px; border-radius: 10px; width: 680px; max-width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
     .modal-title { font-size: 16px; font-weight: bold; color: #1a4d80; margin-bottom: 12px; display: flex; justify-content: space-between; border-bottom: 2px solid #1a4d80; padding-bottom: 6px; }
 
-    /* LAYOUT ORGANIZADO DE FOTOS EM MINIATURAS LADO A LADO */
+    /* GALERIA DE FOTOS */
     .galeria-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; width: 100%; }
     .galeria-thumb { width: 85px; height: 85px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #f8fafc; position: relative; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
     .galeria-thumb:hover { transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.18); border-color: #2563eb; }
@@ -178,7 +178,7 @@
 </head>
 <body>
 
-  <!-- TELA DE LOGIN (BLOQUEIO INICIAL) -->
+  <!-- TELA DE LOGIN -->
   <div id="loginOverlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0f172a; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px;">
     <div style="background: #ffffff; width: 100%; max-width: 380px; padding: 30px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); text-align: center;">
       <div style="font-size: 24px; font-weight: 800; color: #1a4d80; margin-bottom: 4px;">DMA SYS</div>
@@ -211,6 +211,22 @@
       <h1>DMA SYS | Plataforma de Gestão Operacional</h1>
       
       <div class="header-right">
+        <!-- BOTÃO DE USUÁRIOS ONLINE -->
+        <div style="position: relative; display: inline-block;">
+          <button type="button" class="notification-btn" onclick="toggleUsersDropdown()" title="Usuários Conectados" style="width: auto; padding: 0 12px; border-radius: 16px; font-size: 12px;">
+            🟢 <span id="onlineCountText">0 Online</span>
+          </button>
+          
+          <div id="usersDropdown" class="notification-dropdown" style="right: 0; width: 260px;">
+            <div class="notif-header">
+              <span>USUÁRIOS CADASTRADOS</span>
+            </div>
+            <div class="notif-list" id="usersOnlineList">
+              <div style="padding: 12px; text-align: center; color: #888; font-size: 12px;">Carregando usuários...</div>
+            </div>
+          </div>
+        </div>
+
         <!-- ÍCONE DE NOTIFICAÇÃO (SINO) -->
         <button type="button" class="notification-btn" onclick="toggleNotifications()" title="Notificações de Requisições">
           🔔
@@ -233,7 +249,7 @@
       </div>
     </div>
 
-    <!-- NAVEGAÇÃO REORGANIZADA POR DROPDOWNS DE MÓDULOS -->
+    <!-- NAVEGAÇÃO POR DROPDOWNS -->
     <div class="nav-tabs">
       <button type="button" class="nav-tab active" id="btnNavInicio" onclick="mudarAba('inicio')">🏠 Início</button>
       <button type="button" class="nav-tab" id="btnNavDashboard" onclick="mudarAba('dashboard')">📊 Dashboard</button>
@@ -266,7 +282,7 @@
       </div>
     </div>
 
-    <!-- ABA 0: TELA DE INÍCIO / BOAS-VINDAS -->
+    <!-- ABA 0: TELA DE INÍCIO -->
     <div id="abaInicio" class="tab-content active">
       <div class="welcome-hero">
         <h2>Bem-vindo ao DMA SYS v2.0</h2>
@@ -300,9 +316,8 @@
       </div>
     </div>
 
-    <!-- ABA 1: DASHBOARD DE MÉTRICAS -->
+    <!-- ABA 1: DASHBOARD -->
     <div id="abaDashboard" class="tab-content">
-      
       <div class="card" style="margin-bottom: 16px;">
         <div class="card-title">
           <span>Filtro de Período das Métricas</span>
@@ -356,16 +371,13 @@
           </div>
         </div>
       </div>
-
     </div>
 
-    <!-- ABA 2: REQUISIÇÕES INTERNAS DE EQUIPAMENTO -->
+    <!-- ABA 2: REQUISIÇÕES INTERNAS -->
     <div id="abaRequisicoes" class="tab-content">
-      
       <div class="card">
         <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
         <form id="formReq" onsubmit="salvarRequisicao(event)">
-          
           <div class="form-row">
             <div class="form-group" style="flex: 2;">
               <label>Cliente / Locatário Solicitante:</label>
@@ -452,17 +464,14 @@
           </table>
         </div>
       </div>
-
     </div>
 
     <!-- ABA 3: EMISSÃO DE TERMO -->
     <div id="abaEmissao" class="tab-content">
       <form id="termoForm" class="main-grid" onsubmit="gerarTermo(event)">
-        
         <input type="hidden" id="reqVinculadaProtocolo" value="">
 
         <div style="display: flex; flex-direction: column; gap: 16px;">
-          
           <div class="card">
             <div class="card-title">1. Cliente / Locatário</div>
             <div class="form-group">
@@ -502,11 +511,9 @@
               </div>
             </div>
           </div>
-
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 16px;">
-          
           <div class="card" style="flex: 1;">
             <div class="card-title">3. Lista de Acessórios</div>
             <div class="table-container">
@@ -552,9 +559,7 @@
 
             <button type="submit" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;" disabled>Gerar Termo Duplo PDF (Entrega + Higienização)</button>
           </div>
-
         </div>
-
       </form>
     </div>
 
@@ -654,7 +659,6 @@
       <div class="card">
         <div class="card-title">Abrir Nova Ordem de Serviço (Manutenção)</div>
         <form id="formNovaOS" onsubmit="salvarNovaOS(event)">
-          
           <div class="form-row">
             <div class="form-group" style="flex: 2;">
               <label>Cliente / Unidade Hospitalar:</label>
@@ -738,12 +742,11 @@
       </div>
     </div>
 
-    <!-- ABA 7: CADASTRO DE NOVO EQUIPAMENTO NA ABA EQUIP -->
+    <!-- ABA 7: CADASTRO DE NOVO EQUIPAMENTO -->
     <div id="abaCadEquipamento" class="tab-content">
       <div class="card">
         <div class="card-title">Cadastrar Novo Equipamento (Aba EQUIP)</div>
         <form id="formNovoEquip" onsubmit="salvarNovoEquipamento(event)">
-          
           <div class="form-row">
             <div class="form-group">
               <label>TAG do Equipamento:</label>
@@ -788,7 +791,7 @@
 
   </div>
 
-  <!-- MODAL ESPELHO DA O.S. (EDITÁVEL) -->
+  <!-- MODAL ESPELHO DA O.S. -->
   <div id="modalOS" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-title">
@@ -826,7 +829,6 @@
         <textarea id="mOSServico" style="height: 60px;"></textarea>
       </div>
 
-      <!-- GALERIA ORGANIZADA DE ANEXOS / FOTOS -->
       <div style="margin-bottom: 16px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
         <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
           <span style="font-size: 11px; font-weight: 700; color: #444; text-transform: uppercase;">Anexos & Fotos da Manutenção:</span>
@@ -839,7 +841,6 @@
         </div>
       </div>
 
-      <!-- BOTÃO DE AÇÃO DINÂMICO E BOTÃO FECHAR RENOMEADO -->
       <div style="display: flex; gap: 8px; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 12px;">
         <button type="button" id="btnAcaoOSModal" class="btn-negar" style="background:#d97706;" onclick="alternarAcaoOS()">🔓 Reabrir O.S.</button>
         
@@ -851,7 +852,7 @@
     </div>
   </div>
 
-  <!-- POP-UP / MODAL DE RECUSA DA QUALIDADE -->
+  <!-- MODAL DE RECUSA DA QUALIDADE -->
   <div id="modalRecusa" class="modal-overlay">
     <div class="modal-box" style="width: 400px;">
       <div class="modal-title">Recusar Requisição <span id="modalProtReq"></span></div>
@@ -881,7 +882,7 @@
     </div>
   </div>
 
-  <!-- RODAPÉ CORPORATIVO DO SISTEMA -->
+  <!-- RODAPÉ CORPORATIVO -->
   <footer class="system-footer">
     <div><b>DMA SYS</b> v2.0 | Sistema de Gestão Operacional</div>
     <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
@@ -920,11 +921,66 @@
 
     function fecharTodosDropdowns() {
       document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+      document.getElementById('notifDropdown').classList.remove('active');
+      document.getElementById('usersDropdown').classList.remove('active');
     }
 
     document.addEventListener('click', function() {
       fecharTodosDropdowns();
     });
+
+    function toggleUsersDropdown() {
+      const dropdown = document.getElementById('usersDropdown');
+      const atv = dropdown.classList.contains('active');
+      fecharTodosDropdowns();
+      if (!atv) dropdown.classList.add('active');
+    }
+
+    function enviarHeartbeat() {
+      if (!usuarioLogado || !usuarioLogado.usuario) return;
+
+      const payload = {
+        acao: "PING_PRESENCA",
+        usuario: usuarioLogado.usuario
+      };
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      }).catch(err => console.log("Heartbeat em espera..."));
+    }
+
+    function renderizarUsuariosOnline() {
+      if (!bancoDados || !bancoDados.usuarios) return;
+
+      const listContainer = document.getElementById('usersOnlineList');
+      const countText = document.getElementById('onlineCountText');
+      
+      const onlines = bancoDados.usuarios.filter(u => u.online);
+      countText.innerText = `${onlines.length} Online`;
+
+      listContainer.innerHTML = "";
+      if (bancoDados.usuarios.length === 0) {
+        listContainer.innerHTML = '<div style="padding: 12px; text-align: center; color: #888; font-size: 12px;">Nenhum usuário cadastrado.</div>';
+        return;
+      }
+
+      bancoDados.usuarios.forEach(u => {
+        const statusDot = u.online ? "🟢" : "⚪";
+        const statusCor = u.online ? "#155724" : "#64748b";
+        
+        listContainer.innerHTML += `
+          <div class="notif-item" style="cursor: default;">
+            <div class="notif-item-title">
+              <span>${statusDot} ${u.nome}</span>
+            </div>
+            <div class="notif-item-sub" style="color: ${statusCor};">
+              ${u.online ? "Conectado agora" : "Último acesso: " + (u.ultimoAcesso || "-")}
+            </div>
+          </div>
+        `;
+      });
+    }
 
     function verificarSessao() {
       const sessaoSalva = localStorage.getItem("dmasys_usuario");
@@ -991,6 +1047,7 @@
             exibirAssinaturaTecnico();
           }
         }
+        enviarHeartbeat();
       } else {
         divErro.innerText = "Usuário ou senha incorretos.";
         divErro.style.display = "block";
@@ -1016,6 +1073,7 @@
         renderizarTabelaOS();
         atualizarDashboard();
         atualizarNotificacoes();
+        renderizarUsuariosOnline();
         verificarSessao();
       } else {
         document.getElementById('statusBadge').innerText = "Erro nos Dados";
@@ -1045,11 +1103,14 @@
       document.body.appendChild(script);
 
       setInterval(buscarAtualizacoesSilenciosas, 5000);
+      setInterval(enviarHeartbeat, 60000); // 1 minuto para total estabilidade
     };
 
     function toggleNotifications() {
       const dropdown = document.getElementById('notifDropdown');
-      dropdown.classList.toggle('active');
+      const atv = dropdown.classList.contains('active');
+      fecharTodosDropdowns();
+      if (!atv) dropdown.classList.add('active');
     }
 
     function atualizarNotificacoes() {
@@ -1087,7 +1148,7 @@
     }
 
     function irParaRequisicaoPendente() {
-      document.getElementById('notifDropdown').classList.remove('active');
+      fecharTodosDropdowns();
       document.getElementById('filtroStatusReq').value = "PENDENTE";
       mudarAba('requisicoes');
       filtrarRequisicoes();
