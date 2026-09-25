@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LINEMED - Gestão de Termos e Requisições</title>
+  <title>DMA SYS - Gestão de Termos e Requisições</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #f0f2f5; color: #333; min-height: 100vh; display: flex; flex-direction: column; padding: 16px; padding-bottom: 60px; overflow-x: hidden; }
@@ -56,8 +56,8 @@
     .form-row { display: flex; gap: 12px; margin-bottom: 12px; }
     .form-group { flex: 1; display: flex; flex-direction: column; }
     label { font-size: 12px; font-weight: 700; color: #444; margin-bottom: 4px; text-transform: uppercase; }
-    input[type="text"], input[type="month"], select, textarea { width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; background: #fff; transition: border-color 0.2s; }
-    input[type="text"]:focus, select:focus, textarea:focus { border-color: #1a4d80; outline: none; }
+    input[type="text"], input[type="password"], input[type="month"], select, textarea { width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; background: #fff; transition: border-color 0.2s; }
+    input[type="text"]:focus, input[type="password"]:focus, select:focus, textarea:focus { border-color: #1a4d80; outline: none; }
     input[readonly] { background-color: #f8f9fa; color: #333; font-weight: 600; }
     
     .radio-group { display: flex; gap: 20px; align-items: center; padding: 6px 0; }
@@ -91,6 +91,9 @@
 
     .btn-negar { background: #dc3545; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 28px; display: inline-flex; align-items: center; justify-content: center; }
     .btn-negar:hover { background: #bd2130; }
+
+    .btn-logout { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+    .btn-logout:hover { background: #dc3545; border-color: #dc3545; }
 
     .badge-status { padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; display: inline-block; text-align: center; }
     .badge-pendente { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
@@ -154,370 +157,390 @@
 </head>
 <body>
 
-  <div class="header">
-    <h1>LINEMED | Gestão de Termos de Entrega & Higienização</h1>
-    
-    <div class="header-right">
-      <!-- ÍCONE DE NOTIFICAÇÃO (SINO) -->
-      <button type="button" class="notification-btn" onclick="toggleNotifications()" title="Notificações de Requisições">
-        🔔
-        <span id="notifBadge" class="notification-badge">0</span>
+  <!-- TELA DE LOGIN (BLOQUEIO INICIAL) -->
+  <div id="loginOverlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0f172a; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: #ffffff; width: 100%; max-width: 380px; padding: 30px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); text-align: center;">
+      <div style="font-size: 24px; font-weight: 800; color: #1a4d80; margin-bottom: 4px;">DMA SYS</div>
+      <div style="font-size: 11px; color: #64748b; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.5px;">Acesso ao Sistema Operacional</div>
+      
+      <div id="loginErro" style="display: none; background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 16px;">
+        Usuário ou senha incorretos.
+      </div>
+
+      <div style="text-align: left; margin-bottom: 16px;">
+        <label style="font-size: 11px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">USUÁRIO</label>
+        <input type="text" id="loginUsuario" placeholder="Digite seu usuário..." style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; box-sizing: border-box;" onkeypress="if(event.key === 'Enter') efetuarLogin()">
+      </div>
+
+      <div style="text-align: left; margin-bottom: 24px;">
+        <label style="font-size: 11px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">SENHA</label>
+        <input type="password" id="loginSenha" placeholder="Digite sua senha..." style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; box-sizing: border-box;" onkeypress="if(event.key === 'Enter') efetuarLogin()">
+      </div>
+
+      <button type="button" onclick="efetuarLogin()" style="width: 100%; background: #1a4d80; color: #ffffff; padding: 12px; border: none; border-radius: 6px; font-weight: 700; font-size: 14px; cursor: pointer;">
+        ENTRAR NO SISTEMA
       </button>
-
-      <!-- DROPDOWN DE NOTIFICAÇÕES -->
-      <div id="notifDropdown" class="notification-dropdown">
-        <div class="notif-header">
-          <span>REQUISIÇÕES PENDENTES</span>
-          <span id="notifCountText">0 novas</span>
-        </div>
-        <div class="notif-list" id="notifList">
-          <div style="padding: 16px; text-align: center; color: #888; font-size: 12px;">Nenhuma pendência no momento.</div>
-        </div>
-      </div>
-
-      <span id="statusBadge" class="status-badge">Conectando...</span>
     </div>
   </div>
 
-  <!-- NAVEGAÇÃO REORGANIZADA POR ORDEM LÓGICA -->
-  <div class="nav-tabs">
-    <button type="button" class="nav-tab active" onclick="mudarAba('inicio')">🏠 Início</button>
-    <button type="button" class="nav-tab" onclick="mudarAba('dashboard')">📊 Dashboard & Métricas</button>
-    <button type="button" class="nav-tab" onclick="mudarAba('requisicoes')">📋 Requisições Internas</button>
-    <button type="button" class="nav-tab" onclick="mudarAba('emissao')">📝 Emitir Novo Termo</button>
-    <button type="button" class="nav-tab" onclick="mudarAba('consulta')">🔍 Consultar Termos Emitidos</button>
-  </div>
+  <!-- CONTEÚDO PRINCIPAL DO SISTEMA -->
+  <div id="appContainer" style="display: none;">
 
-  <!-- ABA 0: TELA DE INÍCIO / BOAS-VINDAS -->
-  <div id="abaInicio" class="tab-content active">
-    <div class="welcome-hero">
-      <h2>Bem-vindo ao LINEMED TME v2.0</h2>
-      <p>Sistema integrado para gestão de movimentação de equipamentos médicos, controle de requisições do setor administrativo, separação pela Qualidade e emissão de Termos de Entrega e Higienização com assinatura digital.</p>
-    </div>
+    <div class="header">
+      <h1>DMA SYS | Gestão de Termos & Requisições</h1>
+      
+      <div class="header-right">
+        <!-- ÍCONE DE NOTIFICAÇÃO (SINO) -->
+        <button type="button" class="notification-btn" onclick="toggleNotifications()" title="Notificações de Requisições">
+          🔔
+          <span id="notifBadge" class="notification-badge">0</span>
+        </button>
 
-    <div class="quick-actions-grid">
-      <div class="quick-card" onclick="mudarAba('dashboard')">
-        <div class="quick-icon">📊</div>
-        <div class="quick-title">Dashboard & Métricas</div>
-        <div class="quick-desc">Acompanhe indicadores gerais de movimentação, volume por hospital e famílias de equipamentos em tempo real.</div>
-      </div>
-
-      <div class="quick-card" onclick="mudarAba('requisicoes')">
-        <div class="quick-icon">📋</div>
-        <div class="quick-title">Requisições Internas</div>
-        <div class="quick-desc">Solicite substituições de equipamentos para a Qualidade ou atenda pedidos pendentes no estoque.</div>
-      </div>
-
-      <div class="quick-card" onclick="mudarAba('emissao')">
-        <div class="quick-icon">📝</div>
-        <div class="quick-title">Emitir Novo Termo</div>
-        <div class="quick-desc">Gere o Termo Duplo em PDF (Entrega + Higienização) com checklist de acessórios e assinaturas.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ABA 1: DASHBOARD DE MÉTRICAS -->
-  <div id="abaDashboard" class="tab-content">
-    
-    <!-- BARRA DE FILTRO DO DASHBOARD -->
-    <div class="card" style="margin-bottom: 16px;">
-      <div class="card-title">
-        <span>Filtro de Período das Métricas</span>
-      </div>
-      <div class="form-row" style="align-items: center; margin-bottom: 0;">
-        <div class="form-group" style="flex: 1;">
-          <label>Selecione o Mês / Ano:</label>
-          <input type="month" id="dashFiltroMes" onchange="atualizarDashboard()">
+        <!-- DROPDOWN DE NOTIFICAÇÕES -->
+        <div id="notifDropdown" class="notification-dropdown">
+          <div class="notif-header">
+            <span>REQUISIÇÕES PENDENTES</span>
+            <span id="notifCountText">0 novas</span>
+          </div>
+          <div class="notif-list" id="notifList">
+            <div style="padding: 16px; text-align: center; color: #888; font-size: 12px;">Nenhuma pendência no momento.</div>
+          </div>
         </div>
-        <div class="form-group" style="flex: 1;">
-          <label>Modo de Período:</label>
-          <select id="dashModoPeriodo" onchange="alternarModoDash()">
-            <option value="MES">Apenas o Mês Selecionado</option>
-            <option value="GERAL">Todo o Histórico (Geral)</option>
-          </select>
-        </div>
+
+        <span id="statusBadge" class="status-badge">Conectando...</span>
+        <button type="button" class="btn-logout" onclick="efetuarLogout()" title="Sair do Sistema">Sair 🚪</button>
       </div>
     </div>
 
-    <!-- CARDS DE MÉTRICAS SUPERIORES -->
-    <div class="dash-metrics">
-      <div class="metric-card">
-        <div class="metric-title">Total de Requisições</div>
-        <div class="metric-value" id="dashTotalReq">0</div>
-      </div>
-      <div class="metric-card yellow">
-        <div class="metric-title">Pendentes de Envio</div>
-        <div class="metric-value" id="dashPendentes">0</div>
-      </div>
-      <div class="metric-card green">
-        <div class="metric-title">Atendidas pela Qualidade</div>
-        <div class="metric-value" id="dashAtendidos">0</div>
-      </div>
-      <div class="metric-card red">
-        <div class="metric-title">Recusadas / Negadas</div>
-        <div class="metric-value" id="dashRecusados">0</div>
-      </div>
+    <!-- NAVEGAÇÃO POR ABAS -->
+    <div class="nav-tabs">
+      <button type="button" class="nav-tab active" onclick="mudarAba('inicio')">🏠 Início</button>
+      <button type="button" class="nav-tab" onclick="mudarAba('dashboard')">📊 Dashboard & Métricas</button>
+      <button type="button" class="nav-tab" onclick="mudarAba('requisicoes')">📋 Requisições Internas</button>
+      <button type="button" class="nav-tab" onclick="mudarAba('emissao')">📝 Emitir Novo Termo</button>
+      <button type="button" class="nav-tab" onclick="mudarAba('consulta')">🔍 Consultar Termos Emitidos</button>
     </div>
 
-    <!-- GRÁFICOS E QUANTITATIVO POR CLIENTE -->
-    <div class="dash-charts-grid">
-      <div class="card">
-        <div class="card-title">Top Clientes em Demandas de Troca</div>
-        <div id="chartClientes" style="padding-top: 10px;">
-          <div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>
-        </div>
+    <!-- ABA 0: TELA DE INÍCIO / BOAS-VINDAS -->
+    <div id="abaInicio" class="tab-content active">
+      <div class="welcome-hero">
+        <h2>Bem-vindo ao DMA SYS v2.0</h2>
+        <p>Sistema integrado para gestão de movimentação de equipamentos médicos, controle de requisições do setor administrativo, separação pela Qualidade e emissão de Termos de Entrega e Higienização com assinatura digital.</p>
       </div>
 
-      <div class="card">
-        <div class="card-title">Demandas por Família de Equipamentos</div>
-        <div id="chartFamilias" style="padding-top: 10px;">
-          <div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>
+      <div class="quick-actions-grid">
+        <div class="quick-card" onclick="mudarAba('dashboard')">
+          <div class="quick-icon">📊</div>
+          <div class="quick-title">Dashboard & Métricas</div>
+          <div class="quick-desc">Acompanhe indicadores gerais de movimentação, volume por hospital e famílias de equipamentos em tempo real.</div>
+        </div>
+
+        <div class="quick-card" onclick="mudarAba('requisicoes')">
+          <div class="quick-icon">📋</div>
+          <div class="quick-title">Requisições Internas</div>
+          <div class="quick-desc">Solicite substituições de equipamentos para a Qualidade ou atenda pedidos pendentes no estoque.</div>
+        </div>
+
+        <div class="quick-card" onclick="mudarAba('emissao')">
+          <div class="quick-icon">📝</div>
+          <div class="quick-title">Emitir Novo Termo</div>
+          <div class="quick-desc">Gere o Termo Duplo em PDF (Entrega + Higienização) com checklist de acessórios e assinaturas.</div>
         </div>
       </div>
     </div>
 
-  </div>
-
-  <!-- ABA 2: REQUISIÇÕES INTERNAS DE EQUIPAMENTO -->
-  <div id="abaRequisicoes" class="tab-content">
-    
-    <!-- FORMULÁRIO DE NOVA REQUISIÇÃO -->
-    <div class="card">
-      <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
-      <form id="formReq" onsubmit="salvarRequisicao(event)">
-        
-        <div class="form-row">
-          <div class="form-group" style="flex: 2;">
-            <label>Cliente / Locatário Solicitante:</label>
-            <input type="text" id="reqCliente" list="listClientes" placeholder="Selecione ou digite o cliente..." required>
+    <!-- ABA 1: DASHBOARD DE MÉTRICAS -->
+    <div id="abaDashboard" class="tab-content">
+      
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-title">
+          <span>Filtro de Período das Métricas</span>
+        </div>
+        <div class="form-row" style="align-items: center; margin-bottom: 0;">
+          <div class="form-group" style="flex: 1;">
+            <label>Selecione o Mês / Ano:</label>
+            <input type="month" id="dashFiltroMes" onchange="atualizarDashboard()">
           </div>
           <div class="form-group" style="flex: 1;">
-            <label>Operação:</label>
-            <div class="radio-group">
-              <label><input type="radio" name="reqOperacao" value="LOCAÇÃO" checked> Locação</label>
-              <label><input type="radio" name="reqOperacao" value="EMPRÉSTIMO"> Empréstimo</label>
-              <label><input type="radio" name="reqOperacao" value="VENDA"> Venda</label>
+            <label>Modo de Período:</label>
+            <select id="dashModoPeriodo" onchange="alternarModoDash()">
+              <option value="MES">Apenas o Mês Selecionado</option>
+              <option value="GERAL">Todo o Histórico (Geral)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-metrics">
+        <div class="metric-card">
+          <div class="metric-title">Total de Requisições</div>
+          <div class="metric-value" id="dashTotalReq">0</div>
+        </div>
+        <div class="metric-card yellow">
+          <div class="metric-title">Pendentes de Envio</div>
+          <div class="metric-value" id="dashPendentes">0</div>
+        </div>
+        <div class="metric-card green">
+          <div class="metric-title">Atendidas pela Qualidade</div>
+          <div class="metric-value" id="dashAtendidos">0</div>
+        </div>
+        <div class="metric-card red">
+          <div class="metric-title">Recusadas / Negadas</div>
+          <div class="metric-value" id="dashRecusados">0</div>
+        </div>
+      </div>
+
+      <div class="dash-charts-grid">
+        <div class="card">
+          <div class="card-title">Top Clientes em Demandas de Troca</div>
+          <div id="chartClientes" style="padding-top: 10px;">
+            <div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Demandas por Família de Equipamentos</div>
+          <div id="chartFamilias" style="padding-top: 10px;">
+            <div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ABA 2: REQUISIÇÕES INTERNAS DE EQUIPAMENTO -->
+    <div id="abaRequisicoes" class="tab-content">
+      
+      <div class="card">
+        <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
+        <form id="formReq" onsubmit="salvarRequisicao(event)">
+          
+          <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+              <label>Cliente / Locatário Solicitante:</label>
+              <input type="text" id="reqCliente" list="listClientes" placeholder="Selecione ou digite o cliente..." required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Operação:</label>
+              <div class="radio-group">
+                <label><input type="radio" name="reqOperacao" value="LOCAÇÃO" checked> Locação</label>
+                <label><input type="radio" name="reqOperacao" value="EMPRÉSTIMO"> Empréstimo</label>
+                <label><input type="radio" name="reqOperacao" value="VENDA"> Venda</label>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label>Equipamento a Substituir (TAG / Nome atual no cliente):</label>
-            <input type="text" id="reqEqAntigo" placeholder="Ex: LMD-5384 - Ventilador Pulmonar com defeito" required>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Equipamento a Substituir (TAG / Nome atual no cliente):</label>
+              <input type="text" id="reqEqAntigo" placeholder="Ex: LMD-5384 - Ventilador Pulmonar com defeito" required>
+            </div>
+            <div class="form-group">
+              <label>Equipamento Solicitado para a Qualidade enviar:</label>
+              <input type="text" id="reqEqSolicitado" placeholder="Ex: Ventilador Pulmonar (Modelo X)" required>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Equipamento Solicitado para a Qualidade enviar:</label>
-            <input type="text" id="reqEqSolicitado" placeholder="Ex: Ventilador Pulmonar (Modelo X)" required>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Motivo / Observações da Troca:</label>
+            <input type="text" id="reqMotivo" placeholder="Ex: Falha na bateria interna, solicitar troca urgente.">
+          </div>
+
+          <div style="text-align: right;">
+            <button type="submit" id="btnSalvarReq" class="btn-submit">Enviar Requisição e Gerar PDF</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>Acompanhamento de Solicitações</span>
+        </div>
+
+        <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Filtrar por Status:</label>
+            <select id="filtroStatusReq" onchange="filtrarRequisicoes()">
+              <option value="TODOS">Todos os Status</option>
+              <option value="PENDENTE">Apenas Pendentes</option>
+              <option value="ATENDIDO">Apenas Atendidos</option>
+              <option value="RECUSADO">Apenas Recusados</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="flex: 1;">
+            <label>Filtrar por Mês/Ano:</label>
+            <input type="month" id="filtroMesReq" onchange="filtrarRequisicoes()">
+          </div>
+
+          <div class="form-group" style="flex: 2;">
+            <label>Buscar na Tabela (Cliente, Req # ou Equipamento):</label>
+            <input type="text" id="filtroTextoReq" oninput="filtrarRequisicoes()" placeholder="Digite para buscar...">
           </div>
         </div>
+        
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th class="td-center" style="width: 75px;">Req #</th>
+                <th style="width: 120px;">Data / Hora</th>
+                <th>Cliente / Locatário</th>
+                <th>Equipamento Solicitado</th>
+                <th>Motivo / Obs.</th>
+                <th class="td-center" style="width: 85px;">Operação</th>
+                <th class="td-center" style="width: 90px;">Status</th>
+                <th class="td-center" style="width: 210px;">Ações / Qualidade</th>
+              </tr>
+            </thead>
+            <tbody id="corpoRequisicoes">
+              <tr>
+                <td colspan="8" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label>Motivo / Observações da Troca:</label>
-          <input type="text" id="reqMotivo" placeholder="Ex: Falha na bateria interna, solicitar troca urgente.">
+    </div>
+
+    <!-- ABA 3: EMISSÃO DE TERMO -->
+    <div id="abaEmissao" class="tab-content">
+      <form id="termoForm" class="main-grid" onsubmit="gerarTermo(event)">
+        
+        <input type="hidden" id="reqVinculadaProtocolo" value="">
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          
+          <div class="card">
+            <div class="card-title">1. Cliente / Locatário</div>
+            <div class="form-group">
+              <label for="inputCliente">Buscar / Selecionar Cliente:</label>
+              <input type="text" id="inputCliente" list="listClientes" placeholder="Digite o nome do cliente..." required disabled>
+              <datalist id="listClientes"></datalist>
+            </div>
+          </div>
+
+          <div class="card" style="flex: 1;">
+            <div class="card-title">2. Identificação do Equipamento</div>
+            
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label>Pesquisar Equipamento (Digite a TAG, Série ou Patrimônio):</label>
+              <input type="text" id="buscaEquipamento" list="listEquipamentos" placeholder="Ex: LMD-4654 ou 2329918..." oninput="autoPreencherEquipamento()" disabled required>
+              <datalist id="listEquipamentos"></datalist>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group"><label>TAG:</label><input type="text" id="eqTag" readonly placeholder="-"></div>
+              <div class="form-group"><label>Nº de Série:</label><input type="text" id="eqSerie" readonly placeholder="-"></div>
+              <div class="form-group"><label>Patrimônio:</label><input type="text" id="eqPatrimonio" readonly placeholder="-"></div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group"><label>Equipamento:</label><input type="text" id="eqNome" readonly placeholder="-"></div>
+              <div class="form-group"><label>Modelo:</label><input type="text" id="eqModelo" readonly placeholder="-"></div>
+              <div class="form-group"><label>Fabricante:</label><input type="text" id="eqFabricante" readonly placeholder="-"></div>
+            </div>
+
+            <div class="form-group" style="margin-top: 6px;">
+              <label>Operação:</label>
+              <div class="radio-group">
+                <label><input type="radio" name="tipoOperacao" value="LOCAÇÃO" checked> Locação</label>
+                <label><input type="radio" name="tipoOperacao" value="EMPRÉSTIMO"> Empréstimo</label>
+                <label><input type="radio" name="tipoOperacao" value="VENDA"> Venda</label>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <div style="text-align: right;">
-          <button type="submit" id="btnSalvarReq" class="btn-submit">Enviar Requisição e Gerar PDF</button>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          
+          <div class="card" style="flex: 1;">
+            <div class="card-title">3. Lista de Acessórios</div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="td-center" style="width: 40px;">#</th>
+                    <th class="td-center" style="width: 60px;">Qtd</th>
+                    <th>Descrição do Acessório</th>
+                    <th class="td-center" style="width: 130px;">Conformidade</th>
+                  </tr>
+                </thead>
+                <tbody id="corpoAcessorios">
+                  <tr>
+                    <td colspan="4" class="td-center" style="color: #888; padding: 24px;">Selecione um equipamento para visualizar os acessórios.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">4. Liberação e Assinaturas</div>
+            
+            <div class="form-group">
+              <label>Técnico Responsável:</label>
+              <select id="selectTecnico" onchange="exibirAssinaturaTecnico()" required disabled>
+                <option value="">Selecione o técnico...</option>
+              </select>
+              
+              <div class="sig-preview" id="previewTecnico">
+                <span style="color: #aaa; font-size: 12px;">Assinatura do Técnico</span>
+              </div>
+            </div>
+
+            <div class="signature-container">
+              <div class="sig-box">
+                <label>Assinatura do Recebedor / Cliente:</label>
+                <button type="button" class="btn-clear" onclick="limparAssinatura()">Limpar</button>
+                <canvas id="canvasAssinatura" width="500" height="110"></canvas>
+              </div>
+            </div>
+
+            <button type="submit" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;" disabled>Gerar Termo Duplo PDF (Entrega + Higienização)</button>
+          </div>
+
         </div>
+
       </form>
     </div>
 
-    <!-- ACOMPANHAMENTO DE SOLICITAÇÕES -->
-    <div class="card">
-      <div class="card-title">
-        <span>Acompanhamento de Solicitações</span>
-      </div>
-
-      <!-- BARRA DE FILTROS -->
-      <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
-        <div class="form-group" style="flex: 1;">
-          <label>Filtrar por Status:</label>
-          <select id="filtroStatusReq" onchange="filtrarRequisicoes()">
-            <option value="TODOS">Todos os Status</option>
-            <option value="PENDENTE">Apenas Pendentes</option>
-            <option value="ATENDIDO">Apenas Atendidos</option>
-            <option value="RECUSADO">Apenas Recusados</option>
-          </select>
+    <!-- ABA 4: CONSULTA DE TERMOS EMITIDOS -->
+    <div id="abaConsulta" class="tab-content">
+      <div class="card">
+        <div class="card-title">Histórico e Consulta de Termos Gerados</div>
+        
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Filtrar por Protocolo, Cliente, TAG ou Técnico:</label>
+          <input type="text" id="filtroTermos" oninput="filtrarTabelaTermos()" placeholder="Digite aqui para buscar...">
         </div>
 
-        <div class="form-group" style="flex: 1;">
-          <label>Filtrar por Mês/Ano:</label>
-          <input type="month" id="filtroMesReq" onchange="filtrarRequisicoes()">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th class="td-center">Protocolo</th>
+                <th>Data / Hora</th>
+                <th>Cliente / Locatário</th>
+                <th class="td-center">TAG</th>
+                <th>Equipamento</th>
+                <th class="td-center">Operação</th>
+                <th>Técnico</th>
+                <th class="td-center">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="corpoTermos">
+              <tr>
+                <td colspan="8" class="td-center" style="color: #888; padding: 24px;">Carregando histórico...</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-
-        <div class="form-group" style="flex: 2;">
-          <label>Buscar na Tabela (Cliente, Req # ou Equipamento):</label>
-          <input type="text" id="filtroTextoReq" oninput="filtrarRequisicoes()" placeholder="Digite para buscar...">
-        </div>
-      </div>
-      
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th class="td-center" style="width: 75px;">Req #</th>
-              <th style="width: 120px;">Data / Hora</th>
-              <th>Cliente / Locatário</th>
-              <th>Equipamento Solicitado</th>
-              <th>Motivo / Obs.</th>
-              <th class="td-center" style="width: 85px;">Operação</th>
-              <th class="td-center" style="width: 90px;">Status</th>
-              <th class="td-center" style="width: 210px;">Ações / Qualidade</th>
-            </tr>
-          </thead>
-          <tbody id="corpoRequisicoes">
-            <tr>
-              <td colspan="8" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
 
-  </div>
-
-  <!-- ABA 3: EMISSÃO DE TERMO -->
-  <div id="abaEmissao" class="tab-content">
-    <form id="termoForm" class="main-grid" onsubmit="gerarTermo(event)">
-      
-      <input type="hidden" id="reqVinculadaProtocolo" value="">
-
-      <!-- COLUNA ESQUERDA: CLIENTE E EQUIPAMENTO -->
-      <div style="display: flex; flex-direction: column; gap: 16px;">
-        
-        <!-- 1. CLIENTE -->
-        <div class="card">
-          <div class="card-title">1. Cliente / Locatário</div>
-          <div class="form-group">
-            <label for="inputCliente">Buscar / Selecionar Cliente:</label>
-            <input type="text" id="inputCliente" list="listClientes" placeholder="Digite o nome do cliente..." required disabled>
-            <datalist id="listClientes"></datalist>
-          </div>
-        </div>
-
-        <!-- 2. EQUIPAMENTO -->
-        <div class="card" style="flex: 1;">
-          <div class="card-title">2. Identificação do Equipamento</div>
-          
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>Pesquisar Equipamento (Digite a TAG, Série ou Patrimônio):</label>
-            <input type="text" id="buscaEquipamento" list="listEquipamentos" placeholder="Ex: LMD-4654 ou 2329918..." oninput="autoPreencherEquipamento()" disabled required>
-            <datalist id="listEquipamentos"></datalist>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group"><label>TAG:</label><input type="text" id="eqTag" readonly placeholder="-"></div>
-            <div class="form-group"><label>Nº de Série:</label><input type="text" id="eqSerie" readonly placeholder="-"></div>
-            <div class="form-group"><label>Patrimônio:</label><input type="text" id="eqPatrimonio" readonly placeholder="-"></div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group"><label>Equipamento:</label><input type="text" id="eqNome" readonly placeholder="-"></div>
-            <div class="form-group"><label>Modelo:</label><input type="text" id="eqModelo" readonly placeholder="-"></div>
-            <div class="form-group"><label>Fabricante:</label><input type="text" id="eqFabricante" readonly placeholder="-"></div>
-          </div>
-
-          <div class="form-group" style="margin-top: 6px;">
-            <label>Operação:</label>
-            <div class="radio-group">
-              <label><input type="radio" name="tipoOperacao" value="LOCAÇÃO" checked> Locação</label>
-              <label><input type="radio" name="tipoOperacao" value="EMPRÉSTIMO"> Empréstimo</label>
-              <label><input type="radio" name="tipoOperacao" value="VENDA"> Venda</label>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- COLUNA DIREITA: ACESSÓRIOS, ASSINATURAS E BOTÃO -->
-      <div style="display: flex; flex-direction: column; gap: 16px;">
-        
-        <!-- 3. CHECKLIST -->
-        <div class="card" style="flex: 1;">
-          <div class="card-title">3. Lista de Acessórios</div>
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th class="td-center" style="width: 40px;">#</th>
-                  <th class="td-center" style="width: 60px;">Qtd</th>
-                  <th>Descrição do Acessório</th>
-                  <th class="td-center" style="width: 130px;">Conformidade</th>
-                </tr>
-              </thead>
-              <tbody id="corpoAcessorios">
-                <tr>
-                  <td colspan="4" class="td-center" style="color: #888; padding: 24px;">Selecione um equipamento para visualizar os acessórios.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- 4. LIBERAÇÃO E ASSINATURAS -->
-        <div class="card">
-          <div class="card-title">4. Liberação e Assinaturas</div>
-          
-          <div class="form-group">
-            <label>Técnico Responsável:</label>
-            <select id="selectTecnico" onchange="exibirAssinaturaTecnico()" required disabled>
-              <option value="">Selecione o técnico...</option>
-            </select>
-            
-            <div class="sig-preview" id="previewTecnico">
-              <span style="color: #aaa; font-size: 12px;">Assinatura do Técnico</span>
-            </div>
-          </div>
-
-          <div class="signature-container">
-            <div class="sig-box">
-              <label>Assinatura do Recebedor / Cliente:</label>
-              <button type="button" class="btn-clear" onclick="limparAssinatura()">Limpar</button>
-              <canvas id="canvasAssinatura" width="500" height="110"></canvas>
-            </div>
-          </div>
-
-          <button type="submit" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;" disabled>Gerar Termo Duplo PDF (Entrega + Higienização)</button>
-        </div>
-
-      </div>
-
-    </form>
-  </div>
-
-  <!-- ABA 4: CONSULTA DE TERMOS EMITIDOS -->
-  <div id="abaConsulta" class="tab-content">
-    <div class="card">
-      <div class="card-title">Histórico e Consulta de Termos Gerados</div>
-      
-      <div class="form-group" style="margin-bottom: 16px;">
-        <label>Filtrar por Protocolo, Cliente, TAG ou Técnico:</label>
-        <input type="text" id="filtroTermos" oninput="filtrarTabelaTermos()" placeholder="Digite aqui para buscar...">
-      </div>
-
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th class="td-center">Protocolo</th>
-              <th>Data / Hora</th>
-              <th>Cliente / Locatário</th>
-              <th class="td-center">TAG</th>
-              <th>Equipamento</th>
-              <th class="td-center">Operação</th>
-              <th>Técnico</th>
-              <th class="td-center">Ação</th>
-            </tr>
-          </thead>
-          <tbody id="corpoTermos">
-            <tr>
-              <td colspan="8" class="td-center" style="color: #888; padding: 24px;">Carregando histórico...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
   </div>
 
   <!-- POP-UP / MODAL DE RECUSA DA QUALIDADE -->
@@ -540,7 +563,7 @@
   
   <div id="chatBox" class="chat-box">
     <div class="chat-header">
-      💬 Suporte Técnico Linemed
+      💬 Suporte Técnico DMA Sys
       <span onclick="toggleChat()">✕</span>
     </div>
     <div class="chat-body">
@@ -552,7 +575,7 @@
 
   <!-- RODAPÉ CORPORATIVO DO SISTEMA -->
   <footer class="system-footer">
-    <div><b>LINEMED TME</b> v2.0 | Sistema de Gestão de Termos</div>
+    <div><b>DMA SYS</b> v2.0 | Sistema de Gestão Operacional</div>
     <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
   </footer>
 
@@ -563,6 +586,69 @@
     let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [] };
     let equipamentoSelecionado = null;
     let protocoloReqEmRecusa = null;
+    let usuarioLogado = null;
+
+    /* --- CONTROLE DE LOGIN E SESSÃO --- */
+    function verificarSessao() {
+      const sessaoSalva = sessionStorage.getItem("dmasys_usuario");
+      if (sessaoSalva) {
+        usuarioLogado = JSON.parse(sessaoSalva);
+        document.getElementById('loginOverlay').style.display = "none";
+        document.getElementById('appContainer').style.display = "block";
+      } else {
+        document.getElementById('loginOverlay').style.display = "flex";
+        document.getElementById('appContainer').style.display = "none";
+      }
+    }
+
+    function efetuarLogin() {
+      const usr = document.getElementById('loginUsuario').value.trim().toLowerCase();
+      const pass = document.getElementById('loginSenha').value.trim();
+      const divErro = document.getElementById('loginErro');
+
+      if (!usr || !pass) {
+        divErro.innerText = "Preencha o usuário e a senha.";
+        divErro.style.display = "block";
+        return;
+      }
+
+      if (!bancoDados || !bancoDados.usuarios || bancoDados.usuarios.length === 0) {
+        divErro.innerText = "Carregando dados... Tente novamente em alguns segundos.";
+        divErro.style.display = "block";
+        return;
+      }
+
+      const encontrado = bancoDados.usuarios.find(u => {
+        return u.usuario && u.usuario.toLowerCase() === usr && u.senha === pass;
+      });
+
+      if (encontrado) {
+        divErro.style.display = "none";
+        usuarioLogado = encontrado;
+        sessionStorage.setItem("dmasys_usuario", JSON.stringify(encontrado));
+        
+        document.getElementById('loginOverlay').style.display = "none";
+        document.getElementById('appContainer').style.display = "block";
+
+        // Preenche o técnico responsável com o usuário logado se houver correspondência
+        const selTec = document.getElementById('selectTecnico');
+        if (selTec && bancoDados.usuarios) {
+          const idx = bancoDados.usuarios.findIndex(u => u.nome.toLowerCase() === encontrado.nome.toLowerCase());
+          if (idx !== -1) {
+            selTec.value = idx;
+            exibirAssinaturaTecnico();
+          }
+        }
+      } else {
+        divErro.innerText = "Usuário ou senha incorretos.";
+        divErro.style.display = "block";
+      }
+    }
+
+    function efetuarLogout() {
+      sessionStorage.removeItem("dmasys_usuario");
+      window.location.reload();
+    }
 
     function carregarDadosPlanilha(data) {
       if (data && !data.erro) {
@@ -577,6 +663,7 @@
         filtrarRequisicoes();
         atualizarDashboard();
         atualizarNotificacoes();
+        verificarSessao();
       } else {
         document.getElementById('statusBadge').innerText = "Erro nos Dados";
       }
@@ -658,7 +745,7 @@
 
     function enviarWhatsApp() {
       const msg = document.getElementById('msgChat').value.trim();
-      const textoFinal = encodeURIComponent("Olá Suporte Linemed! " + (msg ? msg : "Preciso de auxílio no sistema de termos."));
+      const textoFinal = encodeURIComponent("Olá Suporte DMA Sys! " + (msg ? msg : "Preciso de auxílio no sistema."));
       window.open(`https://wa.me/${NUMERO_WHATSAPP_SUPORTE}?text=${textoFinal}`, '_blank');
       toggleChat();
     }
@@ -992,6 +1079,8 @@
       btn.disabled = true;
       btn.innerText = "GERANDO PDF DA REQUISIÇÃO...";
 
+      const solicitanteNome = (usuarioLogado && usuarioLogado.nome) ? usuarioLogado.nome : "ADMINISTRATIVO";
+
       const payload = {
         acao: "CRIAR_REQUISICAO",
         cliente: document.getElementById('reqCliente').value,
@@ -999,7 +1088,7 @@
         equipamentoAntigo: document.getElementById('reqEqAntigo').value,
         equipamentoSolicitado: document.getElementById('reqEqSolicitado').value,
         motivo: document.getElementById('reqMotivo').value,
-        solicitante: "ADMINISTRATIVO"
+        solicitante: solicitanteNome
       };
 
       fetch(API_URL, {
