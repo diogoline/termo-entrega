@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DMA SYS - Gestão de Termos e Requisições</title>
+  <title>DMA SYS - Gestão de Termos, Requisições e O.S.</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #f0f2f5; color: #333; min-height: 100vh; display: flex; flex-direction: column; padding: 16px; padding-bottom: 60px; overflow-x: hidden; }
     
-    /* Header e Navegação por Abas */
+    /* Header Principal */
     .header { background-color: #1a4d80; color: white; padding: 12px 24px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; box-shadow: 0 3px 6px rgba(0,0,0,0.12); position: relative; }
     .header h1 { font-size: 20px; font-weight: 600; }
     
@@ -39,9 +39,18 @@
     .notif-item-title { font-size: 12px; font-weight: bold; color: #1e293b; display: flex; justify-content: space-between; }
     .notif-item-sub { font-size: 11px; color: #64748b; margin-top: 2px; }
 
-    .nav-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-    .nav-tab { padding: 10px 18px; font-size: 13px; font-weight: bold; border: none; background: #e2e8f0; color: #475569; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+    /* NAVEGAÇÃO REORGANIZADA POR MENUS DROPDOWN */
+    .nav-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+    .nav-tab { padding: 8px 14px; font-size: 13px; font-weight: 700; border: none; background: #f1f5f9; color: #334155; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+    .nav-tab:hover { background: #e2e8f0; }
     .nav-tab.active { background: #1a4d80; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+    /* ESTILOS DE MENU DROPDOWN */
+    .dropdown { position: relative; display: inline-block; }
+    .dropdown-content { display: none; position: absolute; top: 100%; left: 0; background-color: #ffffff; min-width: 210px; box-shadow: 0 8px 16px rgba(0,0,0,0.15); border-radius: 6px; border: 1px solid #cbd5e1; z-index: 1000; overflow: hidden; margin-top: 4px; }
+    .dropdown-content button { color: #334155; padding: 10px 14px; text-decoration: none; display: block; width: 100%; text-align: left; background: none; border: none; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .dropdown-content button:hover { background-color: #f1f5f9; color: #1a4d80; }
+    .dropdown:hover .dropdown-content { display: block; animation: fadeIn 0.15s ease-in-out; }
 
     /* Estrutura das Telas */
     .tab-content { display: none; }
@@ -55,7 +64,7 @@
     /* Formulários e Inputs */
     .form-row { display: flex; gap: 12px; margin-bottom: 12px; }
     .form-group { flex: 1; display: flex; flex-direction: column; }
-    label { font-size: 12px; font-weight: 700; color: #444; margin-bottom: 4px; text-transform: uppercase; }
+    label { font-size: 11px; font-weight: 700; color: #444; margin-bottom: 4px; text-transform: uppercase; }
     input[type="text"], input[type="password"], input[type="month"], select, textarea { width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; background: #fff; transition: border-color 0.2s; }
     input[type="text"]:focus, input[type="password"]:focus, select:focus, textarea:focus { border-color: #1a4d80; outline: none; }
     input[readonly] { background-color: #f8f9fa; color: #333; font-weight: 600; }
@@ -65,10 +74,16 @@
 
     /* Tabelas */
     .table-container { overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 6px; min-height: 200px; max-height: 500px; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { background: #e9ecef; color: #1a4d80; padding: 10px 8px; text-align: left; position: sticky; top: 0; border-bottom: 2px solid #ced4da; font-weight: bold; font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th { background: #e9ecef; color: #1a4d80; padding: 10px 8px; text-align: left; position: sticky; top: 0; border-bottom: 2px solid #ced4da; font-weight: bold; font-size: 11px; text-transform: uppercase; }
     td { padding: 8px 8px; border-bottom: 1px solid #eee; vertical-align: middle; font-size: 12px; }
     .td-center { text-align: center; }
+
+    /* Indicadores de Prioridade da OS na Tabela (Borda Lateral) */
+    .prio-critica { border-left: 5px solid #dc3545 !important; }
+    .prio-alta { border-left: 5px solid #fd7e14 !important; }
+    .prio-media { border-left: 5px solid #ffc107 !important; }
+    .prio-baixa { border-left: 5px solid #20c997 !important; }
 
     /* Assinaturas */
     .signature-container { display: flex; gap: 12px; margin-top: 8px; }
@@ -79,7 +94,7 @@
     .btn-clear { position: absolute; right: 12px; top: 12px; background: #dc3545; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
     /* Botões e Badges de Status */
-    .btn-submit { background: #1a4d80; color: white; border: none; padding: 12px 18px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .btn-submit { background: #1a4d80; color: white; border: none; padding: 12px 18px; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     .btn-submit:hover { background: #13385c; }
     .btn-submit:disabled { background: #6c757d; cursor: not-allowed; }
 
@@ -107,12 +122,12 @@
     .welcome-hero h2 { font-size: 24px; margin-bottom: 8px; }
     .welcome-hero p { font-size: 14px; opacity: 0.9; max-width: 800px; line-height: 1.5; }
     
-    .quick-actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .quick-actions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
     .quick-card { background: white; border-radius: 8px; padding: 20px; border: 1px solid #e2e8f0; text-align: center; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
     .quick-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); border-color: #1a4d80; }
     .quick-icon { font-size: 32px; margin-bottom: 10px; }
-    .quick-title { font-size: 15px; font-weight: bold; color: #1a4d80; margin-bottom: 6px; }
-    .quick-desc { font-size: 12px; color: #64748b; line-height: 1.4; }
+    .quick-title { font-size: 14px; font-weight: bold; color: #1a4d80; margin-bottom: 6px; }
+    .quick-desc { font-size: 11px; color: #64748b; line-height: 1.4; }
 
     /* Estilos do Dashboard */
     .dash-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
@@ -120,7 +135,7 @@
     .metric-card.yellow { border-left-color: #ffc107; }
     .metric-card.green { border-left-color: #28a745; }
     .metric-card.red { border-left-color: #dc3545; }
-    .metric-title { font-size: 12px; font-weight: bold; color: #64748b; text-transform: uppercase; }
+    .metric-title { font-size: 11px; font-weight: bold; color: #64748b; text-transform: uppercase; }
     .metric-value { font-size: 24px; font-weight: bold; color: #1e293b; margin-top: 4px; }
 
     .dash-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -187,7 +202,7 @@
   <div id="appContainer" style="display: none;">
 
     <div class="header">
-      <h1>DMA SYS | Gestão de Termos & Requisições</h1>
+      <h1>DMA SYS | Plataforma de Gestão Operacional</h1>
       
       <div class="header-right">
         <!-- ÍCONE DE NOTIFICAÇÃO (SINO) -->
@@ -212,39 +227,69 @@
       </div>
     </div>
 
-    <!-- NAVEGAÇÃO POR ABAS -->
+    <!-- NAVEGAÇÃO REORGANIZADA POR DROPDOWNS DE MÓDULOS -->
     <div class="nav-tabs">
-      <button type="button" class="nav-tab active" onclick="mudarAba('inicio')">🏠 Início</button>
-      <button type="button" class="nav-tab" onclick="mudarAba('dashboard')">📊 Dashboard & Métricas</button>
-      <button type="button" class="nav-tab" onclick="mudarAba('requisicoes')">📋 Requisições Internas</button>
-      <button type="button" class="nav-tab" onclick="mudarAba('emissao')">📝 Emitir Novo Termo</button>
-      <button type="button" class="nav-tab" onclick="mudarAba('consulta')">🔍 Consultar Termos Emitidos</button>
+      <button type="button" class="nav-tab active" id="btnNavInicio" onclick="mudarAba('inicio')">🏠 Início</button>
+      <button type="button" class="nav-tab" id="btnNavDashboard" onclick="mudarAba('dashboard')">📊 Dashboard</button>
+
+      <!-- MÓDULO QUALIDADE -->
+      <div class="dropdown">
+        <button type="button" class="nav-tab" id="btnNavQualidade">📂 Módulo Qualidade ▾</button>
+        <div class="dropdown-content">
+          <button type="button" onclick="mudarAba('requisicoes')">📋 Requisições Internas</button>
+          <button type="button" onclick="mudarAba('emissao')">📝 Emitir Novo Termo</button>
+          <button type="button" onclick="mudarAba('consulta')">🔍 Consultar Termos Emitidos</button>
+        </div>
+      </div>
+
+      <!-- MÓDULO MANUTENÇÃO (O.S.) -->
+      <div class="dropdown">
+        <button type="button" class="nav-tab" id="btnNavManutencao">🛠️ Manutenção (O.S.) ▾</button>
+        <div class="dropdown-content">
+          <button type="button" onclick="mudarAba('os_gestao')">📋 Central de Gestão de O.S.</button>
+          <button type="button" onclick="mudarAba('os_abertura')">➕ Abrir / Registrar Nova O.S.</button>
+        </div>
+      </div>
+
+      <!-- MÓDULO CADASTROS -->
+      <div class="dropdown">
+        <button type="button" class="nav-tab" id="btnNavCadastros">➕ Cadastros ▾</button>
+        <div class="dropdown-content">
+          <button type="button" onclick="mudarAba('cad_equipamento')">💉 Cadastrar Novo Equipamento</button>
+        </div>
+      </div>
     </div>
 
     <!-- ABA 0: TELA DE INÍCIO / BOAS-VINDAS -->
     <div id="abaInicio" class="tab-content active">
       <div class="welcome-hero">
         <h2>Bem-vindo ao DMA SYS v2.0</h2>
-        <p>Sistema integrado para gestão de movimentação de equipamentos médicos, controle de requisições do setor administrativo, separação pela Qualidade e emissão de Termos de Entrega e Higienização com assinatura digital.</p>
+        <p>Plataforma corporativa para gestão de movimentação de ativos médicos, acompanhamento de ordens de serviço de Engenharia Clínica, requisições internas da Qualidade e emissão digital de termos.</p>
       </div>
 
       <div class="quick-actions-grid">
         <div class="quick-card" onclick="mudarAba('dashboard')">
           <div class="quick-icon">📊</div>
           <div class="quick-title">Dashboard & Métricas</div>
-          <div class="quick-desc">Acompanhe indicadores gerais de movimentação, volume por hospital e famílias de equipamentos em tempo real.</div>
+          <div class="quick-desc">Acompanhe indicadores gerais de movimentação e chamados em tempo real.</div>
         </div>
 
         <div class="quick-card" onclick="mudarAba('requisicoes')">
           <div class="quick-icon">📋</div>
           <div class="quick-title">Requisições Internas</div>
-          <div class="quick-desc">Solicite substituições de equipamentos para a Qualidade ou atenda pedidos pendentes no estoque.</div>
+          <div class="quick-desc">Solicite substituições de equipamentos para a Qualidade ou atenda pedidos.</div>
+        </div>
+
+        <div class="quick-card" onclick="mudarAba('os_gestao')">
+          <div class="quick-icon">🛠️</div>
+          <div class="quick-title">Ordens de Serviço (O.S.)</div>
+          <div class="quick-desc">Gerencie manutenções corretivas e preventivas com visual por prioridade.</div>
         </div>
 
         <div class="quick-card" onclick="mudarAba('emissao')">
           <div class="quick-icon">📝</div>
           <div class="quick-title">Emitir Novo Termo</div>
-          <div class="quick-desc">Gere o Termo Duplo em PDF (Entrega + Higienização) com checklist de acessórios e assinaturas.</div>
+          <div class="quick-desc">Gere o Termo Duplo em PDF (Entrega + Higienização) com assinaturas.</div>
         </div>
       </div>
     </div>
@@ -541,6 +586,200 @@
       </div>
     </div>
 
+    <!-- ABA 5: CENTRAL DE GESTÃO DE ORDENS DE SERVIÇO (O.S.) -->
+    <div id="abaOsGestao" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span>Central de Ordens de Serviço (Engenharia Clínica)</span>
+          <button type="button" class="btn-submit" style="padding: 6px 12px; font-size: 11px;" onclick="mudarAba('os_abertura')">➕ Nova O.S.</button>
+        </div>
+
+        <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Status da O.S.:</label>
+            <select id="filtroStatusOS" onchange="renderizarTabelaOS()">
+              <option value="TODOS">Todos os Status</option>
+              <option value="ABERTA">Apenas Abertas</option>
+              <option value="CONCLUÍDA">Apenas Concluídas</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="flex: 2;">
+            <label>Buscar O.S. (Nº OS, TAG, Cliente ou Equipamento):</label>
+            <input type="text" id="filtroTextoOS" oninput="renderizarTabelaOS()" placeholder="Digite para filtrar...">
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th class="td-center" style="width: 90px;">Nº O.S.</th>
+                <th style="width: 110px;">Abertura</th>
+                <th>Cliente / Unidade</th>
+                <th class="td-center" style="width: 80px;">TAG</th>
+                <th>Equipamento</th>
+                <th class="td-center" style="width: 90px;">Tipo</th>
+                <th class="td-center" style="width: 80px;">Prioridade</th>
+                <th class="td-center" style="width: 80px;">Status</th>
+                <th class="td-center" style="width: 80px;">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="corpoOS">
+              <tr>
+                <td colspan="9" class="td-center" style="color: #888; padding: 24px;">Carregando Ordens de Serviço...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- LEGENDA DE PRIORIDADES INSPIRADA NO NEOVERO -->
+        <div style="display: flex; gap: 12px; margin-top: 12px; font-size: 11px; font-weight: bold; color: #475569;">
+          <span>Prioridades:</span>
+          <span style="color:#dc3545;">🔴 CRÍTICA</span>
+          <span style="color:#fd7e14;">🟠 ALTA</span>
+          <span style="color:#d97706;">🟡 MÉDIA</span>
+          <span style="color:#0d9488;">🔵 BAIXA</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 6: ABERTURA / REGISTRO DE NOVA O.S. -->
+    <div id="abaOsAbertura" class="tab-content">
+      <div class="card">
+        <div class="card-title">Abrir Nova Ordem de Serviço (Manutenção)</div>
+        <form id="formNovaOS" onsubmit="salvarNovaOS(event)">
+          
+          <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+              <label>Cliente / Unidade Hospitalar:</label>
+              <input type="text" id="osCliente" list="listClientes" placeholder="Selecione o cliente..." required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Tipo de Manutenção:</label>
+              <select id="osTipo">
+                <option value="CORRETIVA">CORRETIVA</option>
+                <option value="PREVENTIVA">PREVENTIVA</option>
+                <option value="CALIBRAÇÃO">CALIBRAÇÃO</option>
+                <option value="INSPEÇÃO">INSPEÇÃO / HIGIENIZAÇÃO</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Prioridade do Atendimento:</label>
+              <select id="osPrioridade">
+                <option value="MÉDIA" selected>MÉDIA 🟡</option>
+                <option value="ALTA">ALTA 🟠</option>
+                <option value="CRÍTICA">CRÍTICA 🔴</option>
+                <option value="BAIXA">BAIXA 🔵</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+              <label>Pesquisar Equipamento (TAG / Série / Patrimônio):</label>
+              <input type="text" id="osBuscaEquip" list="listEquipamentos" placeholder="Digite para buscar..." oninput="autoPreencherOSEquipamento()" required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>TAG:</label>
+              <input type="text" id="osTag" readonly placeholder="-">
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Nº de Série:</label>
+              <input type="text" id="osSerie" readonly placeholder="-">
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Patrimônio:</label>
+              <input type="text" id="osPatrimonio" readonly placeholder="-">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Equipamento / Modelo Selecionado:</label>
+            <input type="text" id="osNomeEquip" readonly placeholder="-">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Solicitante / Reclamante:</label>
+              <input type="text" id="osSolicitante" placeholder="Ex: Enfermagem / Eng. Clínica" required>
+            </div>
+            <div class="form-group">
+              <label>Técnico Responsável:</label>
+              <input type="text" id="osTecnico" placeholder="Nome do técnico executante" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Defeito Relatado / Queixa do Cliente:</label>
+            <textarea id="osDefeito" style="height: 60px;" placeholder="Descreva a falha reportada pelo cliente..." required></textarea>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Diagnóstico Técnico & Avaliação:</label>
+            <textarea id="osDiagnostico" style="height: 60px;" placeholder="Laudo do técnico após testes..." required></textarea>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label>Serviço Realizado / Solução Aplicada:</label>
+            <textarea id="osServico" style="height: 60px;" placeholder="Descrição dos reparos, regulagens ou trocas de peças..." required></textarea>
+          </div>
+
+          <div style="text-align: right;">
+            <button type="submit" id="btnSalvarOS" class="btn-submit">Registrar O.S. e Gerar Relatório PDF</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ABA 7: CADASTRO DE NOVO EQUIPAMENTO NA ABA EQUIP -->
+    <div id="abaCadEquipamento" class="tab-content">
+      <div class="card">
+        <div class="card-title">Cadastrar Novo Equipamento (Aba EQUIP)</div>
+        <form id="formNovoEquip" onsubmit="salvarNovoEquipamento(event)">
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>TAG do Equipamento:</label>
+              <input type="text" id="cadTag" placeholder="Ex: LMD-9999" required>
+            </div>
+            <div class="form-group">
+              <label>Nº de Série:</label>
+              <input type="text" id="cadSerie" placeholder="Ex: 849302" required>
+            </div>
+            <div class="form-group">
+              <label>Patrimônio:</label>
+              <input type="text" id="cadPatrimonio" placeholder="Ex: 00984" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+              <label>Nome do Equipamento:</label>
+              <input type="text" id="cadNome" placeholder="Ex: VENTILADOR PULMONAR" required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Modelo:</label>
+              <input type="text" id="cadModelo" placeholder="Ex: RUAH" required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Fabricante:</label>
+              <input type="text" id="cadFabricante" placeholder="Ex: CMOS DRAKE" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label>Acessórios Padrão (Separados por ponto e vírgula ;):</label>
+            <input type="text" id="cadAcessorios" placeholder="Ex: CABO DE FORÇA; CIRCUITO PACIENTE; SENSOR FLUXO">
+          </div>
+
+          <div style="text-align: right;">
+            <button type="submit" id="btnSalvarCadEquip" class="btn-submit">Salvar Equipamento na Planilha</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
   </div>
 
   <!-- POP-UP / MODAL DE RECUSA DA QUALIDADE -->
@@ -583,12 +822,13 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
     const NUMERO_WHATSAPP_SUPORTE = "5511970116092";
 
-    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [] };
+    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [] };
     let equipamentoSelecionado = null;
+    let osEquipamentoSelecionado = null;
     let protocoloReqEmRecusa = null;
     let usuarioLogado = null;
 
-    /* --- CONTROLE DE LOGIN E SESSÃO PERMANENTE (LOCALSTORAGE) --- */
+    /* --- CONTROLE DE LOGIN E SESSÃO PERMANENTE --- */
     function verificarSessao() {
       const sessaoSalva = localStorage.getItem("dmasys_usuario");
       if (sessaoSalva) {
@@ -605,6 +845,12 @@
               exibirAssinaturaTecnico();
             }
           }
+        }
+        
+        // Auto preenche o técnico na abertura de OS
+        const inputTecOS = document.getElementById('osTecnico');
+        if (inputTecOS && usuarioLogado.nome) {
+          inputTecOS.value = usuarioLogado.nome;
         }
       } else {
         document.getElementById('loginOverlay').style.display = "flex";
@@ -636,8 +882,6 @@
       if (encontrado) {
         divErro.style.display = "none";
         usuarioLogado = encontrado;
-        
-        // Salva persistentemente para não perder ao dar F5
         localStorage.setItem("dmasys_usuario", JSON.stringify(encontrado));
         
         document.getElementById('loginOverlay').style.display = "none";
@@ -673,6 +917,7 @@
         popularAutocomplete();
         renderizarTabelaTermos(bancoDados.termosEmitidos);
         filtrarRequisicoes();
+        renderizarTabelaOS();
         atualizarDashboard();
         atualizarNotificacoes();
         verificarSessao();
@@ -689,7 +934,6 @@
     }
 
     window.onload = function() {
-      // Executa a verificação imediatamente ao carregar a página
       verificarSessao();
 
       const hoje = new Date();
@@ -765,26 +1009,37 @@
       toggleChat();
     }
 
+    /* NAVEGAÇÃO REORGANIZADA DE ABAS */
     function mudarAba(nomeAba) {
       document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
       if (nomeAba === 'inicio') {
-        document.querySelectorAll('.nav-tab')[0].classList.add('active');
+        document.getElementById('btnNavInicio').classList.add('active');
         document.getElementById('abaInicio').classList.add('active');
       } else if (nomeAba === 'dashboard') {
-        document.querySelectorAll('.nav-tab')[1].classList.add('active');
+        document.getElementById('btnNavDashboard').classList.add('active');
         document.getElementById('abaDashboard').classList.add('active');
         atualizarDashboard();
       } else if (nomeAba === 'requisicoes') {
-        document.querySelectorAll('.nav-tab')[2].classList.add('active');
+        document.getElementById('btnNavQualidade').classList.add('active');
         document.getElementById('abaRequisicoes').classList.add('active');
       } else if (nomeAba === 'emissao') {
-        document.querySelectorAll('.nav-tab')[3].classList.add('active');
+        document.getElementById('btnNavQualidade').classList.add('active');
         document.getElementById('abaEmissao').classList.add('active');
       } else if (nomeAba === 'consulta') {
-        document.querySelectorAll('.nav-tab')[4].classList.add('active');
+        document.getElementById('btnNavQualidade').classList.add('active');
         document.getElementById('abaConsulta').classList.add('active');
+      } else if (nomeAba === 'os_gestao') {
+        document.getElementById('btnNavManutencao').classList.add('active');
+        document.getElementById('abaOsGestao').classList.add('active');
+        renderizarTabelaOS();
+      } else if (nomeAba === 'os_abertura') {
+        document.getElementById('btnNavManutencao').classList.add('active');
+        document.getElementById('abaOsAbertura').classList.add('active');
+      } else if (nomeAba === 'cad_equipamento') {
+        document.getElementById('btnNavCadastros').classList.add('active');
+        document.getElementById('abaCadEquipamento').classList.add('active');
       }
     }
 
@@ -823,6 +1078,180 @@
       }
 
       document.getElementById('btnEnviar').disabled = false;
+    }
+
+    /* RENDERIZAÇÃO E FILTRO DE O.S. */
+    function renderizarTabelaOS() {
+      const tbody = document.getElementById('corpoOS');
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      const listaOS = bancoDados.ordensServico || [];
+
+      if (listaOS.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color: #888; padding: 20px;">Nenhuma Ordem de Serviço registrada.</td></tr>';
+        return;
+      }
+
+      const statusFiltro = document.getElementById('filtroStatusOS').value;
+      const textoFiltro = document.getElementById('filtroTextoOS').value.toLowerCase().trim();
+
+      let filtradas = listaOS.filter(os => {
+        if (statusFiltro !== "TODOS" && os.status.toUpperCase() !== statusFiltro) return false;
+
+        if (textoFiltro) {
+          const matchProt = os.protocoloOS.toLowerCase().includes(textoFiltro);
+          const matchCli = os.cliente.toLowerCase().includes(textoFiltro);
+          const matchTag = os.tag.toLowerCase().includes(textoFiltro);
+          const matchEq = os.equipamento.toLowerCase().includes(textoFiltro);
+          if (!matchProt && !matchCli && !matchTag && !matchEq) return false;
+        }
+
+        return true;
+      });
+
+      if (filtradas.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color: #888; padding: 20px;">Nenhuma O.S. encontrada para os filtros.</td></tr>';
+        return;
+      }
+
+      filtradas.forEach(os => {
+        let prioClass = "prio-media";
+        const pr = os.prioridade.toUpperCase();
+        if (pr === "CRÍTICA") prioClass = "prio-critica";
+        if (pr === "ALTA") prioClass = "prio-alta";
+        if (pr === "BAIXA") prioClass = "prio-baixa";
+
+        tbody.innerHTML += `
+          <tr class="${prioClass}">
+            <td class="td-center"><b>${os.protocoloOS}</b></td>
+            <td>${os.dataAbertura}</td>
+            <td>${os.cliente}</td>
+            <td class="td-center"><b>${os.tag}</b></td>
+            <td>${os.equipamento}</td>
+            <td class="td-center">${os.tipoManutencao}</td>
+            <td class="td-center"><b>${os.prioridade}</b></td>
+            <td class="td-center"><span class="badge-status ${os.status === 'CONCLUÍDA' ? 'badge-atendido' : 'badge-pendente'}">${os.status}</span></td>
+            <td class="td-center">
+              ${os.pdfUrlOS ? `<a href="${os.pdfUrlOS}" target="_blank" class="btn-pdf">📄 PDF</a>` : '-'}
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function autoPreencherOSEquipamento() {
+      const val = document.getElementById('osBuscaEquip').value.toLowerCase().trim();
+
+      if (!val || !bancoDados.equipamentos) return;
+
+      const eq = bancoDados.equipamentos.find(item => {
+        const strFormatada = `tag: ${item.tag} | ${item.nome} | série: ${item.serie}`.toLowerCase();
+        return strFormatada === val || item.tag.toLowerCase() === val || item.serie.toLowerCase() === val || item.patrimonio.toLowerCase() === val;
+      });
+
+      if (eq) {
+        osEquipamentoSelecionado = eq;
+        document.getElementById('osTag').value = eq.tag || "-";
+        document.getElementById('osSerie').value = eq.serie || "-";
+        document.getElementById('osPatrimonio').value = eq.patrimonio || "-";
+        document.getElementById('osNomeEquip').value = `${eq.nome} (Modelo: ${eq.modelo})` || "-";
+      }
+    }
+
+    function salvarNovaOS(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSalvarOS');
+      btn.disabled = true;
+      btn.innerText = "GERANDO O.S. NO DRIVE...";
+
+      const payload = {
+        acao: "CRIAR_OS",
+        cliente: document.getElementById('osCliente').value,
+        tipoManutencao: document.getElementById('osTipo').value,
+        prioridade: document.getElementById('osPrioridade').value,
+        tag: document.getElementById('osTag').value,
+        serie: document.getElementById('osSerie').value,
+        patrimonio: document.getElementById('osPatrimonio').value,
+        equipamento: document.getElementById('osNomeEquip').value,
+        solicitante: document.getElementById('osSolicitante').value,
+        tecnico: document.getElementById('osTecnico').value,
+        defeitoRelatado: document.getElementById('osDefeito').value,
+        diagnosticoTecnico: document.getElementById('osDiagnostico').value,
+        servicoRealizado: document.getElementById('osServico').value,
+        status: "CONCLUÍDA",
+        disponibilidade: "FUNCIONANDO"
+      };
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === "sucesso") {
+          const querAbrir = confirm("Ordem de Serviço registrada com sucesso!\n\nProtocolo: " + res.protocoloOS + "\n\nDeseja ABRIR O PDF da O.S. agora?");
+          if (querAbrir && res.pdfUrlOS) {
+            window.open(res.pdfUrlOS, '_blank');
+          }
+          document.getElementById('formNovaOS').reset();
+          btn.disabled = false;
+          btn.innerText = "Registrar O.S. e Gerar Relatório PDF";
+          mudarAba('os_gestao');
+          buscarAtualizacoesSilenciosas();
+        } else {
+          alert("Erro ao registrar O.S.");
+          btn.disabled = false;
+          btn.innerText = "Registrar O.S. e Gerar Relatório PDF";
+        }
+      })
+      .catch(err => {
+        alert("Erro na comunicação com o servidor.");
+        btn.disabled = false;
+        btn.innerText = "Registrar O.S. e Gerar Relatório PDF";
+      });
+    }
+
+    function salvarNovoEquipamento(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSalvarCadEquip');
+      btn.disabled = true;
+      btn.innerText = "SALVANDO EQUIPAMENTO...";
+
+      const payload = {
+        acao: "CRIAR_EQUIPAMENTO",
+        tag: document.getElementById('cadTag').value,
+        serie: document.getElementById('cadSerie').value,
+        patrimonio: document.getElementById('cadPatrimonio').value,
+        nome: document.getElementById('cadNome').value,
+        modelo: document.getElementById('cadModelo').value,
+        fabricante: document.getElementById('cadFabricante').value,
+        acessorios: document.getElementById('cadAcessorios').value
+      };
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === "sucesso") {
+          alert("Equipamento cadastrado com sucesso na aba EQUIP!");
+          document.getElementById('formNovoEquip').reset();
+          btn.disabled = false;
+          btn.innerText = "Salvar Equipamento na Planilha";
+          buscarAtualizacoesSilenciosas();
+        } else {
+          alert("Erro ao cadastrar equipamento.");
+          btn.disabled = false;
+          btn.innerText = "Salvar Equipamento na Planilha";
+        }
+      })
+      .catch(err => {
+        alert("Erro na comunicação com o servidor.");
+        btn.disabled = false;
+        btn.innerText = "Salvar Equipamento na Planilha";
+      });
     }
 
     function renderizarTabelaTermos(lista) {
