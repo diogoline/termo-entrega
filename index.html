@@ -283,7 +283,7 @@
       </div>
     </div>
 
-    <!-- DATALISTS DE NOMENCLATURAS PADRONIZADAS -->
+    <!-- DATALISTS DINÂMICAS E CONDICIONAIS -->
     <datalist id="listDescricoesPadrao"></datalist>
     <datalist id="listModelosPadrao"></datalist>
     <datalist id="listFabricantesPadrao"></datalist>
@@ -770,16 +770,16 @@
 
           <div class="form-row">
             <div class="form-group" style="flex: 2;">
-              <label>Nome do Equipamento (Descrição Padronizada):</label>
-              <input type="text" id="cadNome" list="listDescricoesPadrao" placeholder="Selecione ou digite o nome..." required>
+              <label>1. Descrição do Equipamento:</label>
+              <input type="text" id="cadNome" list="listDescricoesPadrao" placeholder="Selecione a Descrição/Família..." onchange="aoSelecionarDescricaoCad()" required>
             </div>
             <div class="form-group" style="flex: 1;">
-              <label>Modelo (Padronizado):</label>
-              <input type="text" id="cadModelo" list="listModelosPadrao" placeholder="Selecione ou digite o modelo..." required>
+              <label>2. Modelo (Filtrado por Descrição):</label>
+              <input type="text" id="cadModelo" list="listModelosPadrao" placeholder="Selecione o Modelo..." onchange="aoSelecionarModeloCad()" required>
             </div>
             <div class="form-group" style="flex: 1;">
-              <label>Fabricante (Padronizado):</label>
-              <input type="text" id="cadFabricante" list="listFabricantesPadrao" placeholder="Selecione ou digite o fabricante..." required>
+              <label>3. Fabricante (Filtrado por Modelo):</label>
+              <input type="text" id="cadFabricante" list="listFabricantesPadrao" placeholder="Selecione o Fabricante..." required>
             </div>
           </div>
 
@@ -795,65 +795,46 @@
       </div>
     </div>
 
-    <!-- ABA 8: CADASTRO DE NOMENCLATURAS PADRÃO (DESCRICAO, MODELO, FABRICANTE) -->
+    <!-- ABA 8: CADASTRO DE NOMENCLATURAS VINCULADAS -->
     <div id="abaCadAuxiliares" class="tab-content">
       <div class="card">
-        <div class="card-title">Gerenciar Nomenclaturas Padronizadas</div>
-        <p style="font-size: 12px; color: #64748b; margin-bottom: 16px;">Cadastre aqui os termos oficiais para evitar divergências na hora de cadastrar equipamentos no sistema.</p>
+        <div class="card-title">Gerenciar Nomenclaturas & Combinações Válidas</div>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 16px;">Cadastre os Modelos e Fabricantes autorizados para cada Descrição de Equipamento.</p>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
-          
-          <!-- CADASTRO DE DESCRIÇÕES -->
-          <div style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <div style="font-weight: bold; color: #1a4d80; font-size: 13px; margin-bottom: 10px;">1. Descrição / Nome do Ativo</div>
-            <div class="form-group" style="margin-bottom: 10px;">
-              <label>Nova Descrição:</label>
-              <input type="text" id="novoAuxDescricao" placeholder="Ex: MONITOR MULTIPARAMÉTRICO">
+        <form onsubmit="salvarAuxiliarVinculado(event)" style="background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+          <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+              <label>Descrição / Família do Equipamento:</label>
+              <input type="text" id="vinculoDescricao" list="listDescricoesPadrao" placeholder="Ex: BOMBA DE INFUSÃO" required>
             </div>
-            <button type="button" class="btn-submit" style="width: 100%; padding: 8px;" onclick="salvarAuxiliar('DESCRICAO')">➕ Cadastrar Descrição</button>
-            
-            <div style="margin-top: 14px;">
-              <label>Cadastrados:</label>
-              <div id="listaAuxDescricao" style="max-height: 200px; overflow-y: auto; background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; font-size: 11px;">
-                <!-- Lista preenchida via JS -->
-              </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Modelo:</label>
+              <input type="text" id="vinculoModelo" placeholder="Ex: ST1000" required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Fabricante:</label>
+              <input type="text" id="vinculoFabricante" placeholder="Ex: SAMTRONIC" required>
             </div>
           </div>
-
-          <!-- CADASTRO DE MODELOS -->
-          <div style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <div style="font-weight: bold; color: #1a4d80; font-size: 13px; margin-bottom: 10px;">2. Modelo do Equipamento</div>
-            <div class="form-group" style="margin-bottom: 10px;">
-              <label>Novo Modelo:</label>
-              <input type="text" id="novoAuxModelo" placeholder="Ex: RUAH">
-            </div>
-            <button type="button" class="btn-submit" style="width: 100%; padding: 8px;" onclick="salvarAuxiliar('MODELO')">➕ Cadastrar Modelo</button>
-            
-            <div style="margin-top: 14px;">
-              <label>Cadastrados:</label>
-              <div id="listaAuxModelo" style="max-height: 200px; overflow-y: auto; background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; font-size: 11px;">
-                <!-- Lista preenchida via JS -->
-              </div>
-            </div>
+          <div style="text-align: right;">
+            <button type="submit" class="btn-submit">➕ Cadastrar Vínculo Oficinal</button>
           </div>
+        </form>
 
-          <!-- CADASTRO DE FABRICANTES -->
-          <div style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <div style="font-weight: bold; color: #1a4d80; font-size: 13px; margin-bottom: 10px;">3. Fabricante / Marca</div>
-            <div class="form-group" style="margin-bottom: 10px;">
-              <label>Novo Fabricante:</label>
-              <input type="text" id="novoAuxFabricante" placeholder="Ex: CMOS DRAKE">
-            </div>
-            <button type="button" class="btn-submit" style="width: 100%; padding: 8px;" onclick="salvarAuxiliar('FABRICANTE')">➕ Cadastrar Fabricante</button>
-            
-            <div style="margin-top: 14px;">
-              <label>Cadastrados:</label>
-              <div id="listaAuxFabricante" style="max-height: 200px; overflow-y: auto; background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; font-size: 11px;">
-                <!-- Lista preenchida via JS -->
-              </div>
-            </div>
-          </div>
-
+        <div class="card-title" style="font-size: 12px;">Catálogo de Combinações Cadastradas</div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Descrição / Família</th>
+                <th>Modelo Autorizado</th>
+                <th>Fabricante</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaAuxiliaresList">
+              <tr><td colspan="3" class="td-center" style="color:#888;">Carregando combinações...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -961,7 +942,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
     const NUMERO_WHATSAPP_SUPORTE = "5511970116092";
 
-    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], descricoesPadrao: [], modelosPadrao: [], fabricantesPadrao: [] };
+    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], relacoesAuxiliares: [] };
     let equipamentoSelecionado = null;
     let osEquipamentoSelecionado = null;
     let protocoloReqEmRecusa = null;
@@ -1051,62 +1032,104 @@
       });
     }
 
+    // --- LÓGICA CONDICIONAL DE NOMENCLATURAS ---
     function renderizarListasAuxiliares() {
-      // Datalists para autocomplete
+      const rels = bancoDados.relacoesAuxiliares || [];
+
+      // 1. Datalist com todas as Descrições Únicas
+      const descricoesUnicas = Array.from(new Set(rels.map(r => r.descricao))).filter(String).sort();
       const dlDesc = document.getElementById('listDescricoesPadrao');
+      if (dlDesc) {
+        dlDesc.innerHTML = descricoesUnicas.map(d => `<option value="${d}">`).join('');
+      }
+
+      // 2. Preenche Tabela na Tela de Gestão de Vínculos
+      const tbody = document.getElementById('tabelaAuxiliaresList');
+      if (tbody) {
+        tbody.innerHTML = "";
+        if (rels.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3" class="td-center" style="color:#888;">Nenhuma combinação registrada na aba CAD_AUXILIARES.</td></tr>';
+        } else {
+          rels.forEach(r => {
+            tbody.innerHTML += `
+              <tr>
+                <td><b>${r.descricao}</b></td>
+                <td>${r.modelo || "-"}</td>
+                <td>${r.fabricante || "-"}</td>
+              </tr>
+            `;
+          });
+        }
+      }
+
+      // Preenche autocompletes iniciais
+      aoSelecionarDescricaoCad();
+    }
+
+    // Chamado ao selecionar Descrição na tela de Cadastro de Equipamento
+    function aoSelecionarDescricaoCad() {
+      const descVal = document.getElementById('cadNome').value.trim().toUpperCase();
+      const rels = bancoDados.relacoesAuxiliares || [];
+
       const dlMod = document.getElementById('listModelosPadrao');
       const dlFab = document.getElementById('listFabricantesPadrao');
 
-      if (dlDesc) {
-        dlDesc.innerHTML = "";
-        (bancoDados.descricoesPadrao || []).forEach(d => dlDesc.innerHTML += `<option value="${d}">`);
-      }
-      if (dlMod) {
-        dlMod.innerHTML = "";
-        (bancoDados.modelosPadrao || []).forEach(m => dlMod.innerHTML += `<option value="${m}">`);
-      }
-      if (dlFab) {
-        dlFab.innerHTML = "";
-        (bancoDados.fabricantesPadrao || []).forEach(f => dlFab.innerHTML += `<option value="${f}">`);
+      if (!descVal) {
+        // Se limpo, mostra todos os modelos/fabricantes
+        const todosMod = Array.from(new Set(rels.map(r => r.modelo))).filter(String).sort();
+        const todosFab = Array.from(new Set(rels.map(r => r.fabricante))).filter(String).sort();
+        if (dlMod) dlMod.innerHTML = todosMod.map(m => `<option value="${m}">`).join('');
+        if (dlFab) dlFab.innerHTML = todosFab.map(f => `<option value="${f}">`).join('');
+        return;
       }
 
-      // Caixas de visualização na tela de cadastro auxiliar
-      const divDesc = document.getElementById('listaAuxDescricao');
-      const divMod = document.getElementById('listaAuxModelo');
-      const divFab = document.getElementById('listaAuxFabricante');
+      // Filtra APENAS modelos vinculados à descrição selecionada
+      const modelosFiltrados = Array.from(new Set(rels.filter(r => r.descricao === descVal).map(r => r.modelo))).filter(String).sort();
+      if (dlMod) dlMod.innerHTML = modelosFiltrados.map(m => `<option value="${m}">`).join('');
 
-      if (divDesc) {
-        divDesc.innerHTML = (bancoDados.descricoesPadrao || []).map(d => `<div style="padding: 3px 0; border-bottom: 1px solid #f1f5f9;">• ${d}</div>`).join('') || '<div style="color:#aaa;">Nenhum item</div>';
-      }
-      if (divMod) {
-        divMod.innerHTML = (bancoDados.modelosPadrao || []).map(m => `<div style="padding: 3px 0; border-bottom: 1px solid #f1f5f9;">• ${m}</div>`).join('') || '<div style="color:#aaa;">Nenhum item</div>';
-      }
-      if (divFab) {
-        divFab.innerHTML = (bancoDados.fabricantesPadrao || []).map(f => `<div style="padding: 3px 0; border-bottom: 1px solid #f1f5f9;">• ${f}</div>`).join('') || '<div style="color:#aaa;">Nenhum item</div>';
+      // Limpa modelo/fabricante se forem incompatíveis
+      aoSelecionarModeloCad();
+    }
+
+    // Chamado ao selecionar Modelo na tela de Cadastro de Equipamento
+    function aoSelecionarModeloCad() {
+      const descVal = document.getElementById('cadNome').value.trim().toUpperCase();
+      const modVal = document.getElementById('cadModelo').value.trim().toUpperCase();
+      const rels = bancoDados.relacoesAuxiliares || [];
+      const dlFab = document.getElementById('listFabricantesPadrao');
+
+      let fabs = rels;
+      if (descVal) fabs = fabs.filter(r => r.descricao === descVal);
+      if (modVal) fabs = fabs.filter(r => r.modelo === modVal);
+
+      const fabricantesFiltrados = Array.from(new Set(fabs.map(r => r.fabricante))).filter(String).sort();
+      if (dlFab) dlFab.innerHTML = fabricantesFiltrados.map(f => `<option value="${f}">`).join('');
+
+      // Se houver apenas 1 fabricante para esse modelo/descrição, preenche automaticamente!
+      if (fabricantesFiltrados.length === 1) {
+        document.getElementById('cadFabricante').value = fabricantesFiltrados[0];
       }
     }
 
-    function salvarAuxiliar(tipo) {
-      let campoId = 'novoAuxDescricao';
-      if (tipo === 'MODELO') campoId = 'novoAuxModelo';
-      if (tipo === 'FABRICANTE') campoId = 'novoAuxFabricante';
+    function salvarAuxiliarVinculado(e) {
+      e.preventDefault();
+      const desc = document.getElementById('vinculoDescricao').value.trim().toUpperCase();
+      const mod  = document.getElementById('vinculoModelo').value.trim().toUpperCase();
+      const fab  = document.getElementById('vinculoFabricante').value.trim().toUpperCase();
 
-      const inputEl = document.getElementById(campoId);
-      const val = inputEl.value.trim().toUpperCase();
-
-      if (!val) {
-        alert("Por favor, digite o nome para cadastrar.");
+      if (!desc || !mod || !fab) {
+        alert("Preencha Descrição, Modelo e Fabricante.");
         return;
       }
 
       const payload = {
-        acao: "CRIAR_AUXILIAR",
-        tipo: tipo,
-        valor: val
+        acao: "CRIAR_AUXILIAR_VINCULADO",
+        descricao: desc,
+        modelo: mod,
+        fabricante: fab
       };
 
-      inputEl.value = "";
-      alert(`Cadastrando "${val}" na lista oficial...`);
+      alert(`Cadastrando vínculo: ${desc} -> ${mod} (${fab})...`);
 
       fetch(API_URL, {
         method: 'POST',
@@ -1115,10 +1138,12 @@
       .then(res => res.json())
       .then(res => {
         if (res.status === "sucesso") {
-          alert("Nomenclatura cadastrada com sucesso!");
+          alert("Combinação cadastrada com sucesso!");
+          document.getElementById('vinculoModelo').value = "";
+          document.getElementById('vinculoFabricante').value = "";
           buscarAtualizacoesSilenciosas();
         } else {
-          alert("Erro ao salvar nomenclatura.");
+          alert("Erro ao cadastrar combinação.");
         }
       })
       .catch(err => alert("Erro na comunicação com o servidor."));
