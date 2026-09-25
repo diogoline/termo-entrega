@@ -39,18 +39,24 @@
     .notif-item-title { font-size: 12px; font-weight: bold; color: #1e293b; display: flex; justify-content: space-between; }
     .notif-item-sub { font-size: 11px; color: #64748b; margin-top: 2px; }
 
-    /* NAVEGAÇÃO REORGANIZADA POR MENUS DROPDOWN */
+    /* NAVEGAÇÃO REORGANIZADA POR MENUS DROPDOWN (CORRIGIDO) */
     .nav-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
     .nav-tab { padding: 8px 14px; font-size: 13px; font-weight: 700; border: none; background: #f1f5f9; color: #334155; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
     .nav-tab:hover { background: #e2e8f0; }
     .nav-tab.active { background: #1a4d80; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-    /* ESTILOS DE MENU DROPDOWN */
+    /* ESTILOS DE MENU DROPDOWN - PONTE DE CONEXÃO CORRIGIDA */
     .dropdown { position: relative; display: inline-block; }
-    .dropdown-content { display: none; position: absolute; top: 100%; left: 0; background-color: #ffffff; min-width: 210px; box-shadow: 0 8px 16px rgba(0,0,0,0.15); border-radius: 6px; border: 1px solid #cbd5e1; z-index: 1000; overflow: hidden; margin-top: 4px; }
-    .dropdown-content button { color: #334155; padding: 10px 14px; text-decoration: none; display: block; width: 100%; text-align: left; background: none; border: none; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-    .dropdown-content button:hover { background-color: #f1f5f9; color: #1a4d80; }
-    .dropdown:hover .dropdown-content { display: block; animation: fadeIn 0.15s ease-in-out; }
+    .dropdown-content { display: none; position: absolute; top: 100%; left: 0; background-color: #ffffff; min-width: 220px; box-shadow: 0 8px 20px rgba(0,0,0,0.18); border-radius: 6px; border: 1px solid #cbd5e1; z-index: 1000; overflow: hidden; margin-top: 2px; }
+    
+    /* Ponte invisível que impede o menu de fechar ao mover o rato */
+    .dropdown-content::before { content: ""; position: absolute; top: -10px; left: 0; width: 100%; height: 10px; background: transparent; }
+
+    .dropdown-content button { color: #334155; padding: 11px 16px; text-decoration: none; display: block; width: 100%; text-align: left; background: none; border: none; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; border-bottom: 1px solid #f1f5f9; }
+    .dropdown-content button:last-child { border-bottom: none; }
+    .dropdown-content button:hover { background-color: #f1f5f9; color: #1a4d80; font-weight: 700; }
+    
+    .dropdown:hover .dropdown-content, .dropdown.open .dropdown-content { display: block; animation: fadeIn 0.15s ease-in-out; }
 
     /* Estrutura das Telas */
     .tab-content { display: none; }
@@ -233,8 +239,8 @@
       <button type="button" class="nav-tab" id="btnNavDashboard" onclick="mudarAba('dashboard')">📊 Dashboard</button>
 
       <!-- MÓDULO QUALIDADE -->
-      <div class="dropdown">
-        <button type="button" class="nav-tab" id="btnNavQualidade">📂 Módulo Qualidade ▾</button>
+      <div class="dropdown" id="dropQualidade">
+        <button type="button" class="nav-tab" id="btnNavQualidade" onclick="toggleMenuDropdown(event, 'dropQualidade')">📂 Módulo Qualidade ▾</button>
         <div class="dropdown-content">
           <button type="button" onclick="mudarAba('requisicoes')">📋 Requisições Internas</button>
           <button type="button" onclick="mudarAba('emissao')">📝 Emitir Novo Termo</button>
@@ -243,8 +249,8 @@
       </div>
 
       <!-- MÓDULO MANUTENÇÃO (O.S.) -->
-      <div class="dropdown">
-        <button type="button" class="nav-tab" id="btnNavManutencao">🛠️ Manutenção (O.S.) ▾</button>
+      <div class="dropdown" id="dropManutencao">
+        <button type="button" class="nav-tab" id="btnNavManutencao" onclick="toggleMenuDropdown(event, 'dropManutencao')">🛠️ Manutenção (O.S.) ▾</button>
         <div class="dropdown-content">
           <button type="button" onclick="mudarAba('os_gestao')">📋 Central de Gestão de O.S.</button>
           <button type="button" onclick="mudarAba('os_abertura')">➕ Abrir / Registrar Nova O.S.</button>
@@ -252,8 +258,8 @@
       </div>
 
       <!-- MÓDULO CADASTROS -->
-      <div class="dropdown">
-        <button type="button" class="nav-tab" id="btnNavCadastros">➕ Cadastros ▾</button>
+      <div class="dropdown" id="dropCadastros">
+        <button type="button" class="nav-tab" id="btnNavCadastros" onclick="toggleMenuDropdown(event, 'dropCadastros')">➕ Cadastros ▾</button>
         <div class="dropdown-content">
           <button type="button" onclick="mudarAba('cad_equipamento')">💉 Cadastrar Novo Equipamento</button>
         </div>
@@ -633,7 +639,7 @@
           </table>
         </div>
 
-        <!-- LEGENDA DE PRIORIDADES INSPIRADA NO NEOVERO -->
+        <!-- LEGENDA DE PRIORIDADES -->
         <div style="display: flex; gap: 12px; margin-top: 12px; font-size: 11px; font-weight: bold; color: #475569;">
           <span>Prioridades:</span>
           <span style="color:#dc3545;">🔴 CRÍTICA</span>
@@ -828,6 +834,26 @@
     let protocoloReqEmRecusa = null;
     let usuarioLogado = null;
 
+    /* CONTROLE DOS DROPDOWNS DO MENU (CLIQUE / HOVER) */
+    function toggleMenuDropdown(event, dropId) {
+      event.stopPropagation();
+      const el = document.getElementById(dropId);
+      const estaAberto = el.classList.contains('open');
+      
+      fecharTodosDropdowns();
+      if (!estaAberto) {
+        el.classList.add('open');
+      }
+    }
+
+    function fecharTodosDropdowns() {
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+    }
+
+    document.addEventListener('click', function() {
+      fecharTodosDropdowns();
+    });
+
     /* --- CONTROLE DE LOGIN E SESSÃO PERMANENTE --- */
     function verificarSessao() {
       const sessaoSalva = localStorage.getItem("dmasys_usuario");
@@ -847,7 +873,6 @@
           }
         }
         
-        // Auto preenche o técnico na abertura de OS
         const inputTecOS = document.getElementById('osTecnico');
         if (inputTecOS && usuarioLogado.nome) {
           inputTecOS.value = usuarioLogado.nome;
@@ -1011,6 +1036,7 @@
 
     /* NAVEGAÇÃO REORGANIZADA DE ABAS */
     function mudarAba(nomeAba) {
+      fecharTodosDropdowns();
       document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
