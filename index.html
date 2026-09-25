@@ -39,7 +39,7 @@
     .notif-item-title { font-size: 12px; font-weight: bold; color: #1e293b; display: flex; justify-content: space-between; }
     .notif-item-sub { font-size: 11px; color: #64748b; margin-top: 2px; }
 
-    /* NAVEGAÇÃO REORGANIZADA POR MENUS DROPDOWN (CORRIGIDO) */
+    /* NAVEGAÇÃO REORGANIZADA POR MENUS DROPDOWN */
     .nav-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
     .nav-tab { padding: 8px 14px; font-size: 13px; font-weight: 700; border: none; background: #f1f5f9; color: #334155; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
     .nav-tab:hover { background: #e2e8f0; }
@@ -149,6 +149,12 @@
     .modal-overlay.active { display: flex; }
     .modal-box { background: white; padding: 24px; border-radius: 10px; width: 680px; max-width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
     .modal-title { font-size: 16px; font-weight: bold; color: #1a4d80; margin-bottom: 12px; display: flex; justify-content: space-between; border-bottom: 2px solid #1a4d80; padding-bottom: 6px; }
+
+    /* LAYOUT ORGANIZADO DE FOTOS EM MINIATURAS LADO A LADO */
+    .galeria-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; width: 100%; }
+    .galeria-thumb { width: 85px; height: 85px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #f8fafc; position: relative; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+    .galeria-thumb:hover { transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.18); border-color: #2563eb; }
+    .galeria-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     /* RODAPÉ DO SISTEMA */
     .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-top: 2px solid #2563eb; }
@@ -781,7 +787,7 @@
 
   </div>
 
-  <!-- MODAL / POP-UP ESPELHO DE VISUALIZAÇÃO E REABERTURA DE O.S. (INSPIRADO NO NEOVERO) -->
+  <!-- MODAL / POP-UP ESPELHO DE VISUALIZAÇÃO E REABERTURA/FECHAMENTO DE O.S. -->
   <div id="modalOS" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-title">
@@ -808,20 +814,22 @@
         <textarea id="mOSServico" style="height: 60px;"></textarea>
       </div>
 
-      <!-- GALERIA DE ANEXOS / FOTOS -->
+      <!-- GALERIA ORGANIZADA DE ANEXOS / FOTOS EM MINIATURAS LADO A LADO -->
       <div style="margin-bottom: 16px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
-        <label style="display: flex; justify-content: space-between; align-items: center;">
-          <span>Anexos & Fotos da Manutenção:</span>
+        <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span style="font-size: 11px; font-weight: 700; color: #444; text-transform: uppercase;">Anexos & Fotos da Manutenção:</span>
           <input type="file" id="inputFotoOS" accept="image/*" style="display:none;" onchange="uploadFotoOS(event)">
           <button type="button" class="btn-atender" style="padding: 4px 8px; font-size: 10px;" onclick="document.getElementById('inputFotoOS').click()">📎 Anexar Imagem</button>
         </label>
-        <div id="mOSGaleria" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+        
+        <div id="mOSGaleria" class="galeria-grid">
           <span style="color:#aaa; font-size:11px;">Nenhuma foto anexada.</span>
         </div>
       </div>
 
+      <!-- BOTÃO DINÂMICO DE REABRIR OU ENCERRAR O.S. -->
       <div style="display: flex; gap: 8px; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 12px;">
-        <button type="button" id="btnReabrirOS" class="btn-negar" style="background:#d97706;" onclick="reabrirOSAtual()">🔓 Reabrir O.S.</button>
+        <button type="button" id="btnAcaoOSModal" class="btn-negar" style="background:#d97706;" onclick="alternarAcaoOS()">🔓 Reabrir O.S.</button>
         
         <div style="display: flex; gap: 8px;">
           <a id="btnPdfOSModal" href="#" target="_blank" class="btn-pdf">🖨️ Imprimir PDF</a>
@@ -877,6 +885,16 @@
     let protocoloReqEmRecusa = null;
     let osSelecionadaModal = null;
     let usuarioLogado = null;
+
+    /* AUXILIAR: CONVERTE LINK DE VISUALIZAÇÃO DO DRIVE EM LINK DIRETO DE IMAGEM RAW */
+    function converterUrlDriveParaImagem(url) {
+      if (!url) return "";
+      const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) {
+        return `https://lh3.googleusercontent.com/d/${match[1]}`;
+      }
+      return url;
+    }
 
     /* CONTROLE DOS DROPDOWNS DO MENU */
     function toggleMenuDropdown(event, dropId) {
@@ -1211,7 +1229,7 @@
       });
     }
 
-    /* ESPELHO E AÇÕES DA O.S. (INSPIRADO NO NEOVERO) */
+    /* ESPELHO E AÇÕES DA O.S. */
     function abrirModalOS(protocoloOS) {
       if (!bancoDados || !bancoDados.ordensServico) return;
 
@@ -1230,6 +1248,16 @@
       document.getElementById('mOSDiagnostico').value = os.diagnosticoTecnico || "";
       document.getElementById('mOSServico').value = os.servicoRealizado || "";
 
+      // Alterna o botão de Ação entre REABRIR ou ENCERRAR conforme o status
+      const btnAcao = document.getElementById('btnAcaoOSModal');
+      if (os.status.toUpperCase() === "CONCLUÍDA") {
+        btnAcao.innerText = "🔓 Reabrir O.S.";
+        btnAcao.style.background = "#d97706";
+      } else {
+        btnAcao.innerText = "✅ Salvar / Encerrar O.S.";
+        btnAcao.style.background = "#28a745";
+      }
+
       const btnPdf = document.getElementById('btnPdfOSModal');
       if (os.pdfUrlOS) {
         btnPdf.href = os.pdfUrlOS;
@@ -1238,13 +1266,21 @@
         btnPdf.style.display = "none";
       }
 
-      // Renderiza a galeria de imagens
+      // Renderização organizada das fotos em miniaturas lado a lado
       const divGaleria = document.getElementById('mOSGaleria');
       divGaleria.innerHTML = "";
+      
       if (os.anexosUrl && os.anexosUrl.length > 10) {
         const urls = os.anexosUrl.split(';').filter(String);
-        urls.forEach(url => {
-          divGaleria.innerHTML += `<a href="${url}" target="_blank" style="display:inline-block; border:1px solid #ccc; border-radius:4px; padding:2px; background:#fff;"><img src="${url}" style="width:50px; height:50px; object-fit:cover; border-radius:3px;" title="Clique para ampliar"/></a>`;
+        urls.forEach(urlOriginal => {
+          const urlDireta = converterUrlDriveParaImagem(urlOriginal);
+          divGaleria.innerHTML += `
+            <div class="galeria-thumb">
+              <a href="${urlOriginal}" target="_blank" title="Clique para abrir foto em tamanho real">
+                <img src="${urlDireta}" alt="Foto da OS" onerror="this.src='https://via.placeholder.com/85?text=Foto';"/>
+              </a>
+            </div>
+          `;
         });
       } else {
         divGaleria.innerHTML = '<span style="color:#aaa; font-size:11px;">Nenhuma foto anexada.</span>';
@@ -1258,37 +1294,78 @@
       document.getElementById('modalOS').classList.remove('active');
     }
 
-    function reabrirOSAtual() {
+    function alternarAcaoOS() {
       if (!osSelecionadaModal) return;
 
+      const st = osSelecionadaModal.status.toUpperCase();
       const diag = document.getElementById('mOSDiagnostico').value;
       const serv = document.getElementById('mOSServico').value;
 
-      const confirma = confirm(`Deseja REABRIR a Ordem de Serviço ${osSelecionadaModal.protocoloOS}?\n\nIsso alterará a situação para ABERTA / PARADO no sistema.`);
-      if (!confirma) return;
+      if (st === "CONCLUÍDA") {
+        // REABRIR A O.S.
+        const confirma = confirm(`Deseja REABRIR a Ordem de Serviço ${osSelecionadaModal.protocoloOS}?\n\nIsso alterará a situação para ABERTA / PARADO no sistema.`);
+        if (!confirma) return;
 
-      const payload = {
-        acao: "REABRIR_OS",
-        protocoloOS: osSelecionadaModal.protocoloOS,
-        novoDiagnostico: diag,
-        novoServico: serv
-      };
+        const payload = {
+          acao: "REABRIR_OS",
+          protocoloOS: osSelecionadaModal.protocoloOS,
+          novoDiagnostico: diag,
+          novoServico: serv
+        };
 
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "sucesso") {
-          alert(`O.S. ${osSelecionadaModal.protocoloOS} reaberta com sucesso!`);
-          fecharModalOS();
-          buscarAtualizacoesSilenciosas();
-        } else {
-          alert("Erro ao reabrir O.S.");
-        }
-      })
-      .catch(err => alert("Erro na comunicação com o servidor."));
+        fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === "sucesso") {
+            alert(`O.S. ${osSelecionadaModal.protocoloOS} reaberta com sucesso!`);
+            fecharModalOS();
+            buscarAtualizacoesSilenciosas();
+          } else {
+            alert("Erro ao reabrir O.S.");
+          }
+        })
+        .catch(err => alert("Erro na comunicação com o servidor."));
+
+      } else {
+        // ENCERRAR A O.S. E GERAR NOVO PDF
+        const confirma = confirm(`Deseja ENCERRAR a Ordem de Serviço ${osSelecionadaModal.protocoloOS}?\n\nO laudo atualizado e todas as fotos anexadas serão salvos no relatório PDF.`);
+        if (!confirma) return;
+
+        const btnAcao = document.getElementById('btnAcaoOSModal');
+        btnAcao.disabled = true;
+        btnAcao.innerText = "SALVANDO E GERANDO PDF...";
+
+        const payload = {
+          acao: "FECHAR_OS",
+          protocoloOS: osSelecionadaModal.protocoloOS,
+          novoDiagnostico: diag,
+          novoServico: serv
+        };
+
+        fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === "sucesso") {
+            alert(`O.S. ${osSelecionadaModal.protocoloOS} concluída com sucesso!\n\nRelatório PDF atualizado no Drive.`);
+            btnAcao.disabled = false;
+            fecharModalOS();
+            buscarAtualizacoesSilenciosas();
+          } else {
+            alert("Erro ao encerrar O.S.");
+            btnAcao.disabled = false;
+          }
+        })
+        .catch(err => {
+          alert("Erro na comunicação com o servidor.");
+          btnAcao.disabled = false;
+        });
+      }
     }
 
     function uploadFotoOS(e) {
@@ -1304,7 +1381,7 @@
           mimeType: file.type
         };
 
-        alert("Enviando imagem para a pasta 'Imagens' no Google Drive...");
+        alert("Enviando foto para a pasta 'Imagens' do Google Drive...");
 
         fetch(API_URL, {
           method: 'POST',
@@ -1313,11 +1390,11 @@
         .then(res => res.json())
         .then(res => {
           if (res.status === "sucesso") {
-            alert("Imagem anexada à O.S. com sucesso!");
+            alert("Foto anexada à O.S. com sucesso!");
             buscarAtualizacoesSilenciosas();
             fecharModalOS();
           } else {
-            alert("Erro ao enviar imagem.");
+            alert("Erro ao enviar foto.");
           }
         })
         .catch(err => alert("Erro na comunicação com o servidor."));
