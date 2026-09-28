@@ -1832,7 +1832,13 @@
       }
 
       lista.forEach(r => {
-        const st = r.status.toUpperCase();
+        let st = r.status ? r.status.toUpperCase() : "PENDENTE";
+        
+        // Correção visual: Se o status contiver nome de usuário ou "ADMINISTRATIVO", força exibir "PENDENTE"
+        if (st === "ADMINISTRATIVO" || st.length > 12) {
+          st = "PENDENTE";
+        }
+
         const isPendente = st === "PENDENTE";
         const isRecusado = st === "RECUSADO";
 
@@ -1852,7 +1858,7 @@
         } else if (isRecusado) {
           btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#dc3545; font-weight:bold; font-size:11px;">Recusado</span></div>`;
         } else {
-          btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#28a745; font-weight:bold; font-size:11px;">Termo: ${r.protocoloTermo}</span></div>`;
+          btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#28a745; font-weight:bold; font-size:11px;">Termo: ${r.protocoloTermo || '-'}</span></div>`;
         }
 
         tbody.innerHTML += `
@@ -1863,7 +1869,7 @@
             <td><b>${r.equipamentoSolicitado}</b></td>
             <td style="color:#555; font-style:italic;">${r.motivo || "-"}</td>
             <td class="td-center"><b>${r.operacao}</b></td>
-            <td class="td-center"><span class="badge-status ${badgeClass}">${r.status}</span></td>
+            <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span></td>
             <td class="td-center">${btnAcao}</td>
           </tr>
         `;
@@ -1903,7 +1909,9 @@
       let familiasMap = {};
 
       reqs.forEach(r => {
-        const st = r.status.toUpperCase();
+        let st = r.status ? r.status.toUpperCase() : "PENDENTE";
+        if (st === "ADMINISTRATIVO" || st.length > 12) st = "PENDENTE";
+
         if (st === "PENDENTE") pendentes++;
         else if (st === "ATENDIDO") atendidos++;
         else if (st === "RECUSADO") recusados++;
