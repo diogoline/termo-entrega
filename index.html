@@ -101,10 +101,13 @@
     .btn-pdf { background: #1a4d80; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; height: 28px; }
     .btn-pdf:hover { background: #13385c; }
 
-    .btn-atender { background: #e0a800; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 28px; display: inline-flex; align-items: center; justify-content: center; }
+    .btn-termo-link { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 11px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; height: 28px; white-space: nowrap; }
+    .btn-termo-link:hover { background: #c8e6c9; }
+
+    .btn-atender { background: #e0a800; color: #fff; border: none; padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 28px; display: inline-flex; align-items: center; justify-content: center; }
     .btn-atender:hover { background: #c69500; }
 
-    .btn-negar { background: #dc3545; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 28px; display: inline-flex; align-items: center; justify-content: center; }
+    .btn-negar { background: #dc3545; color: #fff; border: none; padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 28px; display: inline-flex; align-items: center; justify-content: center; }
     .btn-negar:hover { background: #bd2130; }
 
     .btn-logout { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
@@ -115,7 +118,8 @@
     .badge-atendido { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .badge-recusado { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
 
-    .action-group { display: flex; gap: 4px; justify-content: center; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
+    /* ORGANIZAÇÃO DOS BOTÕES DA TABELA (SEM QUEBRA E COM COMPACTAÇÃO) */
+    .action-group { display: inline-flex; gap: 6px; justify-content: center; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
 
     /* Estilos da Tela de Início */
     .welcome-hero { background: linear-gradient(135deg, #1a4d80 0%, #0f2b48 100%); color: white; border-radius: 12px; padding: 32px 24px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
@@ -283,7 +287,7 @@
       </div>
     </div>
 
-    <!-- DATALISTS DINÂMICAS E CONDICIONAIS -->
+    <!-- DATALISTS DINÂMICAS -->
     <datalist id="listDescricoesPadrao"></datalist>
     <datalist id="listModelosPadrao"></datalist>
     <datalist id="listFabricantesPadrao"></datalist>
@@ -459,7 +463,7 @@
                 <th>Motivo / Obs.</th>
                 <th class="td-center" style="width: 85px;">Operação</th>
                 <th class="td-center" style="width: 90px;">Status</th>
-                <th class="td-center" style="width: 210px;">Ações / Qualidade</th>
+                <th class="td-center" style="width: 190px;">Ações / Qualidade</th>
               </tr>
             </thead>
             <tbody id="corpoRequisicoes">
@@ -817,7 +821,7 @@
             </div>
           </div>
           <div style="text-align: right;">
-            <button type="submit" class="btn-submit">➕ Cadastrar Vínculo Oficinal</button>
+            <button type="submit" class="btn-submit">➕ Cadastrar Vínculo Oficial</button>
           </div>
         </form>
 
@@ -1015,7 +1019,7 @@
 
       listContainer.innerHTML = "";
       if (bancoDados.usuarios.length === 0) {
-        listContainer.innerHTML = '<div style="padding: 12px; text-align: center; color: #888; font-size: 12px;">Nenhum usuário cadastrado.</div>';
+        listContainer.innerHTML = '<div style="padding: 12px; text-align: center; color: #888; font-size: 12px;">Nenum usuário cadastrado.</div>';
         return;
       }
 
@@ -1154,16 +1158,7 @@
         document.getElementById('loginOverlay').style.display = "none";
         document.getElementById('appContainer').style.display = "block";
 
-        if (!tecnicoFoiAlteradoManualmente && bancoDados && bancoDados.usuarios && bancoDados.usuarios.length > 0) {
-          const selTec = document.getElementById('selectTecnico');
-          if (selTec) {
-            const idx = bancoDados.usuarios.findIndex(u => u.nome.toLowerCase() === usuarioLogado.nome.toLowerCase());
-            if (idx !== -1) {
-              selTec.value = idx;
-              exibirAssinaturaTecnico();
-            }
-          }
-        }
+        preencherSelectTecnicos();
         
         const inputTecOS = document.getElementById('osTecnico');
         if (inputTecOS && usuarioLogado.nome && !inputTecOS.value) {
@@ -1172,6 +1167,33 @@
       } else {
         document.getElementById('loginOverlay').style.display = "flex";
         document.getElementById('appContainer').style.display = "none";
+      }
+    }
+
+    function preencherSelectTecnicos() {
+      const selTec = document.getElementById('selectTecnico');
+      if (!selTec || !bancoDados.usuarios || bancoDados.usuarios.length === 0) return;
+
+      const valAtual = selTec.value;
+      selTec.innerHTML = '<option value="">Selecione o técnico...</option>';
+
+      bancoDados.usuarios.forEach((u, idx) => {
+        if (u.nome) {
+          selTec.innerHTML += `<option value="${idx}">${u.nome}</option>`;
+        }
+      });
+
+      if (!tecnicoFoiAlteradoManualmente && usuarioLogado) {
+        const idxLogado = bancoDados.usuarios.findIndex(u => 
+          (u.usuario && u.usuario.toLowerCase() === usuarioLogado.usuario.toLowerCase()) || 
+          (u.nome && u.nome.toLowerCase() === usuarioLogado.nome.toLowerCase())
+        );
+        if (idxLogado !== -1) {
+          selTec.value = idxLogado;
+          exibirAssinaturaTecnico();
+        }
+      } else if (valAtual !== "") {
+        selTec.value = valAtual;
       }
     }
 
@@ -1192,7 +1214,10 @@
         return;
       }
 
-      const encontrado = bancoDados.usuarios.find(u => u.usuario && u.usuario.toLowerCase() === usr && u.senha === pass);
+      const encontrado = bancoDados.usuarios.find(u => 
+        ((u.usuario && u.usuario.toLowerCase() === usr) || (u.nome && u.nome.toLowerCase() === usr)) && 
+        u.senha === pass
+      );
 
       if (encontrado) {
         divErro.style.display = "none";
@@ -1202,14 +1227,7 @@
         document.getElementById('loginOverlay').style.display = "none";
         document.getElementById('appContainer').style.display = "block";
 
-        const selTec = document.getElementById('selectTecnico');
-        if (selTec && bancoDados.usuarios) {
-          const idx = bancoDados.usuarios.findIndex(u => u.nome.toLowerCase() === encontrado.nome.toLowerCase());
-          if (idx !== -1) {
-            selTec.value = idx;
-            exibirAssinaturaTecnico();
-          }
-        }
+        preencherSelectTecnicos();
         enviarHeartbeat();
       } else {
         divErro.innerText = "Usuário ou senha incorretos.";
@@ -1392,17 +1410,7 @@
         });
       }
 
-      const selTec = document.getElementById('selectTecnico');
-      if (selTec && bancoDados.usuarios) {
-        const valAtual = selTec.value;
-        selTec.innerHTML = '<option value="">Selecione o técnico...</option>';
-        bancoDados.usuarios.forEach((u, idx) => {
-          selTec.innerHTML += `<option value="${idx}">${u.nome}</option>`;
-        });
-        if (valAtual !== "") {
-          selTec.value = valAtual;
-        }
-      }
+      preencherSelectTecnicos();
     }
 
     function renderizarTabelaOS() {
@@ -1855,7 +1863,9 @@
         } else if (isRecusado) {
           btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#dc3545; font-weight:bold; font-size:11px;">Recusado</span></div>`;
         } else {
-          btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#28a745; font-weight:bold; font-size:11px;">Termo: ${r.protocoloTermo || '-'}</span></div>`;
+          // Exibição alinhada para termos gerados
+          let termoTexto = r.protocoloTermo ? `Termo: ${r.protocoloTermo}` : 'Termo Gerado';
+          btnAcao = `<div class="action-group">${linkPdfReq}<span class="btn-termo-link">${termoTexto}</span></div>`;
         }
 
         tbody.innerHTML += `
