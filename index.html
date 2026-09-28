@@ -482,7 +482,7 @@
             <div class="card-title">1. Cliente / Locatário</div>
             <div class="form-group">
               <label for="inputCliente">Buscar / Selecionar Cliente:</label>
-              <input type="text" id="inputCliente" list="listClientes" placeholder="Digite o nome do cliente..." required>
+              <input type="text" id="inputCliente" list="listClientes" placeholder="Digite o nome do cliente..." required disabled>
               <datalist id="listClientes"></datalist>
             </div>
           </div>
@@ -492,7 +492,7 @@
             
             <div class="form-group" style="margin-bottom: 12px;">
               <label>Pesquisar Equipamento (Digite a TAG, Série ou Patrimônio):</label>
-              <input type="text" id="buscaEquipamento" list="listEquipamentos" placeholder="Ex: LMD-4654 ou 2329918..." oninput="autoPreencherEquipamento()" required>
+              <input type="text" id="buscaEquipamento" list="listEquipamentos" placeholder="Ex: LMD-4654 ou 2329918..." oninput="autoPreencherEquipamento()" disabled required>
               <datalist id="listEquipamentos"></datalist>
             </div>
 
@@ -546,7 +546,7 @@
             
             <div class="form-group">
               <label>Técnico Responsável:</label>
-              <select id="selectTecnico" onchange="exibirAssinaturaTecnico()" required>
+              <select id="selectTecnico" onchange="exibirAssinaturaTecnico()" required disabled>
                 <option value="">Selecione o técnico...</option>
               </select>
               
@@ -563,7 +563,7 @@
               </div>
             </div>
 
-            <button type="submit" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;">Gerar Termo Duplo PDF (Entrega + Higienização)</button>
+            <button type="submit" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;" disabled>Gerar Termo Duplo PDF (Entrega + Higienização)</button>
           </div>
         </div>
       </form>
@@ -996,7 +996,6 @@
 
       fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       }).catch(err => console.log("Heartbeat em espera..."));
     }
@@ -1076,6 +1075,7 @@
       const dlFab = document.getElementById('listFabricantesPadrao');
 
       if (!descVal) {
+        // Se limpo, mostra todos os modelos/fabricantes
         const todosMod = Array.from(new Set(rels.map(r => r.modelo))).filter(String).sort();
         const todosFab = Array.from(new Set(rels.map(r => r.fabricante))).filter(String).sort();
         if (dlMod) dlMod.innerHTML = todosMod.map(m => `<option value="${m}">`).join('');
@@ -1083,9 +1083,11 @@
         return;
       }
 
+      // Filtra APENAS modelos vinculados à descrição selecionada
       const modelosFiltrados = Array.from(new Set(rels.filter(r => r.descricao === descVal).map(r => r.modelo))).filter(String).sort();
       if (dlMod) dlMod.innerHTML = modelosFiltrados.map(m => `<option value="${m}">`).join('');
 
+      // Limpa modelo/fabricante se forem incompatíveis
       aoSelecionarModeloCad();
     }
 
@@ -1103,6 +1105,7 @@
       const fabricantesFiltrados = Array.from(new Set(fabs.map(r => r.fabricante))).filter(String).sort();
       if (dlFab) dlFab.innerHTML = fabricantesFiltrados.map(f => `<option value="${f}">`).join('');
 
+      // Se houver apenas 1 fabricante para esse modelo/descrição, preenche automaticamente!
       if (fabricantesFiltrados.length === 1) {
         document.getElementById('cadFabricante').value = fabricantesFiltrados[0];
       }
@@ -1126,9 +1129,10 @@
         fabricante: fab
       };
 
+      alert(`Cadastrando vínculo: ${desc} -> ${mod} (${fab})...`);
+
       fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
       .then(res => res.json())
@@ -1266,8 +1270,7 @@
       };
       document.body.appendChild(script);
 
-      // Intervalo seguro para evitar bloqueio por cota do Google Apps Script
-      setInterval(buscarAtualizacoesSilenciosas, 20000);
+      setInterval(buscarAtualizacoesSilenciosas, 5000);
       setInterval(enviarHeartbeat, 60000);
     };
 
@@ -1293,9 +1296,8 @@
 
         listContainer.innerHTML = "";
         pendentes.forEach(p => {
-          const protSafe = (p.protocolo || "").replace(/'/g, "\\'");
           listContainer.innerHTML += `
-            <div class="notif-item" onclick="irParaRequisicaoPendente('${protSafe}')">
+            <div class="notif-item" onclick="irParaRequisicaoPendente()">
               <div class="notif-item-title">
                 <span>${p.protocolo}</span>
                 <span style="color:#e0a800;">🟡 Pendente</span>
@@ -1313,11 +1315,9 @@
       }
     }
 
-    function irParaRequisicaoPendente(protReq) {
+    function irParaRequisicaoPendente() {
       fecharTodosDropdowns();
       document.getElementById('filtroStatusReq').value = "PENDENTE";
-      document.getElementById('filtroMesReq').value = ""; // Limpa restrição de mês
-      document.getElementById('filtroTextoReq').value = protReq || "";
       mudarAba('requisicoes');
       filtrarRequisicoes();
     }
@@ -1379,6 +1379,7 @@
           opt.value = c;
           listC.appendChild(opt);
         });
+        document.getElementById('inputCliente').disabled = false;
       }
 
       const listE = document.getElementById('listEquipamentos');
@@ -1389,6 +1390,7 @@
           opt.value = `TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}`;
           listE.appendChild(opt);
         });
+        document.getElementById('buscaEquipamento').disabled = false;
       }
 
       const selTec = document.getElementById('selectTecnico');
@@ -1399,7 +1401,10 @@
           selTec.innerHTML += `<option value="${idx}">${u.nome}</option>`;
         });
         selTec.value = valAtual;
+        selTec.disabled = false;
       }
+
+      document.getElementById('btnEnviar').disabled = false;
     }
 
     function renderizarTabelaOS() {
@@ -1550,7 +1555,6 @@
 
         fetch(API_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         })
         .then(res => res.json())
@@ -1583,7 +1587,6 @@
 
         fetch(API_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         })
         .then(res => res.json())
@@ -1618,9 +1621,10 @@
           mimeType: file.type
         };
 
+        alert("Enviando foto para a pasta 'Imagens' do Google Drive...");
+
         fetch(API_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         })
         .then(res => res.json())
@@ -1683,7 +1687,6 @@
 
       fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
       .then(res => res.json())
@@ -1730,7 +1733,6 @@
 
       fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
       .then(res => res.json())
@@ -1832,17 +1834,15 @@
       if (!tbody) return;
       tbody.innerHTML = "";
 
-      const dados = lista || (bancoDados ? bancoDados.requisicoes : []);
-
-      if (!dados || dados.length === 0) {
+      if (!lista || lista.length === 0) {
         tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição encontrada para os filtros selecionados.</td></tr>';
         return;
       }
 
-      dados.forEach(r => {
-        const st = (r.status || '').toUpperCase();
-        const isPendente = (st === "PENDENTE");
-        const isRecusado = (st === "RECUSADO");
+      lista.forEach(r => {
+        const st = r.status.toUpperCase();
+        const isPendente = st === "PENDENTE";
+        const isRecusado = st === "RECUSADO";
 
         let badgeClass = "badge-pendente";
         if (st === "ATENDIDO") badgeClass = "badge-atendido";
@@ -1850,31 +1850,27 @@
         
         const linkPdfReq = r.pdfUrlReq ? `<a href="${r.pdfUrlReq}" target="_blank" class="btn-pdf">📄 REQ</a>` : '';
         
-        const cliSafe = (r.cliente || "").replace(/'/g, "\\'");
-        const opSafe = (r.operacao || "LOCAÇÃO").replace(/'/g, "\\'");
-        const protSafe = (r.protocolo || "").replace(/'/g, "\\'");
-
         let btnAcao = "";
         if (isPendente) {
           btnAcao = `<div class="action-group">
             ${linkPdfReq}
-            <button type="button" class="btn-atender" onclick="atenderRequisicao('${protSafe}', '${cliSafe}', '${opSafe}')">Atender</button>
-            <button type="button" class="btn-negar" onclick="abrirModalRecusa('${protSafe}')">Negar</button>
+            <button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${r.cliente}', '${r.operacao}')">Atender</button>
+            <button type="button" class="btn-negar" onclick="abrirModalRecusa('${r.protocolo}')">Negar</button>
           </div>`;
         } else if (isRecusado) {
           btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#dc3545; font-weight:bold; font-size:11px;">Recusado</span></div>`;
         } else {
-          btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#28a745; font-weight:bold; font-size:11px;">Termo: ${r.protocoloTermo || '-'}</span></div>`;
+          btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#28a745; font-weight:bold; font-size:11px;">Termo: ${r.protocoloTermo}</span></div>`;
         }
 
         tbody.innerHTML += `
-          <tr id="linha_req_${r.protocolo}">
+          <tr>
             <td class="td-center"><b>${r.protocolo}</b></td>
-            <td>${r.dataHora || '-'}</td>
-            <td>${r.cliente || '-'}</td>
-            <td><b>${r.equipamentoSolicitado || '-'}</b></td>
+            <td>${r.dataHora}</td>
+            <td>${r.cliente}</td>
+            <td><b>${r.equipamentoSolicitado}</b></td>
             <td style="color:#555; font-style:italic;">${r.motivo || "-"}</td>
-            <td class="td-center"><b>${r.operacao || 'LOCAÇÃO'}</b></td>
+            <td class="td-center"><b>${r.operacao}</b></td>
             <td class="td-center"><span class="badge-status ${badgeClass}">${r.status}</span></td>
             <td class="td-center">${btnAcao}</td>
           </tr>
@@ -1997,7 +1993,6 @@
 
       fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
       .then(res => res.json())
@@ -2015,18 +2010,13 @@
 
     function atenderRequisicao(protReq, cliente, operacao) {
       document.getElementById('reqVinculadaProtocolo').value = protReq;
-      
-      const inputCli = document.getElementById('inputCliente');
-      inputCli.value = cliente;
+      document.getElementById('inputCliente').value = cliente;
       
       const radioOp = document.querySelector(`input[name="tipoOperacao"][value="${operacao}"]`);
       if (radioOp) radioOp.checked = true;
 
       mudarAba('emissao');
-      
-      setTimeout(() => {
-        document.getElementById('buscaEquipamento').focus();
-      }, 100);
+      alert(`Requisição ${protReq} selecionada para atendimento!\n\nSelecione agora o equipamento e os acessórios para gerar o Termo de Entrega.`);
     }
 
     function salvarRequisicao(e) {
@@ -2049,7 +2039,6 @@
 
       fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
       .then(res => res.json())
@@ -2079,8 +2068,7 @@
     function filtrarTabelaTermos() { renderizarTabelaTermos(bancoDados.termosEmitidos); }
 
     function autoPreencherEquipamento() {
-      const rawVal = document.getElementById('buscaEquipamento').value.trim();
-      const val = rawVal.toLowerCase();
+      const val = document.getElementById('buscaEquipamento').value.toLowerCase().trim();
       const tbody = document.getElementById('corpoAcessorios');
 
       if (!val || !bancoDados.equipamentos) {
@@ -2088,21 +2076,9 @@
         return;
       }
 
-      let tagExtraida = val;
-      if (val.includes('tag:')) {
-        tagExtraida = val.split('tag:')[1].split('|')[0].trim();
-      }
-
       const eq = bancoDados.equipamentos.find(item => {
-        const itemTag = (item.tag || "").toLowerCase().trim();
-        const itemSerie = (item.serie || "").toLowerCase().trim();
-        const itemPatrimonio = (item.patrimonio || "").toLowerCase().trim();
-        
-        return itemTag === tagExtraida || 
-               itemTag === val || 
-               itemSerie === val || 
-               itemPatrimonio === val ||
-               `tag: ${itemTag} | ${item.nome.toLowerCase()} | série: ${itemSerie}` === val;
+        const strFormatada = `tag: ${item.tag} | ${item.nome} | série: ${item.serie}`.toLowerCase();
+        return strFormatada === val || item.tag.toLowerCase() === val || item.serie.toLowerCase() === val || item.patrimonio.toLowerCase() === val;
       });
 
       if (eq) {
@@ -2211,17 +2187,6 @@
 
     function limparAssinatura() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
-    function obterAssinaturaOtimizada() {
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = 300;
-      tempCanvas.height = 70;
-      const tempCtx = tempCanvas.getContext('2d');
-      tempCtx.fillStyle = "#FFFFFF";
-      tempCtx.fillRect(0, 0, 300, 70);
-      tempCtx.drawImage(canvas, 0, 0, 300, 70);
-      return tempCanvas.toDataURL("image/jpeg", 0.6);
-    }
-
     function gerarTermo(e) {
       e.preventDefault();
 
@@ -2250,13 +2215,12 @@
       });
 
       const payload = {
-        acao: "CRIAR_TERMO",
         cliente: document.getElementById('inputCliente').value,
         equipamento: equipamentoSelecionado,
         tipoOperacao: document.querySelector('input[name="tipoOperacao"]:checked').value,
         acessorios: listaAcessorios,
         tecnico: tecSelected,
-        assinaturaCliente: obterAssinaturaOtimizada(),
+        assinaturaCliente: canvas.toDataURL(),
         protocoloReq: document.getElementById('reqVinculadaProtocolo').value
       };
 
@@ -2266,28 +2230,27 @@
 
       fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
       .then(res => res.json())
       .then(res => {
-        if (res.status === "sucesso") {
-          const querImprimir = confirm("Termo gerado com sucesso!\n\nProtocolo: " + (res.protocolo || res.protocoloTermo) + "\n\nDeseja IMPRIMIR o documento agora?");
+        if(res.status === "sucesso") {
+          const querImprimir = confirm("Termo gerado com sucesso!\n\nProtocolo: " + res.protocolo + "\n\nDeseja IMPRIMIR o documento agora?");
           if (querImprimir && res.pdfUrl) {
             const win = window.open(res.pdfUrl, '_blank');
             if (win) { win.focus(); }
           }
           location.reload();
         } else {
-          alert("Erro ao gerar termo: " + (res.mensagem || "Erro de processamento no servidor."));
+          alert("Erro ao gerar termo: " + res.mensagem);
           btn.disabled = false;
-          btn.innerText = "Gerar Termo Duplo PDF (Entrega + Higienização)";
+          btn.innerText = "GERAR TERMO DUPLO PDF (ENTREGA + HIGIENIZAÇÃO)";
         }
       })
       .catch(err => {
         alert("Erro de comunicação com o servidor.");
         btn.disabled = false;
-        btn.innerText = "Gerar Termo Duplo PDF (Entrega + Higienização)";
+        btn.innerText = "GERAR TERMO DUPLO PDF (ENTREGA + HIGIENIZAÇÃO)";
       });
     }
   </script>
