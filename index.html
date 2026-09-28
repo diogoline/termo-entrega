@@ -1296,8 +1296,9 @@
 
         listContainer.innerHTML = "";
         pendentes.forEach(p => {
+          const protSafe = (p.protocolo || "").replace(/'/g, "\\'");
           listContainer.innerHTML += `
-            <div class="notif-item" onclick="irParaRequisicaoPendente()">
+            <div class="notif-item" onclick="irParaRequisicaoPendente('${protSafe}')">
               <div class="notif-item-title">
                 <span>${p.protocolo}</span>
                 <span style="color:#e0a800;">🟡 Pendente</span>
@@ -1315,9 +1316,12 @@
       }
     }
 
-    function irParaRequisicaoPendente() {
+    function irParaRequisicaoPendente(protReq) {
       fecharTodosDropdowns();
       document.getElementById('filtroStatusReq').value = "PENDENTE";
+      if (protReq) {
+        document.getElementById('filtroTextoReq').value = protReq;
+      }
       mudarAba('requisicoes');
       filtrarRequisicoes();
     }
@@ -1850,12 +1854,16 @@
         
         const linkPdfReq = r.pdfUrlReq ? `<a href="${r.pdfUrlReq}" target="_blank" class="btn-pdf">📄 REQ</a>` : '';
         
+        const cliSafe = (r.cliente || "").replace(/'/g, "\\'");
+        const opSafe = (r.operacao || "LOCAÇÃO").replace(/'/g, "\\'");
+        const protSafe = (r.protocolo || "").replace(/'/g, "\\'");
+
         let btnAcao = "";
         if (isPendente) {
           btnAcao = `<div class="action-group">
             ${linkPdfReq}
-            <button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${r.cliente}', '${r.operacao}')">Atender</button>
-            <button type="button" class="btn-negar" onclick="abrirModalRecusa('${r.protocolo}')">Negar</button>
+            <button type="button" class="btn-atender" onclick="atenderRequisicao('${protSafe}', '${cliSafe}', '${opSafe}')">Atender</button>
+            <button type="button" class="btn-negar" onclick="abrirModalRecusa('${protSafe}')">Negar</button>
           </div>`;
         } else if (isRecusado) {
           btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#dc3545; font-weight:bold; font-size:11px;">Recusado</span></div>`;
@@ -2010,13 +2018,22 @@
 
     function atenderRequisicao(protReq, cliente, operacao) {
       document.getElementById('reqVinculadaProtocolo').value = protReq;
-      document.getElementById('inputCliente').value = cliente;
+      
+      const inputCli = document.getElementById('inputCliente');
+      inputCli.value = cliente;
+      inputCli.disabled = false;
       
       const radioOp = document.querySelector(`input[name="tipoOperacao"][value="${operacao}"]`);
       if (radioOp) radioOp.checked = true;
 
+      document.getElementById('buscaEquipamento').disabled = false;
+      document.getElementById('btnEnviar').disabled = false;
+
       mudarAba('emissao');
-      alert(`Requisição ${protReq} selecionada para atendimento!\n\nSelecione agora o equipamento e os acessórios para gerar o Termo de Entrega.`);
+      
+      setTimeout(() => {
+        document.getElementById('buscaEquipamento').focus();
+      }, 100);
     }
 
     function salvarRequisicao(e) {
