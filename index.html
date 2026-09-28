@@ -482,7 +482,7 @@
             <div class="card-title">1. Cliente / Locatário</div>
             <div class="form-group">
               <label for="inputCliente">Buscar / Selecionar Cliente:</label>
-              <input type="text" id="inputCliente" list="listClientes" placeholder="Digite o nome do cliente..." required disabled>
+              <input type="text" id="inputCliente" list="listClientes" placeholder="Digite o nome do cliente..." required>
               <datalist id="listClientes"></datalist>
             </div>
           </div>
@@ -492,7 +492,7 @@
             
             <div class="form-group" style="margin-bottom: 12px;">
               <label>Pesquisar Equipamento (Digite a TAG, Série ou Patrimônio):</label>
-              <input type="text" id="buscaEquipamento" list="listEquipamentos" placeholder="Ex: LMD-4654 ou 2329918..." oninput="autoPreencherEquipamento()" disabled required>
+              <input type="text" id="buscaEquipamento" list="listEquipamentos" placeholder="Ex: LMD-4654 ou 2329918..." oninput="autoPreencherEquipamento()" required>
               <datalist id="listEquipamentos"></datalist>
             </div>
 
@@ -546,7 +546,7 @@
             
             <div class="form-group">
               <label>Técnico Responsável:</label>
-              <select id="selectTecnico" onchange="exibirAssinaturaTecnico()" required disabled>
+              <select id="selectTecnico" onchange="exibirAssinaturaTecnico()" required>
                 <option value="">Selecione o técnico...</option>
               </select>
               
@@ -563,7 +563,7 @@
               </div>
             </div>
 
-            <button type="submit" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;" disabled>Gerar Termo Duplo PDF (Entrega + Higienização)</button>
+            <button type="submit" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;">Gerar Termo Duplo PDF (Entrega + Higienização)</button>
           </div>
         </div>
       </form>
@@ -948,6 +948,7 @@
     let protocoloReqEmRecusa = null;
     let osSelecionadaModal = null;
     let usuarioLogado = null;
+    let tecnicoFoiAlteradoManualmente = false;
 
     function converterUrlDriveParaImagem(url) {
       if (!url) return "";
@@ -971,8 +972,10 @@
 
     function fecharTodosDropdowns() {
       document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
-      document.getElementById('notifDropdown').classList.remove('active');
-      document.getElementById('usersDropdown').classList.remove('active');
+      const notif = document.getElementById('notifDropdown');
+      if (notif) notif.classList.remove('active');
+      const users = document.getElementById('usersDropdown');
+      if (users) users.classList.remove('active');
     }
 
     document.addEventListener('click', function() {
@@ -1005,6 +1008,7 @@
 
       const listContainer = document.getElementById('usersOnlineList');
       const countText = document.getElementById('onlineCountText');
+      if (!listContainer || !countText) return;
       
       const onlines = bancoDados.usuarios.filter(u => u.online);
       countText.innerText = `${onlines.length} Online`;
@@ -1032,18 +1036,15 @@
       });
     }
 
-    // --- LÓGICA CONDICIONAL DE NOMENCLATURAS ---
     function renderizarListasAuxiliares() {
       const rels = bancoDados.relacoesAuxiliares || [];
 
-      // 1. Datalist com todas as Descrições Únicas
       const descricoesUnicas = Array.from(new Set(rels.map(r => r.descricao))).filter(String).sort();
       const dlDesc = document.getElementById('listDescricoesPadrao');
       if (dlDesc) {
         dlDesc.innerHTML = descricoesUnicas.map(d => `<option value="${d}">`).join('');
       }
 
-      // 2. Preenche Tabela na Tela de Gestão de Vínculos
       const tbody = document.getElementById('tabelaAuxiliaresList');
       if (tbody) {
         tbody.innerHTML = "";
@@ -1062,20 +1063,19 @@
         }
       }
 
-      // Preenche autocompletes iniciais
       aoSelecionarDescricaoCad();
     }
 
-    // Chamado ao selecionar Descrição na tela de Cadastro de Equipamento
     function aoSelecionarDescricaoCad() {
-      const descVal = document.getElementById('cadNome').value.trim().toUpperCase();
+      const el = document.getElementById('cadNome');
+      if (!el) return;
+      const descVal = el.value.trim().toUpperCase();
       const rels = bancoDados.relacoesAuxiliares || [];
 
       const dlMod = document.getElementById('listModelosPadrao');
       const dlFab = document.getElementById('listFabricantesPadrao');
 
       if (!descVal) {
-        // Se limpo, mostra todos os modelos/fabricantes
         const todosMod = Array.from(new Set(rels.map(r => r.modelo))).filter(String).sort();
         const todosFab = Array.from(new Set(rels.map(r => r.fabricante))).filter(String).sort();
         if (dlMod) dlMod.innerHTML = todosMod.map(m => `<option value="${m}">`).join('');
@@ -1083,18 +1083,19 @@
         return;
       }
 
-      // Filtra APENAS modelos vinculados à descrição selecionada
       const modelosFiltrados = Array.from(new Set(rels.filter(r => r.descricao === descVal).map(r => r.modelo))).filter(String).sort();
       if (dlMod) dlMod.innerHTML = modelosFiltrados.map(m => `<option value="${m}">`).join('');
 
-      // Limpa modelo/fabricante se forem incompatíveis
       aoSelecionarModeloCad();
     }
 
-    // Chamado ao selecionar Modelo na tela de Cadastro de Equipamento
     function aoSelecionarModeloCad() {
-      const descVal = document.getElementById('cadNome').value.trim().toUpperCase();
-      const modVal = document.getElementById('cadModelo').value.trim().toUpperCase();
+      const elDesc = document.getElementById('cadNome');
+      const elMod = document.getElementById('cadModelo');
+      if (!elDesc || !elMod) return;
+
+      const descVal = elDesc.value.trim().toUpperCase();
+      const modVal = elMod.value.trim().toUpperCase();
       const rels = bancoDados.relacoesAuxiliares || [];
       const dlFab = document.getElementById('listFabricantesPadrao');
 
@@ -1105,7 +1106,6 @@
       const fabricantesFiltrados = Array.from(new Set(fabs.map(r => r.fabricante))).filter(String).sort();
       if (dlFab) dlFab.innerHTML = fabricantesFiltrados.map(f => `<option value="${f}">`).join('');
 
-      // Se houver apenas 1 fabricante para esse modelo/descrição, preenche automaticamente!
       if (fabricantesFiltrados.length === 1) {
         document.getElementById('cadFabricante').value = fabricantesFiltrados[0];
       }
@@ -1128,8 +1128,6 @@
         modelo: mod,
         fabricante: fab
       };
-
-      alert(`Cadastrando vínculo: ${desc} -> ${mod} (${fab})...`);
 
       fetch(API_URL, {
         method: 'POST',
@@ -1156,9 +1154,9 @@
         document.getElementById('loginOverlay').style.display = "none";
         document.getElementById('appContainer').style.display = "block";
 
-        if (bancoDados && bancoDados.usuarios && bancoDados.usuarios.length > 0) {
+        if (!tecnicoFoiAlteradoManualmente && bancoDados && bancoDados.usuarios && bancoDados.usuarios.length > 0) {
           const selTec = document.getElementById('selectTecnico');
-          if (selTec) {
+          if (selTec && selTec.value === "") {
             const idx = bancoDados.usuarios.findIndex(u => u.nome.toLowerCase() === usuarioLogado.nome.toLowerCase());
             if (idx !== -1) {
               selTec.value = idx;
@@ -1168,7 +1166,7 @@
         }
         
         const inputTecOS = document.getElementById('osTecnico');
-        if (inputTecOS && usuarioLogado.nome) {
+        if (inputTecOS && usuarioLogado.nome && !inputTecOS.value) {
           inputTecOS.value = usuarioLogado.nome;
         }
       } else {
@@ -1194,9 +1192,7 @@
         return;
       }
 
-      const encontrado = bancoDados.usuarios.find(u => {
-        return u.usuario && u.usuario.toLowerCase() === usr && u.senha === pass;
-      });
+      const encontrado = bancoDados.usuarios.find(u => u.usuario && u.usuario.toLowerCase() === usr && u.senha === pass);
 
       if (encontrado) {
         divErro.style.display = "none";
@@ -1231,8 +1227,10 @@
         bancoDados = data;
         
         const badge = document.getElementById('statusBadge');
-        badge.innerText = "Conectado";
-        badge.classList.add('connected');
+        if (badge) {
+          badge.innerText = "Conectado";
+          badge.classList.add('connected');
+        }
 
         popularAutocomplete();
         renderizarTabelaTermos(bancoDados.termosEmitidos);
@@ -1244,7 +1242,8 @@
         renderizarListasAuxiliares();
         verificarSessao();
       } else {
-        document.getElementById('statusBadge').innerText = "Erro nos Dados";
+        const badge = document.getElementById('statusBadge');
+        if (badge) badge.innerText = "Erro nos Dados";
       }
     }
 
@@ -1260,13 +1259,13 @@
 
       const hoje = new Date();
       const mesFormatado = hoje.getFullYear() + "-" + String(hoje.getMonth() + 1).padStart(2, '0');
-      document.getElementById('filtroMesReq').value = mesFormatado;
-      document.getElementById('dashFiltroMes').value = mesFormatado;
+      if (document.getElementById('filtroMesReq')) document.getElementById('filtroMesReq').value = mesFormatado;
+      if (document.getElementById('dashFiltroMes')) document.getElementById('dashFiltroMes').value = mesFormatado;
 
       const script = document.createElement('script');
       script.src = API_URL + "?callback=carregarDadosPlanilha";
       script.onerror = function() {
-        document.getElementById('statusBadge').innerText = "Erro na Conexão";
+        if (document.getElementById('statusBadge')) document.getElementById('statusBadge').innerText = "Erro na Conexão";
       };
       document.body.appendChild(script);
 
@@ -1288,6 +1287,8 @@
       const badge = document.getElementById('notifBadge');
       const textCount = document.getElementById('notifCountText');
       const listContainer = document.getElementById('notifList');
+
+      if (!badge || !textCount || !listContainer) return;
 
       if (pendentes.length > 0) {
         badge.innerText = pendentes.length;
@@ -1379,7 +1380,6 @@
           opt.value = c;
           listC.appendChild(opt);
         });
-        document.getElementById('inputCliente').disabled = false;
       }
 
       const listE = document.getElementById('listEquipamentos');
@@ -1390,7 +1390,6 @@
           opt.value = `TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}`;
           listE.appendChild(opt);
         });
-        document.getElementById('buscaEquipamento').disabled = false;
       }
 
       const selTec = document.getElementById('selectTecnico');
@@ -1401,10 +1400,7 @@
           selTec.innerHTML += `<option value="${idx}">${u.nome}</option>`;
         });
         selTec.value = valAtual;
-        selTec.disabled = false;
       }
-
-      document.getElementById('btnEnviar').disabled = false;
     }
 
     function renderizarTabelaOS() {
@@ -1681,8 +1677,7 @@
         defeitoRelatado: document.getElementById('osDefeito').value,
         diagnosticoTecnico: document.getElementById('osDiagnostico').value,
         servicoRealizado: document.getElementById('osServico').value,
-        status: "CONCLUÍDA",
-        disponibilidade: "FUNCIONANDO"
+        status: "CONCLUÍDA"
       };
 
       fetch(API_URL, {
@@ -1692,10 +1687,7 @@
       .then(res => res.json())
       .then(res => {
         if (res.status === "sucesso") {
-          const querAbrir = confirm("Ordem de Serviço registrada com sucesso!\n\nProtocolo: " + res.protocoloOS + "\n\nDeseja ABRIR O PDF da O.S. agora?");
-          if (querAbrir && res.pdfUrlOS) {
-            window.open(res.pdfUrlOS, '_blank');
-          }
+          alert("Ordem de Serviço registrada com sucesso!\n\nProtocolo: " + res.protocoloOS);
           document.getElementById('formNovaOS').reset();
           btn.disabled = false;
           btn.innerText = "Registrar O.S. e Gerar Relatório PDF";
@@ -1738,7 +1730,7 @@
       .then(res => res.json())
       .then(res => {
         if (res.status === "sucesso") {
-          alert("Equipamento cadastrado com sucesso na aba EQUIP!");
+          alert("Equipamento cadastrado com sucesso!");
           document.getElementById('formNovoEquip').reset();
           btn.disabled = false;
           btn.innerText = "Salvar Equipamento na Planilha";
@@ -2023,7 +2015,7 @@
       e.preventDefault();
       const btn = document.getElementById('btnSalvarReq');
       btn.disabled = true;
-      btn.innerText = "GERANDO PDF DA REQUISIÇÃO...";
+      btn.innerText = "GERANDO REQUISIÇÃO...";
 
       const solicitanteNome = (usuarioLogado && usuarioLogado.nome) ? usuarioLogado.nome : "ADMINISTRATIVO";
 
@@ -2044,10 +2036,7 @@
       .then(res => res.json())
       .then(res => {
         if (res.status === "sucesso") {
-          const querAbrir = confirm("Requisição gerada com sucesso!\n\nProtocolo: " + res.protocoloReq + "\n\nDeseja ABRIR O PDF da Requisição agora?");
-          if (querAbrir && res.pdfUrlReq) {
-            window.open(res.pdfUrlReq, '_blank');
-          }
+          alert("Requisição gerada com sucesso!\n\nProtocolo: " + res.protocoloReq);
           document.getElementById('formReq').reset();
           btn.disabled = false;
           btn.innerText = "Enviar Requisição e Gerar PDF";
@@ -2137,6 +2126,7 @@
     }
 
     function exibirAssinaturaTecnico() {
+      tecnicoFoiAlteradoManualmente = true;
       const idxTec = document.getElementById('selectTecnico').value;
       const divPrev = document.getElementById('previewTecnico');
 
@@ -2188,7 +2178,7 @@
     function limparAssinatura() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
     function gerarTermo(e) {
-      e.preventDefault();
+      if (e) e.preventDefault();
 
       if (!equipamentoSelecionado) {
         alert("Selecione um equipamento válido na lista de pesquisa.");
@@ -2215,6 +2205,7 @@
       });
 
       const payload = {
+        acao: "CRIAR_TERMO",
         cliente: document.getElementById('inputCliente').value,
         equipamento: equipamentoSelecionado,
         tipoOperacao: document.querySelector('input[name="tipoOperacao"]:checked').value,
@@ -2240,6 +2231,8 @@
             const win = window.open(res.pdfUrl, '_blank');
             if (win) { win.focus(); }
           }
+          document.getElementById('reqVinculadaProtocolo').value = "";
+          tecnicoFoiAlteradoManualmente = false;
           location.reload();
         } else {
           alert("Erro ao gerar termo: " + res.mensagem);
