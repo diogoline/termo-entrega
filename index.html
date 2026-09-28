@@ -482,7 +482,7 @@
             <div class="card-title">1. Cliente / Locatário</div>
             <div class="form-group">
               <label for="inputCliente">Buscar / Selecionar Cliente:</label>
-              <input type="text" id="inputCliente" list="listClientes" placeholder="Digite o nome do cliente..." required disabled>
+              <input type="text" id="inputCliente" list="listClientes" placeholder="Digite o nome do cliente..." required>
               <datalist id="listClientes"></datalist>
             </div>
           </div>
@@ -492,7 +492,7 @@
             
             <div class="form-group" style="margin-bottom: 12px;">
               <label>Pesquisar Equipamento (Digite a TAG, Série ou Patrimônio):</label>
-              <input type="text" id="buscaEquipamento" list="listEquipamentos" placeholder="Ex: LMD-4654 ou 2329918..." oninput="autoPreencherEquipamento()" disabled required>
+              <input type="text" id="buscaEquipamento" list="listEquipamentos" placeholder="Ex: LMD-4654 ou 2329918..." oninput="autoPreencherEquipamento()" required>
               <datalist id="listEquipamentos"></datalist>
             </div>
 
@@ -546,7 +546,7 @@
             
             <div class="form-group">
               <label>Técnico Responsável:</label>
-              <select id="selectTecnico" onchange="exibirAssinaturaTecnico()" required disabled>
+              <select id="selectTecnico" onchange="exibirAssinaturaTecnico()" required>
                 <option value="">Selecione o técnico...</option>
               </select>
               
@@ -563,7 +563,7 @@
               </div>
             </div>
 
-            <button type="submit" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;" disabled>Gerar Termo Duplo PDF (Entrega + Higienização)</button>
+            <button type="submit" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;">Gerar Termo Duplo PDF (Entrega + Higienização)</button>
           </div>
         </div>
       </form>
@@ -996,6 +996,7 @@
 
       fetch(API_URL, {
         method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       }).catch(err => console.log("Heartbeat em espera..."));
     }
@@ -1075,7 +1076,6 @@
       const dlFab = document.getElementById('listFabricantesPadrao');
 
       if (!descVal) {
-        // Se limpo, mostra todos os modelos/fabricantes
         const todosMod = Array.from(new Set(rels.map(r => r.modelo))).filter(String).sort();
         const todosFab = Array.from(new Set(rels.map(r => r.fabricante))).filter(String).sort();
         if (dlMod) dlMod.innerHTML = todosMod.map(m => `<option value="${m}">`).join('');
@@ -1083,11 +1083,9 @@
         return;
       }
 
-      // Filtra APENAS modelos vinculados à descrição selecionada
       const modelosFiltrados = Array.from(new Set(rels.filter(r => r.descricao === descVal).map(r => r.modelo))).filter(String).sort();
       if (dlMod) dlMod.innerHTML = modelosFiltrados.map(m => `<option value="${m}">`).join('');
 
-      // Limpa modelo/fabricante se forem incompatíveis
       aoSelecionarModeloCad();
     }
 
@@ -1105,7 +1103,6 @@
       const fabricantesFiltrados = Array.from(new Set(fabs.map(r => r.fabricante))).filter(String).sort();
       if (dlFab) dlFab.innerHTML = fabricantesFiltrados.map(f => `<option value="${f}">`).join('');
 
-      // Se houver apenas 1 fabricante para esse modelo/descrição, preenche automaticamente!
       if (fabricantesFiltrados.length === 1) {
         document.getElementById('cadFabricante').value = fabricantesFiltrados[0];
       }
@@ -1129,10 +1126,9 @@
         fabricante: fab
       };
 
-      alert(`Cadastrando vínculo: ${desc} -> ${mod} (${fab})...`);
-
       fetch(API_URL, {
         method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
       .then(res => res.json())
@@ -1319,9 +1315,8 @@
     function irParaRequisicaoPendente(protReq) {
       fecharTodosDropdowns();
       document.getElementById('filtroStatusReq').value = "PENDENTE";
-      if (protReq) {
-        document.getElementById('filtroTextoReq').value = protReq;
-      }
+      document.getElementById('filtroMesReq').value = ""; // Limpa o filtro de mês para exibir independente da data
+      document.getElementById('filtroTextoReq').value = protReq || "";
       mudarAba('requisicoes');
       filtrarRequisicoes();
     }
@@ -1383,7 +1378,6 @@
           opt.value = c;
           listC.appendChild(opt);
         });
-        document.getElementById('inputCliente').disabled = false;
       }
 
       const listE = document.getElementById('listEquipamentos');
@@ -1394,7 +1388,6 @@
           opt.value = `TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}`;
           listE.appendChild(opt);
         });
-        document.getElementById('buscaEquipamento').disabled = false;
       }
 
       const selTec = document.getElementById('selectTecnico');
@@ -1405,10 +1398,7 @@
           selTec.innerHTML += `<option value="${idx}">${u.nome}</option>`;
         });
         selTec.value = valAtual;
-        selTec.disabled = false;
       }
-
-      document.getElementById('btnEnviar').disabled = false;
     }
 
     function renderizarTabelaOS() {
@@ -1559,6 +1549,7 @@
 
         fetch(API_URL, {
           method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         })
         .then(res => res.json())
@@ -1591,6 +1582,7 @@
 
         fetch(API_URL, {
           method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         })
         .then(res => res.json())
@@ -1625,10 +1617,9 @@
           mimeType: file.type
         };
 
-        alert("Enviando foto para a pasta 'Imagens' do Google Drive...");
-
         fetch(API_URL, {
           method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         })
         .then(res => res.json())
@@ -1691,6 +1682,7 @@
 
       fetch(API_URL, {
         method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
       .then(res => res.json())
@@ -1737,6 +1729,7 @@
 
       fetch(API_URL, {
         method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
       .then(res => res.json())
@@ -1872,7 +1865,7 @@
         }
 
         tbody.innerHTML += `
-          <tr>
+          <tr id="linha_req_${r.protocolo}">
             <td class="td-center"><b>${r.protocolo}</b></td>
             <td>${r.dataHora}</td>
             <td>${r.cliente}</td>
@@ -2001,6 +1994,7 @@
 
       fetch(API_URL, {
         method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
       .then(res => res.json())
@@ -2021,13 +2015,9 @@
       
       const inputCli = document.getElementById('inputCliente');
       inputCli.value = cliente;
-      inputCli.disabled = false;
       
       const radioOp = document.querySelector(`input[name="tipoOperacao"][value="${operacao}"]`);
       if (radioOp) radioOp.checked = true;
-
-      document.getElementById('buscaEquipamento').disabled = false;
-      document.getElementById('btnEnviar').disabled = false;
 
       mudarAba('emissao');
       
@@ -2056,6 +2046,7 @@
 
       fetch(API_URL, {
         method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
       .then(res => res.json())
@@ -2085,7 +2076,8 @@
     function filtrarTabelaTermos() { renderizarTabelaTermos(bancoDados.termosEmitidos); }
 
     function autoPreencherEquipamento() {
-      const val = document.getElementById('buscaEquipamento').value.toLowerCase().trim();
+      const rawVal = document.getElementById('buscaEquipamento').value.trim();
+      const val = rawVal.toLowerCase();
       const tbody = document.getElementById('corpoAcessorios');
 
       if (!val || !bancoDados.equipamentos) {
@@ -2093,9 +2085,22 @@
         return;
       }
 
+      // Extrai a TAG caso venha formatada no estilo "TAG: LMD-0321 | Monitor..."
+      let tagExtraida = val;
+      if (val.includes('tag:')) {
+        tagExtraida = val.split('tag:')[1].split('|')[0].trim();
+      }
+
       const eq = bancoDados.equipamentos.find(item => {
-        const strFormatada = `tag: ${item.tag} | ${item.nome} | série: ${item.serie}`.toLowerCase();
-        return strFormatada === val || item.tag.toLowerCase() === val || item.serie.toLowerCase() === val || item.patrimonio.toLowerCase() === val;
+        const itemTag = (item.tag || "").toLowerCase().trim();
+        const itemSerie = (item.serie || "").toLowerCase().trim();
+        const itemPatrimonio = (item.patrimonio || "").toLowerCase().trim();
+        
+        return itemTag === tagExtraida || 
+               itemTag === val || 
+               itemSerie === val || 
+               itemPatrimonio === val ||
+               `tag: ${itemTag} | ${item.nome.toLowerCase()} | série: ${itemSerie}` === val;
       });
 
       if (eq) {
@@ -2204,6 +2209,18 @@
 
     function limparAssinatura() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
+    function obterAssinaturaOtimizada() {
+      // Cria um canvas temporário reduzido para otimizar o envio
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = 300;
+      tempCanvas.height = 70;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.fillStyle = "#FFFFFF";
+      tempCtx.fillRect(0, 0, 300, 70);
+      tempCtx.drawImage(canvas, 0, 0, 300, 70);
+      return tempCanvas.toDataURL("image/jpeg", 0.6);
+    }
+
     function gerarTermo(e) {
       e.preventDefault();
 
@@ -2232,12 +2249,13 @@
       });
 
       const payload = {
+        acao: "CRIAR_TERMO",
         cliente: document.getElementById('inputCliente').value,
         equipamento: equipamentoSelecionado,
         tipoOperacao: document.querySelector('input[name="tipoOperacao"]:checked').value,
         acessorios: listaAcessorios,
         tecnico: tecSelected,
-        assinaturaCliente: canvas.toDataURL(),
+        assinaturaCliente: obterAssinaturaOtimizada(),
         protocoloReq: document.getElementById('reqVinculadaProtocolo').value
       };
 
@@ -2247,27 +2265,28 @@
 
       fetch(API_URL, {
         method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
       .then(res => res.json())
       .then(res => {
-        if(res.status === "sucesso") {
-          const querImprimir = confirm("Termo gerado com sucesso!\n\nProtocolo: " + res.protocolo + "\n\nDeseja IMPRIMIR o documento agora?");
+        if (res.status === "sucesso") {
+          const querImprimir = confirm("Termo gerado com sucesso!\n\nProtocolo: " + (res.protocolo || res.protocoloTermo) + "\n\nDeseja IMPRIMIR o documento agora?");
           if (querImprimir && res.pdfUrl) {
             const win = window.open(res.pdfUrl, '_blank');
             if (win) { win.focus(); }
           }
           location.reload();
         } else {
-          alert("Erro ao gerar termo: " + res.mensagem);
+          alert("Erro ao gerar termo: " + (res.mensagem || "Erro de processamento no servidor."));
           btn.disabled = false;
-          btn.innerText = "GERAR TERMO DUPLO PDF (ENTREGA + HIGIENIZAÇÃO)";
+          btn.innerText = "Gerar Termo Duplo PDF (Entrega + Higienização)";
         }
       })
       .catch(err => {
         alert("Erro de comunicação com o servidor.");
         btn.disabled = false;
-        btn.innerText = "GERAR TERMO DUPLO PDF (ENTREGA + HIGIENIZAÇÃO)";
+        btn.innerText = "Gerar Termo Duplo PDF (Entrega + Higienização)";
       });
     }
   </script>
