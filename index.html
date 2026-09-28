@@ -1156,7 +1156,7 @@
 
         if (!tecnicoFoiAlteradoManualmente && bancoDados && bancoDados.usuarios && bancoDados.usuarios.length > 0) {
           const selTec = document.getElementById('selectTecnico');
-          if (selTec && selTec.value === "") {
+          if (selTec) {
             const idx = bancoDados.usuarios.findIndex(u => u.nome.toLowerCase() === usuarioLogado.nome.toLowerCase());
             if (idx !== -1) {
               selTec.value = idx;
@@ -1399,7 +1399,9 @@
         bancoDados.usuarios.forEach((u, idx) => {
           selTec.innerHTML += `<option value="${idx}">${u.nome}</option>`;
         });
-        selTec.value = valAtual;
+        if (valAtual !== "") {
+          selTec.value = valAtual;
+        }
       }
     }
 
@@ -1833,11 +1835,6 @@
 
       lista.forEach(r => {
         let st = r.status ? r.status.toUpperCase() : "PENDENTE";
-        
-        // Correção visual: Se o status contiver nome de usuário ou "ADMINISTRATIVO", força exibir "PENDENTE"
-        if (st === "ADMINISTRATIVO" || st.length > 12) {
-          st = "PENDENTE";
-        }
 
         const isPendente = st === "PENDENTE";
         const isRecusado = st === "RECUSADO";
@@ -1910,7 +1907,6 @@
 
       reqs.forEach(r => {
         let st = r.status ? r.status.toUpperCase() : "PENDENTE";
-        if (st === "ADMINISTRATIVO" || st.length > 12) st = "PENDENTE";
 
         if (st === "PENDENTE") pendentes++;
         else if (st === "ATENDIDO") atendidos++;
