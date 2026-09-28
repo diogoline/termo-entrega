@@ -1266,7 +1266,8 @@
       };
       document.body.appendChild(script);
 
-      setInterval(buscarAtualizacoesSilenciosas, 5000);
+      // Intervalo seguro para evitar bloqueio por cota do Google Apps Script
+      setInterval(buscarAtualizacoesSilenciosas, 20000);
       setInterval(enviarHeartbeat, 60000);
     };
 
@@ -1315,7 +1316,7 @@
     function irParaRequisicaoPendente(protReq) {
       fecharTodosDropdowns();
       document.getElementById('filtroStatusReq').value = "PENDENTE";
-      document.getElementById('filtroMesReq').value = ""; // Limpa o filtro de mês para exibir independente da data
+      document.getElementById('filtroMesReq').value = ""; // Limpa restrição de mês
       document.getElementById('filtroTextoReq').value = protReq || "";
       mudarAba('requisicoes');
       filtrarRequisicoes();
@@ -1831,15 +1832,17 @@
       if (!tbody) return;
       tbody.innerHTML = "";
 
-      if (!lista || lista.length === 0) {
+      const dados = lista || (bancoDados ? bancoDados.requisicoes : []);
+
+      if (!dados || dados.length === 0) {
         tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição encontrada para os filtros selecionados.</td></tr>';
         return;
       }
 
-      lista.forEach(r => {
-        const st = r.status.toUpperCase();
-        const isPendente = st === "PENDENTE";
-        const isRecusado = st === "RECUSADO";
+      dados.forEach(r => {
+        const st = (r.status || '').toUpperCase();
+        const isPendente = (st === "PENDENTE");
+        const isRecusado = (st === "RECUSADO");
 
         let badgeClass = "badge-pendente";
         if (st === "ATENDIDO") badgeClass = "badge-atendido";
@@ -1861,17 +1864,17 @@
         } else if (isRecusado) {
           btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#dc3545; font-weight:bold; font-size:11px;">Recusado</span></div>`;
         } else {
-          btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#28a745; font-weight:bold; font-size:11px;">Termo: ${r.protocoloTermo}</span></div>`;
+          btnAcao = `<div class="action-group">${linkPdfReq}<span style="color:#28a745; font-weight:bold; font-size:11px;">Termo: ${r.protocoloTermo || '-'}</span></div>`;
         }
 
         tbody.innerHTML += `
           <tr id="linha_req_${r.protocolo}">
             <td class="td-center"><b>${r.protocolo}</b></td>
-            <td>${r.dataHora}</td>
-            <td>${r.cliente}</td>
-            <td><b>${r.equipamentoSolicitado}</b></td>
+            <td>${r.dataHora || '-'}</td>
+            <td>${r.cliente || '-'}</td>
+            <td><b>${r.equipamentoSolicitado || '-'}</b></td>
             <td style="color:#555; font-style:italic;">${r.motivo || "-"}</td>
-            <td class="td-center"><b>${r.operacao}</b></td>
+            <td class="td-center"><b>${r.operacao || 'LOCAÇÃO'}</b></td>
             <td class="td-center"><span class="badge-status ${badgeClass}">${r.status}</span></td>
             <td class="td-center">${btnAcao}</td>
           </tr>
@@ -2085,7 +2088,6 @@
         return;
       }
 
-      // Extrai a TAG caso venha formatada no estilo "TAG: LMD-0321 | Monitor..."
       let tagExtraida = val;
       if (val.includes('tag:')) {
         tagExtraida = val.split('tag:')[1].split('|')[0].trim();
@@ -2210,7 +2212,6 @@
     function limparAssinatura() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
     function obterAssinaturaOtimizada() {
-      // Cria um canvas temporário reduzido para otimizar o envio
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = 300;
       tempCanvas.height = 70;
