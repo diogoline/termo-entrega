@@ -2284,5 +2284,264 @@
       });
     }
   </script>
+
+<!-- ===================================================================== -->
+<!-- BOTAO ENGRENAGEM E MENU DE OPCOES -->
+<!-- ===================================================================== -->
+<style>
+  /* Botao Flutuante da Engrenagem */
+  .btn-engrenagem-container {
+    position: fixed;
+    top: 15px;
+    right: 20px;
+    z-index: 9999;
+  }
+
+  .btn-engrenagem {
+    background: #1e3a8a;
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease, background 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-engrenagem:hover {
+    background: #1d4ed8;
+    transform: rotate(45deg);
+  }
+
+  /* Menu Dropdown */
+  .menu-engrenagem {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 50px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    width: 220px;
+    overflow: hidden;
+  }
+
+  .menu-engrenagem.ativo {
+    display: block;
+  }
+
+  .menu-item {
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.2s;
+  }
+
+  .menu-item:last-child {
+    border-bottom: none;
+  }
+
+  .menu-item:hover {
+    background: #f8fafc;
+    color: #1e3a8a;
+  }
+
+  /* Modal do Manual de Apoio (Com Trava de Cópia/Download) */
+  .modal-manual-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-manual-overlay.ativo {
+    display: flex;
+  }
+
+  .modal-manual-card {
+    background: #ffffff;
+    width: 90%;
+    max-width: 800px;
+    max-height: 85vh;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Trava visual de selecao de texto */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .modal-manual-header {
+    background: #1e3a8a;
+    color: #ffffff;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-manual-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-fechar-modal {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 22px;
+    cursor: pointer;
+    opacity: 0.8;
+  }
+
+  .btn-fechar-modal:hover {
+    opacity: 1;
+  }
+
+  .modal-manual-body {
+    padding: 24px;
+    overflow-y: auto;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #334155;
+  }
+
+  .manual-secao {
+    margin-bottom: 22px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 16px;
+  }
+
+  .manual-secao:last-child {
+    border-bottom: none;
+  }
+
+  .manual-secao h4 {
+    margin: 0 0 8px 0;
+    color: #1e3a8a;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .manual-secao p {
+    margin: 0 0 8px 0;
+  }
+
+  .manual-secao ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .manual-secao li {
+    margin-bottom: 6px;
+  }
+
+  .alerta-seguranca {
+    background: #eff6ff;
+    border-left: 4px solid #1e3a8a;
+    padding: 10px 14px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #1e40af;
+    border-radius: 0 6px 6px 0;
+    margin-top: 10px;
+  }
+</style>
+
+<!-- Estrutura do Botao e Dropdown -->
+<div class="btn-engrenagem-container">
+  <button class="btn-engrenagem" onclick="alternarMenuEngrenagem(event)" title="Opções do Sistema">⚙</button>
+  <div class="menu-engrenagem" id="menuEngrenagemDropdown">
+    <div class="menu-item" onclick="abrirModalManual()">📖 Material de Apoio</div>
+    <div class="menu-item" onclick="location.reload()">🔄 Recarregar Sistema</div>
+  </div>
+</div>
+
+<!-- Modal do Manual de Uso (Trava Anti-Download Nativa) -->
+<div class="modal-manual-overlay" id="modalManualUso" oncontextmenu="return false;">
+  <div class="modal-manual-card">
+    <div class="modal-manual-header">
+      <h3>📖 Manual de Operação — Linemed Hospitalar</h3>
+      <button class="btn-fechar-modal" onclick="fecharModalManual()">✕</button>
+    </div>
+    
+    <div class="modal-manual-body">
+      
+      <div class="manual-secao">
+        <h4>1. Acesso e Autenticação</h4>
+        <p>O acesso é restrito aos colaboradores e técnicos autorizados.</p>
+        <ul>
+          <li>Digite seu <b>usuário</b> e <b>senha</b> cadastrados na aba <code>USUARIOS</code>.</li>
+          <li>Ao realizar o login, a assinatura digital do técnico vinculada ao Google Drive é carregada automaticamente para uso nos documentos oficiais.</li>
+        </ul>
+      </div>
+
+      <div class="manual-secao">
+        <h4>2. Solicitação de Requisição Interna (REQ)</h4>
+        <p>Utilizada para solicitar a troca ou envio de equipamentos para clientes.</p>
+        <ul>
+          <li>Selecione o <b>Cliente</b> e o tipo de <b>Operação</b>.</li>
+          <li>Preencha o <b>Equipamento Atual (A substituir)</b> e o <b>Equipamento Solicitado</b> com a devida justificativa no campo de motivo.</li>
+          <li>Toda requisição é gravada com o status inicial <b>PENDENTE</b> até a validação da equipe técnica.</li>
+        </ul>
+      </div>
+
+      <div class="manual-secao">
+        <h4>3. Emissão de Termos Duplos (Entrega + Higienização)</h4>
+        <p>Gera em uma única página A4 o Termo de Entrega e o Termo de Responsabilidade de Higienização[cite: 4, 11, 13].</p>
+        <ul>
+          <li><b>Cliente:</b> Selecionado diretamente da base oficial da aba <code>LISTA</code> (Coluna A)[cite: 12].</li>
+          <li><b>Equipamento:</b> Informe a TAG/Série para que o sistema preencha o Nome e Patrimônio do equipamento.</li>
+          <li><b>Acessórios:</b> Marque os itens e a conformidade de cada acessório que acompanha o equipamento.</li>
+          <li><b>Assinatura:</b> Colete a assinatura do cliente na tela via toque ou mouse antes de concluir a emissão.</li>
+        </ul>
+      </div>
+
+      <div class="manual-secao">
+        <h4>4. Ordens de Serviço (O.S.)</h4>
+        <p>Módulo para acompanhamento de manutenção e atendimento técnico.</p>
+        <ul>
+          <li><b>Abertura:</b> Registre o cliente, equipamento, tipo de manutenção e o defeito relatado.</li>
+          <li><b>Fechamento / Reabertura:</b> Preencha o diagnóstico técnico e o serviço realizado para concluir a O.S.</li>
+          <li><b>Anexos:</b> É possível enviar imagens/fotos das evidências de manutenção.</li>
+        </ul>
+      </div>
+
+      <div class="alerta-seguranca">
+        🔒 <b>Aviso de Segurança:</b> Este manual de apoio é de uso interno e exclusivo dentro do sistema Linemed Hospitalar. O download, cópia ou distribuição externa não são permitidos.
+      </div>
+
+    </div>
+  </div>
+</div>
+  
 </body>
 </html>
