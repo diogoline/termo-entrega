@@ -498,17 +498,17 @@
         <div class="form-row" style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 14px; gap: 12px;">
           <div class="form-group" style="flex: 1.5;">
             <label>Cliente:</label>
-            <input type="text" id="filtroLocCliente" list="listClientes" placeholder="Todos os clientes..." oninput="filtrarTabelaLocacao()">
+            <input type="text" id="filtroLocCliente" list="listClientes" placeholder="Todos os clientes..." oninput="filtrarTabelaLocacaoDebounced()">
           </div>
 
           <div class="form-group" style="flex: 1.2;">
             <label>Unidade / Hospital:</label>
-            <input type="text" id="filtroLocUnidade" list="listUnidadesLocacao" placeholder="Todas as unidades..." oninput="filtrarTabelaLocacao()">
+            <input type="text" id="filtroLocUnidade" list="listUnidadesLocacao" placeholder="Todas as unidades..." oninput="filtrarTabelaLocacaoDebounced()">
           </div>
 
           <div class="form-group" style="flex: 1.5;">
             <label>Família do Equipamento:</label>
-            <input type="text" id="filtroLocEquip" list="listFamiliasLocacao" placeholder="Todas as famílias..." oninput="filtrarTabelaLocacao()">
+            <input type="text" id="filtroLocEquip" list="listFamiliasLocacao" placeholder="Todas as famílias..." oninput="filtrarTabelaLocacaoDebounced()">
           </div>
 
           <div class="form-group" style="flex: 1;">
@@ -523,7 +523,7 @@
 
           <div class="form-group" style="flex: 1.5;">
             <label>Busca Rápida (Contrato, ID, Cidade):</label>
-            <input type="text" id="filtroLocTexto" placeholder="Digite para buscar..." oninput="filtrarTabelaLocacao()">
+            <input type="text" id="filtroLocTexto" placeholder="Digite para buscar..." oninput="filtrarTabelaLocacaoDebounced()">
           </div>
         </div>
 
@@ -679,7 +679,7 @@
 
           <div class="form-group" style="flex: 2;">
             <label>Buscar na Tabela (Cliente, Req # ou Equipamento):</label>
-            <input type="text" id="filtroTextoReq" oninput="filtrarRequisicoes()" placeholder="Digite para buscar...">
+            <input type="text" id="filtroTextoReq" oninput="filtrarRequisicoesDebounced()" placeholder="Digite para buscar...">
           </div>
         </div>
         
@@ -813,7 +813,7 @@
         
         <div class="form-group" style="margin-bottom: 16px;">
           <label>Filtrar por Protocolo, Cliente, TAG ou Técnico:</label>
-          <input type="text" id="filtroTermos" oninput="filtrarTabelaTermos()" placeholder="Digite aqui para buscar...">
+          <input type="text" id="filtroTermos" oninput="filtrarTabelaTermosDebounced()" placeholder="Digite aqui para buscar...">
         </div>
 
         <div class="table-container">
@@ -862,7 +862,7 @@
 
           <div class="form-group" style="flex: 2;">
             <label>Buscar O.S. (Nº OS, TAG, Cliente ou Equipamento):</label>
-            <input type="text" id="filtroTextoOS" oninput="renderizarTabelaOS()" placeholder="Digite para filtrar...">
+            <input type="text" id="filtroTextoOS" oninput="renderizarTabelaOSDebounced()" placeholder="Digite para filtrar...">
           </div>
         </div>
 
@@ -1274,6 +1274,21 @@
     let protocoloReqEmRecusa = null;
     let osSelecionadaModal = null;
     let usuarioLogado = null;
+    let estaBuscandoDados = false;
+
+    // Função utilitária de Debounce para impedir lag na digitação
+    function criarDebounce(func, wait = 200) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    const filtrarTabelaLocacaoDebounced = criarDebounce(() => filtrarTabelaLocacao(), 200);
+    const filtrarRequisicoesDebounced = criarDebounce(() => filtrarRequisicoes(), 200);
+    const filtrarTabelaTermosDebounced = criarDebounce(() => filtrarTabelaTermos(), 200);
+    const renderizarTabelaOSDebounced = criarDebounce(() => renderizarTabelaOS(), 200);
 
     /* CONTROLE DO MENU ENGRENAGEM E MANUAL DE APOIO */
     function alternarMenuAjuda(e) {
@@ -1368,17 +1383,16 @@
       const onlines = bancoDados.usuarios.filter(u => u.online);
       countText.innerText = `${onlines.length} Online`;
 
-      listContainer.innerHTML = "";
       if (bancoDados.usuarios.length === 0) {
         listContainer.innerHTML = '<div style="padding: 12px; text-align: center; color: #888; font-size: 12px;">Nenhum usuário cadastrado.</div>';
         return;
       }
 
-      bancoDados.usuarios.forEach(u => {
+      const rows = bancoDados.usuarios.map(u => {
         const statusDot = u.online ? '<i class="fa-solid fa-circle" style="color:#22c55e;"></i>' : '<i class="fa-regular fa-circle" style="color:#64748b;"></i>';
         const statusCor = u.online ? "#155724" : "#64748b";
         
-        listContainer.innerHTML += `
+        return `
           <div class="notif-item" style="cursor: default;">
             <div class="notif-item-title">
               <span>${statusDot} ${u.nome}</span>
@@ -1389,6 +1403,7 @@
           </div>
         `;
       });
+      listContainer.innerHTML = rows.join('');
     }
 
     function renderizarListasAuxiliares() {
@@ -1402,19 +1417,17 @@
 
       const tbody = document.getElementById('tabelaAuxiliaresList');
       if (tbody) {
-        tbody.innerHTML = "";
         if (rels.length === 0) {
           tbody.innerHTML = '<tr><td colspan="3" class="td-center" style="color:#888;">Nenhuma combinação registrada no banco de dados.</td></tr>';
         } else {
-          rels.forEach(r => {
-            tbody.innerHTML += `
-              <tr>
-                <td><b>${r.descricao}</b></td>
-                <td>${r.modelo || "-"}</td>
-                <td>${r.fabricante || "-"}</td>
-              </tr>
-            `;
-          });
+          const rows = rels.map(r => `
+            <tr>
+              <td><b>${r.descricao}</b></td>
+              <td>${r.modelo || "-"}</td>
+              <td>${r.fabricante || "-"}</td>
+            </tr>
+          `);
+          tbody.innerHTML = rows.join('');
         }
       }
 
@@ -1507,15 +1520,16 @@
       if (!selTec) return;
 
       const valAnterior = selTec.value;
-      selTec.innerHTML = '<option value="">Selecione o técnico...</option>';
-
+      
+      let htmlOptions = '<option value="">Selecione o técnico...</option>';
       if (bancoDados && bancoDados.usuarios && bancoDados.usuarios.length > 0) {
         bancoDados.usuarios.forEach((u, idx) => {
           if (u.nome) {
-            selTec.innerHTML += `<option value="${idx}">${u.nome}</option>`;
+            htmlOptions += `<option value="${idx}">${u.nome}</option>`;
           }
         });
       }
+      selTec.innerHTML = htmlOptions;
 
       if (valAnterior !== "") {
         selTec.value = valAnterior;
@@ -1620,6 +1634,7 @@
     }
 
     function carregarDadosPlanilha(data) {
+      estaBuscandoDados = false;
       if (data && !data.erro) {
         bancoDados = data;
         
@@ -1646,9 +1661,13 @@
     }
 
     function buscarAtualizacoesSilenciosas() {
+      if (estaBuscandoDados) return; // Trava para impedir concorrência no navegador/Apps Script
+      estaBuscandoDados = true;
+
       const script = document.createElement('script');
       script.src = API_URL + "?callback=carregarDadosPlanilha&t=" + new Date().getTime();
       script.onload = function() { script.remove(); };
+      script.onerror = function() { script.remove(); estaBuscandoDados = false; };
       document.body.appendChild(script);
     }
 
@@ -1662,7 +1681,8 @@
 
       buscarAtualizacoesSilenciosas();
 
-      setInterval(buscarAtualizacoesSilenciosas, 5000);
+      // Intervalo otimizado para 30 segundos (evita congelar o navegador e gastar cota GAS)
+      setInterval(buscarAtualizacoesSilenciosas, 30000);
       setInterval(enviarHeartbeat, 60000);
     };
 
@@ -1688,19 +1708,17 @@
         badge.classList.add('active');
         textCount.innerText = `${pendentes.length} pendente(s)`;
 
-        listContainer.innerHTML = "";
-        pendentes.forEach(p => {
-          listContainer.innerHTML += `
-            <div class="notif-item" onclick="irParaRequisicaoPendente()">
-              <div class="notif-item-title">
-                <span>${p.protocolo}</span>
-                <span style="color:#e0a800;"><i class="fa-solid fa-clock"></i> Pendente</span>
-              </div>
-              <div class="notif-item-sub"><b>${p.cliente}</b></div>
-              <div class="notif-item-sub">${p.equipamentoSolicitado}</div>
+        const rows = pendentes.map(p => `
+          <div class="notif-item" onclick="irParaRequisicaoPendente()">
+            <div class="notif-item-title">
+              <span>${p.protocolo}</span>
+              <span style="color:#e0a800;"><i class="fa-solid fa-clock"></i> Pendente</span>
             </div>
-          `;
-        });
+            <div class="notif-item-sub"><b>${p.cliente}</b></div>
+            <div class="notif-item-sub">${p.equipamentoSolicitado}</div>
+          </div>
+        `);
+        listContainer.innerHTML = rows.join('');
       } else {
         badge.innerText = "0";
         badge.classList.remove('active');
@@ -1771,22 +1789,12 @@
     function popularAutocomplete() {
       const listC = document.getElementById('listClientes');
       if (listC && bancoDados.clientes) {
-        listC.innerHTML = "";
-        bancoDados.clientes.forEach(c => {
-          const opt = document.createElement('option');
-          opt.value = c;
-          listC.appendChild(opt);
-        });
+        listC.innerHTML = bancoDados.clientes.map(c => `<option value="${c}">`).join('');
       }
 
       const listE = document.getElementById('listEquipamentos');
       if (listE && bancoDados.equipamentos) {
-        listE.innerHTML = "";
-        bancoDados.equipamentos.forEach(eq => {
-          const opt = document.createElement('option');
-          opt.value = `TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}`;
-          listE.appendChild(opt);
-        });
+        listE.innerHTML = bancoDados.equipamentos.map(eq => `<option value="TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}">`).join('');
       }
 
       // Autocomplete para Locação
@@ -1804,7 +1812,7 @@
     }
 
     /* ===================================================================== */
-    /* FUNÇÕES DO MÓDULO DE CONTROLE DE LOCAÇÃO                              */
+    /* FUNÇÕES DO MÓDULO DE CONTROLE DE LOCAÇÃO (ALTAMENTE OTIMIZADA)       */
     /* ===================================================================== */
     function renderizarTabelaLocacao() {
       const tbody = document.getElementById('corpoLocacao');
@@ -1840,16 +1848,16 @@
         return true;
       });
 
-      tbody.innerHTML = "";
       if (filtradas.length === 0) {
         tbody.innerHTML = '<tr><td colspan="11" class="td-center" style="color: #888; padding: 24px;">Nenhum registro encontrado para os filtros selecionados.</td></tr>';
       } else {
-        filtradas.forEach(loc => {
+        // Construção ultra rápida de HTML via Array.join (Muta o DOM apenas UMA única vez)
+        const rowsHtml = filtradas.map(loc => {
           let badgeSaldoClass = "badge-saldo-ok";
-          if (loc.saldo > 0) badgeSaldoClass = "badge-saldo-pendente"; // Ainda há saldo contratado a entregar
-          if (loc.saldo < 0) badgeSaldoClass = "badge-saldo-alerta";   // Físico maior que o contratado
+          if (loc.saldo > 0) badgeSaldoClass = "badge-saldo-pendente";
+          if (loc.saldo < 0) badgeSaldoClass = "badge-saldo-alerta";
 
-          tbody.innerHTML += `
+          return `
             <tr>
               <td class="td-center"><b>${loc.id}</b></td>
               <td><b>${loc.cliente}</b></td>
@@ -1868,7 +1876,9 @@
               </td>
             </tr>
           `;
-        });
+        }).join('');
+
+        tbody.innerHTML = rowsHtml;
       }
 
       atualizarMetricasLocacao(filtradas);
@@ -1960,12 +1970,11 @@
     }
 
     /* ===================================================================== */
-    /* OUTRAS FUNÇÕES DA APLICAÇÃO (O.S., TERMOS, REQUISIÇÕES)              */
+    /* OUTRAS FUNÇÕES DA APLICAÇÃO (O.S., TERMOS, REQUISIÇÕES) OTIMIZADAS    */
     /* ===================================================================== */
     function renderizarTabelaOS() {
       const tbody = document.getElementById('corpoOS');
       if (!tbody) return;
-      tbody.innerHTML = "";
 
       const listaOS = bancoDados.ordensServico || [];
 
@@ -1996,14 +2005,14 @@
         return;
       }
 
-      filtradas.forEach(os => {
+      const rowsHtml = filtradas.map(os => {
         let prioClass = "prio-media";
         const pr = os.prioridade.toUpperCase();
         if (pr === "CRÍTICA") prioClass = "prio-critica";
         if (pr === "ALTA") prioClass = "prio-alta";
         if (pr === "BAIXA") prioClass = "prio-baixa";
 
-        tbody.innerHTML += `
+        return `
           <tr class="${prioClass}" style="cursor:pointer;" onclick="abrirModalOS('${os.protocoloOS}')">
             <td class="td-center"><b>${os.protocoloOS}</b></td>
             <td>${os.dataAbertura}</td>
@@ -2019,7 +2028,9 @@
             </td>
           </tr>
         `;
-      });
+      }).join('');
+
+      tbody.innerHTML = rowsHtml;
     }
 
     function abrirModalOS(protocoloOS) {
@@ -2062,13 +2073,12 @@
       }
 
       const divGaleria = document.getElementById('mOSGaleria');
-      divGaleria.innerHTML = "";
       
       if (os.anexosUrl && os.anexosUrl.length > 10) {
         const urls = os.anexosUrl.split(';').filter(String);
-        urls.forEach(urlOriginal => {
+        const thumbs = urls.map(urlOriginal => {
           const urlDireta = converterUrlDriveParaImagem(urlOriginal);
-          divGaleria.innerHTML += `
+          return `
             <div class="galeria-thumb">
               <a href="${urlOriginal}" target="_blank" title="Clique para abrir foto em tamanho real">
                 <img src="${urlDireta}" alt="Foto da OS" onerror="this.src='https://via.placeholder.com/85?text=Foto';"/>
@@ -2076,6 +2086,7 @@
             </div>
           `;
         });
+        divGaleria.innerHTML = thumbs.join('');
       } else {
         divGaleria.innerHTML = '<span style="color:#aaa; font-size:11px;">Nenhuma foto anexada.</span>';
       }
@@ -2310,7 +2321,6 @@
     function renderizarTabelaTermos(lista) {
       const tbody = document.getElementById('corpoTermos');
       if (!tbody) return;
-      tbody.innerHTML = "";
 
       if (!lista || lista.length === 0) {
         tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhum termo emitido encontrado.</td></tr>';
@@ -2330,22 +2340,22 @@
         );
       }
 
-      dadosExibir.forEach(t => {
-        tbody.innerHTML += `
-          <tr>
-            <td class="td-center"><b>${t.protocolo}</b></td>
-            <td>${t.dataHora}</td>
-            <td>${t.cliente}</td>
-            <td class="td-center"><b>${t.tag}</b></td>
-            <td>${t.equipamento}</td>
-            <td class="td-center">${t.tipo}</td>
-            <td>${t.tecnico}</td>
-            <td class="td-center">
-              ${t.pdfUrl ? `<a href="${t.pdfUrl}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> PDF</a>` : '-'}
-            </td>
-          </tr>
-        `;
-      });
+      const rowsHtml = dadosExibir.map(t => `
+        <tr>
+          <td class="td-center"><b>${t.protocolo}</b></td>
+          <td>${t.dataHora}</td>
+          <td>${t.cliente}</td>
+          <td class="td-center"><b>${t.tag}</b></td>
+          <td>${t.equipamento}</td>
+          <td class="td-center">${t.tipo}</td>
+          <td>${t.tecnico}</td>
+          <td class="td-center">
+            ${t.pdfUrl ? `<a href="${t.pdfUrl}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> PDF</a>` : '-'}
+          </td>
+        </tr>
+      `).join('');
+
+      tbody.innerHTML = rowsHtml;
     }
 
     function filtrarRequisicoes() {
@@ -2383,14 +2393,13 @@
     function renderizarTabelaRequisicoes(lista) {
       const tbody = document.getElementById('corpoRequisicoes');
       if (!tbody) return;
-      tbody.innerHTML = "";
 
       if (!lista || lista.length === 0) {
         tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição encontrada para os filtros selecionados.</td></tr>';
         return;
       }
 
-      lista.forEach(r => {
+      const rowsHtml = lista.map(r => {
         let st = r.status ? r.status.toUpperCase() : "PENDENTE";
 
         const isPendente = st === "PENDENTE";
@@ -2416,7 +2425,7 @@
           btnAcao = `<div class="btn-action-container">${linkPdfReq}<span class="btn-termo-link">${termoTexto}</span></div>`;
         }
 
-        tbody.innerHTML += `
+        return `
           <tr>
             <td class="td-center"><b>${r.protocolo}</b></td>
             <td>${r.dataHora}</td>
@@ -2428,7 +2437,9 @@
             <td class="td-center" style="width: 230px;">${btnAcao}</td>
           </tr>
         `;
-      });
+      }).join('');
+
+      tbody.innerHTML = rowsHtml;
     }
 
     function alternarModoDash() {
@@ -2482,41 +2493,41 @@
       document.getElementById('dashRecusados').innerText = recusados;
 
       const divCli = document.getElementById('chartClientes');
-      divCli.innerHTML = "";
       const maxCli = Math.max(...Object.values(clientesMap), 1);
 
       if (Object.keys(clientesMap).length === 0) {
         divCli.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">Sem solicitações registradas no período.</div>';
       } else {
-        Object.keys(clientesMap).forEach(cli => {
+        const barsCli = Object.keys(clientesMap).map(cli => {
           const qtd = clientesMap[cli];
           const pct = Math.round((qtd / maxCli) * 100);
-          divCli.innerHTML += `
+          return `
             <div class="bar-container">
               <div class="bar-label"><span>${cli}</span><span>${qtd} req</span></div>
               <div class="bar-bg"><div class="bar-fill" style="width: ${pct}%; background:#2563eb;"></div></div>
             </div>
           `;
-        });
+        }).join('');
+        divCli.innerHTML = barsCli;
       }
 
       const divFam = document.getElementById('chartFamilias');
-      divFam.innerHTML = "";
       const maxFam = Math.max(...Object.values(familiasMap), 1);
 
       if (Object.keys(familiasMap).length === 0) {
         divFam.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">Sem solicitações registradas no período.</div>';
       } else {
-        Object.keys(familiasMap).forEach(fam => {
+        const barsFam = Object.keys(familiasMap).map(fam => {
           const qtd = familiasMap[fam];
           const pct = Math.round((qtd / maxFam) * 100);
-          divFam.innerHTML += `
+          return `
             <div class="bar-container">
               <div class="bar-label"><span>${fam}</span><span>${qtd} req</span></div>
               <div class="bar-bg"><div class="bar-fill" style="width: ${pct}%;"></div></div>
             </div>
           `;
-        });
+        }).join('');
+        divFam.innerHTML = barsFam;
       }
     }
 
@@ -2653,23 +2664,22 @@
           listaAcess = eq.acessorios.split(';').map(s => s.trim()).filter(String);
         }
 
-        tbody.innerHTML = "";
         if (listaAcess.length > 0) {
-          listaAcess.forEach((item, i) => {
-            tbody.innerHTML += `
-              <tr>
-                <td class="td-center">${i + 1}</td>
-                <td class="td-center"><input type="text" style="width: 45px; text-align: center; padding: 4px;" value="1" id="qtd_${i}"></td>
-                <td>${item}</td>
-                <td class="td-center">
-                  <select id="conf_${i}" style="padding: 4px;">
-                    <option value="Conforme">Conforme</option>
-                    <option value="Não Conforme">Não Conforme</option>
-                    <option value="Não Possui">Não Possui</option>
-                  </select>
-                </td>
-              </tr>`;
-          });
+          const rowsAcess = listaAcess.map((item, i) => `
+            <tr>
+              <td class="td-center">${i + 1}</td>
+              <td class="td-center"><input type="text" style="width: 45px; text-align: center; padding: 4px;" value="1" id="qtd_${i}"></td>
+              <td>${item}</td>
+              <td class="td-center">
+                <select id="conf_${i}" style="padding: 4px;">
+                  <option value="Conforme">Conforme</option>
+                  <option value="Não Conforme">Não Conforme</option>
+                  <option value="Não Possui">Não Possui</option>
+                </select>
+              </td>
+            </tr>
+          `).join('');
+          tbody.innerHTML = rowsAcess;
         } else {
           tbody.innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 20px;">Nenhum acessório registrado para este equipamento no banco de dados.</td></tr>';
         }
