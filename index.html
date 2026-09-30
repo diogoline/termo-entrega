@@ -12,7 +12,7 @@
     .header { background-color: #1a4d80; color: white; padding: 12px 24px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; box-shadow: 0 3px 6px rgba(0,0,0,0.12); position: relative; }
     .header h1 { font-size: 20px; font-weight: 600; }
     
-    .header-right { display: flex; align-items: center; gap: 16px; position: relative; }
+    .header-right { display: flex; align-items: center; gap: 12px; position: relative; }
     .status-badge { background-color: #ffc107; color: #333; padding: 6px 14px; border-radius: 16px; font-size: 13px; font-weight: bold; transition: all 0.3s; }
     .status-badge.connected { background-color: #28a745; color: white; }
 
@@ -38,6 +38,165 @@
     .notif-item:hover { background: #f1f5f9; }
     .notif-item-title { font-size: 12px; font-weight: bold; color: #1e293b; display: flex; justify-content: space-between; }
     .notif-item-sub { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+    /* BOTÃO AJUDA / ENGRENAGEM NO NATIVO DO CABEÇALHO */
+    .btn-header-ajuda {
+      background-color: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      height: 32px;
+    }
+
+    .btn-header-ajuda:hover {
+      background-color: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .dropdown-ajuda-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .menu-ajuda-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 42px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      width: 200px;
+      z-index: 10000;
+      overflow: hidden;
+    }
+
+    .menu-ajuda-dropdown.ativo {
+      display: block;
+    }
+
+    .menu-ajuda-item {
+      padding: 11px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1e293b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .menu-ajuda-item:hover {
+      background: #f1f5f9;
+      color: #1a4d80;
+    }
+
+    /* MODAL DO MANUAL DE APOIO (COM TRAVA ANTI-DOWNLOAD) */
+    .modal-manual-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(3px);
+      z-index: 20000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-manual-overlay.ativo {
+      display: flex;
+    }
+
+    .modal-manual-card {
+      background: #ffffff;
+      width: 90%;
+      max-width: 820px;
+      height: 85vh;
+      border-radius: 10px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    .modal-manual-header {
+      background: #1a4d80;
+      color: #ffffff;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-manual-header h3 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .btn-fechar-manual {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .modal-manual-body {
+      padding: 20px 24px;
+      overflow-y: auto;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #334155;
+    }
+
+    .manual-secao {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 14px;
+    }
+
+    .manual-secao h4 {
+      margin: 0 0 8px 0;
+      color: #1a4d80;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .manual-secao ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .manual-secao li {
+      margin-bottom: 6px;
+    }
+
+    .alerta-seguranca {
+      background: #eff6ff;
+      border-left: 4px solid #1a4d80;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1e40af;
+      border-radius: 0 6px 6px 0;
+    }
 
     /* NAVEGAÇÃO POR MENUS DROPDOWN */
     .nav-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
@@ -248,6 +407,17 @@
         </div>
 
         <span id="statusBadge" class="status-badge">Conectando...</span>
+
+        <!-- BOTÃO INTEGRADO DE AJUDA / ENGRENAGEM -->
+        <div class="dropdown-ajuda-container">
+          <button type="button" class="btn-header-ajuda" onclick="alternarMenuAjuda(event)" title="Opções e Manual">
+            ⚙️ Ajuda
+          </button>
+          <div class="menu-ajuda-dropdown" id="menuAjudaDropdown">
+            <div class="menu-ajuda-item" onclick="abrirModalManual()">📖 Material de Apoio</div>
+          </div>
+        </div>
+
         <button type="button" class="btn-logout" onclick="efetuarLogout()" title="Sair do Sistema">Sair 🚪</button>
       </div>
     </div>
@@ -269,7 +439,7 @@
 
       <!-- MÓDULO MANUTENÇÃO (O.S.) -->
       <div class="dropdown" id="dropManutencao">
-        <button type="button" class="nav-tab" id="btnNavManutencao" onclick="toggleMenuDropdown(event, 'dropManutencao')">🛠️ Manutenção (O.S.) ▾</button>
+        <button type="button" class="nav-tab" id="btnNavManutencao" onclick="toggleMenuDropdown(event, 'dropManutencao')">🛠️️ Manutenção (O.S.) ▾</button>
         <div class="dropdown-content">
           <button type="button" onclick="mudarAba('os_gestao')">📋 Central de Gestão de O.S.</button>
           <button type="button" onclick="mudarAba('os_abertura')">➕ Abrir / Registrar Nova O.S.</button>
@@ -920,6 +1090,61 @@
     </div>
   </div>
 
+  <!-- MODAL DO MANUAL DE OPERAÇÃO (SEGURO - TRAVA ANTI-DOWNLOAD) -->
+  <div class="modal-manual-overlay" id="modalManualUso" oncontextmenu="return false;">
+    <div class="modal-manual-card">
+      <div class="modal-manual-header">
+        <h3>📖 Manual de Operação — DMA SYS v2.0</h3>
+        <button type="button" class="btn-fechar-manual" onclick="fecharModalManual()">✕</button>
+      </div>
+      
+      <div class="modal-manual-body">
+        <div class="manual-secao">
+          <h4>1. Acesso e Autenticação</h4>
+          <p>O acesso é restrito aos colaboradores e técnicos autorizados.</p>
+          <ul>
+            <li>Digite seu <b>usuário</b> e <b>senha</b> cadastrados na aba <code>USUARIOS</code>.</li>
+            <li>Ao realizar o login, a assinatura digital do técnico vinculada ao Google Drive é carregada automaticamente.</li>
+          </ul>
+        </div>
+
+        <div class="manual-secao">
+          <h4>2. Requisições Internas (Qualidade)</h4>
+          <p>Utilizada para solicitar a troca ou envio de equipamentos para clientes.</p>
+          <ul>
+            <li>Selecione o Cliente, a Operação e preencha o equipamento a substituir e o solicitado.</li>
+            <li>Toda requisição é gravada com o status inicial <b>PENDENTE</b> até a validação técnica.</li>
+          </ul>
+        </div>
+
+        <div class="manual-secao">
+          <h4>3. Emissão de Termo Duplo</h4>
+          <p>Gera em página única A4 o Termo de Entrega e de Responsabilidade de Higienização.</p>
+          <ul>
+            <li><b>Cliente:</b> Selecionado a partir da aba <code>LISTA</code>.</li>
+            <li><b>Equipamento:</b> A busca por TAG preenche automaticamente Série e Patrimônio.</li>
+            <li><b>Acessórios:</b> Marque os itens e a conformidade antes da emissão.</li>
+            <li><b>Assinatura:</b> Colete a assinatura do cliente na tela antes de finalizar.</li>
+          </ul>
+        </div>
+
+        <div class="manual-secao">
+          <h4>4. Ordens de Serviço (O.S.)</h4>
+          <p>Módulo para acompanhamento de manutenção e atendimento técnico.</p>
+          <ul>
+            <li><b>Abertura:</b> Registre o cliente, equipamento, tipo de manutenção e defeito relato.</li>
+            <li><b>Fechamento / Reabertura:</b> Preencha o diagnóstico e serviços para concluir.</li>
+            <li><b>Anexos:</b> É possível anexar fotos de evidências de manutenção.</li>
+          </ul>
+        </div>
+
+        <div class="alerta-seguranca">
+          🔒 <b>Aviso de Segurança:</b> Este manual é de consulta interna e exclusiva do sistema DMA SYS v2.0. A cópia, impressão ou download não são permitidos.
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- WIDGET DE CHAT (WHATSAPP) -->
   <button type="button" class="chat-widget-btn" onclick="toggleChat()" title="Suporte / Dúvidas">💬</button>
   
@@ -952,6 +1177,35 @@
     let osSelecionadaModal = null;
     let usuarioLogado = null;
 
+    /* AÇÕES DO MENU DE AJUDA / MANUAL DE APOIO */
+    function alternarMenuAjuda(e) {
+      e.stopPropagation();
+      const menu = document.getElementById("menuAjudaDropdown");
+      if (menu) menu.classList.toggle("ativo");
+    }
+
+    function abrirModalManual() {
+      const modal = document.getElementById("modalManualUso");
+      const menu = document.getElementById("menuAjudaDropdown");
+      if (modal) modal.classList.add("ativo");
+      if (menu) menu.classList.remove("ativo");
+    }
+
+    function fecharModalManual() {
+      const modal = document.getElementById("modalManualUso");
+      if (modal) modal.classList.remove("ativo");
+    }
+
+    // Trava atalhos de impressão/salvamento durante a exibição do manual
+    document.addEventListener("keydown", function(e) {
+      const modal = document.getElementById("modalManualUso");
+      if (modal && modal.classList.contains("ativo")) {
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S')) {
+          e.preventDefault();
+        }
+      }
+    });
+
     function converterUrlDriveParaImagem(url) {
       if (!url) return "";
       const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
@@ -978,6 +1232,8 @@
       if (notif) notif.classList.remove('active');
       const users = document.getElementById('usersDropdown');
       if (users) users.classList.remove('active');
+      const ajuda = document.getElementById('menuAjudaDropdown');
+      if (ajuda) ajuda.classList.remove('ativo');
     }
 
     document.addEventListener('click', function() {
@@ -1149,7 +1405,6 @@
       .catch(err => alert("Erro na comunicação com o servidor."));
     }
 
-    // PREENCHE O SELECT DE TÉCNICOS DIRETAMENTE DA COLUNA A DA ABA USUARIOS
     function preencherSelectTecnicos() {
       const selTec = document.getElementById('selectTecnico');
       if (!selTec) return;
@@ -1198,7 +1453,6 @@
       }
     }
 
-    // LOGIN DIRETO VIA API COM VALIDAÇÃO REMOTA
     function efetuarLogin() {
       const usr = document.getElementById('loginUsuario').value.trim().toLowerCase();
       const pass = document.getElementById('loginSenha').value.trim();
@@ -1215,7 +1469,6 @@
       btn.disabled = true;
       btn.innerText = "VALIDANDO ACESSO...";
 
-      // Se os dados locais já estiverem prontos, valida na memória
       if (bancoDados && bancoDados.usuarios && bancoDados.usuarios.length > 0) {
         const encontrado = bancoDados.usuarios.find(u => 
           ((u.usuario && u.usuario.toLowerCase() === usr) || (u.nome && u.nome.toLowerCase() === usr)) && 
@@ -1228,7 +1481,6 @@
         }
       }
 
-      // Caso contrário, valida remotamente via POST
       fetch(API_URL, {
         method: 'POST',
         body: JSON.stringify({ acao: "VERIFICAR_LOGIN", usuario: usr, senha: pass })
@@ -1856,7 +2108,6 @@
       renderizarTabelaRequisicoes(filtradas);
     }
 
-    // RENDERIZAÇÃO DA TABELA GARANTINDO O ALINHAMENTO LADO A LADO
     function renderizarTabelaRequisicoes(lista) {
       const tbody = document.getElementById('corpoRequisicoes');
       if (!tbody) return;
@@ -2284,5 +2535,6 @@
       });
     }
   </script>
- </body>
+
+</body>
 </html>
