@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <!-- ===================================================================== -->
+  <!-- BLOCO 1: CABEÇALHO, DEPENDÊNCIAS DE ÍCONES E ESTILOS CSS -->
+  <!-- ===================================================================== -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DMA SYS - Gestão de Termos, Requisições, O.S., Locação e Compras</title>
+  <title>DMA SYS - Gestão de Termos, Requisições, O.S. e Locação</title>
   
   <!-- Biblioteca de Ícones Vetoriais Profissionais (Font Awesome) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -264,7 +267,9 @@
 </head>
 <body>
 
-  <!-- TELA DE LOGIN -->
+  <!-- ===================================================================== -->
+  <!-- BLOCO 2: TELA DE LOGIN E AUTENTICAÇÃO -->
+  <!-- ===================================================================== -->
   <div id="loginOverlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0f172a; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px;">
     <div style="background: #ffffff; width: 100%; max-width: 380px; padding: 30px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); text-align: center;">
       <div style="font-size: 24px; font-weight: 800; color: #1a4d80; margin-bottom: 4px;">DMA SYS</div>
@@ -293,7 +298,9 @@
   <!-- CONTEÚDO PRINCIPAL DO SISTEMA -->
   <div id="appContainer" style="display: none;">
 
-    <!-- BARRA SUPERIOR (HEADER) -->
+    <!-- ===================================================================== -->
+    <!-- BLOCO 3: BARRA SUPERIOR (HEADER) E MENU ENGRENAGEM -->
+    <!-- ===================================================================== -->
     <div class="header">
       <h1 style="color: #ffffff; display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 600;">
         <i class="fa-solid fa-layer-group" style="font-size: 22px; background: linear-gradient(180deg, #60a5fa 0%, #fef08a 50%, #22c55e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i> 
@@ -355,7 +362,9 @@
       </div>
     </div>
 
-    <!-- MENU DE NAVEGAÇÃO PRINCIPAL (NAV-TABS) -->
+    <!-- ===================================================================== -->
+    <!-- BLOCO 4: MENU DE NAVEGAÇÃO PRINCIPAL (NAV-TABS) -->
+    <!-- ===================================================================== -->
     <div class="nav-tabs">
       <button type="button" class="nav-tab active" id="btnNavInicio" onclick="mudarAba('inicio')">
         <i class="fa-solid fa-house"></i> Início
@@ -364,14 +373,9 @@
         <i class="fa-solid fa-chart-pie"></i> Dashboard
       </button>
 
-      <!-- MÓDULO: CONTROLE DE LOCAÇÃO -->
+      <!-- NOVO MÓDULO: CONTROLE DE LOCAÇÃO -->
       <button type="button" class="nav-tab" id="btnNavLocacao" onclick="mudarAba('locacao')">
         <i class="fa-solid fa-boxes-packing"></i> Controle de Locação
-      </button>
-
-      <!-- MÓDULO DE COMPRAS -->
-      <button type="button" class="nav-tab" id="btnNavCompras" onclick="mudarAba('compras')">
-        <i class="fa-solid fa-cart-shopping"></i> Módulo de Compras
       </button>
 
       <!-- MÓDULO QUALIDADE -->
@@ -416,6 +420,10 @@
     <datalist id="listFamiliasLocacao"></datalist>
     <datalist id="listUnidadesLocacao"></datalist>
 
+    <!-- ===================================================================== -->
+    <!-- BLOCO 5: CONTEÚDO DAS ABAS (MÓDULOS DO SISTEMA) -->
+    <!-- ===================================================================== -->
+
     <!-- ABA 0: TELA DE INÍCIO -->
     <div id="abaInicio" class="tab-content active">
       <div class="welcome-hero">
@@ -430,16 +438,16 @@
           <div class="quick-desc">Consulte o saldo contratado vs. físico por cliente, unidade e família de equipamento.</div>
         </div>
 
-        <div class="quick-card" onclick="mudarAba('compras')">
-          <div class="quick-icon"><i class="fa-solid fa-cart-shopping"></i></div>
-          <div class="quick-title">Módulo de Compras</div>
-          <div class="quick-desc">Crie solicitações com mapa comparativo de 3 fornecedores e aprovação direta.</div>
-        </div>
-
         <div class="quick-card" onclick="mudarAba('dashboard')">
           <div class="quick-icon"><i class="fa-solid fa-chart-line"></i></div>
           <div class="quick-title">Dashboard & Métricas</div>
           <div class="quick-desc">Acompanhe indicadores gerais de movimentação e chamados em tempo real.</div>
+        </div>
+
+        <div class="quick-card" onclick="mudarAba('requisicoes')">
+          <div class="quick-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+          <div class="quick-title">Requisições Internas</div>
+          <div class="quick-desc">Solicite substituições de equipamentos para a Qualidade ou atenda pedidos.</div>
         </div>
 
         <div class="quick-card" onclick="mudarAba('os_gestao')">
@@ -456,8 +464,9 @@
       </div>
     </div>
 
-    <!-- ABA: CONTROLE DE LOCAÇÃO -->
+    <!-- ABA NOVA: CONTROLE DE LOCAÇÃO -->
     <div id="abaLocacao" class="tab-content">
+      <!-- MÉRICA DA LOCAÇÃO -->
       <div class="dash-metrics" style="grid-template-columns: repeat(4, 1fr);">
         <div class="metric-card blue">
           <div class="metric-title">Total de Registros / Famílias</div>
@@ -480,170 +489,65 @@
       <div class="card">
         <div class="card-title">
           <span><i class="fa-solid fa-boxes-packing"></i> Saldos de Equipamentos Locados por Cliente / Unidade</span>
-          <button type="button" class="btn-submit" style="padding: 4px 10px; font-size: 11px;" onclick="buscarAtualizacoesSilenciosas()"><i class="fa-solid fa-rotate"></i> Atualizar Dados</button>
+          <button type="button" class="btn-atender" style="padding: 6px 12px; font-size: 11px;" onclick="buscarAtualizacoesSilenciosas()">
+            <i class="fa-solid fa-rotate"></i> Atualizar Dados
+          </button>
         </div>
 
-        <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px; flex-wrap: wrap;">
-          <div class="form-group" style="flex: 1.2;">
+        <!-- PAINEL DE FILTROS DA LOCAÇÃO -->
+        <div class="form-row" style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 14px; gap: 12px;">
+          <div class="form-group" style="flex: 1.5;">
             <label>Cliente:</label>
-            <input type="text" id="locFiltroCliente" list="listClientes" placeholder="Todos os clientes..." oninput="filtrarTabelaLocacaoDebounced()">
+            <input type="text" id="filtroLocCliente" list="listClientes" placeholder="Todos os clientes..." oninput="filtrarTabelaLocacaoDebounced()">
           </div>
+
           <div class="form-group" style="flex: 1.2;">
             <label>Unidade / Hospital:</label>
-            <input type="text" id="locFiltroUnidade" list="listUnidadesLocacao" placeholder="Todas as unidades..." oninput="filtrarTabelaLocacaoDebounced()">
+            <input type="text" id="filtroLocUnidade" list="listUnidadesLocacao" placeholder="Todas as unidades..." oninput="filtrarTabelaLocacaoDebounced()">
           </div>
-          <div class="form-group" style="flex: 1.2;">
+
+          <div class="form-group" style="flex: 1.5;">
             <label>Família do Equipamento:</label>
-            <input type="text" id="locFiltroFamilia" list="listFamiliasLocacao" placeholder="Todas as famílias..." oninput="filtrarTabelaLocacaoDebounced()">
+            <input type="text" id="filtroLocEquip" list="listFamiliasLocacao" placeholder="Todas as famílias..." oninput="filtrarTabelaLocacaoDebounced()">
           </div>
+
           <div class="form-group" style="flex: 1;">
             <label>Situação:</label>
-            <select id="locFiltroSituacao" onchange="filtrarTabelaLocacao()">
-              <option value="ATIVO" selected>Apenas ATIVO</option>
+            <select id="filtroLocSituacao" onchange="filtrarTabelaLocacao()">
               <option value="TODOS">Todas as Situações</option>
+              <option value="ATIVO" selected>Apenas ATIVO</option>
+              <option value="EMPRÉSTIMO">Apenas EMPRÉSTIMO</option>
+              <option value="ENCERRADO">Apenas ENCERRADO</option>
             </select>
           </div>
+
           <div class="form-group" style="flex: 1.5;">
             <label>Busca Rápida (Contrato, ID, Cidade):</label>
-            <input type="text" id="locFiltroTexto" placeholder="Digite para buscar..." oninput="filtrarTabelaLocacaoDebounced()">
+            <input type="text" id="filtroLocTexto" placeholder="Digite para buscar..." oninput="filtrarTabelaLocacaoDebounced()">
           </div>
         </div>
 
-        <div class="table-container">
+        <!-- TABELA DE LOCAÇÃO -->
+        <div class="table-container" style="max-height: 550px;">
           <table style="table-layout: auto;">
             <thead>
               <tr>
-                <th class="td-center" style="width: 50px;">ID</th>
+                <th class="td-center" style="width: 60px;">ID</th>
                 <th>Cliente</th>
-                <th>Contrato</th>
+                <th style="width: 100px;">Contrato</th>
                 <th>Unidade</th>
-                <th>Localização</th>
-                <th>Família do Equipamento</th>
-                <th class="td-center">Qtd Contratada</th>
-                <th class="td-center">Qtd Física</th>
-                <th class="td-center">Saldo</th>
-                <th class="td-center">Situação</th>
-                <th class="td-center">Ação</th>
+                <th style="width: 120px;">Localização</th>
+                <th>Família de Equipamento</th>
+                <th class="td-center" style="width: 110px;">Qtd Contratada</th>
+                <th class="td-center" style="width: 100px;">Qtd Física</th>
+                <th class="td-center" style="width: 90px;">Saldo</th>
+                <th class="td-center" style="width: 100px;">Situação</th>
+                <th class="td-center" style="width: 110px;">Ação</th>
               </tr>
             </thead>
-            <tbody id="corpoTabelaLocacao">
-              <tr><td colspan="11" class="td-center" style="color:#888; padding:20px;">Carregando dados de locação...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ABA: MÓDULO DE COMPRAS & MAPA DE COTAÇÃO -->
-    <div id="abaCompras" class="tab-content">
-      <div class="card">
-        <div class="card-title">
-          <span><i class="fa-solid fa-cart-plus"></i> Nova Solicitação & Mapa de Cotação de Compras</span>
-        </div>
-
-        <form id="formCompras" onsubmit="salvarSolicitacaoCompra(event)">
-          <div class="form-row">
-            <div class="form-group" style="flex: 1;">
-              <label>Nº O.S. do Sistema Externo (Manual):</label>
-              <input type="text" id="compOsExterna" placeholder="Ex: OS-2026-8849" required>
-            </div>
-
-            <div class="form-group" style="flex: 1.5;">
-              <label>Nome do Solicitante / Comprador:</label>
-              <input type="text" id="compSolicitante" placeholder="Nome do comprador ou solicitante..." required>
-            </div>
-
-            <div class="form-group" style="flex: 2;">
-              <label>Nome do Produto / Peça Solicitada:</label>
-              <input type="text" id="compProduto" placeholder="Ex: SENSORES DE FLUXO PARA VENTILADOR MONNAL T75" required>
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 14px;">
-            <label>Observações / Justificativa Técnica:</label>
-            <input type="text" id="compObservacao" placeholder="Ex: Peça necessária para atendimento da OS de manutenção corretiva urgente.">
-          </div>
-
-          <!-- MAPA DE COTAÇÃO - TRÊS FORNECEDORES -->
-          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px; margin-bottom: 14px;">
-            <div style="font-size: 12px; font-weight: bold; color: #1a4d80; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-              <i class="fa-solid fa-scale-balanced"></i> Mapa de Cotação de Preços (3 Fornecedores)
-            </div>
-
-            <div class="form-row">
-              <div class="form-group" id="boxForn1" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: white;">
-                <label>Fornecedor 1:</label>
-                <input type="text" id="compForn1" placeholder="Nome da empresa 1..." style="margin-bottom: 6px;">
-                <label>Valor Orçado (R$):</label>
-                <input type="number" id="compVal1" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
-              </div>
-
-              <div class="form-group" id="boxForn2" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: white;">
-                <label>Fornecedor 2:</label>
-                <input type="text" id="compForn2" placeholder="Nome da empresa 2..." style="margin-bottom: 6px;">
-                <label>Valor Orçado (R$):</label>
-                <input type="number" id="compVal2" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
-              </div>
-
-              <div class="form-group" id="boxForn3" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: white;">
-                <label>Fornecedor 3:</label>
-                <input type="text" id="compForn3" placeholder="Nome da empresa 3..." style="margin-bottom: 6px;">
-                <label>Valor Orçado (R$):</label>
-                <input type="number" id="compVal3" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
-              </div>
-            </div>
-
-            <!-- PAINEL DE DESTAQUE DO MENOR VALOR -->
-            <div id="painelMenorPreco" style="background: #e6f4ea; border: 1px solid #a8dab5; color: #137333; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 13px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
-              <span><i class="fa-solid fa-trophy"></i> Menor Proposta Identificada: <span id="lblFornVencedor">-</span></span>
-              <span>Valor: <span id="lblMenorValor">R$ 0,00</span></span>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Prazo de Entrega:</label>
-              <input type="text" id="compPrazo" placeholder="Ex: 5 dias úteis">
-            </div>
-            <div class="form-group">
-              <label>Condição de Pagamento:</label>
-              <input type="text" id="compCondPagto" placeholder="Ex: 28 dias / Pix / Faturado">
-            </div>
-            <div class="form-group">
-              <label>Frete:</label>
-              <input type="text" id="compFrete" placeholder="Ex: CIF (Incluso) ou R$ 45,00">
-            </div>
-          </div>
-
-          <div style="text-align: right; margin-top: 12px;">
-            <button type="submit" id="btnSalvarCompra" class="btn-submit">
-              <i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <!-- TABELA DE COTAÇÕES E SOLICITAÇÕES -->
-      <div class="card">
-        <div class="card-title">Central de Gestão de Cotações & Compras</div>
-        <div class="table-container">
-          <table style="table-layout: auto;">
-            <thead>
+            <tbody id="corpoLocacao">
               <tr>
-                <th class="td-center">ID</th>
-                <th>Data / Hora</th>
-                <th>Nº OS Ext.</th>
-                <th>Solicitante</th>
-                <th>Produto / Peça</th>
-                <th>Fornecedor Escolhido</th>
-                <th class="td-center">Menor Valor</th>
-                <th class="td-center">Status</th>
-                <th class="td-center">Ações</th>
-              </tr>
-            </thead>
-            <tbody id="corpoTabelaCompras">
-              <tr>
-                <td colspan="9" class="td-center" style="color:#888; padding:20px;">Carregando cotações de compras...</td>
+                <td colspan="11" class="td-center" style="color: #888; padding: 24px;">Carregando dados de locação...</td>
               </tr>
             </tbody>
           </table>
@@ -1182,6 +1086,10 @@
 
   </div>
 
+  <!-- ===================================================================== -->
+  <!-- BLOCO 6: JANELAS MODAIS (O.S., RECUSA, AJUSTE DE LOCAÇÃO E MANUAL) -->
+  <!-- ===================================================================== -->
+
   <!-- MODAL DE EDIÇÃO DE SALDO FÍSICO DE LOCAÇÃO -->
   <div id="modalLocacao" class="modal-overlay">
     <div class="modal-box" style="width: 480px;">
@@ -1311,16 +1219,16 @@
         </div>
 
         <div class="manual-secao">
-          <h4><i class="fa-solid fa-cart-shopping"></i> 2. Módulo de Compras</h4>
-          <p>Crie e gerencie orçamentos e cotações de peças e insumos com comparativo de 3 fornecedores e aprovação direta.</p>
-        </div>
-
-        <div class="manual-secao">
-          <h4><i class="fa-solid fa-user-check"></i> 3. Acesso e Autenticação</h4>
+          <h4><i class="fa-solid fa-user-check"></i> 2. Acesso e Autenticação</h4>
           <p>O acesso é restrito aos colaboradores e técnicos autorizados.</p>
           <ul>
             <li>Digite seu <b>usuário</b> e <b>senha</b> cadastrados no banco de dados corporativo.</li>
           </ul>
+        </div>
+
+        <div class="manual-secao">
+          <h4><i class="fa-solid fa-file-signature"></i> 3. Emissão de Termo Duplo</h4>
+          <p>Gera em página única A4 o Termo de Entrega e de Responsabilidade de Higienização.</p>
         </div>
 
         <div class="alerta-seguranca">
@@ -1353,11 +1261,14 @@
     <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
   </footer>
 
+  <!-- ===================================================================== -->
+  <!-- BLOCO 7: SCRIPTS E REGRAS DE NEGÓCIO (JAVASCRIPT) -->
+  <!-- ===================================================================== -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
     const NUMERO_WHATSAPP_SUPORTE = "5511970116092";
 
-    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], relacoesAuxiliares: [], locacoes: [], compras: [] };
+    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], relacoesAuxiliares: [], locacoes: [] };
     let equipamentoSelecionado = null;
     let osEquipamentoSelecionado = null;
     let protocoloReqEmRecusa = null;
@@ -1397,6 +1308,15 @@
       const modal = document.getElementById("modalManualUso");
       if (modal) modal.classList.remove("ativo");
     }
+
+    document.addEventListener("keydown", function(e) {
+      const modal = document.getElementById("modalManualUso");
+      if (modal && modal.classList.contains("ativo")) {
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S')) {
+          e.preventDefault();
+        }
+      }
+    });
 
     function converterUrlDriveParaImagem(url) {
       if (!url) return "";
@@ -1486,6 +1406,115 @@
       listContainer.innerHTML = rows.join('');
     }
 
+    function renderizarListasAuxiliares() {
+      const rels = bancoDados.relacoesAuxiliares || [];
+
+      const descricoesUnicas = Array.from(new Set(rels.map(r => r.descricao))).filter(String).sort();
+      const dlDesc = document.getElementById('listDescricoesPadrao');
+      if (dlDesc) {
+        dlDesc.innerHTML = descricoesUnicas.map(d => `<option value="${d}">`).join('');
+      }
+
+      const tbody = document.getElementById('tabelaAuxiliaresList');
+      if (tbody) {
+        if (rels.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3" class="td-center" style="color:#888;">Nenhuma combinação registrada no banco de dados.</td></tr>';
+        } else {
+          const rows = rels.map(r => `
+            <tr>
+              <td><b>${r.descricao}</b></td>
+              <td>${r.modelo || "-"}</td>
+              <td>${r.fabricante || "-"}</td>
+            </tr>
+          `);
+          tbody.innerHTML = rows.join('');
+        }
+      }
+
+      aoSelecionarDescricaoCad();
+    }
+
+    function aoSelecionarDescricaoCad() {
+      const el = document.getElementById('cadNome');
+      if (!el) return;
+      const descVal = el.value.trim().toUpperCase();
+      const rels = bancoDados.relacoesAuxiliares || [];
+
+      const dlMod = document.getElementById('listModelosPadrao');
+      const dlFab = document.getElementById('listFabricantesPadrao');
+
+      if (!descVal) {
+        const todosMod = Array.from(new Set(rels.map(r => r.modelo))).filter(String).sort();
+        const todosFab = Array.from(new Set(rels.map(r => r.fabricante))).filter(String).sort();
+        if (dlMod) dlMod.innerHTML = todosMod.map(m => `<option value="${m}">`).join('');
+        if (dlFab) dlFab.innerHTML = todosFab.map(f => `<option value="${f}">`).join('');
+        return;
+      }
+
+      const modelosFiltrados = Array.from(new Set(rels.filter(r => r.descricao === descVal).map(r => r.modelo))).filter(String).sort();
+      if (dlMod) dlMod.innerHTML = modelosFiltrados.map(m => `<option value="${m}">`).join('');
+
+      aoSelecionarModeloCad();
+    }
+
+    function aoSelecionarModeloCad() {
+      const elDesc = document.getElementById('cadNome');
+      const elMod = document.getElementById('cadModelo');
+      if (!elDesc || !elMod) return;
+
+      const descVal = elDesc.value.trim().toUpperCase();
+      const modVal = elMod.value.trim().toUpperCase();
+      const rels = bancoDados.relacoesAuxiliares || [];
+      const dlFab = document.getElementById('listFabricantesPadrao');
+
+      let fabs = rels;
+      if (descVal) fabs = fabs.filter(r => r.descricao === descVal);
+      if (modVal) fabs = fabs.filter(r => r.modelo === modVal);
+
+      const fabricantesFiltrados = Array.from(new Set(fabs.map(r => r.fabricante))).filter(String).sort();
+      if (dlFab) dlFab.innerHTML = fabricantesFiltrados.map(f => `<option value="${f}">`).join('');
+
+      if (fabricantesFiltrados.length === 1) {
+        document.getElementById('cadFabricante').value = fabricantesFiltrados[0];
+      }
+    }
+
+    function salvarAuxiliarVinculado(e) {
+      e.preventDefault();
+      const desc = document.getElementById('vinculoDescricao').value.trim().toUpperCase();
+      const mod  = document.getElementById('vinculoModelo').value.trim().toUpperCase();
+      const fab  = document.getElementById('vinculoFabricante').value.trim().toUpperCase();
+
+      if (!desc || !mod || !fab) {
+        alert("Preencha Descrição, Modelo e Fabricante.");
+        return;
+      }
+
+      const payload = {
+        acao: "CRIAR_AUXILIAR_VINCULADO",
+        descricao: desc,
+        modelo: mod,
+        fabricante: fab
+      };
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === "sucesso") {
+          alert("Combinação cadastrada com sucesso!");
+          document.getElementById('vinculoModelo').value = "";
+          document.getElementById('vinculoFabricante').value = "";
+          buscarAtualizacoesSilenciosas();
+        } else {
+          alert("Erro ao cadastrar combinação.");
+        }
+      })
+      .catch(err => alert("Erro na comunicação com o servidor."));
+    }
+
     function preencherSelectTecnicos() {
       const selTec = document.getElementById('selectTecnico');
       if (!selTec) return;
@@ -1551,6 +1580,18 @@
       btn.disabled = true;
       btn.innerText = "VALIDANDO ACESSO...";
 
+      if (bancoDados && bancoDados.usuarios && bancoDados.usuarios.length > 0) {
+        const encontrado = bancoDados.usuarios.find(u => 
+          ((u.usuario && u.usuario.toLowerCase() === usr) || (u.nome && u.nome.toLowerCase() === usr)) && 
+          u.senha === pass
+        );
+
+        if (encontrado) {
+          concluirAcessoLogin(encontrado);
+          return;
+        }
+      }
+
       fetch(API_URL, {
         method: 'POST',
         body: JSON.stringify({ acao: "VERIFICAR_LOGIN", usuario: usr, senha: pass })
@@ -1609,7 +1650,6 @@
         filtrarRequisicoes();
         renderizarTabelaOS();
         renderizarTabelaLocacao();
-        renderizarTabelaCompras();
         atualizarDashboard();
         atualizarNotificacoes();
         renderizarUsuariosOnline();
@@ -1621,7 +1661,7 @@
     }
 
     function buscarAtualizacoesSilenciosas() {
-      if (estaBuscandoDados) return;
+      if (estaBuscandoDados) return; // Trava para impedir concorrência no navegador/Apps Script
       estaBuscandoDados = true;
 
       const script = document.createElement('script');
@@ -1641,6 +1681,7 @@
 
       buscarAtualizacoesSilenciosas();
 
+      // Intervalo otimizado para 30 segundos (evita congelar o navegador e gastar cota GAS)
       setInterval(buscarAtualizacoesSilenciosas, 30000);
       setInterval(enviarHeartbeat, 60000);
     };
@@ -1716,10 +1757,6 @@
         document.getElementById('btnNavLocacao').classList.add('active');
         document.getElementById('abaLocacao').classList.add('active');
         renderizarTabelaLocacao();
-      } else if (nomeAba === 'compras') {
-        document.getElementById('btnNavCompras').classList.add('active');
-        document.getElementById('abaCompras').classList.add('active');
-        renderizarTabelaCompras();
       } else if (nomeAba === 'dashboard') {
         document.getElementById('btnNavDashboard').classList.add('active');
         document.getElementById('abaDashboard').classList.add('active');
@@ -1760,6 +1797,7 @@
         listE.innerHTML = bancoDados.equipamentos.map(eq => `<option value="TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}">`).join('');
       }
 
+      // Autocomplete para Locação
       if (bancoDados.locacoes) {
         const familias = Array.from(new Set(bancoDados.locacoes.map(l => l.equipamento))).filter(String).sort();
         const dlFam = document.getElementById('listFamiliasLocacao');
@@ -1773,110 +1811,115 @@
       preencherSelectTecnicos();
     }
 
+    /* ===================================================================== */
+    /* FUNÇÕES DO MÓDULO DE CONTROLE DE LOCAÇÃO (ALTAMENTE OTIMIZADA)       */
+    /* ===================================================================== */
     function renderizarTabelaLocacao() {
-      const tbody = document.getElementById('corpoTabelaLocacao');
+      const tbody = document.getElementById('corpoLocacao');
       if (!tbody) return;
 
-      const locacoes = bancoDados.locacoes || [];
-      if (locacoes.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="11" class="td-center" style="color:#888; padding:20px;">Nenhum registro de locação encontrado.</td></tr>';
+      const locs = bancoDados.locacoes || [];
+      
+      if (locs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="td-center" style="color: #888; padding: 24px;">Nenhum registro de locação encontrado.</td></tr>';
         atualizarMetricasLocacao([]);
         return;
       }
 
-      const cliFiltro = (document.getElementById('locFiltroCliente')?.value || "").toLowerCase();
-      const uniFiltro = (document.getElementById('locFiltroUnidade')?.value || "").toLowerCase();
-      const famFiltro = (document.getElementById('locFiltroFamilia')?.value || "").toLowerCase();
-      const sitFiltro = (document.getElementById('locFiltroSituacao')?.value || "ATIVO").toUpperCase();
-      const txtFiltro = (document.getElementById('locFiltroTexto')?.value || "").toLowerCase().trim();
+      const cliFilter = (document.getElementById('filtroLocCliente').value || "").toLowerCase().trim();
+      const uniFilter = (document.getElementById('filtroLocUnidade').value || "").toLowerCase().trim();
+      const eqFilter  = (document.getElementById('filtroLocEquip').value || "").toLowerCase().trim();
+      const sitFilter = document.getElementById('filtroLocSituacao').value;
+      const txtFilter = (document.getElementById('filtroLocTexto').value || "").toLowerCase().trim();
 
-      const filtrados = locacoes.filter(l => {
-        if (cliFiltro && !l.cliente.toLowerCase().includes(cliFiltro)) return false;
-        if (uniFiltro && !l.unidade.toLowerCase().includes(uniFiltro)) return false;
-        if (famFiltro && !l.equipamento.toLowerCase().includes(famFiltro)) return false;
-        if (sitFiltro !== "TODOS" && l.situacao.toUpperCase() !== sitFiltro) return false;
-        if (txtFiltro) {
-          const matchCont = (l.contrato || "").toLowerCase().includes(txtFiltro);
-          const matchId = (l.id || "").toLowerCase().includes(txtFiltro);
-          const matchLoc = (l.localizacao || "").toLowerCase().includes(txtFiltro);
-          const matchCli = (l.cliente || "").toLowerCase().includes(txtFiltro);
-          if (!matchCont && !matchId && !matchLoc && !matchCli) return false;
+      const filtradas = locs.filter(item => {
+        if (sitFilter !== "TODOS" && (item.situacao || "ATIVO").toUpperCase() !== sitFilter) return false;
+        if (cliFilter && !item.cliente.toLowerCase().includes(cliFilter)) return false;
+        if (uniFilter && !item.unidade.toLowerCase().includes(uniFilter)) return false;
+        if (eqFilter  && !item.equipamento.toLowerCase().includes(eqFilter)) return false;
+
+        if (txtFilter) {
+          const matchId = item.id.toLowerCase().includes(txtFilter);
+          const matchContrato = item.contrato.toLowerCase().includes(txtFilter);
+          const matchLoc = item.localizacao.toLowerCase().includes(txtFilter);
+          if (!matchId && !matchContrato && !matchLoc) return false;
         }
+
         return true;
       });
 
-      atualizarMetricasLocacao(filtrados);
+      if (filtradas.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="td-center" style="color: #888; padding: 24px;">Nenhum registro encontrado para os filtros selecionados.</td></tr>';
+      } else {
+        // Construção ultra rápida de HTML via Array.join (Muta o DOM apenas UMA única vez)
+        const rowsHtml = filtradas.map(loc => {
+          let badgeSaldoClass = "badge-saldo-ok";
+          if (loc.saldo > 0) badgeSaldoClass = "badge-saldo-pendente";
+          if (loc.saldo < 0) badgeSaldoClass = "badge-saldo-alerta";
 
-      if (filtrados.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="11" class="td-center" style="color:#888; padding:20px;">Nenhum registro encontrado com os filtros aplicados.</td></tr>';
-        return;
+          return `
+            <tr>
+              <td class="td-center"><b>${loc.id}</b></td>
+              <td><b>${loc.cliente}</b></td>
+              <td>${loc.contrato || "-"}</td>
+              <td>${loc.unidade || "-"}</td>
+              <td>${loc.localizacao || "-"}</td>
+              <td><b>${loc.equipamento}</b></td>
+              <td class="td-center" style="font-weight: bold; color: #1a4d80;">${loc.qtdContratada}</td>
+              <td class="td-center" style="font-weight: bold; color: #2e7d32;">${loc.qtdFisica}</td>
+              <td class="td-center"><span class="badge-status ${badgeSaldoClass}">${loc.saldo}</span></td>
+              <td class="td-center"><span class="badge-status ${loc.situacao === 'ATIVO' ? 'badge-atendido' : (loc.situacao === 'ENCERRADO' ? 'badge-recusado' : 'badge-pendente')}">${loc.situacao}</span></td>
+              <td class="td-center">
+                <button type="button" class="btn-editar-saldo" onclick="abrirModalAjusteLocacao('${loc.id}')" title="Editar Quantidade Física">
+                  <i class="fa-solid fa-pen-to-square"></i> Ajustar
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        tbody.innerHTML = rowsHtml;
       }
 
-      const rows = filtrados.map(l => {
-        let badgeSaldo = "badge-saldo-ok";
-        if (l.saldo > 0) badgeSaldo = "badge-saldo-pendente";
-        else if (l.saldo < 0) badgeSaldo = "badge-saldo-alerta";
-
-        return `
-          <tr>
-            <td class="td-center"><b>${l.id}</b></td>
-            <td><b>${l.cliente}</b></td>
-            <td>${l.contrato || "-"}</td>
-            <td>${l.unidade || "-"}</td>
-            <td>${l.localizacao || "-"}</td>
-            <td><b>${l.equipamento}</b></td>
-            <td class="td-center" style="font-weight:bold;">${l.qtdContratada}</td>
-            <td class="td-center" style="font-weight:bold; color:#1a4d80;">${l.qtdFisica}</td>
-            <td class="td-center"><span class="badge-status ${badgeSaldo}">${l.saldo}</span></td>
-            <td class="td-center"><b>${l.situacao}</b></td>
-            <td class="td-center">
-              <button type="button" class="btn-editar-saldo" onclick="abrirModalLocacao('${l.id}')"><i class="fa-solid fa-pen-to-square"></i> Ajustar</button>
-            </td>
-          </tr>
-        `;
-      });
-
-      tbody.innerHTML = rows.join('');
+      atualizarMetricasLocacao(filtradas);
     }
 
     function filtrarTabelaLocacao() {
       renderizarTabelaLocacao();
     }
 
-    function atualizarMetricasLocacao(lista) {
-      let totalReg = lista.length;
-      let totalCont = 0;
-      let totalFis = 0;
+    function atualizarMetricasLocacao(listaExibida) {
+      document.getElementById('locTotalRegistros').innerText = listaExibida.length;
 
-      lista.forEach(l => {
-        totalCont += Number(l.qtdContratada) || 0;
-        totalFis += Number(l.qtdFisica) || 0;
+      let sumContratada = 0;
+      let sumFisica = 0;
+      let sumSaldo = 0;
+
+      listaExibida.forEach(l => {
+        sumContratada += Number(l.qtdContratada) || 0;
+        sumFisica += Number(l.qtdFisica) || 0;
+        sumSaldo += Number(l.saldo) || 0;
       });
 
-      let totalSaldo = totalCont - totalFis;
-
-      document.getElementById('locTotalRegistros').innerText = totalReg;
-      document.getElementById('locTotalContratada').innerText = totalCont;
-      document.getElementById('locTotalFisica').innerText = totalFis;
-      
-      const elSaldo = document.getElementById('locTotalSaldo');
-      if (elSaldo) {
-        elSaldo.innerText = totalSaldo;
-      }
+      document.getElementById('locTotalContratada').innerText = sumContratada;
+      document.getElementById('locTotalFisica').innerText = sumFisica;
+      document.getElementById('locTotalSaldo').innerText = sumSaldo;
     }
 
-    function abrirModalLocacao(id) {
-      const loc = (bancoDados.locacoes || []).find(l => l.id.toString() === id.toString());
+    function abrirModalAjusteLocacao(idLoc) {
+      const loc = bancoDados.locacoes.find(l => l.id.toString() === idLoc.toString());
       if (!loc) return;
 
       document.getElementById('locModalId').value = loc.id;
       document.getElementById('locModalDetalhes').innerHTML = `
-        <b>Cliente:</b> ${loc.cliente}<br>
-        <b>Contrato:</b> ${loc.contrato || "N/A"} | <b>Unidade:</b> ${loc.unidade || "N/A"}<br>
-        <b>Equipamento:</b> ${loc.equipamento}<br>
-        <b>Qtd Contratada:</b> ${loc.qtdContratada}
+        <div><b>ID:</b> ${loc.id} | <b>Contrato:</b> ${loc.contrato || "-"}</div>
+        <div><b>Cliente:</b> ${loc.cliente}</div>
+        <div><b>Unidade:</b> ${loc.unidade || "-"} (${loc.localizacao || "-"})</div>
+        <div><b>Família Equipamento:</b> <span style="color:#1a4d80; font-weight:bold;">${loc.equipamento}</span></div>
+        <div style="margin-top: 4px;"><b>Qtd Contratada:</b> ${loc.qtdContratada} | <b>Física Atual:</b> ${loc.qtdFisica} | <b>Saldo Atual:</b> ${loc.saldo}</div>
       `;
       document.getElementById('locModalQtdFisica').value = loc.qtdFisica;
+
       document.getElementById('modalLocacao').classList.add('active');
     }
 
@@ -1885,30 +1928,32 @@
     }
 
     function confirmarAjusteLocacao() {
-      const id = document.getElementById('locModalId').value;
+      const idLoc = document.getElementById('locModalId').value;
       const novaQtd = document.getElementById('locModalQtdFisica').value;
 
       if (novaQtd === "" || isNaN(novaQtd) || Number(novaQtd) < 0) {
-        alert("Informe uma quantidade física válida.");
+        alert("Digite uma quantidade física válida.");
         return;
       }
 
       const btn = document.getElementById('btnSalvarLocModal');
       btn.disabled = true;
-      btn.innerText = "ATUALIZANDO SALDO...";
+      btn.innerText = "SALVANDO...";
+
+      const payload = {
+        acao: "ATUALIZAR_QTD_FISICA_LOCACAO",
+        id: idLoc,
+        qtdFisica: Number(novaQtd)
+      };
 
       fetch(API_URL, {
         method: 'POST',
-        body: JSON.stringify({
-          acao: "ATUALIZAR_QTD_FISICA_LOCACAO",
-          id: id,
-          qtdFisica: Number(novaQtd)
-        })
+        body: JSON.stringify(payload)
       })
       .then(res => res.json())
       .then(res => {
         if (res.status === "sucesso") {
-          alert("Saldo de locação atualizado com sucesso!");
+          alert("Quantidade física da locação atualizada com sucesso!");
           fecharModalLocacao();
           buscarAtualizacoesSilenciosas();
         } else {
@@ -1924,146 +1969,9 @@
       });
     }
 
-    function calcularMenorPrecoCotacao() {
-      const f1 = document.getElementById('compForn1').value || "Fornecedor 1";
-      const v1 = parseFloat(document.getElementById('compVal1').value) || 0;
-
-      const f2 = document.getElementById('compForn2').value || "Fornecedor 2";
-      const v2 = parseFloat(document.getElementById('compVal2').value) || 0;
-
-      const f3 = document.getElementById('compForn3').value || "Fornecedor 3";
-      const v3 = parseFloat(document.getElementById('compVal3').value) || 0;
-
-      let lista = [];
-      if (v1 > 0) lista.push({ forn: f1, val: v1, box: 'boxForn1' });
-      if (v2 > 0) lista.push({ forn: f2, val: v2, box: 'boxForn2' });
-      if (v3 > 0) lista.push({ forn: f3, val: v3, box: 'boxForn3' });
-
-      document.getElementById('boxForn1').style.borderColor = "#e2e8f0";
-      document.getElementById('boxForn2').style.borderColor = "#e2e8f0";
-      document.getElementById('boxForn3').style.borderColor = "#e2e8f0";
-
-      if (lista.length === 0) {
-        document.getElementById('lblFornVencedor').innerText = "-";
-        document.getElementById('lblMenorValor').innerText = "R$ 0,00";
-        return;
-      }
-
-      lista.sort((a, b) => a.val - b.val);
-      const menor = lista[0];
-
-      document.getElementById(menor.box).style.borderColor = "#22c55e";
-      document.getElementById('lblFornVencedor').innerText = menor.forn;
-      document.getElementById('lblMenorValor').innerText = "R$ " + menor.val.toFixed(2).replace('.', ',');
-    }
-
-    function salvarSolicitacaoCompra(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnSalvarCompra');
-      btn.disabled = true;
-      btn.innerText = "GERANDO MAPA DE COTAÇÃO...";
-
-      const payload = {
-        acao: "CRIAR_SOLICITACAO_COMPRA",
-        osExterna: document.getElementById('compOsExterna').value,
-        solicitante: document.getElementById('compSolicitante').value,
-        produto: document.getElementById('compProduto').value,
-        observacao: document.getElementById('compObservacao').value,
-        forn1: document.getElementById('compForn1').value,
-        val1: document.getElementById('compVal1').value,
-        forn2: document.getElementById('compForn2').value,
-        val2: document.getElementById('compVal2').value,
-        forn3: document.getElementById('compForn3').value,
-        val3: document.getElementById('compVal3').value,
-        prazoEntrega: document.getElementById('compPrazo').value,
-        condPagamento: document.getElementById('compCondPagto').value,
-        frete: document.getElementById('compFrete').value,
-        status: "AGUARDANDO APROVAÇÃO"
-      };
-
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "sucesso") {
-          alert(`Cotação gerada com sucesso!\n\nID do Pedido: ${res.protocolo}`);
-          document.getElementById('formCompras').reset();
-          calcularMenorPrecoCotacao();
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF';
-          buscarAtualizacoesSilenciosas();
-        } else {
-          alert("Erro ao salvar solicitação de compra.");
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF';
-        }
-      })
-      .catch(err => {
-        alert("Erro de comunicação com o servidor.");
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF';
-      });
-    }
-
-    function renderizarTabelaCompras() {
-      const tbody = document.getElementById('corpoTabelaCompras');
-      if (!tbody) return;
-
-      const lista = bancoDados.compras || [];
-
-      if (lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color:#888; padding:20px;">Nenhuma cotação de compra registrada.</td></tr>';
-        return;
-      }
-
-      const rowsHtml = lista.map(c => {
-        let badgeClass = "badge-pendente";
-        if (c.status === "APROVADO") badgeClass = "badge-atendido";
-        if (c.status === "RECUSADO") badgeClass = "badge-recusado";
-
-        return `
-          <tr>
-            <td class="td-center"><b>${c.protocolo}</b></td>
-            <td>${c.dataHora}</td>
-            <td><b>${c.osExterna || "-"}</b></td>
-            <td>${c.solicitante}</td>
-            <td>${c.produto}</td>
-            <td><b>${c.fornVencedor}</b></td>
-            <td class="td-center" style="font-weight:bold; color:#1a4d80;">R$ ${Number(c.menorValor).toFixed(2).replace('.', ',')}</td>
-            <td class="td-center"><span class="badge-status ${badgeClass}">${c.status}</span></td>
-            <td class="td-center">
-              ${c.pdfUrlCompra ? `<a href="${c.pdfUrlCompra}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> Mapa PDF</a>` : '-'}
-              ${c.status !== 'APROVADO' ? `<button type="button" class="btn-atender" style="padding:4px 8px; font-size:10px; margin-left:4px;" onclick="aprovarCompra('${c.protocolo}')"><i class="fa-solid fa-check"></i> Aprovar</button>` : ''}
-            </td>
-          </tr>
-        `;
-      }).join('');
-
-      tbody.innerHTML = rowsHtml;
-    }
-
-    function aprovarCompra(protocolo) {
-      const aprovadorNome = (usuarioLogado && usuarioLogado.nome) ? usuarioLogado.nome : "DIRETORIA";
-      if (!confirm(`Confirmar a aprovação da Cotação/Compra ${protocolo}?`)) return;
-
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ acao: "APROVAR_COMPRA", protocolo: protocolo, aprovador: aprovadorNome })
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "sucesso") {
-          alert(`Compra ${protocolo} APROVADA com sucesso!`);
-          buscarAtualizacoesSilenciosas();
-        } else {
-          alert("Erro ao aprovar compra.");
-        }
-      })
-      .catch(err => alert("Erro na comunicação com o servidor."));
-    }
-
+    /* ===================================================================== */
+    /* OUTRAS FUNÇÕES DA APLICAÇÃO (O.S., TERMOS, REQUISIÇÕES) OTIMIZADAS    */
+    /* ===================================================================== */
     function renderizarTabelaOS() {
       const tbody = document.getElementById('corpoOS');
       if (!tbody) return;
@@ -2408,115 +2316,6 @@
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-server"></i> Salvar Equipamento no Banco de Dados';
       });
-    }
-
-    function renderizarListasAuxiliares() {
-      const rels = bancoDados.relacoesAuxiliares || [];
-
-      const descricoesUnicas = Array.from(new Set(rels.map(r => r.descricao))).filter(String).sort();
-      const dlDesc = document.getElementById('listDescricoesPadrao');
-      if (dlDesc) {
-        dlDesc.innerHTML = descricoesUnicas.map(d => `<option value="${d}">`).join('');
-      }
-
-      const tbody = document.getElementById('tabelaAuxiliaresList');
-      if (tbody) {
-        if (rels.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="3" class="td-center" style="color:#888;">Nenhuma combinação registrada no banco de dados.</td></tr>';
-        } else {
-          const rows = rels.map(r => `
-            <tr>
-              <td><b>${r.descricao}</b></td>
-              <td>${r.modelo || "-"}</td>
-              <td>${r.fabricante || "-"}</td>
-            </tr>
-          `);
-          tbody.innerHTML = rows.join('');
-        }
-      }
-
-      aoSelecionarDescricaoCad();
-    }
-
-    function aoSelecionarDescricaoCad() {
-      const el = document.getElementById('cadNome');
-      if (!el) return;
-      const descVal = el.value.trim().toUpperCase();
-      const rels = bancoDados.relacoesAuxiliares || [];
-
-      const dlMod = document.getElementById('listModelosPadrao');
-      const dlFab = document.getElementById('listFabricantesPadrao');
-
-      if (!descVal) {
-        const todosMod = Array.from(new Set(rels.map(r => r.modelo))).filter(String).sort();
-        const todosFab = Array.from(new Set(rels.map(r => r.fabricante))).filter(String).sort();
-        if (dlMod) dlMod.innerHTML = todosMod.map(m => `<option value="${m}">`).join('');
-        if (dlFab) dlFab.innerHTML = todosFab.map(f => `<option value="${f}">`).join('');
-        return;
-      }
-
-      const modelosFiltrados = Array.from(new Set(rels.filter(r => r.descricao === descVal).map(r => r.modelo))).filter(String).sort();
-      if (dlMod) dlMod.innerHTML = modelosFiltrados.map(m => `<option value="${m}">`).join('');
-
-      aoSelecionarModeloCad();
-    }
-
-    function aoSelecionarModeloCad() {
-      const elDesc = document.getElementById('cadNome');
-      const elMod = document.getElementById('cadModelo');
-      if (!elDesc || !elMod) return;
-
-      const descVal = elDesc.value.trim().toUpperCase();
-      const modVal = elMod.value.trim().toUpperCase();
-      const rels = bancoDados.relacoesAuxiliares || [];
-      const dlFab = document.getElementById('listFabricantesPadrao');
-
-      let fabs = rels;
-      if (descVal) fabs = fabs.filter(r => r.descricao === descVal);
-      if (modVal) fabs = fabs.filter(r => r.modelo === modVal);
-
-      const fabricantesFiltrados = Array.from(new Set(fabs.map(r => r.fabricante))).filter(String).sort();
-      if (dlFab) dlFab.innerHTML = fabricantesFiltrados.map(f => `<option value="${f}">`).join('');
-
-      if (fabricantesFiltrados.length === 1) {
-        document.getElementById('cadFabricante').value = fabricantesFiltrados[0];
-      }
-    }
-
-    function salvarAuxiliarVinculado(e) {
-      e.preventDefault();
-      const desc = document.getElementById('vinculoDescricao').value.trim().toUpperCase();
-      const mod  = document.getElementById('vinculoModelo').value.trim().toUpperCase();
-      const fab  = document.getElementById('vinculoFabricante').value.trim().toUpperCase();
-
-      if (!desc || !mod || !fab) {
-        alert("Preencha Descrição, Modelo e Fabricante.");
-        return;
-      }
-
-      const payload = {
-        acao: "CRIAR_AUXILIAR_VINCULADO",
-        descricao: desc,
-        modelo: mod,
-        fabricante: fab
-      };
-
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "sucesso") {
-          alert("Combinação cadastrada com sucesso!");
-          document.getElementById('vinculoModelo').value = "";
-          document.getElementById('vinculoFabricante').value = "";
-          buscarAtualizacoesSilenciosas();
-        } else {
-          alert("Erro ao cadastrar combinação.");
-        }
-      })
-      .catch(err => alert("Erro na comunicação com o servidor."));
     }
 
     function renderizarTabelaTermos(lista) {
