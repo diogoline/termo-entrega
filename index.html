@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <!-- ===================================================================== -->
-  <!-- BLOCO 1: CABEÇALHO, DEPENDÊNCIAS DE ÍCONES E ESTILOS CSS -->
-  <!-- ===================================================================== -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DMA SYS - Gestão de Termos, Requisições, O.S. e Locação</title>
+  <title>DMA SYS - Gestão de Termos, Requisições, O.S., Locação e Compras</title>
   
   <!-- Biblioteca de Ícones Vetoriais Profissionais (Font Awesome) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -267,9 +264,7 @@
 </head>
 <body>
 
-  <!-- ===================================================================== -->
-  <!-- BLOCO 2: TELA DE LOGIN E AUTENTICAÇÃO -->
-  <!-- ===================================================================== -->
+  <!-- TELA DE LOGIN -->
   <div id="loginOverlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0f172a; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px;">
     <div style="background: #ffffff; width: 100%; max-width: 380px; padding: 30px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); text-align: center;">
       <div style="font-size: 24px; font-weight: 800; color: #1a4d80; margin-bottom: 4px;">DMA SYS</div>
@@ -298,9 +293,7 @@
   <!-- CONTEÚDO PRINCIPAL DO SISTEMA -->
   <div id="appContainer" style="display: none;">
 
-    <!-- ===================================================================== -->
-    <!-- BLOCO 3: BARRA SUPERIOR (HEADER) E MENU ENGRENAGEM -->
-    <!-- ===================================================================== -->
+    <!-- BARRA SUPERIOR (HEADER) -->
     <div class="header">
       <h1 style="color: #ffffff; display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 600;">
         <i class="fa-solid fa-layer-group" style="font-size: 22px; background: linear-gradient(180deg, #60a5fa 0%, #fef08a 50%, #22c55e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i> 
@@ -362,9 +355,7 @@
       </div>
     </div>
 
-    <!-- ===================================================================== -->
-    <!-- BLOCO 4: MENU DE NAVEGAÇÃO PRINCIPAL (NAV-TABS) -->
-    <!-- ===================================================================== -->
+    <!-- MENU DE NAVEGAÇÃO PRINCIPAL (NAV-TABS) -->
     <div class="nav-tabs">
       <button type="button" class="nav-tab active" id="btnNavInicio" onclick="mudarAba('inicio')">
         <i class="fa-solid fa-house"></i> Início
@@ -373,12 +364,12 @@
         <i class="fa-solid fa-chart-pie"></i> Dashboard
       </button>
 
-      <!-- NOVO MÓDULO: CONTROLE DE LOCAÇÃO -->
+      <!-- MÓDULO: CONTROLE DE LOCAÇÃO -->
       <button type="button" class="nav-tab" id="btnNavLocacao" onclick="mudarAba('locacao')">
         <i class="fa-solid fa-boxes-packing"></i> Controle de Locação
       </button>
 
-      <!-- NOVO MÓDULO DE COMPRAS -->
+      <!-- MÓDULO DE COMPRAS -->
       <button type="button" class="nav-tab" id="btnNavCompras" onclick="mudarAba('compras')">
         <i class="fa-solid fa-cart-shopping"></i> Módulo de Compras
       </button>
@@ -425,10 +416,6 @@
     <datalist id="listFamiliasLocacao"></datalist>
     <datalist id="listUnidadesLocacao"></datalist>
 
-    <!-- ===================================================================== -->
-    <!-- BLOCO 5: CONTEÚDO DAS ABAS (MÓDULOS DO SISTEMA) -->
-    <!-- ===================================================================== -->
-
     <!-- ABA 0: TELA DE INÍCIO -->
     <div id="abaInicio" class="tab-content active">
       <div class="welcome-hero">
@@ -443,16 +430,16 @@
           <div class="quick-desc">Consulte o saldo contratado vs. físico por cliente, unidade e família de equipamento.</div>
         </div>
 
+        <div class="quick-card" onclick="mudarAba('compras')">
+          <div class="quick-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+          <div class="quick-title">Módulo de Compras</div>
+          <div class="quick-desc">Crie solicitações com mapa comparativo de 3 fornecedores e aprovação direta.</div>
+        </div>
+
         <div class="quick-card" onclick="mudarAba('dashboard')">
           <div class="quick-icon"><i class="fa-solid fa-chart-line"></i></div>
           <div class="quick-title">Dashboard & Métricas</div>
           <div class="quick-desc">Acompanhe indicadores gerais de movimentação e chamados em tempo real.</div>
-        </div>
-
-        <div class="quick-card" onclick="mudarAba('requisicoes')">
-          <div class="quick-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
-          <div class="quick-title">Requisições Internas</div>
-          <div class="quick-desc">Solicite substituições de equipamentos para a Qualidade ou atenda pedidos.</div>
         </div>
 
         <div class="quick-card" onclick="mudarAba('os_gestao')">
@@ -469,9 +456,8 @@
       </div>
     </div>
 
-    <!-- ABA NOVA: CONTROLE DE LOCAÇÃO -->
+    <!-- ABA: CONTROLE DE LOCAÇÃO -->
     <div id="abaLocacao" class="tab-content">
-      <!-- MÉRICA DA LOCAÇÃO -->
       <div class="dash-metrics" style="grid-template-columns: repeat(4, 1fr);">
         <div class="metric-card blue">
           <div class="metric-title">Total de Registros / Famílias</div>
@@ -491,8 +477,64 @@
         </div>
       </div>
 
-    <!-- -->
-    <!-- ABA NOVA: MÓDULO DE COMPRAS & MAPA DE COTAÇÃO -->
+      <div class="card">
+        <div class="card-title">
+          <span><i class="fa-solid fa-boxes-packing"></i> Saldos de Equipamentos Locados por Cliente / Unidade</span>
+          <button type="button" class="btn-submit" style="padding: 4px 10px; font-size: 11px;" onclick="buscarAtualizacoesSilenciosas()"><i class="fa-solid fa-rotate"></i> Atualizar Dados</button>
+        </div>
+
+        <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px; flex-wrap: wrap;">
+          <div class="form-group" style="flex: 1.2;">
+            <label>Cliente:</label>
+            <input type="text" id="locFiltroCliente" list="listClientes" placeholder="Todos os clientes..." oninput="filtrarTabelaLocacaoDebounced()">
+          </div>
+          <div class="form-group" style="flex: 1.2;">
+            <label>Unidade / Hospital:</label>
+            <input type="text" id="locFiltroUnidade" list="listUnidadesLocacao" placeholder="Todas as unidades..." oninput="filtrarTabelaLocacaoDebounced()">
+          </div>
+          <div class="form-group" style="flex: 1.2;">
+            <label>Família do Equipamento:</label>
+            <input type="text" id="locFiltroFamilia" list="listFamiliasLocacao" placeholder="Todas as famílias..." oninput="filtrarTabelaLocacaoDebounced()">
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>Situação:</label>
+            <select id="locFiltroSituacao" onchange="filtrarTabelaLocacao()">
+              <option value="ATIVO" selected>Apenas ATIVO</option>
+              <option value="TODOS">Todas as Situações</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1.5;">
+            <label>Busca Rápida (Contrato, ID, Cidade):</label>
+            <input type="text" id="locFiltroTexto" placeholder="Digite para buscar..." oninput="filtrarTabelaLocacaoDebounced()">
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table style="table-layout: auto;">
+            <thead>
+              <tr>
+                <th class="td-center" style="width: 50px;">ID</th>
+                <th>Cliente</th>
+                <th>Contrato</th>
+                <th>Unidade</th>
+                <th>Localização</th>
+                <th>Família do Equipamento</th>
+                <th class="td-center">Qtd Contratada</th>
+                <th class="td-center">Qtd Física</th>
+                <th class="td-center">Saldo</th>
+                <th class="td-center">Situação</th>
+                <th class="td-center">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="corpoTabelaLocacao">
+              <tr><td colspan="11" class="td-center" style="color:#888; padding:20px;">Carregando dados de locação...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA: MÓDULO DE COMPRAS & MAPA DE COTAÇÃO -->
     <div id="abaCompras" class="tab-content">
       <div class="card">
         <div class="card-title">
@@ -1140,10 +1182,6 @@
 
   </div>
 
-  <!-- ===================================================================== -->
-  <!-- BLOCO 6: JANELAS MODAIS (O.S., RECUSA, AJUSTE DE LOCAÇÃO E MANUAL) -->
-  <!-- ===================================================================== -->
-
   <!-- MODAL DE EDIÇÃO DE SALDO FÍSICO DE LOCAÇÃO -->
   <div id="modalLocacao" class="modal-overlay">
     <div class="modal-box" style="width: 480px;">
@@ -1273,16 +1311,16 @@
         </div>
 
         <div class="manual-secao">
-          <h4><i class="fa-solid fa-user-check"></i> 2. Acesso e Autenticação</h4>
+          <h4><i class="fa-solid fa-cart-shopping"></i> 2. Módulo de Compras</h4>
+          <p>Crie e gerencie orçamentos e cotações de peças e insumos com comparativo de 3 fornecedores e aprovação direta.</p>
+        </div>
+
+        <div class="manual-secao">
+          <h4><i class="fa-solid fa-user-check"></i> 3. Acesso e Autenticação</h4>
           <p>O acesso é restrito aos colaboradores e técnicos autorizados.</p>
           <ul>
             <li>Digite seu <b>usuário</b> e <b>senha</b> cadastrados no banco de dados corporativo.</li>
           </ul>
-        </div>
-
-        <div class="manual-secao">
-          <h4><i class="fa-solid fa-file-signature"></i> 3. Emissão de Termo Duplo</h4>
-          <p>Gera em página única A4 o Termo de Entrega e de Responsabilidade de Higienização.</p>
         </div>
 
         <div class="alerta-seguranca">
@@ -1315,14 +1353,11 @@
     <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
   </footer>
 
-  <!-- ===================================================================== -->
-  <!-- BLOCO 7: SCRIPTS E REGRAS DE NEGÓCIO (JAVASCRIPT) -->
-  <!-- ===================================================================== -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
     const NUMERO_WHATSAPP_SUPORTE = "5511970116092";
 
-    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], relacoesAuxiliares: [], locacoes: [] };
+    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], relacoesAuxiliares: [], locacoes: [], compras: [] };
     let equipamentoSelecionado = null;
     let osEquipamentoSelecionado = null;
     let protocoloReqEmRecusa = null;
@@ -1362,15 +1397,6 @@
       const modal = document.getElementById("modalManualUso");
       if (modal) modal.classList.remove("ativo");
     }
-
-    document.addEventListener("keydown", function(e) {
-      const modal = document.getElementById("modalManualUso");
-      if (modal && modal.classList.contains("ativo")) {
-        if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S')) {
-          e.preventDefault();
-        }
-      }
-    });
 
     function converterUrlDriveParaImagem(url) {
       if (!url) return "";
@@ -1460,115 +1486,6 @@
       listContainer.innerHTML = rows.join('');
     }
 
-    function renderizarListasAuxiliares() {
-      const rels = bancoDados.relacoesAuxiliares || [];
-
-      const descricoesUnicas = Array.from(new Set(rels.map(r => r.descricao))).filter(String).sort();
-      const dlDesc = document.getElementById('listDescricoesPadrao');
-      if (dlDesc) {
-        dlDesc.innerHTML = descricoesUnicas.map(d => `<option value="${d}">`).join('');
-      }
-
-      const tbody = document.getElementById('tabelaAuxiliaresList');
-      if (tbody) {
-        if (rels.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="3" class="td-center" style="color:#888;">Nenhuma combinação registrada no banco de dados.</td></tr>';
-        } else {
-          const rows = rels.map(r => `
-            <tr>
-              <td><b>${r.descricao}</b></td>
-              <td>${r.modelo || "-"}</td>
-              <td>${r.fabricante || "-"}</td>
-            </tr>
-          `);
-          tbody.innerHTML = rows.join('');
-        }
-      }
-
-      aoSelecionarDescricaoCad();
-    }
-
-    function aoSelecionarDescricaoCad() {
-      const el = document.getElementById('cadNome');
-      if (!el) return;
-      const descVal = el.value.trim().toUpperCase();
-      const rels = bancoDados.relacoesAuxiliares || [];
-
-      const dlMod = document.getElementById('listModelosPadrao');
-      const dlFab = document.getElementById('listFabricantesPadrao');
-
-      if (!descVal) {
-        const todosMod = Array.from(new Set(rels.map(r => r.modelo))).filter(String).sort();
-        const todosFab = Array.from(new Set(rels.map(r => r.fabricante))).filter(String).sort();
-        if (dlMod) dlMod.innerHTML = todosMod.map(m => `<option value="${m}">`).join('');
-        if (dlFab) dlFab.innerHTML = todosFab.map(f => `<option value="${f}">`).join('');
-        return;
-      }
-
-      const modelosFiltrados = Array.from(new Set(rels.filter(r => r.descricao === descVal).map(r => r.modelo))).filter(String).sort();
-      if (dlMod) dlMod.innerHTML = modelosFiltrados.map(m => `<option value="${m}">`).join('');
-
-      aoSelecionarModeloCad();
-    }
-
-    function aoSelecionarModeloCad() {
-      const elDesc = document.getElementById('cadNome');
-      const elMod = document.getElementById('cadModelo');
-      if (!elDesc || !elMod) return;
-
-      const descVal = elDesc.value.trim().toUpperCase();
-      const modVal = elMod.value.trim().toUpperCase();
-      const rels = bancoDados.relacoesAuxiliares || [];
-      const dlFab = document.getElementById('listFabricantesPadrao');
-
-      let fabs = rels;
-      if (descVal) fabs = fabs.filter(r => r.descricao === descVal);
-      if (modVal) fabs = fabs.filter(r => r.modelo === modVal);
-
-      const fabricantesFiltrados = Array.from(new Set(fabs.map(r => r.fabricante))).filter(String).sort();
-      if (dlFab) dlFab.innerHTML = fabricantesFiltrados.map(f => `<option value="${f}">`).join('');
-
-      if (fabricantesFiltrados.length === 1) {
-        document.getElementById('cadFabricante').value = fabricantesFiltrados[0];
-      }
-    }
-
-    function salvarAuxiliarVinculado(e) {
-      e.preventDefault();
-      const desc = document.getElementById('vinculoDescricao').value.trim().toUpperCase();
-      const mod  = document.getElementById('vinculoModelo').value.trim().toUpperCase();
-      const fab  = document.getElementById('vinculoFabricante').value.trim().toUpperCase();
-
-      if (!desc || !mod || !fab) {
-        alert("Preencha Descrição, Modelo e Fabricante.");
-        return;
-      }
-
-      const payload = {
-        acao: "CRIAR_AUXILIAR_VINCULADO",
-        descricao: desc,
-        modelo: mod,
-        fabricante: fab
-      };
-
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "sucesso") {
-          alert("Combinação cadastrada com sucesso!");
-          document.getElementById('vinculoModelo').value = "";
-          document.getElementById('vinculoFabricante').value = "";
-          buscarAtualizacoesSilenciosas();
-        } else {
-          alert("Erro ao cadastrar combinação.");
-        }
-      })
-      .catch(err => alert("Erro na comunicação com o servidor."));
-    }
-
     function preencherSelectTecnicos() {
       const selTec = document.getElementById('selectTecnico');
       if (!selTec) return;
@@ -1634,18 +1551,6 @@
       btn.disabled = true;
       btn.innerText = "VALIDANDO ACESSO...";
 
-      if (bancoDados && bancoDados.usuarios && bancoDados.usuarios.length > 0) {
-        const encontrado = bancoDados.usuarios.find(u => 
-          ((u.usuario && u.usuario.toLowerCase() === usr) || (u.nome && u.nome.toLowerCase() === usr)) && 
-          u.senha === pass
-        );
-
-        if (encontrado) {
-          concluirAcessoLogin(encontrado);
-          return;
-        }
-      }
-
       fetch(API_URL, {
         method: 'POST',
         body: JSON.stringify({ acao: "VERIFICAR_LOGIN", usuario: usr, senha: pass })
@@ -1704,6 +1609,7 @@
         filtrarRequisicoes();
         renderizarTabelaOS();
         renderizarTabelaLocacao();
+        renderizarTabelaCompras();
         atualizarDashboard();
         atualizarNotificacoes();
         renderizarUsuariosOnline();
@@ -1715,7 +1621,7 @@
     }
 
     function buscarAtualizacoesSilenciosas() {
-      if (estaBuscandoDados) return; // Trava para impedir concorrência no navegador/Apps Script
+      if (estaBuscandoDados) return;
       estaBuscandoDados = true;
 
       const script = document.createElement('script');
@@ -1735,7 +1641,6 @@
 
       buscarAtualizacoesSilenciosas();
 
-      // Intervalo otimizado para 30 segundos (evita congelar o navegador e gastar cota GAS)
       setInterval(buscarAtualizacoesSilenciosas, 30000);
       setInterval(enviarHeartbeat, 60000);
     };
@@ -1855,7 +1760,6 @@
         listE.innerHTML = bancoDados.equipamentos.map(eq => `<option value="TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}">`).join('');
       }
 
-      // Autocomplete para Locação
       if (bancoDados.locacoes) {
         const familias = Array.from(new Set(bancoDados.locacoes.map(l => l.equipamento))).filter(String).sort();
         const dlFam = document.getElementById('listFamiliasLocacao');
@@ -1869,9 +1773,157 @@
       preencherSelectTecnicos();
     }
 
-    /* ===================================================================== */
-    /* FUNÇÕES DO MÓDULO DE COMPRAS                                         */
-    /* ===================================================================== */
+    function renderizarTabelaLocacao() {
+      const tbody = document.getElementById('corpoTabelaLocacao');
+      if (!tbody) return;
+
+      const locacoes = bancoDados.locacoes || [];
+      if (locacoes.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="td-center" style="color:#888; padding:20px;">Nenhum registro de locação encontrado.</td></tr>';
+        atualizarMetricasLocacao([]);
+        return;
+      }
+
+      const cliFiltro = (document.getElementById('locFiltroCliente')?.value || "").toLowerCase();
+      const uniFiltro = (document.getElementById('locFiltroUnidade')?.value || "").toLowerCase();
+      const famFiltro = (document.getElementById('locFiltroFamilia')?.value || "").toLowerCase();
+      const sitFiltro = (document.getElementById('locFiltroSituacao')?.value || "ATIVO").toUpperCase();
+      const txtFiltro = (document.getElementById('locFiltroTexto')?.value || "").toLowerCase().trim();
+
+      const filtrados = locacoes.filter(l => {
+        if (cliFiltro && !l.cliente.toLowerCase().includes(cliFiltro)) return false;
+        if (uniFiltro && !l.unidade.toLowerCase().includes(uniFiltro)) return false;
+        if (famFiltro && !l.equipamento.toLowerCase().includes(famFiltro)) return false;
+        if (sitFiltro !== "TODOS" && l.situacao.toUpperCase() !== sitFiltro) return false;
+        if (txtFiltro) {
+          const matchCont = (l.contrato || "").toLowerCase().includes(txtFiltro);
+          const matchId = (l.id || "").toLowerCase().includes(txtFiltro);
+          const matchLoc = (l.localizacao || "").toLowerCase().includes(txtFiltro);
+          const matchCli = (l.cliente || "").toLowerCase().includes(txtFiltro);
+          if (!matchCont && !matchId && !matchLoc && !matchCli) return false;
+        }
+        return true;
+      });
+
+      atualizarMetricasLocacao(filtrados);
+
+      if (filtrados.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="td-center" style="color:#888; padding:20px;">Nenhum registro encontrado com os filtros aplicados.</td></tr>';
+        return;
+      }
+
+      const rows = filtrados.map(l => {
+        let badgeSaldo = "badge-saldo-ok";
+        if (l.saldo > 0) badgeSaldo = "badge-saldo-pendente";
+        else if (l.saldo < 0) badgeSaldo = "badge-saldo-alerta";
+
+        return `
+          <tr>
+            <td class="td-center"><b>${l.id}</b></td>
+            <td><b>${l.cliente}</b></td>
+            <td>${l.contrato || "-"}</td>
+            <td>${l.unidade || "-"}</td>
+            <td>${l.localizacao || "-"}</td>
+            <td><b>${l.equipamento}</b></td>
+            <td class="td-center" style="font-weight:bold;">${l.qtdContratada}</td>
+            <td class="td-center" style="font-weight:bold; color:#1a4d80;">${l.qtdFisica}</td>
+            <td class="td-center"><span class="badge-status ${badgeSaldo}">${l.saldo}</span></td>
+            <td class="td-center"><b>${l.situacao}</b></td>
+            <td class="td-center">
+              <button type="button" class="btn-editar-saldo" onclick="abrirModalLocacao('${l.id}')"><i class="fa-solid fa-pen-to-square"></i> Ajustar</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = rows.join('');
+    }
+
+    function filtrarTabelaLocacao() {
+      renderizarTabelaLocacao();
+    }
+
+    function atualizarMetricasLocacao(lista) {
+      let totalReg = lista.length;
+      let totalCont = 0;
+      let totalFis = 0;
+
+      lista.forEach(l => {
+        totalCont += Number(l.qtdContratada) || 0;
+        totalFis += Number(l.qtdFisica) || 0;
+      });
+
+      let totalSaldo = totalCont - totalFis;
+
+      document.getElementById('locTotalRegistros').innerText = totalReg;
+      document.getElementById('locTotalContratada').innerText = totalCont;
+      document.getElementById('locTotalFisica').innerText = totalFis;
+      
+      const elSaldo = document.getElementById('locTotalSaldo');
+      if (elSaldo) {
+        elSaldo.innerText = totalSaldo;
+      }
+    }
+
+    function abrirModalLocacao(id) {
+      const loc = (bancoDados.locacoes || []).find(l => l.id.toString() === id.toString());
+      if (!loc) return;
+
+      document.getElementById('locModalId').value = loc.id;
+      document.getElementById('locModalDetalhes').innerHTML = `
+        <b>Cliente:</b> ${loc.cliente}<br>
+        <b>Contrato:</b> ${loc.contrato || "N/A"} | <b>Unidade:</b> ${loc.unidade || "N/A"}<br>
+        <b>Equipamento:</b> ${loc.equipamento}<br>
+        <b>Qtd Contratada:</b> ${loc.qtdContratada}
+      `;
+      document.getElementById('locModalQtdFisica').value = loc.qtdFisica;
+      document.getElementById('modalLocacao').classList.add('active');
+    }
+
+    function fecharModalLocacao() {
+      document.getElementById('modalLocacao').classList.remove('active');
+    }
+
+    function confirmarAjusteLocacao() {
+      const id = document.getElementById('locModalId').value;
+      const novaQtd = document.getElementById('locModalQtdFisica').value;
+
+      if (novaQtd === "" || isNaN(novaQtd) || Number(novaQtd) < 0) {
+        alert("Informe uma quantidade física válida.");
+        return;
+      }
+
+      const btn = document.getElementById('btnSalvarLocModal');
+      btn.disabled = true;
+      btn.innerText = "ATUALIZANDO SALDO...";
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          acao: "ATUALIZAR_QTD_FISICA_LOCACAO",
+          id: id,
+          qtdFisica: Number(novaQtd)
+        })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === "sucesso") {
+          alert("Saldo de locação atualizado com sucesso!");
+          fecharModalLocacao();
+          buscarAtualizacoesSilenciosas();
+        } else {
+          alert("Erro ao atualizar locação: " + (res.mensagem || ""));
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Atualizar Saldo';
+      })
+      .catch(err => {
+        alert("Erro na comunicação com o servidor.");
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Atualizar Saldo';
+      });
+    }
+
     function calcularMenorPrecoCotacao() {
       const f1 = document.getElementById('compForn1').value || "Fornecedor 1";
       const v1 = parseFloat(document.getElementById('compVal1').value) || 0;
@@ -2012,24 +2064,6 @@
       .catch(err => alert("Erro na comunicação com o servidor."));
     }
 
-    function popularAutocomplete() {
-          buscarAtualizacoesSilenciosas();
-        } else {
-          alert("Erro ao atualizar locação: " + (res.mensagem || ""));
-        }
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Atualizar Saldo';
-      })
-      .catch(err => {
-        alert("Erro na comunicação com o servidor.");
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Atualizar Saldo';
-      });
-    }
-
-    /* ===================================================================== */
-    /* OUTRAS FUNÇÕES DA APLICAÇÃO (O.S., TERMOS, REQUISIÇÕES) OTIMIZADAS    */
-    /* ===================================================================== */
     function renderizarTabelaOS() {
       const tbody = document.getElementById('corpoOS');
       if (!tbody) return;
@@ -2374,6 +2408,115 @@
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-server"></i> Salvar Equipamento no Banco de Dados';
       });
+    }
+
+    function renderizarListasAuxiliares() {
+      const rels = bancoDados.relacoesAuxiliares || [];
+
+      const descricoesUnicas = Array.from(new Set(rels.map(r => r.descricao))).filter(String).sort();
+      const dlDesc = document.getElementById('listDescricoesPadrao');
+      if (dlDesc) {
+        dlDesc.innerHTML = descricoesUnicas.map(d => `<option value="${d}">`).join('');
+      }
+
+      const tbody = document.getElementById('tabelaAuxiliaresList');
+      if (tbody) {
+        if (rels.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3" class="td-center" style="color:#888;">Nenhuma combinação registrada no banco de dados.</td></tr>';
+        } else {
+          const rows = rels.map(r => `
+            <tr>
+              <td><b>${r.descricao}</b></td>
+              <td>${r.modelo || "-"}</td>
+              <td>${r.fabricante || "-"}</td>
+            </tr>
+          `);
+          tbody.innerHTML = rows.join('');
+        }
+      }
+
+      aoSelecionarDescricaoCad();
+    }
+
+    function aoSelecionarDescricaoCad() {
+      const el = document.getElementById('cadNome');
+      if (!el) return;
+      const descVal = el.value.trim().toUpperCase();
+      const rels = bancoDados.relacoesAuxiliares || [];
+
+      const dlMod = document.getElementById('listModelosPadrao');
+      const dlFab = document.getElementById('listFabricantesPadrao');
+
+      if (!descVal) {
+        const todosMod = Array.from(new Set(rels.map(r => r.modelo))).filter(String).sort();
+        const todosFab = Array.from(new Set(rels.map(r => r.fabricante))).filter(String).sort();
+        if (dlMod) dlMod.innerHTML = todosMod.map(m => `<option value="${m}">`).join('');
+        if (dlFab) dlFab.innerHTML = todosFab.map(f => `<option value="${f}">`).join('');
+        return;
+      }
+
+      const modelosFiltrados = Array.from(new Set(rels.filter(r => r.descricao === descVal).map(r => r.modelo))).filter(String).sort();
+      if (dlMod) dlMod.innerHTML = modelosFiltrados.map(m => `<option value="${m}">`).join('');
+
+      aoSelecionarModeloCad();
+    }
+
+    function aoSelecionarModeloCad() {
+      const elDesc = document.getElementById('cadNome');
+      const elMod = document.getElementById('cadModelo');
+      if (!elDesc || !elMod) return;
+
+      const descVal = elDesc.value.trim().toUpperCase();
+      const modVal = elMod.value.trim().toUpperCase();
+      const rels = bancoDados.relacoesAuxiliares || [];
+      const dlFab = document.getElementById('listFabricantesPadrao');
+
+      let fabs = rels;
+      if (descVal) fabs = fabs.filter(r => r.descricao === descVal);
+      if (modVal) fabs = fabs.filter(r => r.modelo === modVal);
+
+      const fabricantesFiltrados = Array.from(new Set(fabs.map(r => r.fabricante))).filter(String).sort();
+      if (dlFab) dlFab.innerHTML = fabricantesFiltrados.map(f => `<option value="${f}">`).join('');
+
+      if (fabricantesFiltrados.length === 1) {
+        document.getElementById('cadFabricante').value = fabricantesFiltrados[0];
+      }
+    }
+
+    function salvarAuxiliarVinculado(e) {
+      e.preventDefault();
+      const desc = document.getElementById('vinculoDescricao').value.trim().toUpperCase();
+      const mod  = document.getElementById('vinculoModelo').value.trim().toUpperCase();
+      const fab  = document.getElementById('vinculoFabricante').value.trim().toUpperCase();
+
+      if (!desc || !mod || !fab) {
+        alert("Preencha Descrição, Modelo e Fabricante.");
+        return;
+      }
+
+      const payload = {
+        acao: "CRIAR_AUXILIAR_VINCULADO",
+        descricao: desc,
+        modelo: mod,
+        fabricante: fab
+      };
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === "sucesso") {
+          alert("Combinação cadastrada com sucesso!");
+          document.getElementById('vinculoModelo').value = "";
+          document.getElementById('vinculoFabricante').value = "";
+          buscarAtualizacoesSilenciosas();
+        } else {
+          alert("Erro ao cadastrar combinação.");
+        }
+      })
+      .catch(err => alert("Erro na comunicação com o servidor."));
     }
 
     function renderizarTabelaTermos(lista) {
