@@ -214,6 +214,7 @@
 </head>
 <body>
 
+  <!-- TELA DE LOGIN -->
   <div id="loginOverlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0f172a; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px;">
     <div style="background: #ffffff; width: 100%; max-width: 380px; padding: 30px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); text-align: center;">
       <div style="font-size: 24px; font-weight: 800; color: #1a4d80; margin-bottom: 4px;">DMA SYS</div>
@@ -239,6 +240,7 @@
     </div>
   </div>
 
+  <!-- CONTAINER DA APLICAÇÃO -->
   <div id="appContainer" style="display: none;">
 
     <div class="header">
@@ -353,6 +355,7 @@
     <datalist id="listFamiliasLocacao"></datalist>
     <datalist id="listUnidadesLocacao"></datalist>
 
+    <!-- ABA INÍCIO -->
     <div id="abaInicio" class="tab-content active">
       <div class="welcome-hero">
         <h2>Bem-vindo ao DMA SYS v2.0</h2>
@@ -551,7 +554,7 @@
 
           <div style="text-align: right; margin-top: 12px;">
             <button type="submit" id="btnSalvarCompra" class="btn-submit">
-              <i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF
+              <i class="fa-solid fa-file-signature"></i> Salvar Cotação
             </button>
           </div>
         </form>
@@ -678,7 +681,7 @@
           </div>
 
           <div style="text-align: right;">
-            <button type="button" onclick="salvarRequisicao(event)" id="btnSalvarReq" class="btn-submit">
+            <button type="submit" id="btnSalvarReq" class="btn-submit">
               <i class="fa-solid fa-paper-plane"></i> Enviar Requisição e Gerar PDF
             </button>
           </div>
@@ -977,7 +980,7 @@
 
           <div style="text-align: right;">
             <button type="submit" id="btnSalvarOS" class="btn-submit">
-              <i class="fa-solid fa-floppy-disk"></i> Registrar O.S. e Gerar Relatório PDF
+              <i class="fa-solid fa-floppy-disk"></i> Registrar O.S.
             </button>
           </div>
         </form>
@@ -1096,7 +1099,7 @@
         <p style="margin-bottom:12px;">Consulte saldos contratados vs. entregues por cliente e unidade hospitalar. Ajuste saldos físicos diretamente pelo botão <b>"Ajustar"</b>.</p>
 
         <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-cart-shopping"></i> 2. Módulo de Compras & Mapa Comparativo</h4>
-        <p style="margin-bottom:12px;">Cadastre cotações informando 3 fornecedores. O sistema destaca a menor proposta em verde e gera o PDF oficial do Mapa de Cotação.</p>
+        <p style="margin-bottom:12px;">Cadastre cotações informando 3 fornecedores. O sistema destaca a menor proposta em verde e registra a cotação com cálculo automático.</p>
 
         <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-shield-halved"></i> 3. Módulo Qualidade & Termos</h4>
         <p style="margin-bottom:12px;">Acompanhe requisições internas, atenda com emissão do Termo Duplo de Entrega e Higienização ou vincule termos já emitidos pelo botão <b>"Vincular"</b>.</p>
@@ -1249,10 +1252,10 @@
       const valAnterior = selTec.value;
       let htmlOptions = '<option value="">Selecione o técnico...</option>';
       if (bancoDados && bancoDados.usuarios) {
-        bancoDados.usuarios.forEach((u, idx) => {
+        bancoDados.usuarios.forEach((u) => {
           if (u && (u.nome || u.usuario)) {
             const nomeExibir = u.nome || u.usuario;
-            htmlOptions += `<option value="${idx}">${nomeExibir}</option>`;
+            htmlOptions += `<option value="${nomeExibir}">${nomeExibir}</option>`;
           }
         });
       }
@@ -1431,7 +1434,7 @@
           document.getElementById('formReq').reset();
           
           const novaReq = {
-            protocolo: res.protocolo,
+            protocolo: res.protocoloReq || res.protocolo,
             dataHora: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
             cliente: cliente,
             operacao: operacao,
@@ -1441,7 +1444,7 @@
             solicitante: solicitante,
             status: "PENDENTE",
             protocoloTermo: "",
-            pdfUrlReq: res.pdfUrl || ""
+            pdfUrlReq: res.pdfUrlReq || res.pdfUrl || ""
           };
 
           if (!bancoDados.requisicoes) bancoDados.requisicoes = [];
@@ -1451,11 +1454,11 @@
           atualizarNotificacoes();
           atualizarDashboard();
 
-          if (res.pdfUrl) {
-            window.open(res.pdfUrl, '_blank');
+          if (novaReq.pdfUrlReq) {
+            window.open(novaReq.pdfUrlReq, '_blank');
           }
 
-          alert(`Requisição ${res.protocolo} criada com sucesso!`);
+          alert(`Requisição ${novaReq.protocolo} criada com sucesso!`);
           buscarAtualizacoesSilenciosas();
         } else {
           alert("Erro ao enviar requisição: " + (res.mensagem || "Erro desconhecido."));
@@ -1675,7 +1678,7 @@
 
       const btn = document.getElementById('btnSalvarCompra');
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> GERANDO COTAÇÃO E MAPA PDF...';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> GERANDO COTAÇÃO...';
 
       const payload = {
         acao: "CRIAR_SOLICITACAO_COMPRA",
@@ -1701,19 +1704,19 @@
           document.getElementById('formCompras').reset();
           calcularMenorPrecoCotacao();
           btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF';
+          btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação';
           buscarAtualizacoesSilenciosas();
           alert(`Cotação ${res.protocolo} criada com sucesso!`);
         } else {
           alert("Erro ao salvar cotação: " + (res.mensagem || "Erro desconhecido."));
           btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF';
+          btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação';
         }
       })
       .catch(err => {
         alert("Falha de conexão ao salvar cotação.");
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF';
+        btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação';
       });
 
       return false;
@@ -1991,8 +1994,8 @@
       if (e) e.preventDefault();
       if (!equipamentoSelecionado) { alert("Selecione um equipamento válido."); return; }
 
-      const idxTec = document.getElementById('selectTecnico').value;
-      const tecSelected = (bancoDados.usuarios || [])[idxTec] || { nome: "Técnico" };
+      const nomeTec = document.getElementById('selectTecnico').value;
+      if (!nomeTec) { alert("Selecione o técnico responsável."); return; }
 
       const payload = {
         acao: "CRIAR_TERMO",
@@ -2000,7 +2003,7 @@
         equipamento: equipamentoSelecionado,
         tipoOperacao: document.querySelector('input[name="tipoOperacao"]:checked').value,
         acessorios: [],
-        tecnico: tecSelected,
+        tecnico: { nome: nomeTec },
         assinaturaCliente: canvas ? canvas.toDataURL() : "",
         protocoloReq: document.getElementById('reqVinculadaProtocolo').value
       };
@@ -2113,16 +2116,16 @@
         equipamento: equip,
         solicitante: solicitante,
         tecnico: tecnico,
-        defeito: defeito,
-        diagnostico: diagnostico,
-        servico: servico
+        defeitoRelatado: defeito,
+        diagnosticoTecnico: diagnostico,
+        servicoRealizado: servico
       };
 
       fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
       .then(res => res.json())
       .then(res => {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar O.S. e Gerar Relatório PDF';
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar O.S.';
         if (res.status === "sucesso") {
           document.getElementById('formNovaOS').reset();
           alert(`Ordem de Serviço ${res.protocoloOS} criada com sucesso!`);
@@ -2134,7 +2137,7 @@
       })
       .catch(err => {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar O.S. e Gerar Relatório PDF';
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar O.S.';
         alert("Falha de conexão ao registrar O.S.");
       });
 
