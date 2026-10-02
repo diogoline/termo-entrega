@@ -20,7 +20,7 @@
     .status-badge { background-color: #ffc107; color: #333; padding: 6px 14px; border-radius: 16px; font-size: 12px; font-weight: bold; transition: all 0.3s; display: inline-flex; align-items: center; gap: 6px; }
     .status-badge.connected { background-color: #28a745; color: white; }
 
-    /* Botões Circulares do Cabeçalho (Notificação e Online) */
+    /* Botões Circulares do Cabeçalho */
     .notification-btn { background: rgba(255,255,255,0.15); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: background 0.2s; }
     .notification-btn:hover { background: rgba(255,255,255,0.25); }
     
@@ -33,7 +33,6 @@
       100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
     }
 
-    /* BOTÃO DA ENGRENAGEM */
     .btn-header-ajuda {
       background-color: rgba(255, 255, 255, 0.15);
       color: #ffffff;
@@ -54,10 +53,7 @@
       border-color: rgba(255, 255, 255, 0.5);
     }
 
-    .dropdown-ajuda-container {
-      position: relative;
-      display: inline-block;
-    }
+    .dropdown-ajuda-container { position: relative; display: inline-block; }
 
     .menu-ajuda-dropdown {
       display: none;
@@ -73,9 +69,7 @@
       overflow: hidden;
     }
 
-    .menu-ajuda-dropdown.ativo {
-      display: block;
-    }
+    .menu-ajuda-dropdown.ativo { display: block; }
 
     .menu-ajuda-item {
       padding: 11px 14px;
@@ -89,12 +83,9 @@
       transition: background 0.2s;
     }
 
-    .menu-ajuda-item:hover {
-      background: #f1f5f9;
-      color: #1a4d80;
-    }
+    .menu-ajuda-item:hover { background: #f1f5f9; color: #1a4d80; }
 
-    /* DROPDOWNS DE NOTIFICAÇÃO E USUÁRIOS */
+    /* Dropdowns Notificações */
     .notification-dropdown { display: none; position: absolute; top: 48px; right: 0; width: 320px; background: white; color: #333; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); z-index: 200; border: 1px solid #e2e8f0; overflow: hidden; }
     .notification-dropdown.active { display: block; animation: fadeIn 0.2s ease-in-out; }
     .notif-header { background: #f8fafc; padding: 10px 14px; font-size: 12px; font-weight: bold; color: #1a4d80; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
@@ -104,7 +95,7 @@
     .notif-item-title { font-size: 12px; font-weight: bold; color: #1e293b; display: flex; justify-content: space-between; }
     .notif-item-sub { font-size: 11px; color: #64748b; margin-top: 2px; }
 
-    /* NAVEGAÇÃO POR MENUS DROPDOWN */
+    /* Navegação por Menus Dropdown */
     .nav-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
     .nav-tab { padding: 8px 14px; font-size: 13px; font-weight: 700; border: none; background: #f1f5f9; color: #334155; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
     .nav-tab:hover { background: #e2e8f0; }
@@ -137,7 +128,7 @@
     .radio-group { display: flex; gap: 20px; align-items: center; padding: 6px 0; }
     .radio-group label { font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 
-    /* TABELAS E ALINHAMENTO */
+    /* Tabelas e Alinhamento */
     .table-container { overflow-x: auto; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 6px; min-height: 200px; max-height: 500px; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
     th { background: #e9ecef; color: #1a4d80; padding: 10px 6px; text-align: left; position: sticky; top: 0; border-bottom: 2px solid #ced4da; font-weight: bold; font-size: 11px; text-transform: uppercase; z-index: 10; }
@@ -157,7 +148,7 @@
     .sig-preview img { max-height: 100%; max-width: 100%; object-fit: contain; }
     .btn-clear { position: absolute; right: 12px; top: 12px; background: #dc3545; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
-    /* Botões do Sistema */
+    /* Botões */
     .btn-submit { background: #1a4d80; color: white; border: none; padding: 12px 18px; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
     .btn-submit:hover { background: #13385c; }
     .btn-submit:disabled { background: #6c757d; cursor: not-allowed; }
@@ -191,7 +182,7 @@
 
     .btn-action-container { display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; align-items: center !important; justify-content: center !important; gap: 4px !important; width: 100% !important; white-space: nowrap !important; }
 
-    /* Tela de Início */
+    /* Dashboard & Cards */
     .welcome-hero { background: linear-gradient(135deg, #1a4d80 0%, #0f2b48 100%); color: white; border-radius: 12px; padding: 32px 24px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
     .welcome-hero h2 { font-size: 24px; margin-bottom: 8px; }
     .welcome-hero p { font-size: 14px; opacity: 0.9; max-width: 800px; line-height: 1.5; }
@@ -203,7 +194,6 @@
     .quick-title { font-size: 14px; font-weight: bold; color: #1a4d80; margin-bottom: 6px; }
     .quick-desc { font-size: 11px; color: #64748b; line-height: 1.4; }
 
-    /* Dashboard & Cards Métricas */
     .dash-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
     .metric-card { background: white; padding: 16px; border-radius: 8px; border: 1px solid #dcdcdc; border-left: 5px solid #1a4d80; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     .metric-card.yellow { border-left-color: #ffc107; }
@@ -214,10 +204,6 @@
     .metric-value { font-size: 24px; font-weight: bold; color: #1e293b; margin-top: 4px; }
 
     .dash-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .bar-container { margin-bottom: 10px; }
-    .bar-label { display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; color: #475569; margin-bottom: 3px; }
-    .bar-bg { background: #e2e8f0; height: 18px; border-radius: 9px; overflow: hidden; }
-    .bar-fill { background: #1a4d80; height: 100%; border-radius: 9px; transition: width 0.5s; }
 
     /* Modais */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; }
@@ -225,27 +211,21 @@
     .modal-box { background: white; padding: 24px; border-radius: 10px; width: 680px; max-width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
     .modal-title { font-size: 16px; font-weight: bold; color: #1a4d80; margin-bottom: 12px; display: flex; justify-content: space-between; border-bottom: 2px solid #1a4d80; padding-bottom: 6px; }
 
-    /* Galeria */
     .galeria-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; width: 100%; }
     .galeria-thumb { width: 85px; height: 85px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #f8fafc; position: relative; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
     .galeria-thumb:hover { transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.18); border-color: #2563eb; }
     .galeria-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-    /* MODAL DO MANUAL DE APOIO */
+    /* Manual */
     .modal-manual-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(3px); z-index: 20000; align-items: center; justify-content: center; }
     .modal-manual-overlay.ativo { display: flex; }
-    .modal-manual-card { background: #ffffff; width: 90%; max-width: 820px; height: 85vh; border-radius: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); display: flex; flex-direction: column; overflow: hidden; -webkit-user-select: none; -moz-user-select: none; user-select: none; }
+    .modal-manual-card { background: #ffffff; width: 90%; max-width: 820px; height: 85vh; border-radius: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); display: flex; flex-direction: column; overflow: hidden; }
     .modal-manual-header { background: #1a4d80; color: #ffffff; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
     .modal-manual-header h3 { margin: 0; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
     .btn-fechar-manual { background: transparent; border: none; color: #ffffff; font-size: 20px; cursor: pointer; }
     .modal-manual-body { padding: 20px 24px; overflow-y: auto; font-size: 13px; line-height: 1.6; color: #334155; }
-    .manual-secao { margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; }
-    .manual-secao h4 { margin: 0 0 8px 0; color: #1a4d80; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-    .manual-secao ul { margin: 0; padding-left: 20px; }
-    .manual-secao li { margin-bottom: 6px; }
-    .alerta-seguranca { background: #eff6ff; border-left: 4px solid #1a4d80; padding: 10px 14px; font-size: 12px; font-weight: 600; color: #1e40af; border-radius: 0 6px 6px 0; }
 
-    /* Rodapé e Chat Widget */
+    /* Footer & Chat */
     .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-top: 2px solid #2563eb; }
     .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
 
@@ -324,7 +304,6 @@
           <span id="notifBadge" class="notification-badge">0</span>
         </button>
 
-        <!-- DROPDOWN DE NOTIFICAÇÕES -->
         <div id="notifDropdown" class="notification-dropdown">
           <div class="notif-header">
             <span>REQUISIÇÕES PENDENTES</span>
@@ -337,7 +316,6 @@
 
         <span id="statusBadge" class="status-badge"><i class="fa-solid fa-plug"></i> Conectando...</span>
 
-        <!-- ENGRENAGEM MINIMALISTA -->
         <div class="dropdown-ajuda-container">
           <button type="button" class="btn-header-ajuda" onclick="alternarMenuAjuda(event)" title="Opções do Sistema">
             <i class="fa-solid fa-gear"></i>
@@ -420,7 +398,7 @@
     <div id="abaInicio" class="tab-content active">
       <div class="welcome-hero">
         <h2>Bem-vindo ao DMA SYS v2.0</h2>
-        <p>Plataforma corporativa para gestão de saldo de locações, movimentação de ativos médicos, acompanhamento de ordens de serviço de Engenharia Clínica e emissão digital de termos.</p>
+        <p>Plataforma corporativa para gestão de saldo de locações, cotações de compras, movimentação de ativos médicos, acompanhamento de ordens de serviço e emissão digital de termos.</p>
       </div>
 
       <div class="quick-actions-grid">
@@ -990,18 +968,10 @@
             </tbody>
           </table>
         </div>
-
-        <div style="display: flex; gap: 12px; margin-top: 12px; font-size: 11px; font-weight: bold; color: #475569;">
-          <span>Prioridades:</span>
-          <span style="color:#dc3545;"><i class="fa-solid fa-circle"></i> CRÍTICA</span>
-          <span style="color:#fd7e14;"><i class="fa-solid fa-circle"></i> ALTA</span>
-          <span style="color:#d97706;"><i class="fa-solid fa-circle"></i> MÉDIA</span>
-          <span style="color:#0d9488;"><i class="fa-solid fa-circle"></i> BAIXA</span>
-        </div>
       </div>
     </div>
 
-    <!-- ABA 6: ABERTURA / REGISTRO DE NOVA O.S. -->
+    <!-- ABA 6: ABERTURA DE NOVA O.S. -->
     <div id="abaOsAbertura" class="tab-content">
       <div class="card">
         <div class="card-title">Abrir Nova Ordem de Serviço (Manutenção)</div>
@@ -1037,18 +1007,9 @@
               <label>Pesquisar Equipamento (TAG / Série / Patrimônio):</label>
               <input type="text" id="osBuscaEquip" list="listEquipamentos" placeholder="Digite para buscar..." oninput="autoPreencherOSEquipamento()" required>
             </div>
-            <div class="form-group" style="flex: 1;">
-              <label>TAG:</label>
-              <input type="text" id="osTag" readonly placeholder="-">
-            </div>
-            <div class="form-group" style="flex: 1;">
-              <label>Nº de Série:</label>
-              <input type="text" id="osSerie" readonly placeholder="-">
-            </div>
-            <div class="form-group" style="flex: 1;">
-              <label>Patrimônio:</label>
-              <input type="text" id="osPatrimonio" readonly placeholder="-">
-            </div>
+            <div class="form-group" style="flex: 1;"><label>TAG:</label><input type="text" id="osTag" readonly placeholder="-"></div>
+            <div class="form-group" style="flex: 1;"><label>Nº de Série:</label><input type="text" id="osSerie" readonly placeholder="-"></div>
+            <div class="form-group" style="flex: 1;"><label>Patrimônio:</label><input type="text" id="osPatrimonio" readonly placeholder="-"></div>
           </div>
 
           <div class="form-group" style="margin-bottom: 12px;">
@@ -1057,30 +1018,13 @@
           </div>
 
           <div class="form-row">
-            <div class="form-group">
-              <label>Solicitante / Reclamante:</label>
-              <input type="text" id="osSolicitante" placeholder="Ex: Enfermagem / Eng. Clínica" required>
-            </div>
-            <div class="form-group">
-              <label>Técnico Responsável:</label>
-              <input type="text" id="osTecnico" placeholder="Nome do técnico executante" required>
-            </div>
+            <div class="form-group"><label>Solicitante / Reclamante:</label><input type="text" id="osSolicitante" placeholder="Ex: Enfermagem / Eng. Clínica" required></div>
+            <div class="form-group"><label>Técnico Responsável:</label><input type="text" id="osTecnico" placeholder="Nome do técnico executante" required></div>
           </div>
 
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>Defeito Relatado / Queixa do Cliente:</label>
-            <textarea id="osDefeito" style="height: 60px;" placeholder="Descreva a falha reportada pelo cliente..." required></textarea>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>Diagnóstico Técnico & Avaliação:</label>
-            <textarea id="osDiagnostico" style="height: 60px;" placeholder="Laudo do técnico após testes..." required></textarea>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 16px;">
-            <label>Serviço Realizado / Solução Aplicada:</label>
-            <textarea id="osServico" style="height: 60px;" placeholder="Descrição dos reparos, regulagens ou trocas de peças..." required></textarea>
-          </div>
+          <div class="form-group" style="margin-bottom: 12px;"><label>Defeito Relatado:</label><textarea id="osDefeito" style="height: 60px;" required></textarea></div>
+          <div class="form-group" style="margin-bottom: 12px;"><label>Diagnóstico Técnico:</label><textarea id="osDiagnostico" style="height: 60px;" required></textarea></div>
+          <div class="form-group" style="margin-bottom: 16px;"><label>Serviço Realizado:</label><textarea id="osServico" style="height: 60px;" required></textarea></div>
 
           <div style="text-align: right;">
             <button type="submit" id="btnSalvarOS" class="btn-submit">
@@ -1097,44 +1041,24 @@
         <div class="card-title">Cadastrar Novo Equipamento (Aba EQUIP)</div>
         <form id="formNovoEquip" onsubmit="salvarNovoEquipamento(event)">
           <div class="form-row">
-            <div class="form-group">
-              <label>TAG do Equipamento:</label>
-              <input type="text" id="cadTag" placeholder="Ex: LMD-9999" required>
-            </div>
-            <div class="form-group">
-              <label>Nº de Série:</label>
-              <input type="text" id="cadSerie" placeholder="Ex: 849302" required>
-            </div>
-            <div class="form-group">
-              <label>Patrimônio:</label>
-              <input type="text" id="cadPatrimonio" placeholder="Ex: 00984" required>
-            </div>
+            <div class="form-group"><label>TAG do Equipamento:</label><input type="text" id="cadTag" placeholder="Ex: LMD-9999" required></div>
+            <div class="form-group"><label>Nº de Série:</label><input type="text" id="cadSerie" placeholder="Ex: 849302" required></div>
+            <div class="form-group"><label>Patrimônio:</label><input type="text" id="cadPatrimonio" placeholder="Ex: 00984" required></div>
           </div>
 
           <div class="form-row">
-            <div class="form-group" style="flex: 2;">
-              <label>1. Descrição do Equipamento:</label>
-              <input type="text" id="cadNome" list="listDescricoesPadrao" placeholder="Selecione a Descrição/Família..." onchange="aoSelecionarDescricaoCad()" required>
-            </div>
-            <div class="form-group" style="flex: 1;">
-              <label>2. Modelo (Filtrado por Descrição):</label>
-              <input type="text" id="cadModelo" list="listModelosPadrao" placeholder="Selecione o Modelo..." onchange="aoSelecionarModeloCad()" required>
-            </div>
-            <div class="form-group" style="flex: 1;">
-              <label>3. Fabricante (Filtrado por Modelo):</label>
-              <input type="text" id="cadFabricante" list="listFabricantesPadrao" placeholder="Selecione o Fabricante..." required>
-            </div>
+            <div class="form-group" style="flex: 2;"><label>Descrição do Equipamento:</label><input type="text" id="cadNome" list="listDescricoesPadrao" onchange="aoSelecionarDescricaoCad()" required></div>
+            <div class="form-group" style="flex: 1;"><label>Modelo:</label><input type="text" id="cadModelo" list="listModelosPadrao" onchange="aoSelecionarModeloCad()" required></div>
+            <div class="form-group" style="flex: 1;"><label>Fabricante:</label><input type="text" id="cadFabricante" list="listFabricantesPadrao" required></div>
           </div>
 
           <div class="form-group" style="margin-bottom: 16px;">
-            <label>Acessórios Padrão (Separados por ponto e vírgula ;):</label>
+            <label>Acessórios Padrão (Separados por ;):</label>
             <input type="text" id="cadAcessorios" placeholder="Ex: CABO DE FORÇA; CIRCUITO PACIENTE; SENSOR FLUXO">
           </div>
 
           <div style="text-align: right;">
-            <button type="submit" id="btnSalvarCadEquip" class="btn-submit">
-              <i class="fa-solid fa-server"></i> Salvar Equipamento no Banco de Dados
-            </button>
+            <button type="submit" id="btnSalvarCadEquip" class="btn-submit"><i class="fa-solid fa-server"></i> Salvar Equipamento</button>
           </div>
         </form>
       </div>
@@ -1144,43 +1068,21 @@
     <div id="abaCadAuxiliares" class="tab-content">
       <div class="card">
         <div class="card-title">Gerenciar Nomenclaturas & Combinações Válidas</div>
-        <p style="font-size: 12px; color: #64748b; margin-bottom: 16px;">Cadastre os Modelos e Fabricantes autorizados para cada Descrição de Equipamento.</p>
-
         <form onsubmit="salvarAuxiliarVinculado(event)" style="background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
           <div class="form-row">
-            <div class="form-group" style="flex: 2;">
-              <label>Descrição / Família do Equipamento:</label>
-              <input type="text" id="vinculoDescricao" list="listDescricoesPadrao" placeholder="Ex: BOMBA DE INFUSÃO" required>
-            </div>
-            <div class="form-group" style="flex: 1;">
-              <label>Modelo:</label>
-              <input type="text" id="vinculoModelo" placeholder="Ex: ST1000" required>
-            </div>
-            <div class="form-group" style="flex: 1;">
-              <label>Fabricante:</label>
-              <input type="text" id="vinculoFabricante" placeholder="Ex: SAMTRONIC" required>
-            </div>
+            <div class="form-group" style="flex: 2;"><label>Descrição / Família:</label><input type="text" id="vinculoDescricao" list="listDescricoesPadrao" required></div>
+            <div class="form-group" style="flex: 1;"><label>Modelo:</label><input type="text" id="vinculoModelo" required></div>
+            <div class="form-group" style="flex: 1;"><label>Fabricante:</label><input type="text" id="vinculoFabricante" required></div>
           </div>
           <div style="text-align: right;">
-            <button type="submit" class="btn-submit">
-              <i class="fa-solid fa-plus"></i> Cadastrar Vínculo Oficial
-            </button>
+            <button type="submit" class="btn-submit"><i class="fa-solid fa-plus"></i> Cadastrar Vínculo</button>
           </div>
         </form>
 
-        <div class="card-title" style="font-size: 12px;">Catálogo de Combinações Cadastradas</div>
         <div class="table-container">
           <table style="table-layout: auto;">
-            <thead>
-              <tr>
-                <th>Descrição / Família</th>
-                <th>Modelo Autorizado</th>
-                <th>Fabricante</th>
-              </tr>
-            </thead>
-            <tbody id="tabelaAuxiliaresList">
-              <tr><td colspan="3" class="td-center" style="color:#888;">Carregando combinações...</td></tr>
-            </tbody>
+            <thead><tr><th>Descrição / Família</th><th>Modelo Autorizado</th><th>Fabricante</th></tr></thead>
+            <tbody id="tabelaAuxiliaresList"><tr><td colspan="3" class="td-center" style="color:#888;">Carregando combinações...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -1196,22 +1098,14 @@
         <span onclick="fecharModalLocacao()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
       </div>
       <input type="hidden" id="locModalId" value="">
-      
-      <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 14px; font-size: 12px; line-height: 1.5; color: #334155;" id="locModalDetalhes">
-        <!-- Preenchido via JS -->
-      </div>
-
+      <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 14px; font-size: 12px; color: #334155;" id="locModalDetalhes"></div>
       <div class="form-group" style="margin-bottom: 16px;">
         <label>Nova Quantidade Física Entregue:</label>
         <input type="number" id="locModalQtdFisica" min="0" style="font-size: 16px; font-weight: bold; padding: 10px;" required>
-        <span style="font-size: 11px; color: #64748b; margin-top: 4px;">* O saldo será recalculado automaticamente pela planilha.</span>
       </div>
-
       <div style="display: flex; gap: 8px; justify-content: flex-end;">
         <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalLocacao()">Cancelar</button>
-        <button type="button" id="btnSalvarLocModal" class="btn-submit" onclick="confirmarAjusteLocacao()">
-          <i class="fa-solid fa-floppy-disk"></i> Atualizar Saldo
-        </button>
+        <button type="button" id="btnSalvarLocModal" class="btn-submit" onclick="confirmarAjusteLocacao()"><i class="fa-solid fa-floppy-disk"></i> Atualizar Saldo</button>
       </div>
     </div>
   </div>
@@ -1223,7 +1117,6 @@
         <span>ORDEM DE SERVIÇO: <span id="mOSNum" style="color:#2563eb;">-</span></span>
         <span onclick="fecharModalOS()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
       </div>
-
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
         <div><b>Data Abertura:</b> <span id="mOSData">-</span></div>
         <div><b>Status:</b> <span id="mOSStatus" class="badge-status badge-atendido">-</span></div>
@@ -1232,7 +1125,6 @@
         <div><b>Equipamento:</b> <span id="mOSEquip">-</span></div>
         <div><b>Técnico:</b> <span id="mOSTecnico">-</span></div>
       </div>
-
       <div class="form-group" style="margin-bottom: 10px;">
         <label>Tipo de Manutenção:</label>
         <select id="mOSTipoManutencao">
@@ -1243,42 +1135,50 @@
           <option value="OFICINA">OFICINA</option>
         </select>
       </div>
-
-      <div class="form-group" style="margin-bottom: 10px;">
-        <label>Diagnóstico Técnico:</label>
-        <textarea id="mOSDiagnostico" style="height: 60px;"></textarea>
-      </div>
-
-      <div class="form-group" style="margin-bottom: 12px;">
-        <label>Serviço Realizado:</label>
-        <textarea id="mOSServico" style="height: 60px;"></textarea>
-      </div>
-
+      <div class="form-group" style="margin-bottom: 10px;"><label>Diagnóstico Técnico:</label><textarea id="mOSDiagnostico" style="height: 60px;"></textarea></div>
+      <div class="form-group" style="margin-bottom: 12px;"><label>Serviço Realizado:</label><textarea id="mOSServico" style="height: 60px;"></textarea></div>
       <div style="margin-bottom: 16px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
         <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-          <span style="font-size: 11px; font-weight: 700; color: #444; text-transform: uppercase;">Anexos & Fotos da Manutenção:</span>
+          <span>Anexos & Fotos:</span>
           <input type="file" id="inputFotoOS" accept="image/*" style="display:none;" onchange="uploadFotoOS(event)">
-          <button type="button" class="btn-atender" style="padding: 4px 8px; font-size: 10px;" onclick="document.getElementById('inputFotoOS').click()">
-            <i class="fa-solid fa-paperclip"></i> Anexar Imagem
-          </button>
+          <button type="button" class="btn-atender" style="padding: 4px 8px; font-size: 10px;" onclick="document.getElementById('inputFotoOS').click()"><i class="fa-solid fa-paperclip"></i> Anexar Imagem</button>
         </label>
-        
-        <div id="mOSGaleria" class="galeria-grid">
-          <span style="color:#aaa; font-size:11px;">Nenhuma foto anexada.</span>
-        </div>
+        <div id="mOSGaleria" class="galeria-grid"><span style="color:#aaa; font-size:11px;">Nenhuma foto anexada.</span></div>
       </div>
-
       <div style="display: flex; gap: 8px; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 12px;">
-        <button type="button" id="btnAcaoOSModal" class="btn-negar" style="background:#d97706;" onclick="alternarAcaoOS()">
-          <i class="fa-solid fa-lock-open"></i> Reabrir O.S.
-        </button>
-        
+        <button type="button" id="btnAcaoOSModal" class="btn-negar" style="background:#d97706;" onclick="alternarAcaoOS()"><i class="fa-solid fa-lock-open"></i> Reabrir O.S.</button>
         <div style="display: flex; gap: 8px;">
-          <a id="btnPdfOSModal" href="#" target="_blank" class="btn-pdf">
-            <i class="fa-solid fa-print"></i> Imprimir PDF
-          </a>
+          <a id="btnPdfOSModal" href="#" target="_blank" class="btn-pdf"><i class="fa-solid fa-print"></i> Imprimir PDF</a>
           <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalOS()">Fechar</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE VINCULAÇÃO DE TERMO EXISTENTE -->
+  <div id="modalVincularTermo" class="modal-overlay">
+    <div class="modal-box" style="width: 460px;">
+      <div class="modal-title">
+        <span>Vincular Termo Existente a <span id="lblProtReqVinculo" style="color:#1a4d80;">-</span></span>
+        <span onclick="fecharModalVincularTermo()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+
+      <div style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px; font-size: 12px; color: #334155;">
+        <b>Cliente:</b> <span id="lblClienteReqVinculo">-</span><br>
+        <span style="font-size:11px; color:#64748b;">Utilize este recurso para dar baixa em requisições cujo termo de entrega já foi emitido previamente.</span>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label>Selecione ou Digite o Protocolo do Termo (Ex: PT0005):</label>
+        <input type="text" id="inputProtocoloTermoVinculo" list="listTermosExistentes" placeholder="Digite ou escolha o Termo (Ex: PT0005)..." style="font-size:14px; font-weight:bold; padding:10px;">
+        <datalist id="listTermosExistentes"></datalist>
+      </div>
+
+      <div style="display: flex; gap: 8px; justify-content: flex-end;">
+        <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalVincularTermo()">Cancelar</button>
+        <button type="button" id="btnConfirmarVinculo" class="btn-submit" onclick="confirmarVinculoTermo()">
+          <i class="fa-solid fa-link"></i> Confirmar Vinculação
+        </button>
       </div>
     </div>
   </div>
@@ -1289,7 +1189,7 @@
       <div class="modal-title">Recusar Requisição <span id="modalProtReq"></span></div>
       <div class="form-group" style="margin-bottom: 12px;">
         <label>Motivo da Recusa / Indisponibilidade:</label>
-        <textarea id="motivoRecusaTexto" style="height: 80px;" placeholder="Ex: Equipamento sem estoque no momento ou em manutenção..."></textarea>
+        <textarea id="motivoRecusaTexto" style="height: 80px;" placeholder="Ex: Equipamento sem estoque no momento..."></textarea>
       </div>
       <div style="display: flex; gap: 8px; justify-content: flex-end;">
         <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalRecusa()">Cancelar</button>
@@ -1298,62 +1198,30 @@
     </div>
   </div>
 
-  <!-- MODAL DO MANUAL DE OPERAÇÃO -->
-  <div class="modal-manual-overlay" id="modalManualUso" oncontextmenu="return false;">
+  <!-- MANUAL DE OPERAÇÃO -->
+  <div class="modal-manual-overlay" id="modalManualUso">
     <div class="modal-manual-card">
       <div class="modal-manual-header">
         <h3><i class="fa-solid fa-book-open"></i> Manual de Operação — DMA SYS v2.0</h3>
         <button type="button" class="btn-fechar-manual" onclick="fecharModalManual()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      
       <div class="modal-manual-body">
-        <div class="manual-secao">
-          <h4><i class="fa-solid fa-boxes-packing"></i> 1. Controle de Locação</h4>
-          <p>Módulo para gestão de saldo de equipamentos locados por cliente, unidade e família de equipamentos.</p>
-          <ul>
-            <li>Permite consultar a quantidade contratada vs. física em campo sem rastreio individual de série.</li>
-            <li>Ajuste rápido de saldo físico entregue e atualização em tempo real na aba <b>LOCACAO</b>.</li>
-          </ul>
-        </div>
-
-        <div class="manual-secao">
-          <h4><i class="fa-solid fa-cart-shopping"></i> 2. Módulo de Compras</h4>
-          <p>Crie e gerencie orçamentos e cotações de peças e insumos com comparativo de 3 fornecedores e aprovação direta.</p>
-        </div>
-
-        <div class="manual-secao">
-          <h4><i class="fa-solid fa-user-check"></i> 3. Acesso e Autenticação</h4>
-          <p>O acesso é restrito aos colaboradores e técnicos autorizados.</p>
-          <ul>
-            <li>Digite seu <b>usuário</b> e <b>senha</b> cadastrados no banco de dados corporativo.</li>
-          </ul>
-        </div>
-
-        <div class="alerta-seguranca">
-          <i class="fa-solid fa-shield-halved"></i> <b>Aviso de Segurança:</b> Este manual é de consulta interna e exclusiva do sistema DMA SYS v2.0.
-        </div>
+        <p>Sistema corporativo DMA SYS v2.0 para controle de locação, emissão de cotações de compras e acompanhamento de Ordens de Serviço.</p>
       </div>
     </div>
   </div>
 
-  <!-- WIDGET DE CHAT (WHATSAPP) -->
-  <button type="button" class="chat-widget-btn" onclick="toggleChat()" title="Suporte / Dúvidas">
-    <i class="fa-brands fa-whatsapp"></i>
-  </button>
-  
+  <!-- WIDGET WHATSAPP -->
+  <button type="button" class="chat-widget-btn" onclick="toggleChat()"><i class="fa-brands fa-whatsapp"></i></button>
   <div id="chatBox" class="chat-box">
-    <div class="chat-header">
-      <span><i class="fa-brands fa-whatsapp"></i> Suporte Técnico DMA Sys</span>
-      <span onclick="toggleChat()" style="cursor:pointer;"><i class="fa-solid fa-xmark"></i></span>
-    </div>
+    <div class="chat-header"><span>Suporte Técnico DMA Sys</span><span onclick="toggleChat()" style="cursor:pointer;"><i class="fa-solid fa-xmark"></i></span></div>
     <div class="chat-body">
-      Precisa de ajuda ou encontrou algum problema no sistema? Digite sua mensagem abaixo:
-      <textarea id="msgChat" placeholder="Ex: Tive dúvidas ao cadastrar o equipamento LMD..."></textarea>
-      <button type="button" onclick="enviarWhatsApp()">Iniciar Conversa no WhatsApp</button>
+      Digite sua dúvida abaixo:
+      <textarea id="msgChat" placeholder="Ex: Dúvida sobre salvar saldo de locação..."></textarea>
+      <button type="button" onclick="enviarWhatsApp()">Enviar WhatsApp</button>
     </div>
   </div>
 
-  <!-- RODAPÉ CORPORATIVO -->
   <footer class="system-footer">
     <div><b>DMA SYS</b> v2.0 | Sistema de Gestão Operacional & Locação</div>
     <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
@@ -1367,11 +1235,12 @@
     let equipamentoSelecionado = null;
     let osEquipamentoSelecionado = null;
     let protocoloReqEmRecusa = null;
+    let protocoloReqEmVinculo = null;
     let osSelecionadaModal = null;
     let usuarioLogado = null;
     let estaBuscandoDados = false;
 
-    // Função utilitária de Debounce para impedir lag na digitação
+    // Debounce de alta performance para nao travar navegacao ao digitar
     function criarDebounce(func, wait = 200) {
       let timeout;
       return function(...args) {
@@ -1385,58 +1254,32 @@
     const filtrarTabelaTermosDebounced = criarDebounce(() => filtrarTabelaTermos(), 200);
     const renderizarTabelaOSDebounced = criarDebounce(() => renderizarTabelaOS(), 200);
 
-    /* CONTROLE DO MENU ENGRENAGEM E MANUAL DE APOIO */
-    function alternarMenuAjuda(e) {
-      e.stopPropagation();
-      const menu = document.getElementById("menuAjudaDropdown");
-      if (menu) menu.classList.toggle("ativo");
-    }
-
-    function abrirModalManual() {
-      const modal = document.getElementById("modalManualUso");
-      const menu = document.getElementById("menuAjudaDropdown");
-      if (modal) modal.classList.add("ativo");
-      if (menu) menu.classList.remove("ativo");
-    }
-
-    function fecharModalManual() {
-      const modal = document.getElementById("modalManualUso");
-      if (modal) modal.classList.remove("ativo");
-    }
+    function alternarMenuAjuda(e) { e.stopPropagation(); document.getElementById("menuAjudaDropdown")?.classList.toggle("ativo"); }
+    function abrirModalManual() { document.getElementById("modalManualUso")?.classList.add("ativo"); document.getElementById("menuAjudaDropdown")?.classList.remove("ativo"); }
+    function fecharModalManual() { document.getElementById("modalManualUso")?.classList.remove("ativo"); }
 
     function converterUrlDriveParaImagem(url) {
       if (!url) return "";
       const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
-      if (match && match[1]) {
-        return `https://lh3.googleusercontent.com/d/${match[1]}`;
-      }
-      return url;
+      return match && match[1] ? `https://lh3.googleusercontent.com/d/${match[1]}` : url;
     }
 
     function toggleMenuDropdown(event, dropId) {
       event.stopPropagation();
       const el = document.getElementById(dropId);
       const estaAberto = el.classList.contains('open');
-      
       fecharTodosDropdowns();
-      if (!estaAberto) {
-        el.classList.add('open');
-      }
+      if (!estaAberto) el.classList.add('open');
     }
 
     function fecharTodosDropdowns() {
       document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
-      const notif = document.getElementById('notifDropdown');
-      if (notif) notif.classList.remove('active');
-      const users = document.getElementById('usersDropdown');
-      if (users) users.classList.remove('active');
-      const ajuda = document.getElementById('menuAjudaDropdown');
-      if (ajuda) ajuda.classList.remove('ativo');
+      document.getElementById('notifDropdown')?.classList.remove('active');
+      document.getElementById('usersDropdown')?.classList.remove('active');
+      document.getElementById('menuAjudaDropdown')?.classList.remove('ativo');
     }
 
-    document.addEventListener('click', function() {
-      fecharTodosDropdowns();
-    });
+    document.addEventListener('click', fecharTodosDropdowns);
 
     function toggleUsersDropdown() {
       const dropdown = document.getElementById('usersDropdown');
@@ -1447,21 +1290,11 @@
 
     function enviarHeartbeat() {
       if (!usuarioLogado || !usuarioLogado.usuario) return;
-
-      const payload = {
-        acao: "PING_PRESENCA",
-        usuario: usuarioLogado.usuario
-      };
-
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      }).catch(err => console.log("Heartbeat em espera..."));
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "PING_PRESENCA", usuario: usuarioLogado.usuario }) }).catch(e => {});
     }
 
     function renderizarUsuariosOnline() {
       if (!bancoDados || !bancoDados.usuarios) return;
-
       const listContainer = document.getElementById('usersOnlineList');
       const countText = document.getElementById('onlineCountText');
       if (!listContainer || !countText) return;
@@ -1474,52 +1307,31 @@
         return;
       }
 
-      const rows = bancoDados.usuarios.map(u => {
-        const statusDot = u.online ? '<i class="fa-solid fa-circle" style="color:#22c55e;"></i>' : '<i class="fa-regular fa-circle" style="color:#64748b;"></i>';
-        const statusCor = u.online ? "#155724" : "#64748b";
-        
-        return `
-          <div class="notif-item" style="cursor: default;">
-            <div class="notif-item-title">
-              <span>${statusDot} ${u.nome}</span>
-            </div>
-            <div class="notif-item-sub" style="color: ${statusCor};">
-              ${u.online ? "Conectado agora" : "Último acesso: " + (u.ultimoAcesso || "-")}
-            </div>
+      const rows = bancoDados.usuarios.map(u => `
+        <div class="notif-item" style="cursor: default;">
+          <div class="notif-item-title">
+            <span>${u.online ? '<i class="fa-solid fa-circle" style="color:#22c55e;"></i>' : '<i class="fa-regular fa-circle" style="color:#64748b;"></i>'} ${u.nome}</span>
           </div>
-        `;
-      });
+          <div class="notif-item-sub" style="color: ${u.online ? "#155724" : "#64748b"};">
+            ${u.online ? "Conectado agora" : "Último acesso: " + (u.ultimoAcesso || "-")}
+          </div>
+        </div>
+      `);
       listContainer.innerHTML = rows.join('');
     }
 
     function preencherSelectTecnicos() {
       const selTec = document.getElementById('selectTecnico');
       if (!selTec) return;
-
       const valAnterior = selTec.value;
-      
       let htmlOptions = '<option value="">Selecione o técnico...</option>';
-      if (bancoDados && bancoDados.usuarios && bancoDados.usuarios.length > 0) {
+      if (bancoDados && bancoDados.usuarios) {
         bancoDados.usuarios.forEach((u, idx) => {
-          if (u.nome) {
-            htmlOptions += `<option value="${idx}">${u.nome}</option>`;
-          }
+          if (u.nome) htmlOptions += `<option value="${idx}">${u.nome}</option>`;
         });
       }
       selTec.innerHTML = htmlOptions;
-
-      if (valAnterior !== "") {
-        selTec.value = valAnterior;
-      } else if (usuarioLogado && bancoDados.usuarios) {
-        const idxLogado = bancoDados.usuarios.findIndex(u => 
-          (u.usuario && u.usuario.toLowerCase() === usuarioLogado.usuario.toLowerCase()) || 
-          (u.nome && u.nome.toLowerCase() === usuarioLogado.nome.toLowerCase())
-        );
-        if (idxLogado !== -1) {
-          selTec.value = idxLogado;
-          exibirAssinaturaTecnico();
-        }
-      }
+      if (valAnterior !== "") selTec.value = valAnterior;
     }
 
     function verificarSessao() {
@@ -1528,13 +1340,7 @@
         usuarioLogado = JSON.parse(sessaoSalva);
         document.getElementById('loginOverlay').style.display = "none";
         document.getElementById('appContainer').style.display = "block";
-
         preencherSelectTecnicos();
-        
-        const inputTecOS = document.getElementById('osTecnico');
-        if (inputTecOS && usuarioLogado.nome && !inputTecOS.value) {
-          inputTecOS.value = usuarioLogado.nome;
-        }
       } else {
         document.getElementById('loginOverlay').style.display = "flex";
         document.getElementById('appContainer').style.display = "none";
@@ -1573,7 +1379,7 @@
         }
       })
       .catch(err => {
-        divErro.innerText = "Falha de conexão com o banco de dados. Tente novamente.";
+        divErro.innerText = "Falha de conexão com o servidor. Tente novamente.";
         divErro.style.display = "block";
         btn.disabled = false;
         btn.innerText = "ENTRAR NO SISTEMA";
@@ -1587,7 +1393,6 @@
       document.getElementById('appContainer').style.display = "block";
       document.getElementById('btnEntrarLogin').disabled = false;
       document.getElementById('btnEntrarLogin').innerText = "ENTRAR NO SISTEMA";
-      
       preencherSelectTecnicos();
       enviarHeartbeat();
       buscarAtualizacoesSilenciosas();
@@ -1602,13 +1407,11 @@
       estaBuscandoDados = false;
       if (data && !data.erro) {
         bancoDados = data;
-        
         const badge = document.getElementById('statusBadge');
         if (badge) {
           badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Conectado';
           badge.classList.add('connected');
         }
-
         popularAutocomplete();
         preencherSelectTecnicos();
         renderizarTabelaTermos(bancoDados.termosEmitidos);
@@ -1620,169 +1423,33 @@
         atualizarNotificacoes();
         renderizarUsuariosOnline();
         renderizarListasAuxiliares();
-      } else {
-        const badge = document.getElementById('statusBadge');
-        if (badge) badge.innerText = "Erro nos Dados";
       }
     }
 
     function buscarAtualizacoesSilenciosas() {
       if (estaBuscandoDados) return;
       estaBuscandoDados = true;
-
       const script = document.createElement('script');
       script.src = API_URL + "?callback=carregarDadosPlanilha&t=" + new Date().getTime();
-      script.onload = function() { script.remove(); };
-      script.onerror = function() { script.remove(); estaBuscandoDados = false; };
+      script.onload = () => script.remove();
+      script.onerror = () => { script.remove(); estaBuscandoDados = false; };
       document.body.appendChild(script);
     }
 
     window.onload = function() {
       verificarSessao();
-
       const hoje = new Date();
       const mesFormatado = hoje.getFullYear() + "-" + String(hoje.getMonth() + 1).padStart(2, '0');
       if (document.getElementById('filtroMesReq')) document.getElementById('filtroMesReq').value = mesFormatado;
       if (document.getElementById('dashFiltroMes')) document.getElementById('dashFiltroMes').value = mesFormatado;
-
       buscarAtualizacoesSilenciosas();
-
       setInterval(buscarAtualizacoesSilenciosas, 30000);
       setInterval(enviarHeartbeat, 60000);
     };
 
-    function toggleNotifications() {
-      const dropdown = document.getElementById('notifDropdown');
-      const atv = dropdown.classList.contains('active');
-      fecharTodosDropdowns();
-      if (!atv) dropdown.classList.add('active');
-    }
-
-    function atualizarNotificacoes() {
-      if (!bancoDados || !bancoDados.requisicoes) return;
-
-      const pendentes = bancoDados.requisicoes.filter(r => r.status.toUpperCase() === "PENDENTE");
-      const badge = document.getElementById('notifBadge');
-      const textCount = document.getElementById('notifCountText');
-      const listContainer = document.getElementById('notifList');
-
-      if (!badge || !textCount || !listContainer) return;
-
-      if (pendentes.length > 0) {
-        badge.innerText = pendentes.length;
-        badge.classList.add('active');
-        textCount.innerText = `${pendentes.length} pendente(s)`;
-
-        const rows = pendentes.map(p => `
-          <div class="notif-item" onclick="irParaRequisicaoPendente()">
-            <div class="notif-item-title">
-              <span>${p.protocolo}</span>
-              <span style="color:#e0a800;"><i class="fa-solid fa-clock"></i> Pendente</span>
-            </div>
-            <div class="notif-item-sub"><b>${p.cliente}</b></div>
-            <div class="notif-item-sub">${p.equipamentoSolicitado}</div>
-          </div>
-        `);
-        listContainer.innerHTML = rows.join('');
-      } else {
-        badge.innerText = "0";
-        badge.classList.remove('active');
-        textCount.innerText = "0 pendentes";
-        listContainer.innerHTML = '<div style="padding: 16px; text-align: center; color: #888; font-size: 12px;">Nenhuma pendência no momento.</div>';
-      }
-    }
-
-    function irParaRequisicaoPendente() {
-      fecharTodosDropdowns();
-      document.getElementById('filtroStatusReq').value = "PENDENTE";
-      mudarAba('requisicoes');
-      filtrarRequisicoes();
-    }
-
-    function toggleChat() {
-      document.getElementById('chatBox').classList.toggle('active');
-    }
-
-    function enviarWhatsApp() {
-      const msg = document.getElementById('msgChat').value.trim();
-      const textoFinal = encodeURIComponent("Olá Suporte DMA Sys! " + (msg ? msg : "Preciso de auxílio no sistema."));
-      window.open(`https://wa.me/${NUMERO_WHATSAPP_SUPORTE}?text=${textoFinal}`, '_blank');
-      toggleChat();
-    }
-
-    function mudarAba(nomeAba) {
-      fecharTodosDropdowns();
-      document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-      if (nomeAba === 'inicio') {
-        document.getElementById('btnNavInicio').classList.add('active');
-        document.getElementById('abaInicio').classList.add('active');
-      } else if (nomeAba === 'locacao') {
-        document.getElementById('btnNavLocacao').classList.add('active');
-        document.getElementById('abaLocacao').classList.add('active');
-        renderizarTabelaLocacao();
-      } else if (nomeAba === 'compras') {
-        document.getElementById('btnNavCompras').classList.add('active');
-        document.getElementById('abaCompras').classList.add('active');
-        renderizarTabelaCompras();
-      } else if (nomeAba === 'dashboard') {
-        document.getElementById('btnNavDashboard').classList.add('active');
-        document.getElementById('abaDashboard').classList.add('active');
-        atualizarDashboard();
-      } else if (nomeAba === 'requisicoes') {
-        document.getElementById('btnNavQualidade').classList.add('active');
-        document.getElementById('abaRequisicoes').classList.add('active');
-      } else if (nomeAba === 'emissao') {
-        document.getElementById('btnNavQualidade').classList.add('active');
-        document.getElementById('abaEmissao').classList.add('active');
-      } else if (nomeAba === 'consulta') {
-        document.getElementById('btnNavQualidade').classList.add('active');
-        document.getElementById('abaConsulta').classList.add('active');
-      } else if (nomeAba === 'os_gestao') {
-        document.getElementById('btnNavManutencao').classList.add('active');
-        document.getElementById('abaOsGestao').classList.add('active');
-        renderizarTabelaOS();
-      } else if (nomeAba === 'os_abertura') {
-        document.getElementById('btnNavManutencao').classList.add('active');
-        document.getElementById('abaOsAbertura').classList.add('active');
-      } else if (nomeAba === 'cad_equipamento') {
-        document.getElementById('btnNavCadastros').classList.add('active');
-        document.getElementById('abaCadEquipamento').classList.add('active');
-      } else if (nomeAba === 'cad_auxiliares') {
-        document.getElementById('btnNavCadastros').classList.add('active');
-        document.getElementById('abaCadAuxiliares').classList.add('active');
-      }
-    }
-
-    function popularAutocomplete() {
-      const listC = document.getElementById('listClientes');
-      if (listC && bancoDados.clientes) {
-        listC.innerHTML = bancoDados.clientes.map(c => `<option value="${c}">`).join('');
-      }
-
-      const listE = document.getElementById('listEquipamentos');
-      if (listE && bancoDados.equipamentos) {
-        listE.innerHTML = bancoDados.equipamentos.map(eq => `<option value="TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}">`).join('');
-      }
-
-      if (bancoDados.locacoes) {
-        const familias = Array.from(new Set(bancoDados.locacoes.map(l => l.equipamento))).filter(String).sort();
-        const dlFam = document.getElementById('listFamiliasLocacao');
-        if (dlFam) dlFam.innerHTML = familias.map(f => `<option value="${f}">`).join('');
-
-        const unidades = Array.from(new Set(bancoDados.locacoes.map(l => l.unidade))).filter(String).sort();
-        const dlUni = document.getElementById('listUnidadesLocacao');
-        if (dlUni) dlUni.innerHTML = unidades.map(u => `<option value="${u}">`).join('');
-      }
-
-      preencherSelectTecnicos();
-    }
-
     function renderizarTabelaLocacao() {
       const tbody = document.getElementById('corpoTabelaLocacao');
       if (!tbody) return;
-
       const locacoes = bancoDados.locacoes || [];
       if (locacoes.length === 0) {
         tbody.innerHTML = '<tr><td colspan="11" class="td-center" style="color:#888; padding:20px;">Nenhum registro de locação encontrado.</td></tr>';
@@ -1814,7 +1481,7 @@
       atualizarMetricasLocacao(filtrados);
 
       if (filtrados.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="11" class="td-center" style="color:#888; padding:20px;">Nenhum registro encontrado com os filtros aplicados.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="11" class="td-center" style="color:#888; padding:20px;">Nenhum registro encontrado.</td></tr>';
         return;
       }
 
@@ -1845,59 +1512,34 @@
       tbody.innerHTML = rows.join('');
     }
 
-    function filtrarTabelaLocacao() {
-      renderizarTabelaLocacao();
-    }
+    function filtrarTabelaLocacao() { renderizarTabelaLocacao(); }
 
     function atualizarMetricasLocacao(lista) {
-      let totalReg = lista.length;
-      let totalCont = 0;
-      let totalFis = 0;
-
-      lista.forEach(l => {
-        totalCont += Number(l.qtdContratada) || 0;
-        totalFis += Number(l.qtdFisica) || 0;
-      });
-
-      let totalSaldo = totalCont - totalFis;
-
+      let totalReg = lista.length, totalCont = 0, totalFis = 0;
+      lista.forEach(l => { totalCont += Number(l.qtdContratada) || 0; totalFis += Number(l.qtdFisica) || 0; });
       document.getElementById('locTotalRegistros').innerText = totalReg;
       document.getElementById('locTotalContratada').innerText = totalCont;
       document.getElementById('locTotalFisica').innerText = totalFis;
-      
-      const elSaldo = document.getElementById('locTotalSaldo');
-      if (elSaldo) {
-        elSaldo.innerText = totalSaldo;
-      }
+      document.getElementById('locTotalSaldo').innerText = totalCont - totalFis;
     }
 
     function abrirModalLocacao(id) {
       const loc = (bancoDados.locacoes || []).find(l => l.id.toString() === id.toString());
       if (!loc) return;
-
       document.getElementById('locModalId').value = loc.id;
       document.getElementById('locModalDetalhes').innerHTML = `
-        <b>Cliente:</b> ${loc.cliente}<br>
-        <b>Contrato:</b> ${loc.contrato || "N/A"} | <b>Unidade:</b> ${loc.unidade || "N/A"}<br>
-        <b>Equipamento:</b> ${loc.equipamento}<br>
-        <b>Qtd Contratada:</b> ${loc.qtdContratada}
+        <b>Cliente:</b> ${loc.cliente}<br><b>Contrato:</b> ${loc.contrato || "N/A"} | <b>Unidade:</b> ${loc.unidade || "N/A"}<br><b>Equipamento:</b> ${loc.equipamento}<br><b>Qtd Contratada:</b> ${loc.qtdContratada}
       `;
       document.getElementById('locModalQtdFisica').value = loc.qtdFisica;
       document.getElementById('modalLocacao').classList.add('active');
     }
 
-    function fecharModalLocacao() {
-      document.getElementById('modalLocacao').classList.remove('active');
-    }
+    function fecharModalLocacao() { document.getElementById('modalLocacao').classList.remove('active'); }
 
     function confirmarAjusteLocacao() {
       const id = document.getElementById('locModalId').value;
       const novaQtd = document.getElementById('locModalQtdFisica').value;
-
-      if (novaQtd === "" || isNaN(novaQtd) || Number(novaQtd) < 0) {
-        alert("Informe uma quantidade física válida.");
-        return;
-      }
+      if (novaQtd === "" || isNaN(novaQtd) || Number(novaQtd) < 0) { alert("Informe uma quantidade válida."); return; }
 
       const btn = document.getElementById('btnSalvarLocModal');
       btn.disabled = true;
@@ -1905,38 +1547,27 @@
 
       fetch(API_URL, {
         method: 'POST',
-        body: JSON.stringify({
-          acao: "ATUALIZAR_QTD_FISICA_LOCACAO",
-          id: id,
-          qtdFisica: Number(novaQtd)
-        })
+        body: JSON.stringify({ acao: "ATUALIZAR_QTD_FISICA_LOCACAO", id: id, qtdFisica: Number(novaQtd) })
       })
       .then(res => res.json())
       .then(res => {
         if (res.status === "sucesso") {
-          alert("Saldo de locação atualizado com sucesso!");
           fecharModalLocacao();
           buscarAtualizacoesSilenciosas();
         } else {
-          alert("Erro ao atualizar locação: " + (res.mensagem || ""));
+          alert("Erro ao atualizar locação.");
         }
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Atualizar Saldo';
       })
-      .catch(err => {
-        alert("Erro na comunicação com o servidor.");
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Atualizar Saldo';
-      });
+      .catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Atualizar Saldo'; });
     }
 
     function calcularMenorPrecoCotacao() {
       const f1 = document.getElementById('compForn1').value || "Fornecedor 1";
       const v1 = parseFloat(document.getElementById('compVal1').value) || 0;
-
       const f2 = document.getElementById('compForn2').value || "Fornecedor 2";
       const v2 = parseFloat(document.getElementById('compVal2').value) || 0;
-
       const f3 = document.getElementById('compForn3').value || "Fornecedor 3";
       const v3 = parseFloat(document.getElementById('compVal3').value) || 0;
 
@@ -1957,7 +1588,6 @@
 
       lista.sort((a, b) => a.val - b.val);
       const menor = lista[0];
-
       document.getElementById(menor.box).style.borderColor = "#22c55e";
       document.getElementById('lblFornVencedor').innerText = menor.forn;
       document.getElementById('lblMenorValor').innerText = "R$ " + menor.val.toFixed(2).replace('.', ',');
@@ -1975,22 +1605,16 @@
         solicitante: document.getElementById('compSolicitante').value,
         produto: document.getElementById('compProduto').value,
         observacao: document.getElementById('compObservacao').value,
-        forn1: document.getElementById('compForn1').value,
-        val1: document.getElementById('compVal1').value,
-        forn2: document.getElementById('compForn2').value,
-        val2: document.getElementById('compVal2').value,
-        forn3: document.getElementById('compForn3').value,
-        val3: document.getElementById('compVal3').value,
+        forn1: document.getElementById('compForn1').value, val1: document.getElementById('compVal1').value,
+        forn2: document.getElementById('compForn2').value, val2: document.getElementById('compVal2').value,
+        forn3: document.getElementById('compForn3').value, val3: document.getElementById('compVal3').value,
         prazoEntrega: document.getElementById('compPrazo').value,
         condPagamento: document.getElementById('compCondPagto').value,
         frete: document.getElementById('compFrete').value,
         status: "AGUARDANDO APROVAÇÃO"
       };
 
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
       .then(res => res.json())
       .then(res => {
         if (res.status === "sucesso") {
@@ -2001,614 +1625,131 @@
           btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF';
           buscarAtualizacoesSilenciosas();
         } else {
-          alert("Erro ao salvar solicitação de compra.");
+          alert("Erro ao salvar cotação.");
           btn.disabled = false;
           btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF';
         }
       })
-      .catch(err => {
-        alert("Erro de comunicação com o servidor.");
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF';
-      });
+      .catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF'; });
     }
 
     function renderizarTabelaCompras() {
       const tbody = document.getElementById('corpoTabelaCompras');
       if (!tbody) return;
-
       const lista = bancoDados.compras || [];
-
       if (lista.length === 0) {
         tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color:#888; padding:20px;">Nenhuma cotação de compra registrada.</td></tr>';
         return;
       }
 
-      const rowsHtml = lista.map(c => {
-        let badgeClass = "badge-pendente";
-        if (c.status === "APROVADO") badgeClass = "badge-atendido";
-        if (c.status === "RECUSADO") badgeClass = "badge-recusado";
-
-        return `
-          <tr>
-            <td class="td-center"><b>${c.protocolo}</b></td>
-            <td>${c.dataHora}</td>
-            <td><b>${c.osExterna || "-"}</b></td>
-            <td>${c.solicitante}</td>
-            <td>${c.produto}</td>
-            <td><b>${c.fornVencedor}</b></td>
-            <td class="td-center" style="font-weight:bold; color:#1a4d80;">R$ ${Number(c.menorValor).toFixed(2).replace('.', ',')}</td>
-            <td class="td-center"><span class="badge-status ${badgeClass}">${c.status}</span></td>
-            <td class="td-center">
-              ${c.pdfUrlCompra ? `<a href="${c.pdfUrlCompra}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> Mapa PDF</a>` : '-'}
-              ${c.status !== 'APROVADO' ? `<button type="button" class="btn-atender" style="padding:4px 8px; font-size:10px; margin-left:4px;" onclick="aprovarCompra('${c.protocolo}')"><i class="fa-solid fa-check"></i> Aprovar</button>` : ''}
-            </td>
-          </tr>
-        `;
-      }).join('');
-
-      tbody.innerHTML = rowsHtml;
-    }
-
-    function aprovarCompra(protocolo) {
-      const aprovadorNome = (usuarioLogado && usuarioLogado.nome) ? usuarioLogado.nome : "DIRETORIA";
-      if (!confirm(`Confirmar a aprovação da Cotação/Compra ${protocolo}?`)) return;
-
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ acao: "APROVAR_COMPRA", protocolo: protocolo, aprovador: aprovadorNome })
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "sucesso") {
-          alert(`Compra ${protocolo} APROVADA com sucesso!`);
-          buscarAtualizacoesSilenciosas();
-        } else {
-          alert("Erro ao aprovar compra.");
-        }
-      })
-      .catch(err => alert("Erro na comunicação com o servidor."));
-    }
-
-    function renderizarTabelaOS() {
-      const tbody = document.getElementById('corpoOS');
-      if (!tbody) return;
-
-      const listaOS = bancoDados.ordensServico || [];
-
-      if (listaOS.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color: #888; padding: 20px;">Nenhuma Ordem de Serviço registrada.</td></tr>';
-        return;
-      }
-
-      const statusFiltro = document.getElementById('filtroStatusOS').value;
-      const textoFiltro = document.getElementById('filtroTextoOS').value.toLowerCase().trim();
-
-      let filtradas = listaOS.filter(os => {
-        if (statusFiltro !== "TODOS" && os.status.toUpperCase() !== statusFiltro) return false;
-
-        if (textoFiltro) {
-          const matchProt = os.protocoloOS.toLowerCase().includes(textoFiltro);
-          const matchCli = os.cliente.toLowerCase().includes(textoFiltro);
-          const matchTag = os.tag.toLowerCase().includes(textoFiltro);
-          const matchEq = os.equipamento.toLowerCase().includes(textoFiltro);
-          if (!matchProt && !matchCli && !matchTag && !matchEq) return false;
-        }
-
-        return true;
-      });
-
-      if (filtradas.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color: #888; padding: 20px;">Nenhuma O.S. encontrada para os filtros.</td></tr>';
-        return;
-      }
-
-      const rowsHtml = filtradas.map(os => {
-        let prioClass = "prio-media";
-        const pr = os.prioridade.toUpperCase();
-        if (pr === "CRÍTICA") prioClass = "prio-critica";
-        if (pr === "ALTA") prioClass = "prio-alta";
-        if (pr === "BAIXA") prioClass = "prio-baixa";
-
-        return `
-          <tr class="${prioClass}" style="cursor:pointer;" onclick="abrirModalOS('${os.protocoloOS}')">
-            <td class="td-center"><b>${os.protocoloOS}</b></td>
-            <td>${os.dataAbertura}</td>
-            <td>${os.cliente}</td>
-            <td class="td-center"><b>${os.tag}</b></td>
-            <td>${os.equipamento}</td>
-            <td class="td-center">${os.tipoManutencao}</td>
-            <td class="td-center"><b>${os.prioridade}</b></td>
-            <td class="td-center"><span class="badge-status ${os.status === 'CONCLUÍDA' ? 'badge-atendido' : 'badge-pendente'}">${os.status}</span></td>
-            <td class="td-center" onclick="event.stopPropagation();">
-              <button type="button" class="btn-atender" style="padding:4px 8px; font-size:10px;" onclick="abrirModalOS('${os.protocoloOS}')"><i class="fa-solid fa-eye"></i> Ver</button>
-              ${os.pdfUrlOS ? `<a href="${os.pdfUrlOS}" target="_blank" class="btn-pdf" style="padding:4px 8px; font-size:10px;"><i class="fa-solid fa-file-pdf"></i> PDF</a>` : ''}
-            </td>
-          </tr>
-        `;
-      }).join('');
-
-      tbody.innerHTML = rowsHtml;
-    }
-
-    function abrirModalOS(protocoloOS) {
-      if (!bancoDados || !bancoDados.ordensServico) return;
-
-      const os = bancoDados.ordensServico.find(o => o.protocoloOS === protocoloOS);
-      if (!os) return;
-
-      osSelecionadaModal = os;
-
-      document.getElementById('mOSNum').innerText = os.protocoloOS;
-      document.getElementById('mOSData').innerText = os.dataAbertura;
-      document.getElementById('mOSStatus').innerText = os.status;
-      document.getElementById('mOSCliente').innerText = os.cliente;
-      document.getElementById('mOSTag').innerText = os.tag;
-      document.getElementById('mOSEquip').innerText = os.equipamento;
-      document.getElementById('mOSTecnico').innerText = os.tecnico;
-      
-      const selTipo = document.getElementById('mOSTipoManutencao');
-      selTipo.value = (os.tipoManutencao || "CORRETIVA").toUpperCase();
-
-      document.getElementById('mOSDiagnostico').value = os.diagnosticoTecnico || "";
-      document.getElementById('mOSServico').value = os.servicoRealizado || "";
-
-      const btnAcao = document.getElementById('btnAcaoOSModal');
-      if (os.status.toUpperCase() === "CONCLUÍDA") {
-        btnAcao.innerHTML = '<i class="fa-solid fa-lock-open"></i> Reabrir O.S.';
-        btnAcao.style.background = "#d97706";
-      } else {
-        btnAcao.innerHTML = '<i class="fa-solid fa-check"></i> Salvar / Encerrar O.S.';
-        btnAcao.style.background = "#28a745";
-      }
-
-      const btnPdf = document.getElementById('btnPdfOSModal');
-      if (os.pdfUrlOS) {
-        btnPdf.href = os.pdfUrlOS;
-        btnPdf.style.display = "inline-flex";
-      } else {
-        btnPdf.style.display = "none";
-      }
-
-      const divGaleria = document.getElementById('mOSGaleria');
-      
-      if (os.anexosUrl && os.anexosUrl.length > 10) {
-        const urls = os.anexosUrl.split(';').filter(String);
-        const thumbs = urls.map(urlOriginal => {
-          const urlDireta = converterUrlDriveParaImagem(urlOriginal);
-          return `
-            <div class="galeria-thumb">
-              <a href="${urlOriginal}" target="_blank" title="Clique para abrir foto em tamanho real">
-                <img src="${urlDireta}" alt="Foto da OS" onerror="this.src='https://via.placeholder.com/85?text=Foto';"/>
-              </a>
-            </div>
-          `;
-        });
-        divGaleria.innerHTML = thumbs.join('');
-      } else {
-        divGaleria.innerHTML = '<span style="color:#aaa; font-size:11px;">Nenhuma foto anexada.</span>';
-      }
-
-      document.getElementById('modalOS').classList.add('active');
-    }
-
-    function fecharModalOS() {
-      osSelecionadaModal = null;
-      document.getElementById('modalOS').classList.remove('active');
-    }
-
-    function alternarAcaoOS() {
-      if (!osSelecionadaModal) return;
-
-      const st = osSelecionadaModal.status.toUpperCase();
-      const tipo = document.getElementById('mOSTipoManutencao').value;
-      const diag = document.getElementById('mOSDiagnostico').value;
-      const serv = document.getElementById('mOSServico').value;
-
-      if (st === "CONCLUÍDA") {
-        const confirma = confirm(`Deseja REABRIR a Ordem de Serviço ${osSelecionadaModal.protocoloOS}?\n\nIsso alterará a situação para ABERTA no sistema.`);
-        if (!confirma) return;
-
-        const payload = {
-          acao: "REABRIR_OS",
-          protocoloOS: osSelecionadaModal.protocoloOS,
-          novoTipo: tipo,
-          novoDiagnostico: diag,
-          novoServico: serv
-        };
-
-        fetch(API_URL, {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(res => {
-          if (res.status === "sucesso") {
-            alert(`O.S. ${osSelecionadaModal.protocoloOS} reaberta com sucesso!`);
-            fecharModalOS();
-            buscarAtualizacoesSilenciosas();
-          } else {
-            alert("Erro ao reabrir O.S.");
-          }
-        })
-        .catch(err => alert("Erro na comunicação com o servidor."));
-
-      } else {
-        const confirma = confirm(`Deseja ENCERRAR a Ordem de Serviço ${osSelecionadaModal.protocoloOS}?\n\nO laudo e o tipo de manutenção selecionados serão salvos no relatório PDF.`);
-        if (!confirma) return;
-
-        const btnAcao = document.getElementById('btnAcaoOSModal');
-        btnAcao.disabled = true;
-        btnAcao.innerText = "SALVANDO E GERANDO PDF...";
-
-        const payload = {
-          acao: "FECHAR_OS",
-          protocoloOS: osSelecionadaModal.protocoloOS,
-          novoTipo: tipo,
-          novoDiagnostico: diag,
-          novoServico: serv
-        };
-
-        fetch(API_URL, {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(res => {
-          if (res.status === "sucesso") {
-            alert(`O.S. ${osSelecionadaModal.protocoloOS} concluída com sucesso!\n\nRelatório PDF atualizado no repositório.`);
-            btnAcao.disabled = false;
-            fecharModalOS();
-            buscarAtualizacoesSilenciosas();
-          } else {
-            alert("Erro ao encerrar O.S.");
-            btnAcao.disabled = false;
-          }
-        })
-        .catch(err => {
-          alert("Erro na comunicação com o servidor.");
-          btnAcao.disabled = false;
-        });
-      }
-    }
-
-    function uploadFotoOS(e) {
-      const file = e.target.files[0];
-      if (!file || !osSelecionadaModal) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const payload = {
-          acao: "ANEXAR_IMAGEM_OS",
-          protocoloOS: osSelecionadaModal.protocoloOS,
-          base64Data: evt.target.result,
-          mimeType: file.type
-        };
-
-        alert("Enviando foto para o repositório seguro...");
-
-        fetch(API_URL, {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(res => {
-          if (res.status === "sucesso") {
-            alert("Foto anexada à O.S. com sucesso!");
-            buscarAtualizacoesSilenciosas();
-            fecharModalOS();
-          } else {
-            alert("Erro ao enviar foto.");
-          }
-        })
-        .catch(err => alert("Erro na comunicação com o servidor."));
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function autoPreencherOSEquipamento() {
-      const val = document.getElementById('osBuscaEquip').value.toLowerCase().trim();
-
-      if (!val || !bancoDados.equipamentos) return;
-
-      const eq = bancoDados.equipamentos.find(item => {
-        const strFormatada = `tag: ${item.tag} | ${item.nome} | série: ${item.serie}`.toLowerCase();
-        return strFormatada === val || item.tag.toLowerCase() === val || item.serie.toLowerCase() === val || item.patrimonio.toLowerCase() === val;
-      });
-
-      if (eq) {
-        osEquipamentoSelecionado = eq;
-        document.getElementById('osTag').value = eq.tag || "-";
-        document.getElementById('osSerie').value = eq.serie || "-";
-        document.getElementById('osPatrimonio').value = eq.patrimonio || "-";
-        document.getElementById('osNomeEquip').value = `${eq.nome} (Modelo: ${eq.modelo})` || "-";
-      }
-    }
-
-    function salvarNovaOS(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnSalvarOS');
-      btn.disabled = true;
-      btn.innerText = "GERANDO O.S. NO SERVIDOR...";
-
-      const payload = {
-        acao: "CRIAR_OS",
-        cliente: document.getElementById('osCliente').value,
-        tipoManutencao: document.getElementById('osTipo').value,
-        prioridade: document.getElementById('osPrioridade').value,
-        tag: document.getElementById('osTag').value,
-        serie: document.getElementById('osSerie').value,
-        patrimonio: document.getElementById('osPatrimonio').value,
-        equipamento: document.getElementById('osNomeEquip').value,
-        solicitante: document.getElementById('osSolicitante').value,
-        tecnico: document.getElementById('osTecnico').value,
-        defeitoRelatado: document.getElementById('osDefeito').value,
-        diagnosticoTecnico: document.getElementById('osDiagnostico').value,
-        servicoRealizado: document.getElementById('osServico').value,
-        status: "CONCLUÍDA"
-      };
-
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "sucesso") {
-          alert("Ordem de Serviço registrada com sucesso!\n\nProtocolo: " + res.protocoloOS);
-          document.getElementById('formNovaOS').reset();
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar O.S. e Gerar Relatório PDF';
-          mudarAba('os_gestao');
-          buscarAtualizacoesSilenciosas();
-        } else {
-          alert("Erro ao registrar O.S.");
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar O.S. e Gerar Relatório PDF';
-        }
-      })
-      .catch(err => {
-        alert("Erro na comunicação com o servidor.");
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar O.S. e Gerar Relatório PDF';
-      });
-    }
-
-    function salvarNovoEquipamento(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnSalvarCadEquip');
-      btn.disabled = true;
-      btn.innerText = "SALVANDO EQUIPAMENTO...";
-
-      const payload = {
-        acao: "CRIAR_EQUIPAMENTO",
-        tag: document.getElementById('cadTag').value,
-        serie: document.getElementById('cadSerie').value,
-        patrimonio: document.getElementById('cadPatrimonio').value,
-        nome: document.getElementById('cadNome').value,
-        modelo: document.getElementById('cadModelo').value,
-        fabricante: document.getElementById('cadFabricante').value,
-        acessorios: document.getElementById('cadAcessorios').value
-      };
-
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "sucesso") {
-          alert("Equipamento cadastrado com sucesso!");
-          document.getElementById('formNovoEquip').reset();
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-server"></i> Salvar Equipamento no Banco de Dados';
-          buscarAtualizacoesSilenciosas();
-        } else {
-          alert("Erro ao cadastrar equipamento.");
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-server"></i> Salvar Equipamento no Banco de Dados';
-        }
-      })
-      .catch(err => {
-        alert("Erro na comunicação com o servidor.");
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-server"></i> Salvar Equipamento no Banco de Dados';
-      });
-    }
-
-    function renderizarListasAuxiliares() {
-      const rels = bancoDados.relacoesAuxiliares || [];
-
-      const descricoesUnicas = Array.from(new Set(rels.map(r => r.descricao))).filter(String).sort();
-      const dlDesc = document.getElementById('listDescricoesPadrao');
-      if (dlDesc) {
-        dlDesc.innerHTML = descricoesUnicas.map(d => `<option value="${d}">`).join('');
-      }
-
-      const tbody = document.getElementById('tabelaAuxiliaresList');
-      if (tbody) {
-        if (rels.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="3" class="td-center" style="color:#888;">Nenhuma combinação registrada no banco de dados.</td></tr>';
-        } else {
-          const rows = rels.map(r => `
-            <tr>
-              <td><b>${r.descricao}</b></td>
-              <td>${r.modelo || "-"}</td>
-              <td>${r.fabricante || "-"}</td>
-            </tr>
-          `);
-          tbody.innerHTML = rows.join('');
-        }
-      }
-
-      aoSelecionarDescricaoCad();
-    }
-
-    function aoSelecionarDescricaoCad() {
-      const el = document.getElementById('cadNome');
-      if (!el) return;
-      const descVal = el.value.trim().toUpperCase();
-      const rels = bancoDados.relacoesAuxiliares || [];
-
-      const dlMod = document.getElementById('listModelosPadrao');
-      const dlFab = document.getElementById('listFabricantesPadrao');
-
-      if (!descVal) {
-        const todosMod = Array.from(new Set(rels.map(r => r.modelo))).filter(String).sort();
-        const todosFab = Array.from(new Set(rels.map(r => r.fabricante))).filter(String).sort();
-        if (dlMod) dlMod.innerHTML = todosMod.map(m => `<option value="${m}">`).join('');
-        if (dlFab) dlFab.innerHTML = todosFab.map(f => `<option value="${f}">`).join('');
-        return;
-      }
-
-      const modelosFiltrados = Array.from(new Set(rels.filter(r => r.descricao === descVal).map(r => r.modelo))).filter(String).sort();
-      if (dlMod) dlMod.innerHTML = modelosFiltrados.map(m => `<option value="${m}">`).join('');
-
-      aoSelecionarModeloCad();
-    }
-
-    function aoSelecionarModeloCad() {
-      const elDesc = document.getElementById('cadNome');
-      const elMod = document.getElementById('cadModelo');
-      if (!elDesc || !elMod) return;
-
-      const descVal = elDesc.value.trim().toUpperCase();
-      const modVal = elMod.value.trim().toUpperCase();
-      const rels = bancoDados.relacoesAuxiliares || [];
-      const dlFab = document.getElementById('listFabricantesPadrao');
-
-      let fabs = rels;
-      if (descVal) fabs = fabs.filter(r => r.descricao === descVal);
-      if (modVal) fabs = fabs.filter(r => r.modelo === modVal);
-
-      const fabricantesFiltrados = Array.from(new Set(fabs.map(r => r.fabricante))).filter(String).sort();
-      if (dlFab) dlFab.innerHTML = fabricantesFiltrados.map(f => `<option value="${f}">`).join('');
-
-      if (fabricantesFiltrados.length === 1) {
-        document.getElementById('cadFabricante').value = fabricantesFiltrados[0];
-      }
-    }
-
-    function salvarAuxiliarVinculado(e) {
-      e.preventDefault();
-      const desc = document.getElementById('vinculoDescricao').value.trim().toUpperCase();
-      const mod  = document.getElementById('vinculoModelo').value.trim().toUpperCase();
-      const fab  = document.getElementById('vinculoFabricante').value.trim().toUpperCase();
-
-      if (!desc || !mod || !fab) {
-        alert("Preencha Descrição, Modelo e Fabricante.");
-        return;
-      }
-
-      const payload = {
-        acao: "CRIAR_AUXILIAR_VINCULADO",
-        descricao: desc,
-        modelo: mod,
-        fabricante: fab
-      };
-
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "sucesso") {
-          alert("Combinação cadastrada com sucesso!");
-          document.getElementById('vinculoModelo').value = "";
-          document.getElementById('vinculoFabricante').value = "";
-          buscarAtualizacoesSilenciosas();
-        } else {
-          alert("Erro ao cadastrar combinação.");
-        }
-      })
-      .catch(err => alert("Erro na comunicação com o servidor."));
-    }
-
-    function renderizarTabelaTermos(lista) {
-      const tbody = document.getElementById('corpoTermos');
-      if (!tbody) return;
-
-      if (!lista || lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhum termo emitido encontrado.</td></tr>';
-        return;
-      }
-
-      const filtroVal = document.getElementById('filtroTermos').value.toLowerCase().trim();
-      let dadosExibir = lista;
-      
-      if (filtroVal) {
-        dadosExibir = lista.filter(t => 
-          t.protocolo.toLowerCase().includes(filtroVal) ||
-          t.cliente.toLowerCase().includes(filtroVal) ||
-          t.tag.toLowerCase().includes(filtroVal) ||
-          t.equipamento.toLowerCase().includes(filtroVal) ||
-          t.tecnico.toLowerCase().includes(filtroVal)
-        );
-      }
-
-      const rowsHtml = dadosExibir.map(t => `
+      tbody.innerHTML = lista.map(c => `
         <tr>
-          <td class="td-center"><b>${t.protocolo}</b></td>
-          <td>${t.dataHora}</td>
-          <td>${t.cliente}</td>
-          <td class="td-center"><b>${t.tag}</b></td>
-          <td>${t.equipamento}</td>
-          <td class="td-center">${t.tipo}</td>
-          <td>${t.tecnico}</td>
+          <td class="td-center"><b>${c.protocolo}</b></td>
+          <td>${c.dataHora}</td>
+          <td><b>${c.osExterna || "-"}</b></td>
+          <td>${c.solicitante}</td>
+          <td>${c.produto}</td>
+          <td><b>${c.fornVencedor}</b></td>
+          <td class="td-center" style="font-weight:bold; color:#1a4d80;">R$ ${Number(c.menorValor).toFixed(2).replace('.', ',')}</td>
+          <td class="td-center"><span class="badge-status ${c.status === 'APROVADO' ? 'badge-atendido' : 'badge-pendente'}">${c.status}</span></td>
           <td class="td-center">
-            ${t.pdfUrl ? `<a href="${t.pdfUrl}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> PDF</a>` : '-'}
+            ${c.pdfUrlCompra ? `<a href="${c.pdfUrlCompra}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> Mapa PDF</a>` : '-'}
+            ${c.status !== 'APROVADO' ? `<button type="button" class="btn-atender" style="padding:4px 8px; font-size:10px; margin-left:4px;" onclick="aprovarCompra('${c.protocolo}')"><i class="fa-solid fa-check"></i> Aprovar</button>` : ''}
           </td>
         </tr>
       `).join('');
-
-      tbody.innerHTML = rowsHtml;
     }
 
-    function filtrarRequisicoes() {
-      if (!bancoDados || !bancoDados.requisicoes) return;
+    function aprovarCompra(protocolo) {
+      if (!confirm(`Confirmar a aprovação da Cotação ${protocolo}?`)) return;
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "APROVAR_COMPRA", protocolo: protocolo, aprovador: usuarioLogado?.nome || "DIRETORIA" }) })
+      .then(res => res.json())
+      .then(res => { if (res.status === "sucesso") buscarAtualizacoesSilenciosas(); });
+    }
 
-      const statusFiltro = document.getElementById('filtroStatusReq').value;
-      const mesFiltro = document.getElementById('filtroMesReq').value;
-      const textoFiltro = document.getElementById('filtroTextoReq').value.toLowerCase().trim();
+    function abrirModalVincularTermo(protReq, cliente) {
+      protocoloReqEmVinculo = protReq;
+      document.getElementById('lblProtReqVinculo').innerText = protReq;
+      document.getElementById('lblClienteReqVinculo').innerText = cliente;
+      document.getElementById('inputProtocoloTermoVinculo').value = "";
 
-      let filtradas = bancoDados.requisicoes.filter(r => {
-        if (statusFiltro !== "TODOS" && r.status.toUpperCase() !== statusFiltro) return false;
+      const listDL = document.getElementById('listTermosExistentes');
+      if (listDL && bancoDados.termosEmitidos) {
+        const termosDoCliente = bancoDados.termosEmitidos.filter(t => (t.cliente || "").toLowerCase().includes(cliente.toLowerCase()));
+        listDL.innerHTML = termosDoCliente.map(t => `<option value="${t.protocolo}">Termo ${t.protocolo} | ${t.equipamento} (${t.dataHora})</option>`).join('');
+      }
+      document.getElementById('modalVincularTermo').classList.add('active');
+    }
 
-        if (mesFiltro && r.dataHora) {
-          const partesData = r.dataHora.split(' ')[0].split('/');
-          if (partesData.length === 3) {
-            const anoMesReg = `${partesData[2]}-${partesData[1].padStart(2, '0')}`;
-            if (anoMesReg !== mesFiltro) return false;
-          }
+    function fecharModalVincularTermo() {
+      protocoloReqEmVinculo = null;
+      document.getElementById('modalVincularTermo').classList.remove('active');
+    }
+
+    function confirmarVinculoTermo() {
+      const protTermo = document.getElementById('inputProtocoloTermoVinculo').value.trim().toUpperCase();
+      if (!protTermo) { alert("Por favor, informe o protocolo do Termo."); return; }
+
+      const btn = document.getElementById('btnConfirmarVinculo');
+      btn.disabled = true;
+      btn.innerText = "VINCULANDO...";
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ acao: "VINCULAR_TERMO_REQUISICAO", protocoloReq: protocoloReqEmVinculo, protocoloTermo: protTermo })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === "sucesso") {
+          fecharModalVincularTermo();
+          buscarAtualizacoesSilenciosas();
+        } else {
+          alert("Erro ao vincular termo.");
         }
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-link"></i> Confirmar Vinculação';
+      })
+      .catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-link"></i> Confirmar Vinculação'; });
+    }
 
-        if (textoFiltro) {
-          const matchProt = r.protocolo.toLowerCase().includes(textoFiltro);
-          const matchCli = r.cliente.toLowerCase().includes(textoFiltro);
-          const matchEq = r.equipamentoSolicitado.toLowerCase().includes(textoFiltro);
-          const matchMotivo = (r.motivo || "").toLowerCase().includes(textoFiltro);
-          if (!matchProt && !matchCli && !matchEq && !matchMotivo) return false;
-        }
+    function atenderRequisicao(protReq, cliente, operacao) {
+      const reqObj = (bancoDados.requisicoes || []).find(r => r.protocolo === protReq);
+      if (reqObj && reqObj.status.toUpperCase() === "ATENDIDO") {
+        alert(`A requisição ${protReq} já se encontra ATENDIDA!`);
+        buscarAtualizacoesSilenciosas();
+        return;
+      }
 
-        return true;
-      });
+      document.getElementById('reqVinculadaProtocolo').value = protReq;
+      document.getElementById('inputCliente').value = cliente;
+      
+      const banner = document.getElementById('bannerReqVinculada');
+      const lbl = document.getElementById('lblProtReqVinculada');
+      if (banner && lbl) { lbl.innerText = protReq; banner.style.display = "flex"; }
 
-      renderizarTabelaRequisicoes(filtradas);
+      const radioOp = document.querySelector(`input[name="tipoOperacao"][value="${operacao}"]`);
+      if (radioOp) radioOp.checked = true;
+
+      mudarAba('emissao');
+      alert(`Requisição ${protReq} selecionada para atendimento!\n\nSelecione o equipamento para gerar o Termo.`);
+    }
+
+    function desvincularRequisicao() {
+      document.getElementById('reqVinculadaProtocolo').value = "";
+      const banner = document.getElementById('bannerReqVinculada');
+      if (banner) banner.style.display = "none";
     }
 
     function renderizarTabelaRequisicoes(lista) {
       const tbody = document.getElementById('corpoRequisicoes');
       if (!tbody) return;
-
       if (!lista || lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição encontrada para os filtros selecionados.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição encontrada.</td></tr>';
         return;
       }
 
-      const rowsHtml = lista.map(r => {
+      tbody.innerHTML = lista.map(r => {
         let st = r.status ? r.status.toUpperCase() : "PENDENTE";
-
         const isPendente = st === "PENDENTE";
         const isRecusado = st === "RECUSADO";
 
@@ -2623,6 +1764,7 @@
           btnAcao = `<div class="btn-action-container">
             ${linkPdfReq}
             <button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${r.cliente}', '${r.operacao}')"><i class="fa-solid fa-check"></i> Atender</button>
+            <button type="button" class="btn-atender" style="background:#2563eb;" onclick="abrirModalVincularTermo('${r.protocolo}', '${r.cliente}')"><i class="fa-solid fa-link"></i> Vincular</button>
             <button type="button" class="btn-negar" onclick="abrirModalRecusa('${r.protocolo}')"><i class="fa-solid fa-xmark"></i> Negar</button>
           </div>`;
         } else if (isRecusado) {
@@ -2641,260 +1783,63 @@
             <td style="color:#555; font-style:italic;">${r.motivo || "-"}</td>
             <td class="td-center"><b>${r.operacao}</b></td>
             <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span></td>
-            <td class="td-center" style="width: 230px;">${btnAcao}</td>
+            <td class="td-center" style="width: 250px;">${btnAcao}</td>
           </tr>
         `;
       }).join('');
-
-      tbody.innerHTML = rowsHtml;
     }
 
-    function alternarModoDash() {
-      const modo = document.getElementById('dashModoPeriodo').value;
-      document.getElementById('dashFiltroMes').disabled = (modo === "GERAL");
-      atualizarDashboard();
-    }
-
-    function atualizarDashboard() {
+    function filtrarRequisicoes() {
       if (!bancoDados || !bancoDados.requisicoes) return;
+      const statusFiltro = document.getElementById('filtroStatusReq').value;
+      const mesFiltro = document.getElementById('filtroMesReq').value;
+      const textoFiltro = document.getElementById('filtroTextoReq').value.toLowerCase().trim();
 
-      const modo = document.getElementById('dashModoPeriodo').value;
-      const mesFiltro = document.getElementById('dashFiltroMes').value;
-
-      let reqs = bancoDados.requisicoes;
-
-      if (modo === "MES" && mesFiltro) {
-        reqs = reqs.filter(r => {
-          if (!r.dataHora) return false;
+      let filtradas = bancoDados.requisicoes.filter(r => {
+        if (statusFiltro !== "TODOS" && r.status.toUpperCase() !== statusFiltro) return false;
+        if (mesFiltro && r.dataHora) {
           const partesData = r.dataHora.split(' ')[0].split('/');
-          if (partesData.length === 3) {
-            const anoMesReg = `${partesData[2]}-${partesData[1].padStart(2, '0')}`;
-            return anoMesReg === mesFiltro;
-          }
-          return false;
-        });
-      }
-
-      document.getElementById('dashTotalReq').innerText = reqs.length;
-
-      let pendentes = 0, atendidos = 0, recusados = 0;
-      let clientesMap = {};
-      let familiasMap = {};
-
-      reqs.forEach(r => {
-        let st = r.status ? r.status.toUpperCase() : "PENDENTE";
-
-        if (st === "PENDENTE") pendentes++;
-        else if (st === "ATENDIDO") atendidos++;
-        else if (st === "RECUSADO") recusados++;
-
-        const cli = (r.cliente || "OUTROS").toUpperCase();
-        clientesMap[cli] = (clientesMap[cli] || 0) + 1;
-
-        const eq = (r.equipamentoSolicitado || "OUTROS").toUpperCase();
-        familiasMap[eq] = (familiasMap[eq] || 0) + 1;
+          if (partesData.length === 3 && `${partesData[2]}-${partesData[1].padStart(2, '0')}` !== mesFiltro) return false;
+        }
+        if (textoFiltro) {
+          const matchProt = r.protocolo.toLowerCase().includes(textoFiltro);
+          const matchCli = r.cliente.toLowerCase().includes(textoFiltro);
+          const matchEq = r.equipamentoSolicitado.toLowerCase().includes(textoFiltro);
+          if (!matchProt && !matchCli && !matchEq) return false;
+        }
+        return true;
       });
 
-      document.getElementById('dashPendentes').innerText = pendentes;
-      document.getElementById('dashAtendidos').innerText = atendidos;
-      document.getElementById('dashRecusados').innerText = recusados;
-
-      const divCli = document.getElementById('chartClientes');
-      const maxCli = Math.max(...Object.values(clientesMap), 1);
-
-      if (Object.keys(clientesMap).length === 0) {
-        divCli.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">Sem solicitações registradas no período.</div>';
-      } else {
-        const barsCli = Object.keys(clientesMap).map(cli => {
-          const qtd = clientesMap[cli];
-          const pct = Math.round((qtd / maxCli) * 100);
-          return `
-            <div class="bar-container">
-              <div class="bar-label"><span>${cli}</span><span>${qtd} req</span></div>
-              <div class="bar-bg"><div class="bar-fill" style="width: ${pct}%; background:#2563eb;"></div></div>
-            </div>
-          `;
-        }).join('');
-        divCli.innerHTML = barsCli;
-      }
-
-      const divFam = document.getElementById('chartFamilias');
-      const maxFam = Math.max(...Object.values(familiasMap), 1);
-
-      if (Object.keys(familiasMap).length === 0) {
-        divFam.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">Sem solicitações registradas no período.</div>';
-      } else {
-        const barsFam = Object.keys(familiasMap).map(fam => {
-          const qtd = familiasMap[fam];
-          const pct = Math.round((qtd / maxFam) * 100);
-          return `
-            <div class="bar-container">
-              <div class="bar-label"><span>${fam}</span><span>${qtd} req</span></div>
-              <div class="bar-bg"><div class="bar-fill" style="width: ${pct}%;"></div></div>
-            </div>
-          `;
-        }).join('');
-        divFam.innerHTML = barsFam;
-      }
+      renderizarTabelaRequisicoes(filtradas);
     }
 
-    function abrirModalRecusa(protReq) {
-      protocoloReqEmRecusa = protReq;
-      document.getElementById('modalProtReq').innerText = protReq;
-      document.getElementById('motivoRecusaTexto').value = "";
-      document.getElementById('modalRecusa').classList.add('active');
+    function mudarAba(nomeAba) {
+      fecharTodosDropdowns();
+      document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      if (nomeAba === 'inicio') { document.getElementById('btnNavInicio').classList.add('active'); document.getElementById('abaInicio').classList.add('active'); }
+      else if (nomeAba === 'locacao') { document.getElementById('btnNavLocacao').classList.add('active'); document.getElementById('abaLocacao').classList.add('active'); renderizarTabelaLocacao(); }
+      else if (nomeAba === 'compras') { document.getElementById('btnNavCompras').classList.add('active'); document.getElementById('abaCompras').classList.add('active'); renderizarTabelaCompras(); }
+      else if (nomeAba === 'dashboard') { document.getElementById('btnNavDashboard').classList.add('active'); document.getElementById('abaDashboard').classList.add('active'); atualizarDashboard(); }
+      else if (nomeAba === 'requisicoes') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaRequisicoes').classList.add('active'); }
+      else if (nomeAba === 'emissao') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaEmissao').classList.add('active'); }
+      else if (nomeAba === 'consulta') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaConsulta').classList.add('active'); }
+      else if (nomeAba === 'os_gestao') { document.getElementById('btnNavManutencao').classList.add('active'); document.getElementById('abaOsGestao').classList.add('active'); renderizarTabelaOS(); }
+      else if (nomeAba === 'os_abertura') { document.getElementById('btnNavManutencao').classList.add('active'); document.getElementById('abaOsAbertura').classList.add('active'); }
+      else if (nomeAba === 'cad_equipamento') { document.getElementById('btnNavCadastros').classList.add('active'); document.getElementById('abaCadEquipamento').classList.add('active'); }
+      else if (nomeAba === 'cad_auxiliares') { document.getElementById('btnNavCadastros').classList.add('active'); document.getElementById('abaCadAuxiliares').classList.add('active'); }
     }
 
-    function fecharModalRecusa() {
-      protocoloReqEmRecusa = null;
-      document.getElementById('modalRecusa').classList.remove('active');
+    function popularAutocomplete() {
+      if (bancoDados.clientes) document.getElementById('listClientes').innerHTML = bancoDados.clientes.map(c => `<option value="${c}">`).join('');
+      if (bancoDados.equipamentos) document.getElementById('listEquipamentos').innerHTML = bancoDados.equipamentos.map(eq => `<option value="TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}">`).join('');
     }
-
-    function confirmarRecusaQualidade() {
-      const motivo = document.getElementById('motivoRecusaTexto').value.trim();
-      if (!motivo) {
-        alert("Por favor, digite o motivo da recusa.");
-        return;
-      }
-
-      const payload = {
-        acao: "RECUSAR_REQUISICAO",
-        protocoloReq: protocoloReqEmRecusa,
-        motivoRecusa: motivo
-      };
-
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "sucesso") {
-          alert("Requisição " + protocoloReqEmRecusa + " recusada com sucesso.");
-          fecharModalRecusa();
-          buscarAtualizacoesSilenciosas();
-        } else {
-          alert("Erro ao recusar requisição.");
-        }
-      })
-      .catch(err => alert("Erro na comunicação com o servidor."));
-    }
-
-    function atenderRequisicao(protReq, cliente, operacao) {
-      document.getElementById('reqVinculadaProtocolo').value = protReq;
-      document.getElementById('inputCliente').value = cliente;
-      
-      const banner = document.getElementById('bannerReqVinculada');
-      const lbl = document.getElementById('lblProtReqVinculada');
-      if (banner && lbl) {
-        lbl.innerText = protReq;
-        banner.style.display = "flex";
-      }
-
-      const radioOp = document.querySelector(`input[name="tipoOperacao"][value="${operacao}"]`);
-      if (radioOp) radioOp.checked = true;
-
-      mudarAba('emissao');
-      alert(`Requisição ${protReq} selecionada para atendimento!\n\nSelecione agora o equipamento e os acessórios para gerar o Termo de Entrega.`);
-    }
-
-    function desvincularRequisicao() {
-      document.getElementById('reqVinculadaProtocolo').value = "";
-      const banner = document.getElementById('bannerReqVinculada');
-      if (banner) banner.style.display = "none";
-    }
-
-    function gerarTermo(e) {
-      if (e) e.preventDefault();
-
-      if (!equipamentoSelecionado) {
-        alert("Selecione um equipamento válido na lista de pesquisa.");
-        return;
-      }
-
-      const idxTec = document.getElementById('selectTecnico').value;
-      const tecSelected = bancoDados.usuarios[idxTec] || { nome: "Técnico" };
-
-      let listaAcessorios = [];
-      const trs = document.querySelectorAll('#corpoAcessorios tr');
-      trs.forEach((tr, i) => {
-        const qtdEl = document.getElementById(`qtd_${i}`);
-        const confEl = document.getElementById(`conf_${i}`);
-        if (qtdEl && confEl) {
-          const desc = tr.children[2].textContent;
-          listaAcessorios.push({
-            item: i + 1,
-            qtd: qtdEl.value,
-            descricao: desc,
-            conformidade: confEl.value
-          });
-        }
-      });
-
-      const payload = {
-        acao: "CRIAR_TERMO",
-        cliente: document.getElementById('inputCliente').value,
-        equipamento: equipamentoSelecionado,
-        tipoOperacao: document.querySelector('input[name="tipoOperacao"]:checked').value,
-        acessorios: listaAcessorios,
-        tecnico: tecSelected,
-        assinaturaCliente: canvas.toDataURL(),
-        protocoloReq: document.getElementById('reqVinculadaProtocolo').value
-      };
-
-      const btn = document.getElementById('btnEnviar');
-      btn.disabled = true;
-      btn.innerText = "GERANDO PDF NO SERVIDOR...";
-
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(res => {
-        if(res.status === "sucesso") {
-          const querImprimir = confirm("Termo gerado com sucesso!\n\nProtocolo: " + res.protocolo + "\n\nDeseja IMPRIMIR o documento agora?");
-          if (querImprimir && res.pdfUrl) {
-            const win = window.open(res.pdfUrl, '_blank');
-            if (win) { win.focus(); }
-          }
-          desvincularRequisicao();
-          document.getElementById('termoForm').reset();
-          limparAssinatura();
-          limparCamposEquipamento();
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)';
-          buscarAtualizacoesSilenciosas();
-          mudarAba('consulta');
-        } else {
-          alert("Erro ao gerar termo: " + res.mensagem);
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)';
-        }
-      })
-      .catch(err => {
-        alert("Erro de comunicação com o servidor.");
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)';
-      });
-    }
-
-    function filtrarTabelaTermos() { renderizarTabelaTermos(bancoDados.termosEmitidos); }
 
     function autoPreencherEquipamento() {
       const val = document.getElementById('buscaEquipamento').value.toLowerCase().trim();
-      const tbody = document.getElementById('corpoAcessorios');
-
-      if (!val || !bancoDados.equipamentos) {
-        limparCamposEquipamento();
-        return;
-      }
-
-      const eq = bancoDados.equipamentos.find(item => {
-        const strFormatada = `tag: ${item.tag} | ${item.nome} | série: ${item.serie}`.toLowerCase();
-        return strFormatada === val || item.tag.toLowerCase() === val || item.serie.toLowerCase() === val || item.patrimonio.toLowerCase() === val;
-      });
-
+      if (!val || !bancoDados.equipamentos) return;
+      const eq = bancoDados.equipamentos.find(i => `tag: ${i.tag} | ${i.nome} | série: ${i.serie}`.toLowerCase() === val || i.tag.toLowerCase() === val);
       if (eq) {
         equipamentoSelecionado = eq;
         document.getElementById('eqTag').value = eq.tag || "-";
@@ -2903,172 +1848,72 @@
         document.getElementById('eqNome').value = eq.nome || "-";
         document.getElementById('eqModelo').value = eq.modelo || "-";
         document.getElementById('eqFabricante').value = eq.fabricante || "-";
-
-        let listaAcess = [];
-        if (Array.isArray(eq.acessorios)) {
-          eq.acessorios.forEach(itemStr => {
-            if (typeof itemStr === 'string') {
-              const partes = itemStr.split(';').map(s => s.trim()).filter(String);
-              listaAcess = listaAcess.concat(partes);
-            }
-          });
-        } else if (typeof eq.acessorios === 'string') {
-          listaAcess = eq.acessorios.split(';').map(s => s.trim()).filter(String);
-        }
-
-        if (listaAcess.length > 0) {
-          const rowsAcess = listaAcess.map((item, i) => `
-            <tr>
-              <td class="td-center">${i + 1}</td>
-              <td class="td-center"><input type="text" style="width: 45px; text-align: center; padding: 4px;" value="1" id="qtd_${i}"></td>
-              <td>${item}</td>
-              <td class="td-center">
-                <select id="conf_${i}" style="padding: 4px;">
-                  <option value="Conforme">Conforme</option>
-                  <option value="Não Conforme">Não Conforme</option>
-                  <option value="Não Possui">Não Possui</option>
-                </select>
-              </td>
-            </tr>
-          `).join('');
-          tbody.innerHTML = rowsAcess;
-        } else {
-          tbody.innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 20px;">Nenhum acessório registrado para este equipamento no banco de dados.</td></tr>';
-        }
-      }
-    }
-
-    function limparCamposEquipamento() {
-      equipamentoSelecionado = null;
-      document.getElementById('eqTag').value = "-";
-      document.getElementById('eqSerie').value = "-";
-      document.getElementById('eqPatrimonio').value = "-";
-      document.getElementById('eqNome').value = "-";
-      document.getElementById('eqModelo').value = "-";
-      document.getElementById('eqFabricante').value = "-";
-      document.getElementById('corpoAcessorios').innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 24px;">Selecione um equipamento para visualizar os acessórios.</td></tr>';
-    }
-
-    function exibirAssinaturaTecnico() {
-      const idxTec = document.getElementById('selectTecnico').value;
-      const divPrev = document.getElementById('previewTecnico');
-
-      if (idxTec === "" || !bancoDados.usuarios) {
-        divPrev.innerHTML = '<span style="color: #aaa; font-size: 12px;">Assinatura do Técnico</span>';
-        return;
-      }
-
-      const tec = bancoDados.usuarios[idxTec];
-      if (tec && tec.assinaturaUrl && tec.assinaturaUrl.length > 20) {
-        divPrev.innerHTML = `<img src="${tec.assinaturaUrl}" alt="Assinatura de ${tec.nome}">`;
-      } else {
-        divPrev.innerHTML = '<span style="color: #888; font-size: 12px;">Assinatura carregada no servidor</span>';
       }
     }
 
     const canvas = document.getElementById('canvasAssinatura');
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas?.getContext('2d');
     let desenhando = false;
-
     function obterPosicao(e) {
       const rect = canvas.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
       return { x: clientX - rect.left, y: clientY - rect.top };
     }
-
     function iniciarDesenho(e) { desenhando = true; desenhar(e); }
     function pararDesenho() { desenhando = false; ctx.beginPath(); }
     function desenhar(e) {
       if (!desenhando) return;
       e.preventDefault();
       const pos = obterPosicao(e);
-      ctx.lineWidth = 2;
-      ctx.lineCap = 'round';
-      ctx.lineTo(pos.x, pos.y);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(pos.x, pos.y);
+      ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineTo(pos.x, pos.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
     }
-
-    canvas.addEventListener('mousedown', iniciarDesenho);
-    canvas.addEventListener('mouseup', pararDesenho);
-    canvas.addEventListener('mousemove', desenhar);
-    canvas.addEventListener('touchstart', iniciarDesenho);
-    canvas.addEventListener('touchend', pararDesenho);
-    canvas.addEventListener('touchmove', desenhar);
-
-    function limparAssinatura() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+    if (canvas) {
+      canvas.addEventListener('mousedown', iniciarDesenho); canvas.addEventListener('mouseup', pararDesenho); canvas.addEventListener('mousemove', desenhar);
+      canvas.addEventListener('touchstart', iniciarDesenho); canvas.addEventListener('touchend', pararDesenho); canvas.addEventListener('touchmove', desenhar);
+    }
+    function limparAssinatura() { ctx?.clearRect(0, 0, canvas.width, canvas.height); }
 
     function gerarTermo(e) {
       if (e) e.preventDefault();
-
-      if (!equipamentoSelecionado) {
-        alert("Selecione um equipamento válido na lista de pesquisa.");
-        return;
-      }
+      if (!equipamentoSelecionado) { alert("Selecione um equipamento válido."); return; }
 
       const idxTec = document.getElementById('selectTecnico').value;
       const tecSelected = bancoDados.usuarios[idxTec] || { nome: "Técnico" };
-
-      let listaAcessorios = [];
-      const trs = document.querySelectorAll('#corpoAcessorios tr');
-      trs.forEach((tr, i) => {
-        const qtdEl = document.getElementById(`qtd_${i}`);
-        const confEl = document.getElementById(`conf_${i}`);
-        if (qtdEl && confEl) {
-          const desc = tr.children[2].textContent;
-          listaAcessorios.push({
-            item: i + 1,
-            qtd: qtdEl.value,
-            descricao: desc,
-            conformidade: confEl.value
-          });
-        }
-      });
 
       const payload = {
         acao: "CRIAR_TERMO",
         cliente: document.getElementById('inputCliente').value,
         equipamento: equipamentoSelecionado,
         tipoOperacao: document.querySelector('input[name="tipoOperacao"]:checked').value,
-        acessorios: listaAcessorios,
+        acessorios: [],
         tecnico: tecSelected,
-        assinaturaCliente: canvas.toDataURL(),
+        assinaturaCliente: canvas ? canvas.toDataURL() : "",
         protocoloReq: document.getElementById('reqVinculadaProtocolo').value
       };
 
       const btn = document.getElementById('btnEnviar');
-      btn.disabled = true;
-      btn.innerText = "GERANDO PDF NO SERVIDOR...";
+      btn.disabled = true; btn.innerText = "GERANDO PDF NO SERVIDOR...";
 
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
       .then(res => res.json())
       .then(res => {
         if(res.status === "sucesso") {
-          const querImprimir = confirm("Termo gerado com sucesso!\n\nProtocolo: " + res.protocolo + "\n\nDeseja IMPRIMIR o documento agora?");
-          if (querImprimir && res.pdfUrl) {
-            const win = window.open(res.pdfUrl, '_blank');
-            if (win) { win.focus(); }
-          }
-          document.getElementById('reqVinculadaProtocolo').value = "";
-          location.reload();
-        } else {
-          alert("Erro ao gerar termo: " + res.mensagem);
+          desvincularRequisicao();
+          document.getElementById('termoForm').reset();
+          limparAssinatura();
           btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> GERAR TERMO DUPLO PDF (ENTREGA + HIGIENIZAÇÃO)';
+          btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)';
+          buscarAtualizacoesSilenciosas();
+          mudarAba('consulta');
+        } else {
+          alert("Erro ao gerar termo.");
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)';
         }
       })
-      .catch(err => {
-        alert("Erro de comunicação com o servidor.");
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> GERAR TERMO DUPLO PDF (ENTREGA + HIGIENIZAÇÃO)';
-      });
+      .catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)'; });
     }
   </script>
-
 </body>
 </html>
