@@ -139,18 +139,18 @@
     .btn-submit:hover { background: #13385c; }
     .btn-submit:disabled { background: #6c757d; cursor: not-allowed; }
 
-    .btn-pdf { background: #1a4d80; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; white-space: nowrap; height: 26px; border: none; }
+    .btn-pdf { background: #1a4d80; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 10px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; white-space: nowrap; height: 26px; border: none; }
     .btn-pdf:hover { background: #13385c; }
 
-    .btn-termo-link { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; height: 26px; white-space: nowrap; }
+    .btn-termo-link { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 10px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; height: 26px; white-space: nowrap; }
 
-    .btn-atender { background: #e0a800; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
+    .btn-atender { background: #e0a800; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
     .btn-atender:hover { background: #c69500; }
 
-    .btn-negar { background: #dc3545; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
+    .btn-negar { background: #dc3545; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
     .btn-negar:hover { background: #bd2130; }
 
-    .btn-vincular { background: #2563eb; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
+    .btn-vincular { background: #2563eb; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
     .btn-vincular:hover { background: #1d4ed8; }
 
     .btn-editar-saldo { background: #2563eb; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
@@ -1209,13 +1209,21 @@
       const listContainer = document.getElementById('usersOnlineList');
       const countText = document.getElementById('onlineCountText');
       if (!listContainer || !countText) return;
+
+      const usuarios = bancoDados.usuarios || [];
+
+      // Local override to keep the logged-in user active
+      if (usuarioLogado && usuarioLogado.usuario) {
+        const me = usuarios.find(u => u && u.usuario.toLowerCase() === usuarioLogado.usuario.toLowerCase());
+        if (me) me.online = true;
+      }
       
-      const onlines = (bancoDados.usuarios || []).filter(u => u && u.online);
-      const offlines = (bancoDados.usuarios || []).filter(u => u && !u.online);
+      const onlines = usuarios.filter(u => u && u.online);
+      const offlines = usuarios.filter(u => u && !u.online);
       
       countText.innerText = `${onlines.length} Online`;
 
-      if (!bancoDados.usuarios || bancoDados.usuarios.length === 0) {
+      if (usuarios.length === 0) {
         listContainer.innerHTML = '<div style="padding: 12px; text-align: center; color: #888; font-size: 12px;">Nenhum usuário cadastrado.</div>';
         return;
       }
@@ -1227,9 +1235,9 @@
           <div class="notif-item" style="cursor: default;">
             <div class="notif-item-title">
               <span><i class="fa-solid fa-circle" style="color:#22c55e;"></i> ${u.nome || u.usuario || '-'}</span>
-              <span style="font-size:10px; color:#155724; font-weight:normal;">Online</span>
+              <span style="font-size:10px; color:#155724; font-weight:bold;">Online</span>
             </div>
-            <div class="notif-item-sub">Usuário: <b>${u.usuario || '-'}</b> | Acesso: ${u.ultimoAcesso || 'Agora'}</div>
+            <div class="notif-item-sub">Usuário: <b>${u.usuario || '-'}</b> | Ativo: ${u.ultimoAcesso || 'Agora'}</div>
           </div>
         `).join('');
       }
@@ -1271,6 +1279,7 @@
           document.getElementById('loginOverlay').style.display = "none";
           document.getElementById('appContainer').style.display = "block";
           preencherSelectTecnicos();
+          enviarHeartbeat();
         } else {
           document.getElementById('loginOverlay').style.display = "flex";
           document.getElementById('appContainer').style.display = "none";
@@ -1508,6 +1517,125 @@
       .catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Atualizar Saldo'; });
     }
 
+    function renderizarTabelaCompras() {
+      const tbody = document.getElementById('corpoTabelaCompras');
+      if (!tbody) return;
+      const lista = bancoDados.compras || [];
+      if (lista.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color:#888; padding:20px;">Nenhuma cotação de compra registrada.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = lista.map(c => {
+        if (!c) return '';
+        const st = (c.status || "PENDENTE").toUpperCase();
+        let badgeClass = "badge-pendente";
+        if (st === "APROVADO") badgeClass = "badge-atendido";
+        if (st === "RECUSADO") badgeClass = "badge-recusado";
+
+        const linkPdf = c.pdfUrlCompra ? `<a href="${c.pdfUrlCompra}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> Mapa PDF</a>` : '-';
+
+        return `
+          <tr>
+            <td class="td-center"><b>${c.protocolo || '-'}</b></td>
+            <td>${c.dataHora || '-'}</td>
+            <td><b>${c.osExterna || '-'}</b></td>
+            <td>${c.solicitante || '-'}</td>
+            <td>${c.produto || '-'}</td>
+            <td><b>${c.fornVencedor || '-'}</b></td>
+            <td class="td-center" style="font-weight:bold; color:#137333;">R$ ${Number(c.menorValor || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span></td>
+            <td class="td-center">${linkPdf}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function calcularMenorPrecoCotacao() {
+      const f1 = document.getElementById('compForn1')?.value.trim() || "Fornecedor 1";
+      const v1 = parseFloat(document.getElementById('compVal1')?.value) || 0;
+
+      const f2 = document.getElementById('compForn2')?.value.trim() || "Fornecedor 2";
+      const v2 = parseFloat(document.getElementById('compVal2')?.value) || 0;
+
+      const f3 = document.getElementById('compForn3')?.value.trim() || "Fornecedor 3";
+      const v3 = parseFloat(document.getElementById('compVal3')?.value) || 0;
+
+      let opcoes = [];
+      if (v1 > 0) opcoes.push({ nome: f1, valor: v1 });
+      if (v2 > 0) opcoes.push({ nome: f2, valor: v2 });
+      if (v3 > 0) opcoes.push({ nome: f3, valor: v3 });
+
+      const lblVencedor = document.getElementById('lblFornVencedor');
+      const lblValor = document.getElementById('lblMenorValor');
+
+      if (opcoes.length === 0) {
+        if (lblVencedor) lblVencedor.innerText = "-";
+        if (lblValor) lblValor.innerText = "R$ 0,00";
+        return;
+      }
+
+      opcoes.sort((a, b) => a.valor - b.valor);
+      const vencedor = opcoes[0];
+
+      if (lblVencedor) lblVencedor.innerText = vencedor.nome;
+      if (lblValor) lblValor.innerText = "R$ " + vencedor.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function salvarSolicitacaoCompra(e) {
+      if (e) e.preventDefault();
+      const osExterna = document.getElementById('compOsExterna').value.trim();
+      const solicitante = document.getElementById('compSolicitante').value.trim();
+      const produto = document.getElementById('compProduto').value.trim();
+
+      if (!osExterna || !solicitante || !produto) {
+        alert("Preencha os campos obrigatórios (Nº O.S. Externa, Solicitante e Produto).");
+        return;
+      }
+
+      const btn = document.getElementById('btnSalvarCompra');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> GERANDO COTAÇÃO E MAPA PDF...';
+
+      const payload = {
+        acao: "CRIAR_SOLICITACAO_COMPRA",
+        osExterna: osExterna,
+        solicitante: solicitante,
+        produto: produto,
+        observacao: document.getElementById('compObservacao').value.trim(),
+        forn1: document.getElementById('compForn1').value.trim(),
+        val1: parseFloat(document.getElementById('compVal1').value) || 0,
+        forn2: document.getElementById('compForn2').value.trim(),
+        val2: parseFloat(document.getElementById('compVal2').value) || 0,
+        forn3: document.getElementById('compForn3').value.trim(),
+        val3: parseFloat(document.getElementById('compVal3').value) || 0,
+        prazo: document.getElementById('compPrazo').value.trim(),
+        condPagto: document.getElementById('compCondPagto').value.trim(),
+        frete: document.getElementById('compFrete').value.trim()
+      };
+
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === "sucesso") {
+          document.getElementById('formCompras').reset();
+          calcularMenorPrecoCotacao();
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF';
+          buscarAtualizacoesSilenciosas();
+          alert(`Cotação ${res.protocolo} criada com sucesso!`);
+        } else {
+          alert("Erro ao salvar cotação: " + (res.mensagem || "Erro desconhecido."));
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF';
+        }
+      })
+      .catch(err => {
+        alert("Falha de conexão ao salvar cotação.");
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF';
+      });
+    }
+
     function renderizarTabelaRequisicoes(lista) {
       const tbody = document.getElementById('corpoRequisicoes');
       if (!tbody) return;
@@ -1627,9 +1755,10 @@
       .then(res => res.json())
       .then(res => {
         if (res.status === "sucesso") {
-          // Atualização imediata em memória local
+          // Find the SPECIFIC pending row for this protocol
           if (bancoDados && bancoDados.requisicoes) {
-            const reqLocal = bancoDados.requisicoes.find(r => r && r.protocolo === protReqAlvo);
+            const reqLocal = bancoDados.requisicoes.find(r => r && r.protocolo === protReqAlvo && (r.status || "").toUpperCase() === "PENDENTE") ||
+                             bancoDados.requisicoes.find(r => r && r.protocolo === protReqAlvo);
             if (reqLocal) {
               reqLocal.status = "ATENDIDO";
               reqLocal.protocoloTermo = protTermo;
@@ -1654,7 +1783,10 @@
     }
 
     function atenderRequisicao(protReq, cliente, operacao) {
-      const reqObj = (bancoDados.requisicoes || []).find(r => r && r.protocolo === protReq);
+      // Find the SPECIFIC requisition that is PENDENTE for this protocol
+      const reqObj = (bancoDados.requisicoes || []).find(r => r && r.protocolo === protReq && (r.status || "").toUpperCase() === "PENDENTE") ||
+                     (bancoDados.requisicoes || []).find(r => r && r.protocolo === protReq);
+
       if (reqObj && (reqObj.status || "").toUpperCase() === "ATENDIDO") {
         alert(`A requisição ${protReq} já se encontra ATENDIDA!`);
         buscarAtualizacoesSilenciosas();
