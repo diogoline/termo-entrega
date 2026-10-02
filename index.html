@@ -30,56 +30,13 @@
       100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
     }
 
-    .btn-header-ajuda {
-      background-color: rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 6px;
-      width: 34px;
-      height: 32px;
-      font-size: 14px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-    }
-
-    .btn-header-ajuda:hover {
-      background-color: rgba(255, 255, 255, 0.25);
-      border-color: rgba(255, 255, 255, 0.5);
-    }
+    .btn-header-ajuda { background-color: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 6px; width: 34px; height: 32px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+    .btn-header-ajuda:hover { background-color: rgba(255, 255, 255, 0.25); border-color: rgba(255, 255, 255, 0.5); }
 
     .dropdown-ajuda-container { position: relative; display: inline-block; }
-
-    .menu-ajuda-dropdown {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 40px;
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      width: 200px;
-      z-index: 10000;
-      overflow: hidden;
-    }
-
+    .menu-ajuda-dropdown { display: none; position: absolute; right: 0; top: 40px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 200px; z-index: 10000; overflow: hidden; }
     .menu-ajuda-dropdown.ativo { display: block; }
-
-    .menu-ajuda-item {
-      padding: 11px 14px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #1e293b;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: background 0.2s;
-    }
-
+    .menu-ajuda-item { padding: 11px 14px; font-size: 12px; font-weight: 600; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.2s; }
     .menu-ajuda-item:hover { background: #f1f5f9; color: #1a4d80; }
 
     .notification-dropdown { display: none; position: absolute; top: 48px; right: 0; width: 340px; background: white; color: #333; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); z-index: 200; border: 1px solid #e2e8f0; overflow: hidden; }
@@ -130,7 +87,7 @@
     .btn-submit:hover { background: #13385c; }
     .btn-submit:disabled { background: #6c757d; cursor: not-allowed; }
 
-    .btn-pdf { background: #1a4d80; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 10px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; white-space: nowrap; height: 26px; border: none; }
+    .btn-pdf { background: #1a4d80; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 10px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; white-space: nowrap; height: 26px; border: none; cursor: pointer; }
     .btn-pdf:hover { background: #13385c; }
 
     .btn-termo-link { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 10px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; height: 26px; white-space: nowrap; }
@@ -144,9 +101,6 @@
     .btn-vincular { background: #2563eb; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
     .btn-vincular:hover { background: #1d4ed8; }
 
-    .btn-editar-saldo { background: #2563eb; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
-    .btn-editar-saldo:hover { background: #1d4ed8; }
-
     .btn-logout { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: background 0.2s; height: 32px; display: inline-flex; align-items: center; gap: 6px; }
     .btn-logout:hover { background: #dc3545; border-color: #dc3545; }
 
@@ -154,10 +108,6 @@
     .badge-pendente { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
     .badge-atendido { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .badge-recusado { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    
-    .badge-saldo-ok { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; font-weight: 800; }
-    .badge-saldo-pendente { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; font-weight: 800; }
-    .badge-saldo-alerta { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; font-weight: 800; }
 
     .btn-action-container { display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; align-items: center !important; justify-content: center !important; gap: 4px !important; width: 100% !important; white-space: nowrap !important; }
 
@@ -578,9 +528,7 @@
               </tr>
             </thead>
             <tbody id="corpoTabelaCompras">
-              <tr>
-                <td colspan="9" class="td-center" style="color:#888; padding:20px;">Carregando cotações de compras...</td>
-              </tr>
+              <tr><td colspan="9" class="td-center" style="color:#888; padding:20px;">Carregando cotações de compras...</td></tr>
             </tbody>
           </table>
         </div>
@@ -590,9 +538,7 @@
     <!-- MÓDULO DASHBOARD -->
     <div id="abaDashboard" class="tab-content">
       <div class="card" style="margin-bottom: 16px;">
-        <div class="card-title">
-          <span>Filtro de Período das Métricas</span>
-        </div>
+        <div class="card-title"><span>Filtro de Período das Métricas</span></div>
         <div class="form-row" style="align-items: center; margin-bottom: 0;">
           <div class="form-group" style="flex: 1;">
             <label>Selecione o Mês / Ano:</label>
@@ -730,9 +676,7 @@
               </tr>
             </thead>
             <tbody id="corpoRequisicoes">
-              <tr>
-                <td colspan="8" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td>
-              </tr>
+              <tr><td colspan="8" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td></tr>
             </tbody>
           </table>
         </div>
@@ -799,15 +743,13 @@
                 <thead>
                   <tr>
                     <th class="td-center" style="width: 40px;">#</th>
-                    <th class="td-center" style="width: 60px;">Qtd</th>
+                    <th class="td-center" style="width: 70px;">QTD</th>
                     <th>Descrição do Acessório</th>
-                    <th class="td-center" style="width: 130px;">Conformidade</th>
+                    <th class="td-center" style="width: 110px;">Conformidade</th>
                   </tr>
                 </thead>
                 <tbody id="corpoAcessorios">
-                  <tr>
-                    <td colspan="4" class="td-center" style="color: #888; padding: 24px;">Selecione um equipamento para visualizar os acessórios.</td>
-                  </tr>
+                  <tr><td colspan="4" class="td-center" style="color: #888; padding: 24px;">Selecione um equipamento para visualizar os acessórios.</td></tr>
                 </tbody>
               </table>
             </div>
@@ -843,12 +785,10 @@
     <div id="abaConsulta" class="tab-content">
       <div class="card">
         <div class="card-title">Histórico e Consulta de Termos Gerados</div>
-        
         <div class="form-group" style="margin-bottom: 16px;">
           <label>Filtrar por Protocolo, Cliente, TAG ou Técnico:</label>
           <input type="text" id="filtroTermos" oninput="filtrarTabelaTermosDebounced()" placeholder="Digite aqui para buscar...">
         </div>
-
         <div class="table-container">
           <table style="table-layout: auto;">
             <thead>
@@ -864,9 +804,7 @@
               </tr>
             </thead>
             <tbody id="corpoTermos">
-              <tr>
-                <td colspan="8" class="td-center" style="color: #888; padding: 24px;">Carregando histórico...</td>
-              </tr>
+              <tr><td colspan="8" class="td-center" style="color: #888; padding: 24px;">Carregando histórico...</td></tr>
             </tbody>
           </table>
         </div>
@@ -878,9 +816,7 @@
       <div class="card">
         <div class="card-title">
           <span>Central de Ordens de Serviço (Engenharia Clínica)</span>
-          <button type="button" class="btn-submit" style="padding: 6px 12px; font-size: 11px;" onclick="mudarAba('os_abertura')">
-            <i class="fa-solid fa-plus"></i> Nova O.S.
-          </button>
+          <button type="button" class="btn-submit" style="padding: 6px 12px; font-size: 11px;" onclick="mudarAba('os_abertura')"><i class="fa-solid fa-plus"></i> Nova O.S.</button>
         </div>
 
         <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
@@ -892,7 +828,6 @@
               <option value="CONCLUÍDA">Apenas Concluídas</option>
             </select>
           </div>
-
           <div class="form-group" style="flex: 2;">
             <label>Buscar O.S. (Nº OS, TAG, Cliente ou Equipamento):</label>
             <input type="text" id="filtroTextoOS" oninput="renderizarTabelaOSDebounced()" placeholder="Digite para filtrar...">
@@ -915,9 +850,7 @@
               </tr>
             </thead>
             <tbody id="corpoOS">
-              <tr>
-                <td colspan="9" class="td-center" style="color: #888; padding: 24px;">Carregando Ordens de Serviço...</td>
-              </tr>
+              <tr><td colspan="9" class="td-center" style="color: #888; padding: 24px;">Carregando Ordens de Serviço...</td></tr>
             </tbody>
           </table>
         </div>
@@ -979,9 +912,7 @@
           <div class="form-group" style="margin-bottom: 16px;"><label>Serviço Realizado:</label><textarea id="osServico" style="height: 60px;" required></textarea></div>
 
           <div style="text-align: right;">
-            <button type="submit" id="btnSalvarOS" class="btn-submit">
-              <i class="fa-solid fa-floppy-disk"></i> Registrar O.S.
-            </button>
+            <button type="submit" id="btnSalvarOS" class="btn-submit"><i class="fa-solid fa-floppy-disk"></i> Registrar O.S.</button>
           </div>
         </form>
       </div>
@@ -1041,6 +972,23 @@
 
   </div>
 
+  <!-- MODAL VISUALIZADOR DE REQUISIÇÃO (PDF) -->
+  <div id="modalVisualizadorReq" class="modal-overlay">
+    <div class="modal-box" style="width: 800px; max-width: 95vw; height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-title">
+        <span id="tituloModalReqPDF">Visualizar Requisição (PDF)</span>
+        <span onclick="fecharModalVisualizadorReq()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div style="flex: 1; background: #e2e8f0; border-radius: 6px; overflow: hidden; position: relative;">
+        <iframe id="iframeVisualizadorReq" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+      </div>
+      <div style="margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalVisualizadorReq()">Fechar</button>
+        <a id="btnAbrirNovaAbaPdfReq" href="#" target="_blank" class="btn-submit" style="padding: 8px 16px; text-decoration: none; font-size: 12px;"><i class="fa-solid fa-external-link-alt"></i> Abrir em Nova Guia / Imprimir</a>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAIS DO SISTEMA -->
   <div id="modalLocacao" class="modal-overlay">
     <div class="modal-box" style="width: 480px;">
@@ -1067,23 +1015,18 @@
         <span>Vincular Termo Existente a <span id="lblProtReqVinculo" style="color:#1a4d80;">-</span></span>
         <span onclick="fecharModalVincularTermo()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
       </div>
-
       <div style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px; font-size: 12px; color: #334155;">
         <b>Cliente:</b> <span id="lblClienteReqVinculo">-</span><br>
         <span style="font-size:11px; color:#64748b;">Utilize este recurso para dar baixa em requisições cujo termo de entrega já foi emitido previamente.</span>
       </div>
-
       <div class="form-group" style="margin-bottom: 16px;">
         <label>Selecione ou Digite o Protocolo do Termo (Ex: PT0018):</label>
         <input type="text" id="inputProtocoloTermoVinculo" list="listTermosExistentes" placeholder="Digite ou escolha o Termo (Ex: PT0018)..." style="font-size:14px; font-weight:bold; padding:10px;">
         <datalist id="listTermosExistentes"></datalist>
       </div>
-
       <div style="display: flex; gap: 8px; justify-content: flex-end;">
         <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalVincularTermo()">Cancelar</button>
-        <button type="button" id="btnConfirmarVinculo" class="btn-submit" onclick="confirmarVinculoTermo()">
-          <i class="fa-solid fa-link"></i> Confirmar Vinculação
-        </button>
+        <button type="button" id="btnConfirmarVinculo" class="btn-submit" onclick="confirmarVinculoTermo()"><i class="fa-solid fa-link"></i> Confirmar Vinculação</button>
       </div>
     </div>
   </div>
@@ -1097,13 +1040,10 @@
       <div class="modal-manual-body">
         <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-boxes-packing"></i> 1. Controle de Locação</h4>
         <p style="margin-bottom:12px;">Consulte saldos contratados vs. entregues por cliente e unidade hospitalar. Ajuste saldos físicos diretamente pelo botão <b>"Ajustar"</b>.</p>
-
         <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-cart-shopping"></i> 2. Módulo de Compras & Mapa Comparativo</h4>
         <p style="margin-bottom:12px;">Cadastre cotações informando 3 fornecedores. O sistema destaca a menor proposta em verde e registra a cotação com cálculo automático.</p>
-
         <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-shield-halved"></i> 3. Módulo Qualidade & Termos</h4>
         <p style="margin-bottom:12px;">Acompanhe requisições internas, atenda com emissão do Termo Duplo de Entrega e Higienização ou vincule termos já emitidos pelo botão <b>"Vincular"</b>.</p>
-
         <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-screwdriver-wrench"></i> 4. Manutenção e O.S.</h4>
         <p>Acompanhe e abra ordens de serviço preventivas e corretivas com priorização por cores.</p>
       </div>
@@ -1454,8 +1394,8 @@
           atualizarNotificacoes();
           atualizarDashboard();
 
-          if (novaReq.pdfUrlReq && confirm(`Requisição ${novaReq.protocolo} criada com sucesso!\n\nDeseja abrir o PDF da requisição agora?`)) {
-            window.open(novaReq.pdfUrlReq, '_blank');
+          if (novaReq.pdfUrlReq) {
+            abrirModalVisualizadorReq(novaReq.pdfUrlReq, "Visualizar Requisição: " + novaReq.protocolo);
           }
 
           buscarAtualizacoesSilenciosas();
@@ -1472,6 +1412,25 @@
       });
 
       return false;
+    }
+
+    function abrirModalVisualizadorReq(pdfUrl, titulo) {
+      const modal = document.getElementById('modalVisualizadorReq');
+      const iframe = document.getElementById('iframeVisualizadorReq');
+      const tituloEl = document.getElementById('tituloModalReqPDF');
+      const btnLink = document.getElementById('btnAbrirNovaAbaPdfReq');
+
+      if (iframe) iframe.src = pdfUrl;
+      if (tituloEl) tituloEl.innerText = titulo || "Visualizar Requisição (PDF)";
+      if (btnLink) btnLink.href = pdfUrl;
+      if (modal) modal.classList.add('active');
+    }
+
+    function fecharModalVisualizadorReq() {
+      const modal = document.getElementById('modalVisualizadorReq');
+      const iframe = document.getElementById('iframeVisualizadorReq');
+      if (iframe) iframe.src = "";
+      if (modal) modal.classList.remove('active');
     }
 
     function renderizarTabelaLocacao() {
@@ -1633,10 +1592,8 @@
     function calcularMenorPrecoCotacao() {
       const f1 = document.getElementById('compForn1')?.value.trim() || "Fornecedor 1";
       const v1 = parseFloat(document.getElementById('compVal1')?.value) || 0;
-
       const f2 = document.getElementById('compForn2')?.value.trim() || "Fornecedor 2";
       const v2 = parseFloat(document.getElementById('compVal2')?.value) || 0;
-
       const f3 = document.getElementById('compForn3')?.value.trim() || "Fornecedor 3";
       const v3 = parseFloat(document.getElementById('compVal3')?.value) || 0;
 
@@ -1729,6 +1686,15 @@
         return;
       }
 
+      // ORDENAÇÃO INTELIGENTE: PENDENTES NO TOPO
+      lista.sort((a, b) => {
+        const stA = (a.status || "").toUpperCase();
+        const stB = (b.status || "").toUpperCase();
+        if (stA === "PENDENTE" && stB !== "PENDENTE") return -1;
+        if (stA !== "PENDENTE" && stB === "PENDENTE") return 1;
+        return 0;
+      });
+
       tbody.innerHTML = lista.map(r => {
         if (!r) return '';
         let st = (r.status || "PENDENTE").toUpperCase();
@@ -1739,7 +1705,7 @@
         if (st === "ATENDIDO") badgeClass = "badge-atendido";
         if (isRecusado) badgeClass = "badge-recusado";
         
-        const linkPdfReq = r.pdfUrlReq ? `<a href="${r.pdfUrlReq}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> REQ</a>` : '';
+        const linkPdfReq = r.pdfUrlReq ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${r.pdfUrlReq}', 'Visualizar Requisição: ${r.protocolo}')"><i class="fa-solid fa-file-pdf"></i> REQ</button>` : '';
         
         let btnAcao = "";
         if (isPendente) {
@@ -1887,7 +1853,6 @@
       if (radioOp) radioOp.checked = true;
 
       mudarAba('emissao');
-      alert(`Requisição ${protReq} selecionada para atendimento!\n\nSelecione o equipamento para gerar o Termo.`);
     }
 
     function desvincularRequisicao() {
@@ -1965,7 +1930,7 @@
               tbodyAc.innerHTML = listaAcs.map((ac, idx) => `
                 <tr>
                   <td class="td-center">${idx + 1}</td>
-                  <td class="td-center">1</td>
+                  <td class="td-center"><input type="number" class="qtd-acessorio" value="1" min="0" style="width: 50px; text-align: center; font-weight: bold; border: 1px solid #dc3545; color: #dc3545; border-radius: 4px; padding: 2px;"></td>
                   <td><b>${ac.toUpperCase()}</b></td>
                   <td class="td-center" style="color:#166534; font-weight:bold;">CONFORME</td>
                 </tr>
@@ -2028,9 +1993,11 @@
       trs.forEach((tr, idx) => {
         const tds = tr.querySelectorAll('td');
         if (tds.length >= 3 && !tr.innerText.includes("NÃO POSSUI")) {
+          const inputQtd = tr.querySelector('.qtd-acessorio');
+          const qtdVal = inputQtd ? (parseInt(inputQtd.value) || 1) : 1;
           acessoriosList.push({
             item: idx + 1,
-            qtd: 1,
+            qtd: qtdVal,
             descricao: tds[2].innerText.trim(),
             conformidade: "CONFORME"
           });
@@ -2235,7 +2202,7 @@
           <td class="td-center">${t.tipo || '-'}</td>
           <td>${t.tecnico || '-'}</td>
           <td class="td-center">
-            ${t.pdfUrl ? `<a href="${t.pdfUrl}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> PDF</a>` : '-'}
+            ${t.pdfUrl ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${t.pdfUrl}', 'Visualizar Termo: ${t.protocolo}')"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : '-'}
           </td>
         </tr>
       `).join('');
