@@ -1348,17 +1348,17 @@
           badge.classList.add('connected');
         }
         
-        try { popularAutocomplete(); } catch(e) { console.error("Erro popularAutocomplete:", e); }
-        try { preencherSelectTecnicos(); } catch(e) { console.error("Erro preencherSelectTecnicos:", e); }
-        try { renderizarTabelaTermos(bancoDados.termosEmitidos || []); } catch(e) { console.error("Erro renderizarTabelaTermos:", e); }
-        try { filtrarRequisicoes(); } catch(e) { console.error("Erro filtrarRequisicoes:", e); }
-        try { renderizarTabelaOS(); } catch(e) { console.error("Erro renderizarTabelaOS:", e); }
-        try { renderizarTabelaLocacao(); } catch(e) { console.error("Erro renderizarTabelaLocacao:", e); }
-        try { renderizarTabelaCompras(); } catch(e) { console.error("Erro renderizarTabelaCompras:", e); }
-        try { atualizarDashboard(); } catch(e) { console.error("Erro atualizarDashboard:", e); }
-        try { atualizarNotificacoes(); } catch(e) { console.error("Erro atualizarNotificacoes:", e); }
-        try { renderizarUsuariosOnline(); } catch(e) { console.error("Erro renderizarUsuariosOnline:", e); }
-        try { renderizarListasAuxiliares(); } catch(e) { console.error("Erro renderizarListasAuxiliares:", e); }
+        try { popularAutocomplete(); } catch(e) {}
+        try { preencherSelectTecnicos(); } catch(e) {}
+        try { renderizarTabelaTermos(bancoDados.termosEmitidos || []); } catch(e) {}
+        try { filtrarRequisicoes(); } catch(e) {}
+        try { renderizarTabelaOS(); } catch(e) {}
+        try { renderizarTabelaLocacao(); } catch(e) {}
+        try { renderizarTabelaCompras(); } catch(e) {}
+        try { atualizarDashboard(); } catch(e) {}
+        try { atualizarNotificacoes(); } catch(e) {}
+        try { renderizarUsuariosOnline(); } catch(e) {}
+        try { renderizarListasAuxiliares(); } catch(e) {}
       } else {
         const badge = document.getElementById('statusBadge');
         if (badge) badge.innerText = "Erro nos Dados";
@@ -1454,11 +1454,10 @@
           atualizarNotificacoes();
           atualizarDashboard();
 
-          if (novaReq.pdfUrlReq) {
+          if (novaReq.pdfUrlReq && confirm(`Requisição ${novaReq.protocolo} criada com sucesso!\n\nDeseja abrir o PDF da requisição agora?`)) {
             window.open(novaReq.pdfUrlReq, '_blank');
           }
 
-          alert(`Requisição ${novaReq.protocolo} criada com sucesso!`);
           buscarAtualizacoesSilenciosas();
         } else {
           alert("Erro ao enviar requisição: " + (res.mensagem || "Erro desconhecido."));
@@ -1953,7 +1952,6 @@
         document.getElementById('eqModelo').value = eq.modelo || "-";
         document.getElementById('eqFabricante').value = eq.fabricante || "-";
 
-        // Renderizar Acessórios da Coluna G
         const tbodyAc = document.getElementById('corpoAcessorios');
         if (tbodyAc) {
           const rawAcs = eq.acessorios ? eq.acessorios.toString().trim() : "";
@@ -2016,13 +2014,15 @@
     function limparAssinatura() { ctx?.clearRect(0, 0, canvas.width, canvas.height); }
 
     function gerarTermo(e) {
-      if (e) e.preventDefault();
-      if (!equipamentoSelecionado) { alert("Selecione um equipamento válido."); return; }
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (!equipamentoSelecionado) { alert("Selecione um equipamento válido."); return false; }
 
       const nomeTec = document.getElementById('selectTecnico').value;
-      if (!nomeTec) { alert("Selecione o técnico responsável."); return; }
+      if (!nomeTec) { alert("Selecione o técnico responsável."); return false; }
 
-      // Coletar acessórios visíveis na tabela
       let acessoriosList = [];
       const trs = document.querySelectorAll('#corpoAcessorios tr');
       trs.forEach((tr, idx) => {
@@ -2054,22 +2054,33 @@
       fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
       .then(res => res.json())
       .then(res => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)';
+        
         if(res.status === "sucesso") {
           desvincularRequisicao();
           document.getElementById('termoForm').reset();
           limparAssinatura();
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)';
+          equipamentoSelecionado = null;
+          document.getElementById('corpoAcessorios').innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 24px;">Selecione um equipamento para visualizar os acessórios.</td></tr>';
+          
           buscarAtualizacoesSilenciosas();
-          if (res.pdfUrl) window.open(res.pdfUrl, '_blank');
+
+          if (res.pdfUrl && confirm(`Termo ${res.protocolo} gerado com sucesso!\n\nDeseja abrir o PDF gerado agora?`)) {
+            window.open(res.pdfUrl, '_blank');
+          }
           mudarAba('consulta');
         } else {
           alert("Erro ao gerar termo.");
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)';
         }
       })
-      .catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)'; });
+      .catch(err => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)';
+        alert("Falha de conexão ao gerar termo.");
+      });
+
+      return false;
     }
 
     function renderizarTabelaOS() {
