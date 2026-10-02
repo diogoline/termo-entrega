@@ -87,7 +87,7 @@
     .btn-submit:hover { background: #13385c; }
     .btn-submit:disabled { background: #6c757d; cursor: not-allowed; }
 
-    .btn-pdf { background: #1a4d80; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 10px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; white-space: nowrap; height: 26px; border: none; cursor: pointer; }
+    .btn-pdf { background: #1a4d80; color: white; padding: 4px 10px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 11px; display: inline-flex; align-items: center; gap: 5px; justify-content: center; white-space: nowrap; height: 26px; border: none; cursor: pointer; }
     .btn-pdf:hover { background: #13385c; }
 
     .btn-termo-link { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 10px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; height: 26px; white-space: nowrap; }
@@ -1420,7 +1420,13 @@
       const tituloEl = document.getElementById('tituloModalReqPDF');
       const btnLink = document.getElementById('btnAbrirNovaAbaPdfReq');
 
-      if (iframe) iframe.src = pdfUrl;
+      // Converte o link do Google Drive para o formato /preview para evitar bloqueio de embed/permissão
+      let embedUrl = pdfUrl;
+      if (embedUrl.includes('/file/d/')) {
+        embedUrl = embedUrl.replace(/\/view.*$/, '/preview').replace(/\/edit.*$/, '/preview');
+      }
+
+      if (iframe) iframe.src = embedUrl;
       if (tituloEl) tituloEl.innerText = titulo || "Visualizar Requisição (PDF)";
       if (btnLink) btnLink.href = pdfUrl;
       if (modal) modal.classList.add('active');
@@ -1705,7 +1711,7 @@
         if (st === "ATENDIDO") badgeClass = "badge-atendido";
         if (isRecusado) badgeClass = "badge-recusado";
         
-        const linkPdfReq = r.pdfUrlReq ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${r.pdfUrlReq}', 'Visualizar Requisição: ${r.protocolo}')"><i class="fa-solid fa-file-pdf"></i> REQ</button>` : '';
+        const linkPdfReq = r.pdfUrlReq ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${r.pdfUrlReq}', 'Visualizar Requisição: ${r.protocolo}')" title="Visualizar Requisição PDF"><i class="fa-solid fa-eye"></i> REQ</button>` : '';
         
         let btnAcao = "";
         if (isPendente) {
