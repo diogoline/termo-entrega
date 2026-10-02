@@ -1952,8 +1952,33 @@
         document.getElementById('eqNome').value = eq.nome || "-";
         document.getElementById('eqModelo').value = eq.modelo || "-";
         document.getElementById('eqFabricante').value = eq.fabricante || "-";
+
+        // Renderizar Acessórios da Coluna G
+        const tbodyAc = document.getElementById('corpoAcessorios');
+        if (tbodyAc) {
+          const rawAcs = eq.acessorios ? eq.acessorios.toString().trim() : "";
+          if (!rawAcs || rawAcs.toUpperCase() === "NÃO POSSUI" || rawNulo(rawAcs)) {
+            tbodyAc.innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 20px;">NÃO POSSUI ACESSÓRIOS CADASTRADOS.</td></tr>';
+          } else {
+            const listaAcs = rawAcs.split(';').map(a => a.trim()).filter(Boolean);
+            if (listaAcs.length === 0) {
+              tbodyAc.innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 20px;">NÃO POSSUI ACESSÓRIOS CADASTRADOS.</td></tr>';
+            } else {
+              tbodyAc.innerHTML = listaAcs.map((ac, idx) => `
+                <tr>
+                  <td class="td-center">${idx + 1}</td>
+                  <td class="td-center">1</td>
+                  <td><b>${ac.toUpperCase()}</b></td>
+                  <td class="td-center" style="color:#166534; font-weight:bold;">CONFORME</td>
+                </tr>
+              `).join('');
+            }
+          }
+        }
       }
     }
+
+    function rawNulo(v) { return !v || v === "" || v === "-"; }
 
     function autoPreencherOSEquipamento() {
       const val = document.getElementById('osBuscaEquip').value.toLowerCase().trim();
@@ -1997,12 +2022,27 @@
       const nomeTec = document.getElementById('selectTecnico').value;
       if (!nomeTec) { alert("Selecione o técnico responsável."); return; }
 
+      // Coletar acessórios visíveis na tabela
+      let acessoriosList = [];
+      const trs = document.querySelectorAll('#corpoAcessorios tr');
+      trs.forEach((tr, idx) => {
+        const tds = tr.querySelectorAll('td');
+        if (tds.length >= 3 && !tr.innerText.includes("NÃO POSSUI")) {
+          acessoriosList.push({
+            item: idx + 1,
+            qtd: 1,
+            descricao: tds[2].innerText.trim(),
+            conformidade: "CONFORME"
+          });
+        }
+      });
+
       const payload = {
         acao: "CRIAR_TERMO",
         cliente: document.getElementById('inputCliente').value,
         equipamento: equipamentoSelecionado,
         tipoOperacao: document.querySelector('input[name="tipoOperacao"]:checked').value,
-        acessorios: [],
+        acessorios: acessoriosList,
         tecnico: { nome: nomeTec },
         assinaturaCliente: canvas ? canvas.toDataURL() : "",
         protocoloReq: document.getElementById('reqVinculadaProtocolo').value
@@ -2021,6 +2061,7 @@
           btn.disabled = false;
           btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)';
           buscarAtualizacoesSilenciosas();
+          if (res.pdfUrl) window.open(res.pdfUrl, '_blank');
           mudarAba('consulta');
         } else {
           alert("Erro ao gerar termo.");
