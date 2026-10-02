@@ -253,7 +253,6 @@
 
   <div id="appContainer" style="display: none;">
 
-    <!-- BARRA SUPERIOR (HEADER) -->
     <div class="header">
       <h1 style="color: #ffffff; display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 600;">
         <i class="fa-solid fa-layer-group" style="font-size: 22px; background: linear-gradient(180deg, #60a5fa 0%, #fef08a 50%, #22c55e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i> 
@@ -519,7 +518,6 @@
             <input type="text" id="compObservacao" placeholder="Ex: Peça necessária para atendimento da OS de manutenção corretiva urgente.">
           </div>
 
-          <!-- MAPA DE COTAÇÃO - TRÊS FORNECEDORES -->
           <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px; margin-bottom: 14px;">
             <div style="font-size: 12px; font-weight: bold; color: #1a4d80; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
               <i class="fa-solid fa-scale-balanced"></i> Mapa de Cotação de Preços (3 Fornecedores)
@@ -548,7 +546,6 @@
               </div>
             </div>
 
-            <!-- PAINEL DE DESTAQUE DO MENOR VALOR -->
             <div id="painelMenorPreco" style="background: #e6f4ea; border: 1px solid #a8dab5; color: #137333; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 13px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
               <span><i class="fa-solid fa-trophy"></i> Menor Proposta Identificada: <span id="lblFornVencedor">-</span></span>
               <span>Valor: <span id="lblMenorValor">R$ 0,00</span></span>
@@ -578,7 +575,6 @@
         </form>
       </div>
 
-      <!-- TABELA DE COTAÇÕES E SOLICITAÇÕES -->
       <div class="card">
         <div class="card-title">Central de Gestão de Cotações & Compras</div>
         <div class="table-container">
@@ -757,7 +753,6 @@
     </div>
 
     <div id="abaEmissao" class="tab-content">
-      <!-- PAINEL DE REQUISIÇÃO VINCULADA -->
       <div id="bannerReqVinculada" style="display: none; background: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 12px; align-items: center; justify-content: space-between;">
         <span><i class="fa-solid fa-link"></i> Atendendo Requisição Pendente: <span id="lblProtReqVinculada" style="color: #1a4d80;">-</span></span>
         <button type="button" onclick="desvincularRequisicao()" style="background: transparent; border: none; color: #dc3545; font-weight: bold; cursor: pointer; font-size: 11px;"><i class="fa-solid fa-xmark"></i> Cancelar Vínculo</button>
@@ -1200,8 +1195,9 @@
     }
 
     function enviarHeartbeat() {
-      if (!usuarioLogado || !usuarioLogado.usuario) return;
-      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "PING_PRESENCA", usuario: usuarioLogado.usuario }) }).catch(e => {});
+      if (!usuarioLogado || (!usuarioLogado.usuario && !usuarioLogado.nome)) return;
+      var idUsr = usuarioLogado.usuario || usuarioLogado.nome;
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "PING_PRESENCA", usuario: idUsr }) }).catch(e => {});
     }
 
     function renderizarUsuariosOnline() {
@@ -1212,9 +1208,11 @@
 
       const usuarios = bancoDados.usuarios || [];
 
-      // Local override to keep the logged-in user active
-      if (usuarioLogado && usuarioLogado.usuario) {
-        const me = usuarios.find(u => u && u.usuario.toLowerCase() === usuarioLogado.usuario.toLowerCase());
+      if (usuarioLogado && (usuarioLogado.usuario || usuarioLogado.nome)) {
+        const me = usuarios.find(u => 
+          u && ((u.usuario && u.usuario.toLowerCase() === (usuarioLogado.usuario || '').toLowerCase()) ||
+                (u.nome && u.nome.toLowerCase() === (usuarioLogado.nome || '').toLowerCase()))
+        );
         if (me) me.online = true;
       }
       
@@ -1237,7 +1235,7 @@
               <span><i class="fa-solid fa-circle" style="color:#22c55e;"></i> ${u.nome || u.usuario || '-'}</span>
               <span style="font-size:10px; color:#155724; font-weight:bold;">Online</span>
             </div>
-            <div class="notif-item-sub">Usuário: <b>${u.usuario || '-'}</b> | Ativo: ${u.ultimoAcesso || 'Agora'}</div>
+            <div class="notif-item-sub">Login: <b>${u.usuario || '-'}</b> | Ativo: ${u.ultimoAcesso || 'Agora'}</div>
           </div>
         `).join('');
       }
@@ -1249,7 +1247,7 @@
             <div class="notif-item-title">
               <span><i class="fa-regular fa-circle" style="color:#94a3b8;"></i> ${u.nome || u.usuario || '-'}</span>
             </div>
-            <div class="notif-item-sub">Última presença: ${u.ultimoAcesso || '-'}</div>
+            <div class="notif-item-sub">Login: ${u.usuario || '-'} | Última presença: ${u.ultimoAcesso || '-'}</div>
           </div>
         `).join('');
       }
@@ -1264,7 +1262,10 @@
       let htmlOptions = '<option value="">Selecione o técnico...</option>';
       if (bancoDados && bancoDados.usuarios) {
         bancoDados.usuarios.forEach((u, idx) => {
-          if (u && u.nome) htmlOptions += `<option value="${idx}">${u.nome}</option>`;
+          if (u && (u.nome || u.usuario)) {
+            const nomeExibir = u.nome || u.usuario;
+            htmlOptions += `<option value="${idx}">${nomeExibir}</option>`;
+          }
         });
       }
       selTec.innerHTML = htmlOptions;
@@ -1755,7 +1756,6 @@
       .then(res => res.json())
       .then(res => {
         if (res.status === "sucesso") {
-          // Find the SPECIFIC pending row for this protocol
           if (bancoDados && bancoDados.requisicoes) {
             const reqLocal = bancoDados.requisicoes.find(r => r && r.protocolo === protReqAlvo && (r.status || "").toUpperCase() === "PENDENTE") ||
                              bancoDados.requisicoes.find(r => r && r.protocolo === protReqAlvo);
@@ -1783,7 +1783,6 @@
     }
 
     function atenderRequisicao(protReq, cliente, operacao) {
-      // Find the SPECIFIC requisition that is PENDENTE for this protocol
       const reqObj = (bancoDados.requisicoes || []).find(r => r && r.protocolo === protReq && (r.status || "").toUpperCase() === "PENDENTE") ||
                      (bancoDados.requisicoes || []).find(r => r && r.protocolo === protReq);
 
@@ -1832,7 +1831,6 @@
     }
 
     function popularAutocomplete() {
-      // Clientes mesclados
       let listaClientesUnicos = new Set();
       if (bancoDados.clientes) bancoDados.clientes.forEach(c => c && listaClientesUnicos.add(c));
       if (bancoDados.locacoes) bancoDados.locacoes.forEach(l => l && l.cliente && listaClientesUnicos.add(l.cliente));
@@ -1840,13 +1838,11 @@
       const listC = document.getElementById('listClientes');
       if (listC) listC.innerHTML = Array.from(listaClientesUnicos).sort().map(c => `<option value="${c}">`).join('');
 
-      // Equipamentos
       if (bancoDados.equipamentos) {
         const listE = document.getElementById('listEquipamentos');
         if (listE) listE.innerHTML = bancoDados.equipamentos.map(eq => `<option value="TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}">`).join('');
       }
 
-      // Unidades e Famílias do Controle de Locação
       if (bancoDados.locacoes) {
         const unidades = Array.from(new Set(bancoDados.locacoes.map(l => l ? l.unidade : '').filter(Boolean))).sort();
         const familias = Array.from(new Set(bancoDados.locacoes.map(l => l ? l.equipamento : '').filter(Boolean))).sort();
@@ -2100,7 +2096,6 @@
       if (document.getElementById('dashAtendidos')) document.getElementById('dashAtendidos').innerText = atendidos;
       if (document.getElementById('dashRecusados')) document.getElementById('dashRecusados').innerText = recusados;
 
-      // Renderizar gráfico visual de Top Clientes
       const divCli = document.getElementById('chartClientes');
       if (divCli) {
         const topClientes = Object.entries(contagemClientes).sort((a, b) => b[1] - a[1]).slice(0, 5);
@@ -2125,7 +2120,6 @@
         }
       }
 
-      // Renderizar gráfico visual de Top Famílias
       const divFam = document.getElementById('chartFamilias');
       if (divFam) {
         const topFamilias = Object.entries(contagemFamilias).sort((a, b) => b[1] - a[1]).slice(0, 5);
