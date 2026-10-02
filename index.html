@@ -21,7 +21,7 @@
     .status-badge.connected { background-color: #28a745; color: white; }
 
     /* Botões Circulares do Cabeçalho */
-    .notification-btn { background: rgba(255,255,255,0.15); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: background 0.2s; }
+    .notification-btn { background: rgba(255,255,255,0.15); border: none; color: white; padding: 0 12px; height: 36px; border-radius: 18px; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: background 0.2s; gap: 6px; }
     .notification-btn:hover { background: rgba(255,255,255,0.25); }
     
     .notification-badge { position: absolute; top: -2px; right: -2px; background: #dc3545; color: white; border-radius: 10px; padding: 2px 6px; font-size: 10px; font-weight: bold; border: 2px solid #1a4d80; display: none; }
@@ -86,10 +86,10 @@
     .menu-ajuda-item:hover { background: #f1f5f9; color: #1a4d80; }
 
     /* Dropdowns Notificações */
-    .notification-dropdown { display: none; position: absolute; top: 48px; right: 0; width: 320px; background: white; color: #333; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); z-index: 200; border: 1px solid #e2e8f0; overflow: hidden; }
+    .notification-dropdown { display: none; position: absolute; top: 48px; right: 0; width: 340px; background: white; color: #333; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); z-index: 200; border: 1px solid #e2e8f0; overflow: hidden; }
     .notification-dropdown.active { display: block; animation: fadeIn 0.2s ease-in-out; }
     .notif-header { background: #f8fafc; padding: 10px 14px; font-size: 12px; font-weight: bold; color: #1a4d80; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
-    .notif-list { max-height: 260px; overflow-y: auto; }
+    .notif-list { max-height: 280px; overflow-y: auto; }
     .notif-item { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: background 0.2s; }
     .notif-item:hover { background: #f1f5f9; }
     .notif-item-title { font-size: 12px; font-weight: bold; color: #1e293b; display: flex; justify-content: space-between; }
@@ -134,18 +134,6 @@
     td { padding: 8px 6px; border-bottom: 1px solid #eee; vertical-align: middle; font-size: 12px; overflow: hidden; text-overflow: ellipsis; }
     .td-center { text-align: center; }
 
-    .prio-critica { border-left: 5px solid #dc3545 !important; }
-    .prio-alta { border-left: 5px solid #fd7e14 !important; }
-    .prio-media { border-left: 5px solid #ffc107 !important; }
-    .prio-baixa { border-left: 5px solid #20c997 !important; }
-
-    .signature-container { display: flex; gap: 12px; margin-top: 8px; }
-    .sig-box { flex: 1; border: 1px dashed #bbb; border-radius: 6px; padding: 10px; background: #fafafa; text-align: center; position: relative; }
-    .sig-box canvas { width: 100%; height: 110px; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: crosshair; touch-action: none; }
-    .sig-preview { height: 60px; border: 1px solid #ccc; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; margin-top: 6px; padding: 4px; }
-    .sig-preview img { max-height: 100%; max-width: 100%; object-fit: contain; }
-    .btn-clear { position: absolute; right: 12px; top: 12px; background: #dc3545; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
-
     /* Botões */
     .btn-submit { background: #1a4d80; color: white; border: none; padding: 12px 18px; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
     .btn-submit:hover { background: #13385c; }
@@ -155,13 +143,15 @@
     .btn-pdf:hover { background: #13385c; }
 
     .btn-termo-link { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; height: 26px; white-space: nowrap; }
-    .btn-termo-link:hover { background: #c8e6c9; }
 
-    .btn-atender { background: #e0a800; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
+    .btn-atender { background: #e0a800; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
     .btn-atender:hover { background: #c69500; }
 
-    .btn-negar { background: #dc3545; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
+    .btn-negar { background: #dc3545; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
     .btn-negar:hover { background: #bd2130; }
+
+    .btn-vincular { background: #2563eb; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
+    .btn-vincular:hover { background: #1d4ed8; }
 
     .btn-editar-saldo { background: #2563eb; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
     .btn-editar-saldo:hover { background: #1d4ed8; }
@@ -208,11 +198,6 @@
     .modal-box { background: white; padding: 24px; border-radius: 10px; width: 680px; max-width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
     .modal-title { font-size: 16px; font-weight: bold; color: #1a4d80; margin-bottom: 12px; display: flex; justify-content: space-between; border-bottom: 2px solid #1a4d80; padding-bottom: 6px; }
 
-    .galeria-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; width: 100%; }
-    .galeria-thumb { width: 85px; height: 85px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #f8fafc; position: relative; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
-    .galeria-thumb:hover { transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.18); border-color: #2563eb; }
-    .galeria-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
     /* Manual */
     .modal-manual-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(3px); z-index: 20000; align-items: center; justify-content: center; }
     .modal-manual-overlay.ativo { display: flex; }
@@ -241,7 +226,6 @@
 </head>
 <body>
 
-  <!-- TELA DE LOGIN -->
   <div id="loginOverlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0f172a; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px;">
     <div style="background: #ffffff; width: 100%; max-width: 380px; padding: 30px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); text-align: center;">
       <div style="font-size: 24px; font-weight: 800; color: #1a4d80; margin-bottom: 4px;">DMA SYS</div>
@@ -267,7 +251,6 @@
     </div>
   </div>
 
-  <!-- CONTEÚDO PRINCIPAL DO SISTEMA -->
   <div id="appContainer" style="display: none;">
 
     <!-- BARRA SUPERIOR (HEADER) -->
@@ -280,14 +263,14 @@
       <div class="header-right">
         <!-- BOTÃO DE USUÁRIOS ONLINE -->
         <div style="position: relative; display: inline-block;">
-          <button type="button" class="notification-btn" onclick="toggleUsersDropdown()" title="Usuários Conectados" style="width: auto; padding: 0 12px; border-radius: 16px; font-size: 12px; gap: 6px;">
+          <button type="button" class="notification-btn" onclick="toggleUsersDropdown(event)" title="Usuários Conectados">
             <i class="fa-solid fa-circle" style="color: #22c55e; font-size: 10px;"></i>
             <span id="onlineCountText">0 Online</span>
           </button>
           
-          <div id="usersDropdown" class="notification-dropdown" style="right: 0; width: 260px;">
+          <div id="usersDropdown" class="notification-dropdown" style="right: 0; width: 280px;">
             <div class="notif-header">
-              <span><i class="fa-solid fa-users"></i> USUÁRIOS CADASTRADOS</span>
+              <span><i class="fa-solid fa-users"></i> USUÁRIOS REGISTRADOS</span>
             </div>
             <div class="notif-list" id="usersOnlineList">
               <div style="padding: 12px; text-align: center; color: #888; font-size: 12px;">Carregando usuários...</div>
@@ -296,7 +279,7 @@
         </div>
 
         <!-- ÍCONE DE NOTIFICAÇÃO (SINO) -->
-        <button type="button" class="notification-btn" onclick="toggleNotifications()" title="Notificações de Requisições">
+        <button type="button" class="notification-btn" onclick="toggleNotifications(event)" title="Notificações de Requisições">
           <i class="fa-solid fa-bell"></i>
           <span id="notifBadge" class="notification-badge">0</span>
         </button>
@@ -391,7 +374,6 @@
     <datalist id="listFamiliasLocacao"></datalist>
     <datalist id="listUnidadesLocacao"></datalist>
 
-    <!-- ABA 0: TELA DE INÍCIO -->
     <div id="abaInicio" class="tab-content active">
       <div class="welcome-hero">
         <h2>Bem-vindo ao DMA SYS v2.0</h2>
@@ -431,7 +413,6 @@
       </div>
     </div>
 
-    <!-- ABA: CONTROLE DE LOCAÇÃO -->
     <div id="abaLocacao" class="tab-content">
       <div class="dash-metrics" style="grid-template-columns: repeat(4, 1fr);">
         <div class="metric-card blue">
@@ -509,7 +490,6 @@
       </div>
     </div>
 
-    <!-- ABA: MÓDULO DE COMPRAS & MAPA DE COTAÇÃO -->
     <div id="abaCompras" class="tab-content">
       <div class="card">
         <div class="card-title">
@@ -626,7 +606,6 @@
       </div>
     </div>
 
-    <!-- ABA 1: DASHBOARD -->
     <div id="abaDashboard" class="tab-content">
       <div class="card" style="margin-bottom: 16px;">
         <div class="card-title">
@@ -639,7 +618,7 @@
           </div>
           <div class="form-group" style="flex: 1;">
             <label>Modo de Período:</label>
-            <select id="dashModoPeriodo" onchange="alternarModoDash()">
+            <select id="dashModoPeriodo" onchange="atualizarDashboard()">
               <option value="MES">Apenas o Mês Selecionado</option>
               <option value="GERAL">Todo o Histórico (Geral)</option>
             </select>
@@ -683,7 +662,6 @@
       </div>
     </div>
 
-    <!-- ABA 2: REQUISIÇÕES INTERNAS -->
     <div id="abaRequisicoes" class="tab-content">
       <div class="card">
         <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
@@ -760,12 +738,12 @@
               <tr>
                 <th class="td-center" style="width: 70px;">Req #</th>
                 <th style="width: 110px;">Data / Hora</th>
-                <th style="width: 240px;">Cliente / Locatário</th>
-                <th style="width: 210px;">Equipamento Solicitado</th>
-                <th style="width: 200px;">Motivo / Obs.</th>
-                <th class="td-center" style="width: 85px;">Operação</th>
-                <th class="td-center" style="width: 85px;">Status</th>
-                <th class="td-center" style="width: 230px;">Ações / Qualidade</th>
+                <th style="width: 220px;">Cliente / Locatário</th>
+                <th style="width: 200px;">Equipamento Solicitado</th>
+                <th>Motivo / Obs.</th>
+                <th class="td-center" style="width: 80px;">Operação</th>
+                <th class="td-center" style="width: 80px;">Status</th>
+                <th class="td-center" style="width: 310px;">Ações / Qualidade</th>
               </tr>
             </thead>
             <tbody id="corpoRequisicoes">
@@ -778,7 +756,6 @@
       </div>
     </div>
 
-    <!-- ABA 3: EMISSÃO DE TERMO -->
     <div id="abaEmissao" class="tab-content">
       <!-- PAINEL DE REQUISIÇÃO VINCULADA -->
       <div id="bannerReqVinculada" style="display: none; background: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 12px; align-items: center; justify-content: space-between;">
@@ -861,10 +838,6 @@
               <select id="selectTecnico" onchange="exibirAssinaturaTecnico()" required>
                 <option value="">Selecione o técnico...</option>
               </select>
-              
-              <div class="sig-preview" id="previewTecnico">
-                <span style="color: #aaa; font-size: 12px;">Assinatura do Técnico</span>
-              </div>
             </div>
 
             <div class="signature-container">
@@ -883,7 +856,6 @@
       </form>
     </div>
 
-    <!-- ABA 4: CONSULTA DE TERMOS EMITIDOS -->
     <div id="abaConsulta" class="tab-content">
       <div class="card">
         <div class="card-title">Histórico e Consulta de Termos Gerados</div>
@@ -917,7 +889,6 @@
       </div>
     </div>
 
-    <!-- ABA 5: CENTRAL DE GESTÃO DE ORDENS DE SERVIÇO (O.S.) -->
     <div id="abaOsGestao" class="tab-content">
       <div class="card">
         <div class="card-title">
@@ -968,7 +939,6 @@
       </div>
     </div>
 
-    <!-- ABA 6: ABERTURA DE NOVA O.S. -->
     <div id="abaOsAbertura" class="tab-content">
       <div class="card">
         <div class="card-title">Abrir Nova Ordem de Serviço (Manutenção)</div>
@@ -1032,7 +1002,6 @@
       </div>
     </div>
 
-    <!-- ABA 7: CADASTRO DE NOVO EQUIPAMENTO -->
     <div id="abaCadEquipamento" class="tab-content">
       <div class="card">
         <div class="card-title">Cadastrar Novo Equipamento (Aba EQUIP)</div>
@@ -1044,8 +1013,8 @@
           </div>
 
           <div class="form-row">
-            <div class="form-group" style="flex: 2;"><label>Descrição do Equipamento:</label><input type="text" id="cadNome" list="listDescricoesPadrao" onchange="aoSelecionarDescricaoCad()" required></div>
-            <div class="form-group" style="flex: 1;"><label>Modelo:</label><input type="text" id="cadModelo" list="listModelosPadrao" onchange="aoSelecionarModeloCad()" required></div>
+            <div class="form-group" style="flex: 2;"><label>Descrição do Equipamento:</label><input type="text" id="cadNome" list="listDescricoesPadrao" required></div>
+            <div class="form-group" style="flex: 1;"><label>Modelo:</label><input type="text" id="cadModelo" list="listModelosPadrao" required></div>
             <div class="form-group" style="flex: 1;"><label>Fabricante:</label><input type="text" id="cadFabricante" list="listFabricantesPadrao" required></div>
           </div>
 
@@ -1061,7 +1030,6 @@
       </div>
     </div>
 
-    <!-- ABA 8: CADASTRO DE NOMENCLATURAS VINCULADAS -->
     <div id="abaCadAuxiliares" class="tab-content">
       <div class="card">
         <div class="card-title">Gerenciar Nomenclaturas & Combinações Válidas</div>
@@ -1087,7 +1055,6 @@
 
   </div>
 
-  <!-- MODAL DE EDIÇÃO DE SALDO FÍSICO DE LOCAÇÃO -->
   <div id="modalLocacao" class="modal-overlay">
     <div class="modal-box" style="width: 480px;">
       <div class="modal-title">
@@ -1107,54 +1074,8 @@
     </div>
   </div>
 
-  <!-- MODAL ESPELHO DA O.S. -->
-  <div id="modalOS" class="modal-overlay">
-    <div class="modal-box">
-      <div class="modal-title">
-        <span>ORDEM DE SERVIÇO: <span id="mOSNum" style="color:#2563eb;">-</span></span>
-        <span onclick="fecharModalOS()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
-      </div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
-        <div><b>Data Abertura:</b> <span id="mOSData">-</span></div>
-        <div><b>Status:</b> <span id="mOSStatus" class="badge-status badge-atendido">-</span></div>
-        <div><b>Cliente:</b> <span id="mOSCliente">-</span></div>
-        <div><b>TAG:</b> <span id="mOSTag" style="font-weight:bold; color:#1a4d80;">-</span></div>
-        <div><b>Equipamento:</b> <span id="mOSEquip">-</span></div>
-        <div><b>Técnico:</b> <span id="mOSTecnico">-</span></div>
-      </div>
-      <div class="form-group" style="margin-bottom: 10px;">
-        <label>Tipo de Manutenção:</label>
-        <select id="mOSTipoManutencao">
-          <option value="CORRETIVA">CORRETIVA</option>
-          <option value="PREVENTIVA">PREVENTIVA</option>
-          <option value="CALIBRAÇÃO">CALIBRAÇÃO</option>
-          <option value="INSPEÇÃO">INSPEÇÃO / HIGIENIZAÇÃO</option>
-          <option value="OFICINA">OFICINA</option>
-        </select>
-      </div>
-      <div class="form-group" style="margin-bottom: 10px;"><label>Diagnóstico Técnico:</label><textarea id="mOSDiagnostico" style="height: 60px;"></textarea></div>
-      <div class="form-group" style="margin-bottom: 12px;"><label>Serviço Realizado:</label><textarea id="mOSServico" style="height: 60px;"></textarea></div>
-      <div style="margin-bottom: 16px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
-        <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-          <span>Anexos & Fotos:</span>
-          <input type="file" id="inputFotoOS" accept="image/*" style="display:none;" onchange="uploadFotoOS(event)">
-          <button type="button" class="btn-atender" style="padding: 4px 8px; font-size: 10px;" onclick="document.getElementById('inputFotoOS').click()"><i class="fa-solid fa-paperclip"></i> Anexar Imagem</button>
-        </label>
-        <div id="mOSGaleria" class="galeria-grid"><span style="color:#aaa; font-size:11px;">Nenhuma foto anexada.</span></div>
-      </div>
-      <div style="display: flex; gap: 8px; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 12px;">
-        <button type="button" id="btnAcaoOSModal" class="btn-negar" style="background:#d97706;" onclick="alternarAcaoOS()"><i class="fa-solid fa-lock-open"></i> Reabrir O.S.</button>
-        <div style="display: flex; gap: 8px;">
-          <a id="btnPdfOSModal" href="#" target="_blank" class="btn-pdf"><i class="fa-solid fa-print"></i> Imprimir PDF</a>
-          <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalOS()">Fechar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL DE VINCULAÇÃO DE TERMO EXISTENTE -->
   <div id="modalVincularTermo" class="modal-overlay">
-    <div class="modal-box" style="width: 460px;">
+    <div class="modal-box" style="width: 480px;">
       <div class="modal-title">
         <span>Vincular Termo Existente a <span id="lblProtReqVinculo" style="color:#1a4d80;">-</span></span>
         <span onclick="fecharModalVincularTermo()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
@@ -1166,8 +1087,8 @@
       </div>
 
       <div class="form-group" style="margin-bottom: 16px;">
-        <label>Selecione ou Digite o Protocolo do Termo (Ex: PT0005):</label>
-        <input type="text" id="inputProtocoloTermoVinculo" list="listTermosExistentes" placeholder="Digite ou escolha o Termo (Ex: PT0005)..." style="font-size:14px; font-weight:bold; padding:10px;">
+        <label>Selecione ou Digite o Protocolo do Termo (Ex: PT0018):</label>
+        <input type="text" id="inputProtocoloTermoVinculo" list="listTermosExistentes" placeholder="Digite ou escolha o Termo (Ex: PT0018)..." style="font-size:14px; font-weight:bold; padding:10px;">
         <datalist id="listTermosExistentes"></datalist>
       </div>
 
@@ -1180,30 +1101,24 @@
     </div>
   </div>
 
-  <!-- MODAL DE RECUSA DA QUALIDADE -->
-  <div id="modalRecusa" class="modal-overlay">
-    <div class="modal-box" style="width: 400px;">
-      <div class="modal-title">Recusar Requisição <span id="modalProtReq"></span></div>
-      <div class="form-group" style="margin-bottom: 12px;">
-        <label>Motivo da Recusa / Indisponibilidade:</label>
-        <textarea id="motivoRecusaTexto" style="height: 80px;" placeholder="Ex: Equipamento sem estoque no momento..."></textarea>
-      </div>
-      <div style="display: flex; gap: 8px; justify-content: flex-end;">
-        <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalRecusa()">Cancelar</button>
-        <button type="button" class="btn-negar" onclick="confirmarRecusaQualidade()">Confirmar Recusa</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MANUAL DE OPERAÇÃO -->
   <div class="modal-manual-overlay" id="modalManualUso">
     <div class="modal-manual-card">
       <div class="modal-manual-header">
-        <h3><i class="fa-solid fa-book-open"></i> Manual de Operação — DMA SYS v2.0</h3>
+        <h3><i class="fa-solid fa-book-open"></i> Material de Apoio & Manual de Operação — DMA SYS v2.0</h3>
         <button type="button" class="btn-fechar-manual" onclick="fecharModalManual()"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-manual-body">
-        <p>Sistema corporativo DMA SYS v2.0 para controle de locação, emissão de cotações de compras e acompanhamento de Ordens de Serviço.</p>
+        <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-boxes-packing"></i> 1. Controle de Locação</h4>
+        <p style="margin-bottom:12px;">Consulte saldos contratados vs. entregues por cliente e unidade hospitalar. Ajuste saldos físicos diretamente pelo botão <b>"Ajustar"</b>.</p>
+
+        <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-cart-shopping"></i> 2. Módulo de Compras & Mapa Comparativo</h4>
+        <p style="margin-bottom:12px;">Cadastre cotações informando 3 fornecedores. O sistema destaca a menor proposta em verde e gera o PDF oficial do Mapa de Cotação.</p>
+
+        <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-shield-halved"></i> 3. Módulo Qualidade & Termos</h4>
+        <p style="margin-bottom:12px;">Acompanhe requisições internas, atenda com emissão do Termo Duplo de Entrega e Higienização ou vincule termos já emitidos pelo botão <b>"Vincular"</b>.</p>
+
+        <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-screwdriver-wrench"></i> 4. Manutenção e O.S.</h4>
+        <p>Acompanhe e abra ordens de serviço preventivas e corretivas com priorização por cores.</p>
       </div>
     </div>
   </div>
@@ -1230,14 +1145,10 @@
 
     let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], relacoesAuxiliares: [], locacoes: [], compras: [] };
     let equipamentoSelecionado = null;
-    let osEquipamentoSelecionado = null;
-    let protocoloReqEmRecusa = null;
     let protocoloReqEmVinculo = null;
-    let osSelecionadaModal = null;
     let usuarioLogado = null;
     let estaBuscandoDados = false;
 
-    // Debounce de alta performance para nao travar navegacao ao digitar
     function criarDebounce(func, wait = 200) {
       let timeout;
       return function(...args) {
@@ -1251,15 +1162,9 @@
     const filtrarTabelaTermosDebounced = criarDebounce(() => filtrarTabelaTermos(), 200);
     const renderizarTabelaOSDebounced = criarDebounce(() => renderizarTabelaOS(), 200);
 
-    function alternarMenuAjuda(e) { e.stopPropagation(); document.getElementById("menuAjudaDropdown")?.classList.toggle("ativo"); }
+    function alternarMenuAjuda(e) { if(e) e.stopPropagation(); document.getElementById("menuAjudaDropdown")?.classList.toggle("ativo"); }
     function abrirModalManual() { document.getElementById("modalManualUso")?.classList.add("ativo"); document.getElementById("menuAjudaDropdown")?.classList.remove("ativo"); }
     function fecharModalManual() { document.getElementById("modalManualUso")?.classList.remove("ativo"); }
-
-    function converterUrlDriveParaImagem(url) {
-      if (!url) return "";
-      const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
-      return match && match[1] ? `https://lh3.googleusercontent.com/d/${match[1]}` : url;
-    }
 
     function toggleMenuDropdown(event, dropId) {
       event.stopPropagation();
@@ -1278,8 +1183,17 @@
 
     document.addEventListener('click', fecharTodosDropdowns);
 
-    function toggleUsersDropdown() {
+    function toggleUsersDropdown(e) {
+      if(e) e.stopPropagation();
       const dropdown = document.getElementById('usersDropdown');
+      const atv = dropdown.classList.contains('active');
+      fecharTodosDropdowns();
+      if (!atv) dropdown.classList.add('active');
+    }
+
+    function toggleNotifications(e) {
+      if(e) e.stopPropagation();
+      const dropdown = document.getElementById('notifDropdown');
       const atv = dropdown.classList.contains('active');
       fecharTodosDropdowns();
       if (!atv) dropdown.classList.add('active');
@@ -1297,6 +1211,8 @@
       if (!listContainer || !countText) return;
       
       const onlines = (bancoDados.usuarios || []).filter(u => u && u.online);
+      const offlines = (bancoDados.usuarios || []).filter(u => u && !u.online);
+      
       countText.innerText = `${onlines.length} Online`;
 
       if (!bancoDados.usuarios || bancoDados.usuarios.length === 0) {
@@ -1304,17 +1220,33 @@
         return;
       }
 
-      const rows = bancoDados.usuarios.map(u => `
-        <div class="notif-item" style="cursor: default;">
-          <div class="notif-item-title">
-            <span>${u.online ? '<i class="fa-solid fa-circle" style="color:#22c55e;"></i>' : '<i class="fa-regular fa-circle" style="color:#64748b;"></i>'} ${u.nome || u.usuario || '-'}</span>
+      let html = '';
+      if (onlines.length > 0) {
+        html += `<div style="padding: 6px 12px; font-size: 10px; font-weight: bold; color: #166534; background: #dcfce7;">🟢 CONECTADOS AGORA (${onlines.length})</div>`;
+        html += onlines.map(u => `
+          <div class="notif-item" style="cursor: default;">
+            <div class="notif-item-title">
+              <span><i class="fa-solid fa-circle" style="color:#22c55e;"></i> ${u.nome || u.usuario || '-'}</span>
+              <span style="font-size:10px; color:#155724; font-weight:normal;">Online</span>
+            </div>
+            <div class="notif-item-sub">Usuário: <b>${u.usuario || '-'}</b> | Acesso: ${u.ultimoAcesso || 'Agora'}</div>
           </div>
-          <div class="notif-item-sub" style="color: ${u.online ? "#155724" : "#64748b"};">
-            ${u.online ? "Conectado agora" : "Último acesso: " + (u.ultimoAcesso || "-")}
+        `).join('');
+      }
+
+      if (offlines.length > 0) {
+        html += `<div style="padding: 6px 12px; font-size: 10px; font-weight: bold; color: #475569; background: #f1f5f9;">⚪ INDISPONÍVEIS / OFFLINE (${offlines.length})</div>`;
+        html += offlines.map(u => `
+          <div class="notif-item" style="cursor: default; opacity: 0.7;">
+            <div class="notif-item-title">
+              <span><i class="fa-regular fa-circle" style="color:#94a3b8;"></i> ${u.nome || u.usuario || '-'}</span>
+            </div>
+            <div class="notif-item-sub">Última presença: ${u.ultimoAcesso || '-'}</div>
           </div>
-        </div>
-      `);
-      listContainer.innerHTML = rows.join('');
+        `).join('');
+      }
+
+      listContainer.innerHTML = html;
     }
 
     function preencherSelectTecnicos() {
@@ -1415,7 +1347,6 @@
           badge.classList.add('connected');
         }
         
-        // Executamos cada módulo dentro de um bloco try/catch isolado para resiliência total
         try { popularAutocomplete(); } catch(e) { console.error("Erro popularAutocomplete:", e); }
         try { preencherSelectTecnicos(); } catch(e) { console.error("Erro preencherSelectTecnicos:", e); }
         try { renderizarTabelaTermos(bancoDados.termosEmitidos || []); } catch(e) { console.error("Erro renderizarTabelaTermos:", e); }
@@ -1577,110 +1508,6 @@
       .catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Atualizar Saldo'; });
     }
 
-    function calcularMenorPrecoCotacao() {
-      const f1 = document.getElementById('compForn1').value || "Fornecedor 1";
-      const v1 = parseFloat(document.getElementById('compVal1').value) || 0;
-      const f2 = document.getElementById('compForn2').value || "Fornecedor 2";
-      const v2 = parseFloat(document.getElementById('compVal2').value) || 0;
-      const f3 = document.getElementById('compForn3').value || "Fornecedor 3";
-      const v3 = parseFloat(document.getElementById('compVal3').value) || 0;
-
-      let lista = [];
-      if (v1 > 0) lista.push({ forn: f1, val: v1, box: 'boxForn1' });
-      if (v2 > 0) lista.push({ forn: f2, val: v2, box: 'boxForn2' });
-      if (v3 > 0) lista.push({ forn: f3, val: v3, box: 'boxForn3' });
-
-      if (document.getElementById('boxForn1')) document.getElementById('boxForn1').style.borderColor = "#e2e8f0";
-      if (document.getElementById('boxForn2')) document.getElementById('boxForn2').style.borderColor = "#e2e8f0";
-      if (document.getElementById('boxForn3')) document.getElementById('boxForn3').style.borderColor = "#e2e8f0";
-
-      if (lista.length === 0) {
-        if (document.getElementById('lblFornVencedor')) document.getElementById('lblFornVencedor').innerText = "-";
-        if (document.getElementById('lblMenorValor')) document.getElementById('lblMenorValor').innerText = "R$ 0,00";
-        return;
-      }
-
-      lista.sort((a, b) => a.val - b.val);
-      const menor = lista[0];
-      if (document.getElementById(menor.box)) document.getElementById(menor.box).style.borderColor = "#22c55e";
-      if (document.getElementById('lblFornVencedor')) document.getElementById('lblFornVencedor').innerText = menor.forn;
-      if (document.getElementById('lblMenorValor')) document.getElementById('lblMenorValor').innerText = "R$ " + menor.val.toFixed(2).replace('.', ',');
-    }
-
-    function salvarSolicitacaoCompra(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnSalvarCompra');
-      btn.disabled = true;
-      btn.innerText = "GERANDO MAPA DE COTAÇÃO...";
-
-      const payload = {
-        acao: "CRIAR_SOLICITACAO_COMPRA",
-        osExterna: document.getElementById('compOsExterna').value,
-        solicitante: document.getElementById('compSolicitante').value,
-        produto: document.getElementById('compProduto').value,
-        observacao: document.getElementById('compObservacao').value,
-        forn1: document.getElementById('compForn1').value, val1: document.getElementById('compVal1').value,
-        forn2: document.getElementById('compForn2').value, val2: document.getElementById('compVal2').value,
-        forn3: document.getElementById('compForn3').value, val3: document.getElementById('compVal3').value,
-        prazoEntrega: document.getElementById('compPrazo').value,
-        condPagamento: document.getElementById('compCondPagto').value,
-        frete: document.getElementById('compFrete').value,
-        status: "AGUARDANDO APROVAÇÃO"
-      };
-
-      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "sucesso") {
-          alert(`Cotação gerada com sucesso!\n\nID do Pedido: ${res.protocolo}`);
-          document.getElementById('formCompras').reset();
-          calcularMenorPrecoCotacao();
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF';
-          buscarAtualizacoesSilenciosas();
-        } else {
-          alert("Erro ao salvar cotação.");
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF';
-        }
-      })
-      .catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação e Emitir Mapa em PDF'; });
-    }
-
-    function renderizarTabelaCompras() {
-      const tbody = document.getElementById('corpoTabelaCompras');
-      if (!tbody) return;
-      const lista = bancoDados.compras || [];
-      if (lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color:#888; padding:20px;">Nenhuma cotação de compra registrada.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = lista.map(c => `
-        <tr>
-          <td class="td-center"><b>${c.protocolo || '-'}</b></td>
-          <td>${c.dataHora || '-'}</td>
-          <td><b>${c.osExterna || "-"}</b></td>
-          <td>${c.solicitante || '-'}</td>
-          <td>${c.produto || '-'}</td>
-          <td><b>${c.fornVencedor || '-'}</b></td>
-          <td class="td-center" style="font-weight:bold; color:#1a4d80;">R$ ${(Number(c.menorValor) || 0).toFixed(2).replace('.', ',')}</td>
-          <td class="td-center"><span class="badge-status ${c.status === 'APROVADO' ? 'badge-atendido' : 'badge-pendente'}">${c.status || 'PENDENTE'}</span></td>
-          <td class="td-center">
-            ${c.pdfUrlCompra ? `<a href="${c.pdfUrlCompra}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> Mapa PDF</a>` : '-'}
-            ${c.status !== 'APROVADO' ? `<button type="button" class="btn-atender" style="padding:4px 8px; font-size:10px; margin-left:4px;" onclick="aprovarCompra('${c.protocolo}')"><i class="fa-solid fa-check"></i> Aprovar</button>` : ''}
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function aprovarCompra(protocolo) {
-      if (!confirm(`Confirmar a aprovação da Cotação ${protocolo}?`)) return;
-      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "APROVAR_COMPRA", protocolo: protocolo, aprovador: usuarioLogado?.nome || "DIRETORIA" }) })
-      .then(res => res.json())
-      .then(res => { if (res.status === "sucesso") buscarAtualizacoesSilenciosas(); });
-    }
-
     function renderizarTabelaRequisicoes(lista) {
       const tbody = document.getElementById('corpoRequisicoes');
       if (!tbody) return;
@@ -1706,7 +1533,7 @@
           btnAcao = `<div class="btn-action-container">
             ${linkPdfReq}
             <button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}', '${r.operacao || 'LOCAÇÃO'}')"><i class="fa-solid fa-check"></i> Atender</button>
-            <button type="button" class="btn-atender" style="background:#2563eb;" onclick="abrirModalVincularTermo('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}')"><i class="fa-solid fa-link"></i> Vincular</button>
+            <button type="button" class="btn-vincular" onclick="abrirModalVincularTermo('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}')"><i class="fa-solid fa-link"></i> Vincular</button>
             <button type="button" class="btn-negar" onclick="abrirModalRecusa('${r.protocolo}')"><i class="fa-solid fa-xmark"></i> Negar</button>
           </div>`;
         } else if (isRecusado) {
@@ -1725,7 +1552,7 @@
             <td style="color:#555; font-style:italic;">${r.motivo || "-"}</td>
             <td class="td-center"><b>${r.operacao || 'LOCAÇÃO'}</b></td>
             <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span></td>
-            <td class="td-center" style="width: 250px;">${btnAcao}</td>
+            <td class="td-center">${btnAcao}</td>
           </tr>
         `;
       }).join('');
@@ -1791,22 +1618,39 @@
       btn.disabled = true;
       btn.innerText = "VINCULANDO...";
 
+      const protReqAlvo = protocoloReqEmVinculo;
+
       fetch(API_URL, {
         method: 'POST',
-        body: JSON.stringify({ acao: "VINCULAR_TERMO_REQUISICAO", protocoloReq: protocoloReqEmVinculo, protocoloTermo: protTermo })
+        body: JSON.stringify({ acao: "VINCULAR_TERMO_REQUISICAO", protocoloReq: protReqAlvo, protocoloTermo: protTermo })
       })
       .then(res => res.json())
       .then(res => {
         if (res.status === "sucesso") {
+          // Atualização imediata em memória local
+          if (bancoDados && bancoDados.requisicoes) {
+            const reqLocal = bancoDados.requisicoes.find(r => r && r.protocolo === protReqAlvo);
+            if (reqLocal) {
+              reqLocal.status = "ATENDIDO";
+              reqLocal.protocoloTermo = protTermo;
+            }
+          }
           fecharModalVincularTermo();
+          filtrarRequisicoes();
+          atualizarDashboard();
+          atualizarNotificacoes();
           buscarAtualizacoesSilenciosas();
         } else {
-          alert("Erro ao vincular termo.");
+          alert("Erro ao vincular termo: " + (res.mensagem || "Requisição não encontrada na planilha."));
         }
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-link"></i> Confirmar Vinculação';
       })
-      .catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-link"></i> Confirmar Vinculação'; });
+      .catch(err => {
+        alert("Falha de conexão ao vincular termo.");
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-link"></i> Confirmar Vinculação';
+      });
     }
 
     function atenderRequisicao(protReq, cliente, operacao) {
@@ -1856,13 +1700,30 @@
     }
 
     function popularAutocomplete() {
-      if (bancoDados.clientes) {
-        const listC = document.getElementById('listClientes');
-        if (listC) listC.innerHTML = bancoDados.clientes.map(c => `<option value="${c}">`).join('');
-      }
+      // Clientes mesclados
+      let listaClientesUnicos = new Set();
+      if (bancoDados.clientes) bancoDados.clientes.forEach(c => c && listaClientesUnicos.add(c));
+      if (bancoDados.locacoes) bancoDados.locacoes.forEach(l => l && l.cliente && listaClientesUnicos.add(l.cliente));
+      
+      const listC = document.getElementById('listClientes');
+      if (listC) listC.innerHTML = Array.from(listaClientesUnicos).sort().map(c => `<option value="${c}">`).join('');
+
+      // Equipamentos
       if (bancoDados.equipamentos) {
         const listE = document.getElementById('listEquipamentos');
         if (listE) listE.innerHTML = bancoDados.equipamentos.map(eq => `<option value="TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}">`).join('');
+      }
+
+      // Unidades e Famílias do Controle de Locação
+      if (bancoDados.locacoes) {
+        const unidades = Array.from(new Set(bancoDados.locacoes.map(l => l ? l.unidade : '').filter(Boolean))).sort();
+        const familias = Array.from(new Set(bancoDados.locacoes.map(l => l ? l.equipamento : '').filter(Boolean))).sort();
+
+        const dlUni = document.getElementById('listUnidadesLocacao');
+        if (dlUni) dlUni.innerHTML = unidades.map(u => `<option value="${u}">`).join('');
+
+        const dlFam = document.getElementById('listFamiliasLocacao');
+        if (dlFam) dlFam.innerHTML = familias.map(f => `<option value="${f}">`).join('');
       }
     }
 
@@ -1979,30 +1840,21 @@
         return;
       }
 
-      tbody.innerHTML = filtradas.map(os => {
-        let prioClass = "prio-media";
-        const pr = (os.prioridade || "").toUpperCase();
-        if (pr === "CRÍTICA") prioClass = "prio-critica";
-        if (pr === "ALTA") prioClass = "prio-alta";
-        if (pr === "BAIXA") prioClass = "prio-baixa";
-
-        return `
-          <tr class="${prioClass}" style="cursor:pointer;" onclick="abrirModalOS('${os.protocoloOS}')">
-            <td class="td-center"><b>${os.protocoloOS || '-'}</b></td>
-            <td>${os.dataAbertura || '-'}</td>
-            <td>${os.cliente || '-'}</td>
-            <td class="td-center"><b>${os.tag || '-'}</b></td>
-            <td>${os.equipamento || '-'}</td>
-            <td class="td-center">${os.tipoManutencao || '-'}</td>
-            <td class="td-center"><b>${os.prioridade || '-'}</b></td>
-            <td class="td-center"><span class="badge-status ${os.status === 'CONCLUÍDA' ? 'badge-atendido' : 'badge-pendente'}">${os.status || 'ABERTA'}</span></td>
-            <td class="td-center" onclick="event.stopPropagation();">
-              <button type="button" class="btn-atender" style="padding:4px 8px; font-size:10px;" onclick="abrirModalOS('${os.protocoloOS}')"><i class="fa-solid fa-eye"></i> Ver</button>
-              ${os.pdfUrlOS ? `<a href="${os.pdfUrlOS}" target="_blank" class="btn-pdf" style="padding:4px 8px; font-size:10px;"><i class="fa-solid fa-file-pdf"></i> PDF</a>` : ''}
-            </td>
-          </tr>
-        `;
-      }).join('');
+      tbody.innerHTML = filtradas.map(os => `
+        <tr>
+          <td class="td-center"><b>${os.protocoloOS || '-'}</b></td>
+          <td>${os.dataAbertura || '-'}</td>
+          <td>${os.cliente || '-'}</td>
+          <td class="td-center"><b>${os.tag || '-'}</b></td>
+          <td>${os.equipamento || '-'}</td>
+          <td class="td-center">${os.tipoManutencao || '-'}</td>
+          <td class="td-center"><b>${os.prioridade || '-'}</b></td>
+          <td class="td-center"><span class="badge-status ${os.status === 'CONCLUÍDA' ? 'badge-atendido' : 'badge-pendente'}">${os.status || 'ABERTA'}</span></td>
+          <td class="td-center">
+            ${os.pdfUrlOS ? `<a href="${os.pdfUrlOS}" target="_blank" class="btn-pdf" style="padding:4px 8px; font-size:10px;"><i class="fa-solid fa-file-pdf"></i> PDF</a>` : '-'}
+          </td>
+        </tr>
+      `).join('');
     }
 
     function renderizarTabelaTermos(lista) {
@@ -2096,16 +1948,75 @@
       if (document.getElementById('dashTotalReq')) document.getElementById('dashTotalReq').innerText = reqs.length;
 
       let pendentes = 0, atendidos = 0, recusados = 0;
+      let contagemClientes = {};
+      let contagemFamilias = {};
+
       reqs.forEach(r => {
         let st = (r.status || "PENDENTE").toUpperCase();
         if (st === "PENDENTE") pendentes++;
         else if (st === "ATENDIDO") atendidos++;
         else if (st === "RECUSADO") recusados++;
+
+        let cli = r.cliente || "Não informado";
+        contagemClientes[cli] = (contagemClientes[cli] || 0) + 1;
+
+        let eq = r.equipamentoSolicitado || "Diversos";
+        contagemFamilias[eq] = (contagemFamilias[eq] || 0) + 1;
       });
 
       if (document.getElementById('dashPendentes')) document.getElementById('dashPendentes').innerText = pendentes;
       if (document.getElementById('dashAtendidos')) document.getElementById('dashAtendidos').innerText = atendidos;
       if (document.getElementById('dashRecusados')) document.getElementById('dashRecusados').innerText = recusados;
+
+      // Renderizar gráfico visual de Top Clientes
+      const divCli = document.getElementById('chartClientes');
+      if (divCli) {
+        const topClientes = Object.entries(contagemClientes).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        if (topClientes.length === 0) {
+          divCli.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>';
+        } else {
+          const maxVal = topClientes[0][1] || 1;
+          divCli.innerHTML = topClientes.map(([nome, qtd]) => {
+            const pct = Math.round((qtd / maxVal) * 100);
+            return `
+              <div style="margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 2px;">
+                  <span>${nome}</span>
+                  <span style="color: #1a4d80;">${qtd} reqs</span>
+                </div>
+                <div style="background: #e2e8f0; border-radius: 4px; height: 10px; overflow: hidden;">
+                  <div style="background: #1a4d80; width: ${pct}%; height: 100%; border-radius: 4px;"></div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // Renderizar gráfico visual de Top Famílias
+      const divFam = document.getElementById('chartFamilias');
+      if (divFam) {
+        const topFamilias = Object.entries(contagemFamilias).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        if (topFamilias.length === 0) {
+          divFam.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>';
+        } else {
+          const maxVal = topFamilias[0][1] || 1;
+          divFam.innerHTML = topFamilias.map(([nome, qtd]) => {
+            const pct = Math.round((qtd / maxVal) * 100);
+            return `
+              <div style="margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 2px;">
+                  <span>${nome}</span>
+                  <span style="color: #2563eb;">${qtd} reqs</span>
+                </div>
+                <div style="background: #e2e8f0; border-radius: 4px; height: 10px; overflow: hidden;">
+                  <div style="background: #2563eb; width: ${pct}%; height: 100%; border-radius: 4px;"></div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
     }
 
     function atualizarNotificacoes() {
@@ -2122,7 +2033,7 @@
         badge.classList.add('active');
         textCount.innerText = `${pendentes.length} pendente(s)`;
         listContainer.innerHTML = pendentes.map(p => `
-          <div class="notif-item" onclick="irParaRequisicaoPendente()">
+          <div class="notif-item" onclick="irParaRequisicaoEspecifica(event, '${p.protocolo}')">
             <div class="notif-item-title">
               <span>${p.protocolo || '-'}</span>
               <span style="color:#e0a800;"><i class="fa-solid fa-clock"></i> Pendente</span>
@@ -2139,9 +2050,11 @@
       }
     }
 
-    function irParaRequisicaoPendente() {
+    function irParaRequisicaoEspecifica(e, protocolo) {
+      if (e) e.stopPropagation();
       fecharTodosDropdowns();
       if (document.getElementById('filtroStatusReq')) document.getElementById('filtroStatusReq').value = "PENDENTE";
+      if (document.getElementById('filtroTextoReq')) document.getElementById('filtroTextoReq').value = protocolo || "";
       mudarAba('requisicoes');
       filtrarRequisicoes();
     }
