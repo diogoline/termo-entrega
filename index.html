@@ -108,7 +108,6 @@
     .dropdown-content button:hover { background-color: #f1f5f9; color: #1a4d80; font-weight: 700; }
     .dropdown:hover .dropdown-content, .dropdown.open .dropdown-content { display: block; animation: fadeIn 0.15s ease-in-out; }
 
-    /* Estrutura das Telas */
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
@@ -140,7 +139,6 @@
     .prio-media { border-left: 5px solid #ffc107 !important; }
     .prio-baixa { border-left: 5px solid #20c997 !important; }
 
-    /* Assinaturas */
     .signature-container { display: flex; gap: 12px; margin-top: 8px; }
     .sig-box { flex: 1; border: 1px dashed #bbb; border-radius: 6px; padding: 10px; background: #fafafa; text-align: center; position: relative; }
     .sig-box canvas { width: 100%; height: 110px; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: crosshair; touch-action: none; }
@@ -182,7 +180,6 @@
 
     .btn-action-container { display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; align-items: center !important; justify-content: center !important; gap: 4px !important; width: 100% !important; white-space: nowrap !important; }
 
-    /* Dashboard & Cards */
     .welcome-hero { background: linear-gradient(135deg, #1a4d80 0%, #0f2b48 100%); color: white; border-radius: 12px; padding: 32px 24px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
     .welcome-hero h2 { font-size: 24px; margin-bottom: 8px; }
     .welcome-hero p { font-size: 14px; opacity: 0.9; max-width: 800px; line-height: 1.5; }
@@ -1299,10 +1296,10 @@
       const countText = document.getElementById('onlineCountText');
       if (!listContainer || !countText) return;
       
-      const onlines = bancoDados.usuarios.filter(u => u.online);
+      const onlines = (bancoDados.usuarios || []).filter(u => u && u.online);
       countText.innerText = `${onlines.length} Online`;
 
-      if (bancoDados.usuarios.length === 0) {
+      if (!bancoDados.usuarios || bancoDados.usuarios.length === 0) {
         listContainer.innerHTML = '<div style="padding: 12px; text-align: center; color: #888; font-size: 12px;">Nenhum usuário cadastrado.</div>';
         return;
       }
@@ -1310,7 +1307,7 @@
       const rows = bancoDados.usuarios.map(u => `
         <div class="notif-item" style="cursor: default;">
           <div class="notif-item-title">
-            <span>${u.online ? '<i class="fa-solid fa-circle" style="color:#22c55e;"></i>' : '<i class="fa-regular fa-circle" style="color:#64748b;"></i>'} ${u.nome}</span>
+            <span>${u.online ? '<i class="fa-solid fa-circle" style="color:#22c55e;"></i>' : '<i class="fa-regular fa-circle" style="color:#64748b;"></i>'} ${u.nome || u.usuario || '-'}</span>
           </div>
           <div class="notif-item-sub" style="color: ${u.online ? "#155724" : "#64748b"};">
             ${u.online ? "Conectado agora" : "Último acesso: " + (u.ultimoAcesso || "-")}
@@ -1327,7 +1324,7 @@
       let htmlOptions = '<option value="">Selecione o técnico...</option>';
       if (bancoDados && bancoDados.usuarios) {
         bancoDados.usuarios.forEach((u, idx) => {
-          if (u.nome) htmlOptions += `<option value="${idx}">${u.nome}</option>`;
+          if (u && u.nome) htmlOptions += `<option value="${idx}">${u.nome}</option>`;
         });
       }
       selTec.innerHTML = htmlOptions;
@@ -1337,10 +1334,15 @@
     function verificarSessao() {
       const sessaoSalva = localStorage.getItem("dmasys_usuario");
       if (sessaoSalva) {
-        usuarioLogado = JSON.parse(sessaoSalva);
-        document.getElementById('loginOverlay').style.display = "none";
-        document.getElementById('appContainer').style.display = "block";
-        preencherSelectTecnicos();
+        try { usuarioLogado = JSON.parse(sessaoSalva); } catch(e) { usuarioLogado = null; }
+        if (usuarioLogado) {
+          document.getElementById('loginOverlay').style.display = "none";
+          document.getElementById('appContainer').style.display = "block";
+          preencherSelectTecnicos();
+        } else {
+          document.getElementById('loginOverlay').style.display = "flex";
+          document.getElementById('appContainer').style.display = "none";
+        }
       } else {
         document.getElementById('loginOverlay').style.display = "flex";
         document.getElementById('appContainer').style.display = "none";
@@ -1412,17 +1414,22 @@
           badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Conectado';
           badge.classList.add('connected');
         }
-        popularAutocomplete();
-        preencherSelectTecnicos();
-        renderizarTabelaTermos(bancoDados.termosEmitidos);
-        filtrarRequisicoes();
-        renderizarTabelaOS();
-        renderizarTabelaLocacao();
-        renderizarTabelaCompras();
-        atualizarDashboard();
-        atualizarNotificacoes();
-        renderizarUsuariosOnline();
-        renderizarListasAuxiliares();
+        
+        // Executamos cada módulo dentro de um bloco try/catch isolado para resiliência total
+        try { popularAutocomplete(); } catch(e) { console.error("Erro popularAutocomplete:", e); }
+        try { preencherSelectTecnicos(); } catch(e) { console.error("Erro preencherSelectTecnicos:", e); }
+        try { renderizarTabelaTermos(bancoDados.termosEmitidos || []); } catch(e) { console.error("Erro renderizarTabelaTermos:", e); }
+        try { filtrarRequisicoes(); } catch(e) { console.error("Erro filtrarRequisicoes:", e); }
+        try { renderizarTabelaOS(); } catch(e) { console.error("Erro renderizarTabelaOS:", e); }
+        try { renderizarTabelaLocacao(); } catch(e) { console.error("Erro renderizarTabelaLocacao:", e); }
+        try { renderizarTabelaCompras(); } catch(e) { console.error("Erro renderizarTabelaCompras:", e); }
+        try { atualizarDashboard(); } catch(e) { console.error("Erro atualizarDashboard:", e); }
+        try { atualizarNotificacoes(); } catch(e) { console.error("Erro atualizarNotificacoes:", e); }
+        try { renderizarUsuariosOnline(); } catch(e) { console.error("Erro renderizarUsuariosOnline:", e); }
+        try { renderizarListasAuxiliares(); } catch(e) { console.error("Erro renderizarListasAuxiliares:", e); }
+      } else {
+        const badge = document.getElementById('statusBadge');
+        if (badge) badge.innerText = "Erro nos Dados";
       }
     }
 
@@ -1464,15 +1471,21 @@
       const txtFiltro = (document.getElementById('locFiltroTexto')?.value || "").toLowerCase().trim();
 
       const filtrados = locacoes.filter(l => {
-        if (cliFiltro && !l.cliente.toLowerCase().includes(cliFiltro)) return false;
-        if (uniFiltro && !l.unidade.toLowerCase().includes(uniFiltro)) return false;
-        if (famFiltro && !l.equipamento.toLowerCase().includes(famFiltro)) return false;
-        if (sitFiltro !== "TODOS" && l.situacao.toUpperCase() !== sitFiltro) return false;
+        if (!l) return false;
+        const cCliente = (l.cliente || "").toLowerCase();
+        const cUnidade = (l.unidade || "").toLowerCase();
+        const cEquip = (l.equipamento || "").toLowerCase();
+        const cSituacao = (l.situacao || "").toUpperCase();
+
+        if (cliFiltro && !cCliente.includes(cliFiltro)) return false;
+        if (uniFiltro && !cUnidade.includes(uniFiltro)) return false;
+        if (famFiltro && !cEquip.includes(famFiltro)) return false;
+        if (sitFiltro !== "TODOS" && cSituacao !== sitFiltro) return false;
         if (txtFiltro) {
           const matchCont = (l.contrato || "").toLowerCase().includes(txtFiltro);
-          const matchId = (l.id || "").toLowerCase().includes(txtFiltro);
+          const matchId = (l.id || "").toString().toLowerCase().includes(txtFiltro);
           const matchLoc = (l.localizacao || "").toLowerCase().includes(txtFiltro);
-          const matchCli = (l.cliente || "").toLowerCase().includes(txtFiltro);
+          const matchCli = cCliente.includes(txtFiltro);
           if (!matchCont && !matchId && !matchLoc && !matchCli) return false;
         }
         return true;
@@ -1481,27 +1494,28 @@
       atualizarMetricasLocacao(filtrados);
 
       if (filtrados.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="11" class="td-center" style="color:#888; padding:20px;">Nenhum registro encontrado.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="11" class="td-center" style="color:#888; padding:20px;">Nenhum registro encontrado para o filtro.</td></tr>';
         return;
       }
 
       const rows = filtrados.map(l => {
         let badgeSaldo = "badge-saldo-ok";
-        if (l.saldo > 0) badgeSaldo = "badge-saldo-pendente";
-        else if (l.saldo < 0) badgeSaldo = "badge-saldo-alerta";
+        const numSaldo = Number(l.saldo) || 0;
+        if (numSaldo > 0) badgeSaldo = "badge-saldo-pendente";
+        else if (numSaldo < 0) badgeSaldo = "badge-saldo-alerta";
 
         return `
           <tr>
-            <td class="td-center"><b>${l.id}</b></td>
-            <td><b>${l.cliente}</b></td>
+            <td class="td-center"><b>${l.id || '-'}</b></td>
+            <td><b>${l.cliente || '-'}</b></td>
             <td>${l.contrato || "-"}</td>
             <td>${l.unidade || "-"}</td>
             <td>${l.localizacao || "-"}</td>
-            <td><b>${l.equipamento}</b></td>
-            <td class="td-center" style="font-weight:bold;">${l.qtdContratada}</td>
-            <td class="td-center" style="font-weight:bold; color:#1a4d80;">${l.qtdFisica}</td>
-            <td class="td-center"><span class="badge-status ${badgeSaldo}">${l.saldo}</span></td>
-            <td class="td-center"><b>${l.situacao}</b></td>
+            <td><b>${l.equipamento || '-'}</b></td>
+            <td class="td-center" style="font-weight:bold;">${l.qtdContratada ?? 0}</td>
+            <td class="td-center" style="font-weight:bold; color:#1a4d80;">${l.qtdFisica ?? 0}</td>
+            <td class="td-center"><span class="badge-status ${badgeSaldo}">${numSaldo}</span></td>
+            <td class="td-center"><b>${l.situacao || 'ATIVO'}</b></td>
             <td class="td-center">
               <button type="button" class="btn-editar-saldo" onclick="abrirModalLocacao('${l.id}')"><i class="fa-solid fa-pen-to-square"></i> Ajustar</button>
             </td>
@@ -1515,22 +1529,22 @@
     function filtrarTabelaLocacao() { renderizarTabelaLocacao(); }
 
     function atualizarMetricasLocacao(lista) {
-      let totalReg = lista.length, totalCont = 0, totalFis = 0;
-      lista.forEach(l => { totalCont += Number(l.qtdContratada) || 0; totalFis += Number(l.qtdFisica) || 0; });
-      document.getElementById('locTotalRegistros').innerText = totalReg;
-      document.getElementById('locTotalContratada').innerText = totalCont;
-      document.getElementById('locTotalFisica').innerText = totalFis;
-      document.getElementById('locTotalSaldo').innerText = totalCont - totalFis;
+      let totalReg = (lista || []).length, totalCont = 0, totalFis = 0;
+      (lista || []).forEach(l => { totalCont += Number(l.qtdContratada) || 0; totalFis += Number(l.qtdFisica) || 0; });
+      if (document.getElementById('locTotalRegistros')) document.getElementById('locTotalRegistros').innerText = totalReg;
+      if (document.getElementById('locTotalContratada')) document.getElementById('locTotalContratada').innerText = totalCont;
+      if (document.getElementById('locTotalFisica')) document.getElementById('locTotalFisica').innerText = totalFis;
+      if (document.getElementById('locTotalSaldo')) document.getElementById('locTotalSaldo').innerText = totalCont - totalFis;
     }
 
     function abrirModalLocacao(id) {
-      const loc = (bancoDados.locacoes || []).find(l => l.id.toString() === id.toString());
+      const loc = (bancoDados.locacoes || []).find(l => l && l.id && l.id.toString() === id.toString());
       if (!loc) return;
       document.getElementById('locModalId').value = loc.id;
       document.getElementById('locModalDetalhes').innerHTML = `
-        <b>Cliente:</b> ${loc.cliente}<br><b>Contrato:</b> ${loc.contrato || "N/A"} | <b>Unidade:</b> ${loc.unidade || "N/A"}<br><b>Equipamento:</b> ${loc.equipamento}<br><b>Qtd Contratada:</b> ${loc.qtdContratada}
+        <b>Cliente:</b> ${loc.cliente || '-'}<br><b>Contrato:</b> ${loc.contrato || "N/A"} | <b>Unidade:</b> ${loc.unidade || "N/A"}<br><b>Equipamento:</b> ${loc.equipamento || '-'}<br><b>Qtd Contratada:</b> ${loc.qtdContratada ?? 0}
       `;
-      document.getElementById('locModalQtdFisica').value = loc.qtdFisica;
+      document.getElementById('locModalQtdFisica').value = loc.qtdFisica ?? 0;
       document.getElementById('modalLocacao').classList.add('active');
     }
 
@@ -1576,21 +1590,21 @@
       if (v2 > 0) lista.push({ forn: f2, val: v2, box: 'boxForn2' });
       if (v3 > 0) lista.push({ forn: f3, val: v3, box: 'boxForn3' });
 
-      document.getElementById('boxForn1').style.borderColor = "#e2e8f0";
-      document.getElementById('boxForn2').style.borderColor = "#e2e8f0";
-      document.getElementById('boxForn3').style.borderColor = "#e2e8f0";
+      if (document.getElementById('boxForn1')) document.getElementById('boxForn1').style.borderColor = "#e2e8f0";
+      if (document.getElementById('boxForn2')) document.getElementById('boxForn2').style.borderColor = "#e2e8f0";
+      if (document.getElementById('boxForn3')) document.getElementById('boxForn3').style.borderColor = "#e2e8f0";
 
       if (lista.length === 0) {
-        document.getElementById('lblFornVencedor').innerText = "-";
-        document.getElementById('lblMenorValor').innerText = "R$ 0,00";
+        if (document.getElementById('lblFornVencedor')) document.getElementById('lblFornVencedor').innerText = "-";
+        if (document.getElementById('lblMenorValor')) document.getElementById('lblMenorValor').innerText = "R$ 0,00";
         return;
       }
 
       lista.sort((a, b) => a.val - b.val);
       const menor = lista[0];
-      document.getElementById(menor.box).style.borderColor = "#22c55e";
-      document.getElementById('lblFornVencedor').innerText = menor.forn;
-      document.getElementById('lblMenorValor').innerText = "R$ " + menor.val.toFixed(2).replace('.', ',');
+      if (document.getElementById(menor.box)) document.getElementById(menor.box).style.borderColor = "#22c55e";
+      if (document.getElementById('lblFornVencedor')) document.getElementById('lblFornVencedor').innerText = menor.forn;
+      if (document.getElementById('lblMenorValor')) document.getElementById('lblMenorValor').innerText = "R$ " + menor.val.toFixed(2).replace('.', ',');
     }
 
     function salvarSolicitacaoCompra(e) {
@@ -1644,14 +1658,14 @@
 
       tbody.innerHTML = lista.map(c => `
         <tr>
-          <td class="td-center"><b>${c.protocolo}</b></td>
-          <td>${c.dataHora}</td>
+          <td class="td-center"><b>${c.protocolo || '-'}</b></td>
+          <td>${c.dataHora || '-'}</td>
           <td><b>${c.osExterna || "-"}</b></td>
-          <td>${c.solicitante}</td>
-          <td>${c.produto}</td>
-          <td><b>${c.fornVencedor}</b></td>
-          <td class="td-center" style="font-weight:bold; color:#1a4d80;">R$ ${Number(c.menorValor).toFixed(2).replace('.', ',')}</td>
-          <td class="td-center"><span class="badge-status ${c.status === 'APROVADO' ? 'badge-atendido' : 'badge-pendente'}">${c.status}</span></td>
+          <td>${c.solicitante || '-'}</td>
+          <td>${c.produto || '-'}</td>
+          <td><b>${c.fornVencedor || '-'}</b></td>
+          <td class="td-center" style="font-weight:bold; color:#1a4d80;">R$ ${(Number(c.menorValor) || 0).toFixed(2).replace('.', ',')}</td>
+          <td class="td-center"><span class="badge-status ${c.status === 'APROVADO' ? 'badge-atendido' : 'badge-pendente'}">${c.status || 'PENDENTE'}</span></td>
           <td class="td-center">
             ${c.pdfUrlCompra ? `<a href="${c.pdfUrlCompra}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> Mapa PDF</a>` : '-'}
             ${c.status !== 'APROVADO' ? `<button type="button" class="btn-atender" style="padding:4px 8px; font-size:10px; margin-left:4px;" onclick="aprovarCompra('${c.protocolo}')"><i class="fa-solid fa-check"></i> Aprovar</button>` : ''}
@@ -1667,16 +1681,99 @@
       .then(res => { if (res.status === "sucesso") buscarAtualizacoesSilenciosas(); });
     }
 
+    function renderizarTabelaRequisicoes(lista) {
+      const tbody = document.getElementById('corpoRequisicoes');
+      if (!tbody) return;
+      if (!lista || lista.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição encontrada para o filtro selecionado.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = lista.map(r => {
+        if (!r) return '';
+        let st = (r.status || "PENDENTE").toUpperCase();
+        const isPendente = st === "PENDENTE";
+        const isRecusado = st === "RECUSADO";
+
+        let badgeClass = "badge-pendente";
+        if (st === "ATENDIDO") badgeClass = "badge-atendido";
+        if (isRecusado) badgeClass = "badge-recusado";
+        
+        const linkPdfReq = r.pdfUrlReq ? `<a href="${r.pdfUrlReq}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> REQ</a>` : '';
+        
+        let btnAcao = "";
+        if (isPendente) {
+          btnAcao = `<div class="btn-action-container">
+            ${linkPdfReq}
+            <button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}', '${r.operacao || 'LOCAÇÃO'}')"><i class="fa-solid fa-check"></i> Atender</button>
+            <button type="button" class="btn-atender" style="background:#2563eb;" onclick="abrirModalVincularTermo('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}')"><i class="fa-solid fa-link"></i> Vincular</button>
+            <button type="button" class="btn-negar" onclick="abrirModalRecusa('${r.protocolo}')"><i class="fa-solid fa-xmark"></i> Negar</button>
+          </div>`;
+        } else if (isRecusado) {
+          btnAcao = `<div class="btn-action-container">${linkPdfReq}<span style="color:#dc3545; font-weight:bold; font-size:11px;">Recusado</span></div>`;
+        } else {
+          let termoTexto = r.protocoloTermo ? `Termo: ${r.protocoloTermo}` : 'Termo Gerado';
+          btnAcao = `<div class="btn-action-container">${linkPdfReq}<span class="btn-termo-link">${termoTexto}</span></div>`;
+        }
+
+        return `
+          <tr>
+            <td class="td-center"><b>${r.protocolo || '-'}</b></td>
+            <td>${r.dataHora || '-'}</td>
+            <td>${r.cliente || '-'}</td>
+            <td><b>${r.equipamentoSolicitado || '-'}</b></td>
+            <td style="color:#555; font-style:italic;">${r.motivo || "-"}</td>
+            <td class="td-center"><b>${r.operacao || 'LOCAÇÃO'}</b></td>
+            <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span></td>
+            <td class="td-center" style="width: 250px;">${btnAcao}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filtrarRequisicoes() {
+      const requisicoes = bancoDados.requisicoes || [];
+      const statusFiltro = document.getElementById('filtroStatusReq')?.value || "TODOS";
+      const mesFiltro = document.getElementById('filtroMesReq')?.value || "";
+      const textoFiltro = (document.getElementById('filtroTextoReq')?.value || "").toLowerCase().trim();
+
+      let filtradas = requisicoes.filter(r => {
+        if (!r) return false;
+        const st = (r.status || "PENDENTE").toUpperCase();
+        if (statusFiltro !== "TODOS" && st !== statusFiltro) return false;
+
+        if (mesFiltro && r.dataHora) {
+          const partesData = String(r.dataHora).split(' ')[0].split('/');
+          if (partesData.length === 3) {
+            const anoMesReg = `${partesData[2]}-${partesData[1].padStart(2, '0')}`;
+            if (anoMesReg !== mesFiltro) return false;
+          }
+        }
+
+        if (textoFiltro) {
+          const matchProt = (r.protocolo || "").toLowerCase().includes(textoFiltro);
+          const matchCli = (r.cliente || "").toLowerCase().includes(textoFiltro);
+          const matchEq = (r.equipamentoSolicitado || "").toLowerCase().includes(textoFiltro);
+          const matchMotivo = (r.motivo || "").toLowerCase().includes(textoFiltro);
+          if (!matchProt && !matchCli && !matchEq && !matchMotivo) return false;
+        }
+
+        return true;
+      });
+
+      renderizarTabelaRequisicoes(filtradas);
+    }
+
     function abrirModalVincularTermo(protReq, cliente) {
       protocoloReqEmVinculo = protReq;
-      document.getElementById('lblProtReqVinculo').innerText = protReq;
-      document.getElementById('lblClienteReqVinculo').innerText = cliente;
-      document.getElementById('inputProtocoloTermoVinculo').value = "";
+      if (document.getElementById('lblProtReqVinculo')) document.getElementById('lblProtReqVinculo').innerText = protReq;
+      if (document.getElementById('lblClienteReqVinculo')) document.getElementById('lblClienteReqVinculo').innerText = cliente;
+      if (document.getElementById('inputProtocoloTermoVinculo')) document.getElementById('inputProtocoloTermoVinculo').value = "";
 
       const listDL = document.getElementById('listTermosExistentes');
       if (listDL && bancoDados.termosEmitidos) {
-        const termosDoCliente = bancoDados.termosEmitidos.filter(t => (t.cliente || "").toLowerCase().includes(cliente.toLowerCase()));
-        listDL.innerHTML = termosDoCliente.map(t => `<option value="${t.protocolo}">Termo ${t.protocolo} | ${t.equipamento} (${t.dataHora})</option>`).join('');
+        const termosDoCliente = bancoDados.termosEmitidos.filter(t => t && (t.cliente || "").toLowerCase().includes((cliente || "").toLowerCase()));
+        listDL.innerHTML = termosDoCliente.map(t => `<option value="${t.protocolo}">Termo ${t.protocolo} | ${t.equipamento || '-'} (${t.dataHora || '-'})</option>`).join('');
       }
       document.getElementById('modalVincularTermo').classList.add('active');
     }
@@ -1713,8 +1810,8 @@
     }
 
     function atenderRequisicao(protReq, cliente, operacao) {
-      const reqObj = (bancoDados.requisicoes || []).find(r => r.protocolo === protReq);
-      if (reqObj && reqObj.status.toUpperCase() === "ATENDIDO") {
+      const reqObj = (bancoDados.requisicoes || []).find(r => r && r.protocolo === protReq);
+      if (reqObj && (reqObj.status || "").toUpperCase() === "ATENDIDO") {
         alert(`A requisição ${protReq} já se encontra ATENDIDA!`);
         buscarAtualizacoesSilenciosas();
         return;
@@ -1740,79 +1837,6 @@
       if (banner) banner.style.display = "none";
     }
 
-    function renderizarTabelaRequisicoes(lista) {
-      const tbody = document.getElementById('corpoRequisicoes');
-      if (!tbody) return;
-      if (!lista || lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição encontrada.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = lista.map(r => {
-        let st = r.status ? r.status.toUpperCase() : "PENDENTE";
-        const isPendente = st === "PENDENTE";
-        const isRecusado = st === "RECUSADO";
-
-        let badgeClass = "badge-pendente";
-        if (st === "ATENDIDO") badgeClass = "badge-atendido";
-        if (isRecusado) badgeClass = "badge-recusado";
-        
-        const linkPdfReq = r.pdfUrlReq ? `<a href="${r.pdfUrlReq}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> REQ</a>` : '';
-        
-        let btnAcao = "";
-        if (isPendente) {
-          btnAcao = `<div class="btn-action-container">
-            ${linkPdfReq}
-            <button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${r.cliente}', '${r.operacao}')"><i class="fa-solid fa-check"></i> Atender</button>
-            <button type="button" class="btn-atender" style="background:#2563eb;" onclick="abrirModalVincularTermo('${r.protocolo}', '${r.cliente}')"><i class="fa-solid fa-link"></i> Vincular</button>
-            <button type="button" class="btn-negar" onclick="abrirModalRecusa('${r.protocolo}')"><i class="fa-solid fa-xmark"></i> Negar</button>
-          </div>`;
-        } else if (isRecusado) {
-          btnAcao = `<div class="btn-action-container">${linkPdfReq}<span style="color:#dc3545; font-weight:bold; font-size:11px;">Recusado</span></div>`;
-        } else {
-          let termoTexto = r.protocoloTermo ? `Termo: ${r.protocoloTermo}` : 'Termo Gerado';
-          btnAcao = `<div class="btn-action-container">${linkPdfReq}<span class="btn-termo-link">${termoTexto}</span></div>`;
-        }
-
-        return `
-          <tr>
-            <td class="td-center"><b>${r.protocolo}</b></td>
-            <td>${r.dataHora}</td>
-            <td>${r.cliente}</td>
-            <td><b>${r.equipamentoSolicitado}</b></td>
-            <td style="color:#555; font-style:italic;">${r.motivo || "-"}</td>
-            <td class="td-center"><b>${r.operacao}</b></td>
-            <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span></td>
-            <td class="td-center" style="width: 250px;">${btnAcao}</td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function filtrarRequisicoes() {
-      if (!bancoDados || !bancoDados.requisicoes) return;
-      const statusFiltro = document.getElementById('filtroStatusReq').value;
-      const mesFiltro = document.getElementById('filtroMesReq').value;
-      const textoFiltro = document.getElementById('filtroTextoReq').value.toLowerCase().trim();
-
-      let filtradas = bancoDados.requisicoes.filter(r => {
-        if (statusFiltro !== "TODOS" && r.status.toUpperCase() !== statusFiltro) return false;
-        if (mesFiltro && r.dataHora) {
-          const partesData = r.dataHora.split(' ')[0].split('/');
-          if (partesData.length === 3 && `${partesData[2]}-${partesData[1].padStart(2, '0')}` !== mesFiltro) return false;
-        }
-        if (textoFiltro) {
-          const matchProt = r.protocolo.toLowerCase().includes(textoFiltro);
-          const matchCli = r.cliente.toLowerCase().includes(textoFiltro);
-          const matchEq = r.equipamentoSolicitado.toLowerCase().includes(textoFiltro);
-          if (!matchProt && !matchCli && !matchEq) return false;
-        }
-        return true;
-      });
-
-      renderizarTabelaRequisicoes(filtradas);
-    }
-
     function mudarAba(nomeAba) {
       fecharTodosDropdowns();
       document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
@@ -1832,14 +1856,20 @@
     }
 
     function popularAutocomplete() {
-      if (bancoDados.clientes) document.getElementById('listClientes').innerHTML = bancoDados.clientes.map(c => `<option value="${c}">`).join('');
-      if (bancoDados.equipamentos) document.getElementById('listEquipamentos').innerHTML = bancoDados.equipamentos.map(eq => `<option value="TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}">`).join('');
+      if (bancoDados.clientes) {
+        const listC = document.getElementById('listClientes');
+        if (listC) listC.innerHTML = bancoDados.clientes.map(c => `<option value="${c}">`).join('');
+      }
+      if (bancoDados.equipamentos) {
+        const listE = document.getElementById('listEquipamentos');
+        if (listE) listE.innerHTML = bancoDados.equipamentos.map(eq => `<option value="TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}">`).join('');
+      }
     }
 
     function autoPreencherEquipamento() {
       const val = document.getElementById('buscaEquipamento').value.toLowerCase().trim();
       if (!val || !bancoDados.equipamentos) return;
-      const eq = bancoDados.equipamentos.find(i => `tag: ${i.tag} | ${i.nome} | série: ${i.serie}`.toLowerCase() === val || i.tag.toLowerCase() === val);
+      const eq = bancoDados.equipamentos.find(i => `tag: ${i.tag} | ${i.nome} | série: ${i.serie}`.toLowerCase() === val || (i.tag || '').toLowerCase() === val);
       if (eq) {
         equipamentoSelecionado = eq;
         document.getElementById('eqTag').value = eq.tag || "-";
@@ -1861,9 +1891,9 @@
       return { x: clientX - rect.left, y: clientY - rect.top };
     }
     function iniciarDesenho(e) { desenhando = true; desenhar(e); }
-    function pararDesenho() { desenhando = false; ctx.beginPath(); }
+    function pararDesenho() { desenhando = false; ctx?.beginPath(); }
     function desenhar(e) {
-      if (!desenhando) return;
+      if (!desenhando || !ctx) return;
       e.preventDefault();
       const pos = obterPosicao(e);
       ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineTo(pos.x, pos.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
@@ -1879,7 +1909,7 @@
       if (!equipamentoSelecionado) { alert("Selecione um equipamento válido."); return; }
 
       const idxTec = document.getElementById('selectTecnico').value;
-      const tecSelected = bancoDados.usuarios[idxTec] || { nome: "Técnico" };
+      const tecSelected = (bancoDados.usuarios || [])[idxTec] || { nome: "Técnico" };
 
       const payload = {
         acao: "CRIAR_TERMO",
@@ -1913,6 +1943,215 @@
         }
       })
       .catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)'; });
+    }
+
+    function renderizarTabelaOS() {
+      const tbody = document.getElementById('corpoOS');
+      if (!tbody) return;
+      const listaOS = bancoDados.ordensServico || [];
+
+      if (listaOS.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color: #888; padding: 20px;">Nenhuma Ordem de Serviço registrada.</td></tr>';
+        return;
+      }
+
+      const statusFiltro = document.getElementById('filtroStatusOS')?.value || "TODOS";
+      const textoFiltro = (document.getElementById('filtroTextoOS')?.value || "").toLowerCase().trim();
+
+      let filtradas = listaOS.filter(os => {
+        if (!os) return false;
+        const st = (os.status || "").toUpperCase();
+        if (statusFiltro !== "TODOS" && st !== statusFiltro) return false;
+
+        if (textoFiltro) {
+          const matchProt = (os.protocoloOS || "").toLowerCase().includes(textoFiltro);
+          const matchCli = (os.cliente || "").toLowerCase().includes(textoFiltro);
+          const matchTag = (os.tag || "").toLowerCase().includes(textoFiltro);
+          const matchEq = (os.equipamento || "").toLowerCase().includes(textoFiltro);
+          if (!matchProt && !matchCli && !matchTag && !matchEq) return false;
+        }
+
+        return true;
+      });
+
+      if (filtradas.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color: #888; padding: 20px;">Nenhuma O.S. encontrada para os filtros.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtradas.map(os => {
+        let prioClass = "prio-media";
+        const pr = (os.prioridade || "").toUpperCase();
+        if (pr === "CRÍTICA") prioClass = "prio-critica";
+        if (pr === "ALTA") prioClass = "prio-alta";
+        if (pr === "BAIXA") prioClass = "prio-baixa";
+
+        return `
+          <tr class="${prioClass}" style="cursor:pointer;" onclick="abrirModalOS('${os.protocoloOS}')">
+            <td class="td-center"><b>${os.protocoloOS || '-'}</b></td>
+            <td>${os.dataAbertura || '-'}</td>
+            <td>${os.cliente || '-'}</td>
+            <td class="td-center"><b>${os.tag || '-'}</b></td>
+            <td>${os.equipamento || '-'}</td>
+            <td class="td-center">${os.tipoManutencao || '-'}</td>
+            <td class="td-center"><b>${os.prioridade || '-'}</b></td>
+            <td class="td-center"><span class="badge-status ${os.status === 'CONCLUÍDA' ? 'badge-atendido' : 'badge-pendente'}">${os.status || 'ABERTA'}</span></td>
+            <td class="td-center" onclick="event.stopPropagation();">
+              <button type="button" class="btn-atender" style="padding:4px 8px; font-size:10px;" onclick="abrirModalOS('${os.protocoloOS}')"><i class="fa-solid fa-eye"></i> Ver</button>
+              ${os.pdfUrlOS ? `<a href="${os.pdfUrlOS}" target="_blank" class="btn-pdf" style="padding:4px 8px; font-size:10px;"><i class="fa-solid fa-file-pdf"></i> PDF</a>` : ''}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderizarTabelaTermos(lista) {
+      const tbody = document.getElementById('corpoTermos');
+      if (!tbody) return;
+
+      if (!lista || lista.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhum termo emitido encontrado.</td></tr>';
+        return;
+      }
+
+      const filtroVal = (document.getElementById('filtroTermos')?.value || "").toLowerCase().trim();
+      let dadosExibir = lista;
+      
+      if (filtroVal) {
+        dadosExibir = lista.filter(t => 
+          t && (
+            (t.protocolo || "").toLowerCase().includes(filtroVal) ||
+            (t.cliente || "").toLowerCase().includes(filtroVal) ||
+            (t.tag || "").toLowerCase().includes(filtroVal) ||
+            (t.equipamento || "").toLowerCase().includes(filtroVal) ||
+            (t.tecnico || "").toLowerCase().includes(filtroVal)
+          )
+        );
+      }
+
+      if (dadosExibir.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhum termo encontrado.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = dadosExibir.map(t => `
+        <tr>
+          <td class="td-center"><b>${t.protocolo || '-'}</b></td>
+          <td>${t.dataHora || '-'}</td>
+          <td>${t.cliente || '-'}</td>
+          <td class="td-center"><b>${t.tag || '-'}</b></td>
+          <td>${t.equipamento || '-'}</td>
+          <td class="td-center">${t.tipo || '-'}</td>
+          <td>${t.tecnico || '-'}</td>
+          <td class="td-center">
+            ${t.pdfUrl ? `<a href="${t.pdfUrl}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> PDF</a>` : '-'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderizarListasAuxiliares() {
+      const rels = bancoDados.relacoesAuxiliares || [];
+      const descricoesUnicas = Array.from(new Set(rels.map(r => r ? r.descricao : '').filter(Boolean))).sort();
+      const dlDesc = document.getElementById('listDescricoesPadrao');
+      if (dlDesc) {
+        dlDesc.innerHTML = descricoesUnicas.map(d => `<option value="${d}">`).join('');
+      }
+
+      const tbody = document.getElementById('tabelaAuxiliaresList');
+      if (tbody) {
+        if (rels.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3" class="td-center" style="color:#888;">Nenhuma combinação registrada.</td></tr>';
+        } else {
+          tbody.innerHTML = rels.map(r => `
+            <tr>
+              <td><b>${r.descricao || '-'}</b></td>
+              <td>${r.modelo || "-"}</td>
+              <td>${r.fabricante || "-"}</td>
+            </tr>
+          `).join('');
+        }
+      }
+    }
+
+    function atualizarDashboard() {
+      if (!bancoDados || !bancoDados.requisicoes) return;
+      const modo = document.getElementById('dashModoPeriodo')?.value || "MES";
+      const mesFiltro = document.getElementById('dashFiltroMes')?.value || "";
+
+      let reqs = bancoDados.requisicoes || [];
+
+      if (modo === "MES" && mesFiltro) {
+        reqs = reqs.filter(r => {
+          if (!r || !r.dataHora) return false;
+          const partesData = String(r.dataHora).split(' ')[0].split('/');
+          if (partesData.length === 3) {
+            const anoMesReg = `${partesData[2]}-${partesData[1].padStart(2, '0')}`;
+            return anoMesReg === mesFiltro;
+          }
+          return false;
+        });
+      }
+
+      if (document.getElementById('dashTotalReq')) document.getElementById('dashTotalReq').innerText = reqs.length;
+
+      let pendentes = 0, atendidos = 0, recusados = 0;
+      reqs.forEach(r => {
+        let st = (r.status || "PENDENTE").toUpperCase();
+        if (st === "PENDENTE") pendentes++;
+        else if (st === "ATENDIDO") atendidos++;
+        else if (st === "RECUSADO") recusados++;
+      });
+
+      if (document.getElementById('dashPendentes')) document.getElementById('dashPendentes').innerText = pendentes;
+      if (document.getElementById('dashAtendidos')) document.getElementById('dashAtendidos').innerText = atendidos;
+      if (document.getElementById('dashRecusados')) document.getElementById('dashRecusados').innerText = recusados;
+    }
+
+    function atualizarNotificacoes() {
+      if (!bancoDados || !bancoDados.requisicoes) return;
+      const pendentes = bancoDados.requisicoes.filter(r => r && (r.status || '').toUpperCase() === "PENDENTE");
+      const badge = document.getElementById('notifBadge');
+      const textCount = document.getElementById('notifCountText');
+      const listContainer = document.getElementById('notifList');
+
+      if (!badge || !textCount || !listContainer) return;
+
+      if (pendentes.length > 0) {
+        badge.innerText = pendentes.length;
+        badge.classList.add('active');
+        textCount.innerText = `${pendentes.length} pendente(s)`;
+        listContainer.innerHTML = pendentes.map(p => `
+          <div class="notif-item" onclick="irParaRequisicaoPendente()">
+            <div class="notif-item-title">
+              <span>${p.protocolo || '-'}</span>
+              <span style="color:#e0a800;"><i class="fa-solid fa-clock"></i> Pendente</span>
+            </div>
+            <div class="notif-item-sub"><b>${p.cliente || '-'}</b></div>
+            <div class="notif-item-sub">${p.equipamentoSolicitado || '-'}</div>
+          </div>
+        `).join('');
+      } else {
+        badge.innerText = "0";
+        badge.classList.remove('active');
+        textCount.innerText = "0 pendentes";
+        listContainer.innerHTML = '<div style="padding: 16px; text-align: center; color: #888; font-size: 12px;">Nenhuma pendência no momento.</div>';
+      }
+    }
+
+    function irParaRequisicaoPendente() {
+      fecharTodosDropdowns();
+      if (document.getElementById('filtroStatusReq')) document.getElementById('filtroStatusReq').value = "PENDENTE";
+      mudarAba('requisicoes');
+      filtrarRequisicoes();
+    }
+
+    function toggleChat() { document.getElementById('chatBox')?.classList.toggle('active'); }
+    function enviarWhatsApp() {
+      const msg = document.getElementById('msgChat').value.trim();
+      const textoFinal = encodeURIComponent("Olá Suporte DMA Sys! " + (msg ? msg : "Preciso de auxílio no sistema."));
+      window.open(`https://wa.me/${NUMERO_WHATSAPP_SUPORTE}?text=${textoFinal}`, '_blank');
+      toggleChat();
     }
   </script>
 </body>
