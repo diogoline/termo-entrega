@@ -1285,7 +1285,7 @@
 
     function notificarDigitandoChat() {
       const agora = new Date().getTime();
-      if (agora - ultimoTempoDigitandoEnviado < 800) return;
+      if (agora - ultimoTempoDigitandoEnviado < 600) return;
       ultimoTempoDigitandoEnviado = agora;
 
       const rem = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario) : "Sistema";
