@@ -1157,11 +1157,11 @@
       let html = `
         <div class="chat-panel-container" onclick="event.stopPropagation()">
           <div class="chat-tabs">
-            <button class="chat-tab active" id="tabChatGeral" onclick="mudarAbaChat('GERAL')"><i class="fa-solid fa-comments"></i> Geral</button>
-            <button class="chat-tab" id="tabChatPrivado" onclick="mudarAbaChat('PRIVADO')"><i class="fa-solid fa-user"></i> Privado</button>
+            <button class="chat-tab ${chatAtivoDestinatario === 'GERAL' ? 'active' : ''}" id="tabChatGeral" onclick="mudarAbaChat('GERAL')"><i class="fa-solid fa-comments"></i> Geral</button>
+            <button class="chat-tab ${chatAtivoDestinatario !== 'GERAL' ? 'active' : ''}" id="tabChatPrivado" onclick="mudarAbaChat('PRIVADO')"><i class="fa-solid fa-user"></i> Privado</button>
           </div>
           
-          <div id="corpoChatGeral" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
+          <div id="corpoChatGeral" style="display:${chatAtivoDestinatario === 'GERAL' ? 'flex' : 'none'}; flex-direction:column; flex:1; overflow:hidden;">
             <div class="chat-messages" id="chatMsgBox">
               <div style="text-align:center; color:#888; font-size:10px; margin-top:10px;">Carregando bate-papo...</div>
             </div>
@@ -1187,7 +1187,7 @@
             </div>
           </div>
 
-          <div id="corpoListaEquipe" style="display:none; flex-direction:column; flex:1; overflow-y:auto; padding:8px;">
+          <div id="corpoListaEquipe" style="display:${chatAtivoDestinatario !== 'GERAL' ? 'flex' : 'none'}; flex-direction:column; flex:1; overflow-y:auto; padding:8px;">
             <div style="font-size:10px; font-weight:bold; color:#1a4d80; margin-bottom:6px;">CLIQUE EM UM COLEGA PARA CONVERSAR:</div>
       `;
 
@@ -1275,7 +1275,7 @@
 
     function notificarDigitandoChat() {
       const agora = new Date().getTime();
-      if (agora - ultimoTempoDigitandoEnviado < 1000) return;
+      if (agora - ultimoTempoDigitandoEnviado < 800) return;
       ultimoTempoDigitandoEnviado = agora;
 
       const rem = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario) : "Sistema";
@@ -1355,7 +1355,9 @@
       });
 
       if (filtradas.length === 0) {
-        box.innerHTML = '<div style="text-align:center; color:#888; font-size:10px; margin-top:20px;">Nenhuma mensagem ainda. Digite abaixo para iniciar!</div>';
+        if (box.innerHTML.indexOf("Nenhuma mensagem ainda") === -1) {
+          box.innerHTML = '<div style="text-align:center; color:#888; font-size:10px; margin-top:20px;">Nenhuma mensagem ainda. Digite abaixo para iniciar!</div>';
+        }
         return;
       }
 
@@ -1530,7 +1532,7 @@
       buscarAtualizacoesSilenciosas();
       setInterval(buscarAtualizacoesSilenciosas, 30000);
       setInterval(enviarHeartbeat, 15000);
-      // Chat ultra rápido a cada 1.5 segundos
+      // Chat ultrarrápido a cada 1.5 segundos
       setInterval(() => {
         const dropUsr = document.getElementById('usersDropdown');
         if (dropUsr && dropUsr.classList.contains('active')) {
