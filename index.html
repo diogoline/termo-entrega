@@ -1143,7 +1143,6 @@
       }
       
       const onlines = usuarios.filter(u => u && u.online);
-      const offlines = usuarios.filter(u => u && !u.online);
       
       countText.innerText = `${onlines.length} Online`;
 
@@ -1174,14 +1173,16 @@
       `;
 
       onlines.forEach(u => {
-        const nomeU = u.nome || u.usuario || '-';
+        const nomeU = u.nome || '-';
+        const ultAcesso = u.ultimoAcesso ? `Último acesso: ${u.ultimoAcesso}` : 'Online agora';
         if (usuarioLogado && nomeU.toLowerCase() !== (usuarioLogado.nome || '').toLowerCase()) {
           html += `
-            <div class="notif-item" onclick="iniciarChatPrivado('${nomeU}')" style="padding:6px 10px; margin-bottom:4px; background:#f8fafc; border-radius:4px;">
+            <div class="notif-item" onclick="iniciarChatPrivado('${nomeU}')" style="padding:8px 10px; margin-bottom:4px; background:#f8fafc; border-radius:4px; border:1px solid #e2e8f0;">
               <div class="notif-item-title" style="font-size:11px;">
                 <span><i class="fa-solid fa-circle" style="color:#22c55e; font-size:8px;"></i> ${nomeU}</span>
-                <span style="font-size:9px; color:#2563eb;">Conversar 💬</span>
+                <span style="font-size:10px; color:#2563eb; font-weight:bold;">Conversar 💬</span>
               </div>
+              <div class="notif-item-sub">${ultAcesso}</div>
             </div>
           `;
         }
@@ -1202,7 +1203,7 @@
       const tabP = document.getElementById('tabChatPrivado');
       const boxG = document.getElementById('corpoChatGeral');
       const boxP = document.getElementById('corpoListaEquipe');
-      if (!tabG || !tabP) return;
+      if (!tabG || !tabP || !boxG || !boxP) return;
 
       if (tipo === 'GERAL') {
         chatAtivoDestinatario = "GERAL";
@@ -1289,7 +1290,6 @@
         if (chatAtivoDestinatario === "GERAL") {
           return dest === "geral" || dest === "";
         } else {
-          // Privado entre eu e o destinatario ativo
           return (dest === meuNome && rem === chatAtivoDestinatario) || (dest === chatAtivoDestinatario && rem === meuNome);
         }
       });
@@ -1311,7 +1311,7 @@
       box.scrollTop = box.scrollHeight;
     }
 
-    function iniciarPiscarTitle() {
+    function iniciarPiscarTitulo() {
       if (timerPiscarTitulo) return;
       let alternar = false;
       timerPiscarTitulo = setInterval(() => {
@@ -2076,7 +2076,7 @@
               tbodyAc.innerHTML = listaAcs.map((ac, idx) => `
                 <tr>
                   <td class="td-center">${idx + 1}</td>
-                  <td class="td-center"><input type="number" class="qtd-acessorio" value="1" min="0" style="width: 50px; text-align: center; font-weight: bold; border: 1px solid #dc3545; color: #dc3545; border-radius: 4px; padding: 2px;"></td>
+                  <td class="td-center"><input type="number" class="qtd-acessorio" value="1" min="0" style="width: 50px; text-align: center; font-weight: bold; border: 1px solid #1a4d80; color: #1a4d80; border-radius: 4px; padding: 2px;"></td>
                   <td><b>${ac.toUpperCase()}</b></td>
                   <td class="td-center" style="color:#166534; font-weight:bold;">CONFORME</td>
                 </tr>
