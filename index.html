@@ -202,13 +202,13 @@
       </h1>
 
       <div class="header-right">
-        <div style="position: relative; display: inline-block;">
+        <div style="position: relative; display: inline-block;" id="containerMenuUsuarioChat">
           <button type="button" class="notification-btn" onclick="toggleUsersDropdown(event)" title="Usuários Conectados e Chat">
             <i class="fa-solid fa-circle" style="color: #22c55e; font-size: 10px;"></i>
             <span id="onlineCountText">0 Online</span>
           </button>
           
-          <div id="usersDropdown" class="notification-dropdown" style="right: 0; width: 320px;">
+          <div id="usersDropdown" class="notification-dropdown" style="right: 0; width: 320px;" onclick="event.stopPropagation()">
             <div class="notif-header">
               <span><i class="fa-solid fa-users"></i> EQUIPE CONECTADA</span>
             </div>
@@ -1064,6 +1064,8 @@
     let chatAtivoDestinatario = "GERAL";
     let tituloOriginalPagina = document.title;
     let timerPiscarTitulo = null;
+    let timeoutDigitando = null;
+    let ultimoTempoDigitandoEnviado = 0;
 
     function criarDebounce(func, wait = 200) {
       let timeout;
@@ -1143,7 +1145,6 @@
       }
       
       const onlines = usuarios.filter(u => u && u.online);
-      
       countText.innerText = `${onlines.length} Online`;
 
       if (usuarios.length === 0) {
@@ -1162,8 +1163,9 @@
             <div class="chat-messages" id="chatMsgBox">
               <div style="text-align:center; color:#888; font-size:10px; margin-top:10px;">Carregando bate-papo...</div>
             </div>
+            <div id="chatIndicadorDigitando" style="font-size:10px; color:#1a4d80; padding:2px 8px; font-style:italic; min-height:16px;"></div>
             <div class="chat-input-box">
-              <input type="text" id="inputMsgChat" placeholder="Digite sua mensagem..." onkeypress="if(event.key === 'Enter') enviarMensagemChat()">
+              <input type="text" id="inputMsgChat" placeholder="Digite sua mensagem..." oninput="notificarDigitandoChat()" onkeypress="if(event.key === 'Enter') enviarMensagemChat()">
               <button onclick="enviarMensagemChat()">Enviar</button>
             </div>
           </div>
@@ -1198,6 +1200,8 @@
     }
 
     let cacheMensagensChat = [];
+    let usuarioDigitandoAtual = "";
+
     function mudarAbaChat(tipo) {
       const tabG = document.getElementById('tabChatGeral');
       const tabP = document.getElementById('tabChatPrivado');
@@ -1211,6 +1215,8 @@
         tabP.classList.remove('active');
         boxG.style.display = 'flex';
         boxP.style.display = 'none';
+        const input = document.getElementById('inputMsgChat');
+        if(input) input.placeholder = "Digite sua mensagem geral...";
         renderizarMensagensChatNaTela();
       } else {
         tabP.classList.add('active');
@@ -1234,6 +1240,18 @@
       const input = document.getElementById('inputMsgChat');
       if(input) input.placeholder = `Mensagem para ${nomeColega}...`;
       renderizarMensagensChatNaTela();
+    }
+
+    function notificarDigitandoChat() {
+      const agora = new Date().getTime();
+      if (agora - ultimoTempoDigitandoEnviado < 1500) return;
+      ultimoTempoDigitandoEnviado = agora;
+
+      const rem = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario) : "Sistema";
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ acao: "DIGITANDO_CHAT", remetente: rem, destinatario: chatAtivoDestinatario })
+      }).catch(e => {});
     }
 
     function enviarMensagemChat() {
@@ -1263,17 +1281,28 @@
       const usr = usuarioLogado.nome || usuarioLogado.usuario || "";
       fetch(API_URL, {
         method: 'POST',
-        body: JSON.stringify({ acao: "BUSCAR_MENSAGENS_CHAT", usuario: usr })
+        body: JSON.stringify({ acao: "BUSCAR_MENSAGENS_CHAT", usuario: usr, chatAtivo: chatAtivoDestinatario })
       })
       .then(res => res.json())
       .then(res => {
-        if (res.status === "sucesso" && res.mensagens) {
-          const qtdAnterior = cacheMensagensChat.length;
-          cacheMensagensChat = res.mensagens;
-          if (cacheMensagensChat.length > qtdAnterior && qtdAnterior > 0) {
-            iniciarPiscarTitulo();
+        if (res.status === "sucesso") {
+          if (res.mensagens) {
+            const qtdAnterior = cacheMensagensChat.length;
+            cacheMensagensChat = res.mensagens;
+            if (cacheMensagensChat.length > qtdAnterior && qtdAnterior > 0) {
+              iniciarPiscarTitulo();
+            }
+            renderizarMensagensChatNaTela();
           }
-          renderizarMensagensChatNaTela();
+          if (res.digitando) {
+            usuarioDigitandoAtual = res.digitando;
+          } else {
+            usuarioDigitandoAtual = "";
+          }
+          const lblDig = document.getElementById('chatIndicadorDigitando');
+          if (lblDig) {
+            lblDig.innerText = usuarioDigitandoAtual ? `${usuarioDigitandoAtual} está digitando...` : "";
+          }
         }
       }).catch(e => {});
     }
@@ -1299,7 +1328,7 @@
         return;
       }
 
-      box.innerHTML = filtradas.map(m => {
+      const htmlConteudo = filtradas.map(m => {
         const isMe = (m.remetente || "").toLowerCase().trim() === meuNome;
         return `
           <div class="chat-msg ${isMe ? 'me' : ''}">
@@ -1308,14 +1337,18 @@
           </div>
         `;
       }).join('');
-      box.scrollTop = box.scrollHeight;
+
+      if (box.innerHTML !== htmlConteudo) {
+        box.innerHTML = htmlConteudo;
+        box.scrollTop = box.scrollHeight;
+      }
     }
 
     function iniciarPiscarTitulo() {
       if (timerPiscarTitulo) return;
       let alternar = false;
       timerPiscarTitulo = setInterval(() => {
-        document.title = alternar ? "💬 Nova Mensagem no Chat!" : tituloOriginalPagina;
+        document.title = alternar ? "💬 Nova Mensagem!" : tituloOriginalPagina;
         alternar = !alternar;
       }, 1500);
     }
@@ -1465,7 +1498,14 @@
       if (document.getElementById('dashFiltroMes')) document.getElementById('dashFiltroMes').value = mesFormatado;
       buscarAtualizacoesSilenciosas();
       setInterval(buscarAtualizacoesSilenciosas, 30000);
-      setInterval(enviarHeartbeat, 20000);
+      setInterval(enviarHeartbeat, 15000);
+      // Chat em tempo real ultra rápido a cada 2 segundos
+      setInterval(() => {
+        const dropUsr = document.getElementById('usersDropdown');
+        if (dropUsr && dropUsr.classList.contains('active')) {
+          buscarMensagensChatServidor();
+        }
+      }, 2000);
     };
 
     function salvarRequisicao(e) {
