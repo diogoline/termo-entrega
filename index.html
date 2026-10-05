@@ -150,16 +150,20 @@
     .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
 
     /* Estilos do Chat Interno Integrado */
-    .chat-panel-container { display: flex; flex-direction: column; height: 280px; }
+    .chat-panel-container { display: flex; flex-direction: column; height: 320px; }
     .chat-tabs { display: flex; background: #f1f5f9; border-bottom: 1px solid #cbd5e1; }
     .chat-tab { flex: 1; padding: 8px; text-align: center; font-size: 11px; font-weight: bold; cursor: pointer; background: #f8fafc; border: none; border-bottom: 2px solid transparent; }
     .chat-tab.active { background: white; color: #1a4d80; border-bottom-color: #1a4d80; }
     .chat-messages { flex: 1; padding: 10px; overflow-y: auto; background: #fafafa; font-size: 11px; display: flex; flex-direction: column; gap: 6px; }
     .chat-msg { background: white; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0; max-width: 85%; }
     .chat-msg.me { background: #dcfce7; align-self: flex-end; border-color: #bbf7d0; }
-    .chat-input-box { display: flex; padding: 8px; background: white; border-top: 1px solid #cbd5e1; gap: 6px; }
+    .chat-input-box { display: flex; padding: 8px; background: white; border-top: 1px solid #cbd5e1; gap: 6px; position: relative; align-items: center; }
     .chat-input-box input { flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; }
-    .chat-input-box button { background: #1a4d80; color: white; border: none; padding: 0 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; }
+    .chat-input-box button { background: #1a4d80; color: white; border: none; padding: 0 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; height: 30px; }
+    .emoji-picker-dropdown { display: none; position: absolute; bottom: 45px; left: 8px; background: white; border: 1px solid #cbd5e1; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 8px; width: 210px; z-index: 9999; grid-template-columns: repeat(6, 1fr); gap: 4px; text-align: center; }
+    .emoji-picker-dropdown.active { display: grid; }
+    .emoji-item { font-size: 16px; cursor: pointer; padding: 4px; border-radius: 4px; transition: background 0.1s; }
+    .emoji-item:hover { background: #f1f5f9; }
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
@@ -208,7 +212,7 @@
             <span id="onlineCountText">0 Online</span>
           </button>
           
-          <div id="usersDropdown" class="notification-dropdown" style="right: 0; width: 320px;" onclick="event.stopPropagation()">
+          <div id="usersDropdown" class="notification-dropdown" style="right: 0; width: 340px;" onclick="event.stopPropagation()">
             <div class="notif-header">
               <span><i class="fa-solid fa-users"></i> EQUIPE CONECTADA</span>
             </div>
@@ -1054,7 +1058,6 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
-    const NUMERO_WHATSAPP_SUPORTE = "5511970116092";
 
     let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], relacoesAuxiliares: [], locacoes: [], compras: [] };
     let equipamentoSelecionado = null;
@@ -1064,7 +1067,6 @@
     let chatAtivoDestinatario = "GERAL";
     let tituloOriginalPagina = document.title;
     let timerPiscarTitulo = null;
-    let timeoutDigitando = null;
     let ultimoTempoDigitandoEnviado = 0;
 
     function criarDebounce(func, wait = 200) {
@@ -1165,6 +1167,21 @@
             </div>
             <div id="chatIndicadorDigitando" style="font-size:10px; color:#1a4d80; padding:2px 8px; font-style:italic; min-height:16px;"></div>
             <div class="chat-input-box">
+              <button type="button" onclick="toggleEmojiPicker(event)" title="Inserir Emoji" style="background:#f1f5f9; color:#333; border:1px solid #cbd5e1; width:30px; border-radius:4px; font-size:13px; cursor:pointer;">😊</button>
+              <div id="emojiPickerDropdown" class="emoji-picker-dropdown">
+                <span class="emoji-item" onclick="inserirEmoji('😀')">😀</span>
+                <span class="emoji-item" onclick="inserirEmoji('😂')">😂</span>
+                <span class="emoji-item" onclick="inserirEmoji('👍')">👍</span>
+                <span class="emoji-item" onclick="inserirEmoji('🚀')">🚀</span>
+                <span class="emoji-item" onclick="inserirEmoji('✅')">✅</span>
+                <span class="emoji-item" onclick="inserirEmoji('⚠️')">⚠️</span>
+                <span class="emoji-item" onclick="inserirEmoji('🔧')">🔧</span>
+                <span class="emoji-item" onclick="inserirEmoji('💡')">💡</span>
+                <span class="emoji-item" onclick="inserirEmoji('🙏')">🙏</span>
+                <span class="emoji-item" onclick="inserirEmoji('❤️')">❤️</span>
+                <span class="emoji-item" onclick="inserirEmoji('👋')">👋</span>
+                <span class="emoji-item" onclick="inserirEmoji('🎯')">🎯</span>
+              </div>
               <input type="text" id="inputMsgChat" placeholder="Digite sua mensagem..." oninput="notificarDigitandoChat()" onkeypress="if(event.key === 'Enter') enviarMensagemChat()">
               <button onclick="enviarMensagemChat()">Enviar</button>
             </div>
@@ -1201,6 +1218,20 @@
 
     let cacheMensagensChat = [];
     let usuarioDigitandoAtual = "";
+
+    function toggleEmojiPicker(e) {
+      if(e) e.stopPropagation();
+      document.getElementById('emojiPickerDropdown')?.classList.toggle('active');
+    }
+
+    function inserirEmoji(emoji) {
+      const input = document.getElementById('inputMsgChat');
+      if (input) {
+        input.value += emoji;
+        input.focus();
+      }
+      document.getElementById('emojiPickerDropdown')?.classList.remove('active');
+    }
 
     function mudarAbaChat(tipo) {
       const tabG = document.getElementById('tabChatGeral');
@@ -1244,7 +1275,7 @@
 
     function notificarDigitandoChat() {
       const agora = new Date().getTime();
-      if (agora - ultimoTempoDigitandoEnviado < 1500) return;
+      if (agora - ultimoTempoDigitandoEnviado < 1000) return;
       ultimoTempoDigitandoEnviado = agora;
 
       const rem = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario) : "Sistema";
@@ -1499,13 +1530,13 @@
       buscarAtualizacoesSilenciosas();
       setInterval(buscarAtualizacoesSilenciosas, 30000);
       setInterval(enviarHeartbeat, 15000);
-      // Chat em tempo real ultra rápido a cada 2 segundos
+      // Chat ultra rápido a cada 1.5 segundos
       setInterval(() => {
         const dropUsr = document.getElementById('usersDropdown');
         if (dropUsr && dropUsr.classList.contains('active')) {
           buscarMensagensChatServidor();
         }
-      }, 2000);
+      }, 1500);
     };
 
     function salvarRequisicao(e) {
@@ -1891,7 +1922,7 @@
         if (st === "ATENDIDO") badgeClass = "badge-atendido";
         if (isRecusado) badgeClass = "badge-recusado";
         
-        const linkPdfReq = r.pdfUrlReq ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${r.pdfUrlReq}', 'Visualizar Requisição: ${r.protocolo}')" title="Visualizar Requisição"><i class="fa-solid fa-eye"></i> REQ</button>` : '';
+        const linkPdfReq = r.pdfUrlReq ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${r.pdfUrlReq}', 'Visualizar Requisição: ${r.protocolo}')" title="Visualizar Requisição"><i class="fa-solid fa-eye"></i></button>` : '';
         
         let btnAcao = "";
         if (isPendente) {
