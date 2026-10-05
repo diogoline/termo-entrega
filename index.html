@@ -91,25 +91,21 @@
     .btn-pdf:hover { background: #13385c; }
 
     .btn-termo-link { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 10px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; height: 26px; white-space: nowrap; }
-
-    .btn-atender { background: #e0a800; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
-    .btn-atender:hover { background: #c69500; }
-
-    .btn-negar { background: #dc3545; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
-    .btn-negar:hover { background: #bd2130; }
-
-    .btn-vincular { background: #2563eb; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; white-space: nowrap; height: 26px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
-    .btn-vincular:hover { background: #1d4ed8; }
-
-    .btn-logout { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: background 0.2s; height: 32px; display: inline-flex; align-items: center; gap: 6px; }
-    .btn-logout:hover { background: #dc3545; border-color: #dc3545; }
+    .btn-editar-saldo { background: #2563eb; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; justify-content: center; height: 26px; white-space: nowrap; }
+    .btn-editar-saldo:hover { background: #1d4ed8; }
 
     .badge-status { padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; display: inline-block; text-align: center; }
     .badge-pendente { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
     .badge-atendido { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .badge-recusado { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .badge-encerrado { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
 
-    .btn-action-container { display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; align-items: center !important; justify-content: center !important; gap: 4px !important; width: 100% !important; white-space: nowrap !important; }
+    .badge-saldo-ok { background: #f1f5f9; color: #334155; }
+    .badge-saldo-pendente { background: #fef3c7; color: #92400e; }
+    .badge-saldo-alerta { background: #fee2e2; color: #991b1b; }
+
+    .btn-logout { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: background 0.2s; height: 32px; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-logout:hover { background: #dc3545; border-color: #dc3545; }
 
     .welcome-hero { background: linear-gradient(135deg, #1a4d80 0%, #0f2b48 100%); color: white; border-radius: 12px; padding: 32px 24px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
     .welcome-hero h2 { font-size: 24px; margin-bottom: 8px; }
@@ -145,9 +141,6 @@
     .modal-manual-header h3 { margin: 0; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
     .btn-fechar-manual { background: transparent; border: none; color: #ffffff; font-size: 20px; cursor: pointer; }
     .modal-manual-body { padding: 20px 24px; overflow-y: auto; font-size: 13px; line-height: 1.6; color: #334155; }
-
-    .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-top: 2px solid #2563eb; }
-    .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
 
     /* Estilos do Chat Interno Integrado */
     .chat-panel-container { display: flex; flex-direction: column; height: 320px; }
@@ -394,8 +387,9 @@
           <div class="form-group" style="flex: 1;">
             <label>Situação:</label>
             <select id="locFiltroSituacao" onchange="filtrarTabelaLocacao()">
-              <option value="ATIVO" selected>Apenas ATIVO</option>
-              <option value="TODOS">Todas as Situações</option>
+              <option value="TODOS" selected>Todas as Situações</option>
+              <option value="ATIVO">Apenas ATIVO</option>
+              <option value="ENCERRADO">Apenas ENCERRADO</option>
             </select>
           </div>
           <div class="form-group" style="flex: 1.5;">
@@ -995,22 +989,42 @@
     </div>
   </div>
 
-  <!-- MODAIS DO SISTEMA -->
+  <!-- MODAL LOCAÇÃO ATUALIZADO (AJUSTE COM LOG E VALORES) -->
   <div id="modalLocacao" class="modal-overlay">
-    <div class="modal-box" style="width: 480px;">
+    <div class="modal-box" style="width: 520px;">
       <div class="modal-title">
-        <span>Ajustar Quantidade Física (Locação)</span>
+        <span>Ajuste de Locação, Valores e Observações</span>
         <span onclick="fecharModalLocacao()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
       </div>
       <input type="hidden" id="locModalId" value="">
       <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 14px; font-size: 12px; color: #334155;" id="locModalDetalhes"></div>
-      <div class="form-group" style="margin-bottom: 16px;">
-        <label>Nova Quantidade Física Entregue:</label>
-        <input type="number" id="locModalQtdFisica" min="0" style="font-size: 16px; font-weight: bold; padding: 10px;" required>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nova Qtd Física Entregue:</label>
+          <input type="number" id="locModalQtdFisica" min="0" style="font-size: 15px; font-weight: bold; padding: 8px;" required>
+        </div>
+        <div class="form-group">
+          <label>Valor Unitário (R$):</label>
+          <input type="number" id="locModalValUnit" step="0.01" min="0" placeholder="0.00" style="font-size: 15px; font-weight: bold; padding: 8px;">
+        </div>
       </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Valor Total (R$):</label>
+          <input type="number" id="locModalValTotal" step="0.01" min="0" placeholder="0.00" style="font-size: 15px; font-weight: bold; padding: 8px;">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label>Observação / Nota (Histórico de Log):</label>
+        <textarea id="locModalObservacao" placeholder="Ex: Aumentou a quantidade conforme aditivo contratual..." style="height: 70px;"></textarea>
+      </div>
+
       <div style="display: flex; gap: 8px; justify-content: flex-end;">
         <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalLocacao()">Cancelar</button>
-        <button type="button" id="btnSalvarLocModal" class="btn-submit" onclick="confirmarAjusteLocacao()"><i class="fa-solid fa-floppy-disk"></i> Atualizar Saldo</button>
+        <button type="button" id="btnSalvarLocModal" class="btn-submit" onclick="confirmarAjusteLocacao()"><i class="fa-solid fa-floppy-disk"></i> Salvar Ajuste e Log</button>
       </div>
     </div>
   </div>
@@ -1045,7 +1059,7 @@
       </div>
       <div class="modal-manual-body">
         <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-boxes-packing"></i> 1. Controle de Locação</h4>
-        <p style="margin-bottom:12px;">Consulte saldos contratados vs. entregues por cliente e unidade hospitalar. Ajuste saldos físicos diretamente pelo botão <b>"Ajustar"</b>.</p>
+        <p style="margin-bottom:12px;">Consulte saldos contratados vs. entregues por cliente e unidade hospitalar. Ajuste saldos físicos, valores e adicione notas de log com data e hora diretamente pelo botão <b>"Ajustar"</b>.</p>
         <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-cart-shopping"></i> 2. Módulo de Compras & Mapa Comparativo</h4>
         <p style="margin-bottom:12px;">Cadastre cotações informando 3 fornecedores. O sistema destaca a menor proposta em verde e registra a cotação com cálculo automático.</p>
         <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-shield-halved"></i> 3. Módulo Qualidade & Termos</h4>
@@ -1532,7 +1546,6 @@
       buscarAtualizacoesSilenciosas();
       setInterval(buscarAtualizacoesSilenciosas, 30000);
       setInterval(enviarHeartbeat, 15000);
-      // Chat ultrarrápido a cada 1.5 segundos
       setInterval(() => {
         const dropUsr = document.getElementById('usersDropdown');
         if (dropUsr && dropUsr.classList.contains('active')) {
@@ -1666,7 +1679,7 @@
       const cliFiltro = (document.getElementById('locFiltroCliente')?.value || "").toLowerCase();
       const uniFiltro = (document.getElementById('locFiltroUnidade')?.value || "").toLowerCase();
       const famFiltro = (document.getElementById('locFiltroFamilia')?.value || "").toLowerCase();
-      const sitFiltro = (document.getElementById('locFiltroSituacao')?.value || "ATIVO").toUpperCase();
+      const sitFiltro = (document.getElementById('locFiltroSituacao')?.value || "TODOS").toUpperCase();
       const txtFiltro = (document.getElementById('locFiltroTexto')?.value || "").toLowerCase().trim();
 
       const filtrados = locacoes.filter(l => {
@@ -1679,7 +1692,11 @@
         if (cliFiltro && !cCliente.includes(cliFiltro)) return false;
         if (uniFiltro && !cUnidade.includes(uniFiltro)) return false;
         if (famFiltro && !cEquip.includes(famFiltro)) return false;
-        if (sitFiltro !== "TODOS" && cSituacao !== sitFiltro) return false;
+        
+        if (sitFiltro !== "TODOS") {
+          if (cSituacao !== sitFiltro) return false;
+        }
+
         if (txtFiltro) {
           const matchCont = (l.contrato || "").toLowerCase().includes(txtFiltro);
           const matchId = (l.id || "").toString().toLowerCase().includes(txtFiltro);
@@ -1703,6 +1720,10 @@
         if (numSaldo > 0) badgeSaldo = "badge-saldo-pendente";
         else if (numSaldo < 0) badgeSaldo = "badge-saldo-alerta";
 
+        const sitUp = (l.situacao || 'ATIVO').toUpperCase();
+        let badgeSitClass = "badge-atendido";
+        if (sitUp === "ENCERRADO") badgeSitClass = "badge-encerrado";
+
         return `
           <tr>
             <td class="td-center"><b>${l.id || '-'}</b></td>
@@ -1714,7 +1735,7 @@
             <td class="td-center" style="font-weight:bold;">${l.qtdContratada ?? 0}</td>
             <td class="td-center" style="font-weight:bold; color:#1a4d80;">${l.qtdFisica ?? 0}</td>
             <td class="td-center"><span class="badge-status ${badgeSaldo}">${numSaldo}</span></td>
-            <td class="td-center"><b>${l.situacao || 'ATIVO'}</b></td>
+            <td class="td-center"><span class="badge-status ${badgeSitClass}">${sitUp}</span></td>
             <td class="td-center">
               <button type="button" class="btn-editar-saldo" onclick="abrirModalLocacao('${l.id}')"><i class="fa-solid fa-pen-to-square"></i> Ajustar</button>
             </td>
@@ -1741,9 +1762,12 @@
       if (!loc) return;
       document.getElementById('locModalId').value = loc.id;
       document.getElementById('locModalDetalhes').innerHTML = `
-        <b>Cliente:</b> ${loc.cliente || '-'}<br><b>Contrato:</b> ${loc.contrato || "N/A"} | <b>Unidade:</b> ${loc.unidade || "N/A"}<br><b>Equipamento:</b> ${loc.equipamento || '-'}<br><b>Qtd Contratada:</b> ${loc.qtdContratada ?? 0}
+        <b>Cliente:</b> ${loc.cliente || '-'}<br><b>Contrato:</b> ${loc.contrato || "N/A"} | <b>Unidade:</b> ${loc.unidade || "N/A"}<br><b>Equipamento:</b> ${loc.equipamento || '-'}<br><b>Qtd Contratada:</b> ${loc.qtdContratada ?? 0}<br>${loc.observacaoLog ? '<span style="color:#1a4d80;"><b>Último Log:</b> ' + loc.observacaoLog + '</span>' : ''}
       `;
       document.getElementById('locModalQtdFisica').value = loc.qtdFisica ?? 0;
+      document.getElementById('locModalValUnit').value = loc.valorUnitario ?? "";
+      document.getElementById('locModalValTotal').value = loc.valorTotal ?? "";
+      document.getElementById('locModalObservacao').value = "";
       document.getElementById('modalLocacao').classList.add('active');
     }
 
@@ -1752,15 +1776,29 @@
     function confirmarAjusteLocacao() {
       const id = document.getElementById('locModalId').value;
       const novaQtd = document.getElementById('locModalQtdFisica').value;
-      if (novaQtd === "" || isNaN(novaQtd) || Number(novaQtd) < 0) { alert("Informe uma quantidade válida."); return; }
+      const valUnit = document.getElementById('locModalValUnit').value;
+      const valTotal = document.getElementById('locModalValTotal').value;
+      const obs = document.getElementById('locModalObservacao').value.trim();
+
+      if (novaQtd === "" || isNaN(novaQtd) || Number(novaQtd) < 0) { alert("Informe uma quantidade física válida."); return; }
 
       const btn = document.getElementById('btnSalvarLocModal');
       btn.disabled = true;
-      btn.innerText = "ATUALIZANDO SALDO...";
+      btn.innerText = "SALVANDO AJUSTE...";
+
+      const nomeUsr = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario) : "Sistema";
 
       fetch(API_URL, {
         method: 'POST',
-        body: JSON.stringify({ acao: "ATUALIZAR_QTD_FISICA_LOCACAO", id: id, qtdFisica: Number(novaQtd) })
+        body: JSON.stringify({
+          acao: "ATUALIZAR_QTD_FISICA_LOCACAO",
+          id: id,
+          qtdFisica: Number(novaQtd),
+          valorUnitario: Number(valUnit) || 0,
+          valorTotal: Number(valTotal) || 0,
+          observacao: obs,
+          usuarioNome: nomeUsr
+        })
       })
       .then(res => res.json())
       .then(res => {
@@ -1771,9 +1809,12 @@
           alert("Erro ao atualizar locação.");
         }
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Atualizar Saldo';
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Salvar Ajuste e Log';
       })
-      .catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Atualizar Saldo'; });
+      .catch(err => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Salvar Ajuste e Log';
+      });
     }
 
     function renderizarTabelaCompras() {
