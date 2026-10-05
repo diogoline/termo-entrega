@@ -1152,7 +1152,7 @@
       }
 
       let html = `
-        <div class="chat-panel-container">
+        <div class="chat-panel-container" onclick="event.stopPropagation()">
           <div class="chat-tabs">
             <button class="chat-tab active" id="tabChatGeral" onclick="mudarAbaChat('GERAL')"><i class="fa-solid fa-comments"></i> Geral</button>
             <button class="chat-tab" id="tabChatPrivado" onclick="mudarAbaChat('PRIVADO')"><i class="fa-solid fa-user"></i> Privado</button>
@@ -1177,7 +1177,7 @@
         const ultAcesso = u.ultimoAcesso ? `Último acesso: ${u.ultimoAcesso}` : 'Online agora';
         if (usuarioLogado && nomeU.toLowerCase() !== (usuarioLogado.nome || '').toLowerCase()) {
           html += `
-            <div class="notif-item" onclick="iniciarChatPrivado('${nomeU}')" style="padding:8px 10px; margin-bottom:4px; background:#f8fafc; border-radius:4px; border:1px solid #e2e8f0;">
+            <div class="notif-item" onclick="iniciarChatPrivado('${nomeU}')" style="padding:8px 10px; margin-bottom:4px; background:#f8fafc; border-radius:4px; border:1px solid #e2e8f0; cursor:pointer;">
               <div class="notif-item-title" style="font-size:11px;">
                 <span><i class="fa-solid fa-circle" style="color:#22c55e; font-size:8px;"></i> ${nomeU}</span>
                 <span style="font-size:10px; color:#2563eb; font-weight:bold;">Conversar 💬</span>
