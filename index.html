@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DMA SYS - Gestão de Termos, Requisições, O.S., Locação e Compras</title>
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #f0f2f5; color: #333; min-height: 100vh; display: flex; flex-direction: column; padding: 16px; padding-bottom: 60px; overflow-x: hidden; }
@@ -163,7 +161,6 @@
 </head>
 <body>
 
-  <!-- TELA DE LOGIN -->
   <div id="loginOverlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0f172a; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px;">
     <div style="background: #ffffff; width: 100%; max-width: 380px; padding: 30px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); text-align: center;">
       <div style="font-size: 24px; font-weight: 800; color: #1a4d80; margin-bottom: 4px;">DMA SYS</div>
@@ -189,7 +186,6 @@
     </div>
   </div>
 
-  <!-- CONTAINER DA APLICAÇÃO -->
   <div id="appContainer" style="display: none;">
 
     <div class="header">
@@ -1171,8 +1167,8 @@
       let html = `
         <div class="chat-panel-container" onclick="event.stopPropagation()">
           <div class="chat-tabs">
-            <button class="chat-tab ${chatAtivoDestinatario === 'GERAL' ? 'active' : ''}" id="tabChatGeral" onclick="mudarAbaChat('GERAL')"><i class="fa-solid fa-comments"></i> Geral</button>
-            <button class="chat-tab ${chatAtivoDestinatario !== 'GERAL' ? 'active' : ''}" id="tabChatPrivado" onclick="mudarAbaChat('PRIVADO')"><i class="fa-solid fa-user"></i> Privado</button>
+            <button type="button" class="chat-tab ${chatAtivoDestinatario === 'GERAL' ? 'active' : ''}" id="tabChatGeral" onclick="mudarAbaChat('GERAL')"><i class="fa-solid fa-comments"></i> Geral</button>
+            <button type="button" class="chat-tab ${chatAtivoDestinatario !== 'GERAL' ? 'active' : ''}" id="tabChatPrivado" onclick="mudarAbaChat('PRIVADO')"><i class="fa-solid fa-user"></i> Privado</button>
           </div>
           
           <div id="corpoChatGeral" style="display:${chatAtivoDestinatario === 'GERAL' ? 'flex' : 'none'}; flex-direction:column; flex:1; overflow:hidden;">
@@ -1182,7 +1178,7 @@
             <div id="chatIndicadorDigitando" style="font-size:10px; color:#1a4d80; padding:2px 8px; font-style:italic; min-height:16px;"></div>
             <div class="chat-input-box">
               <button type="button" onclick="toggleEmojiPicker(event)" title="Inserir Emoji" style="background:#f1f5f9; color:#333; border:1px solid #cbd5e1; width:30px; border-radius:4px; font-size:13px; cursor:pointer;">😊</button>
-              <div id="emojiPickerDropdown" class="emoji-picker-dropdown">
+              <div id="emojiPickerDropdown" class="emoji-picker-dropdown" onclick="event.stopPropagation()">
                 <span class="emoji-item" onclick="inserirEmoji('😀')">😀</span>
                 <span class="emoji-item" onclick="inserirEmoji('😂')">😂</span>
                 <span class="emoji-item" onclick="inserirEmoji('👍')">👍</span>
@@ -1197,7 +1193,7 @@
                 <span class="emoji-item" onclick="inserirEmoji('🎯')">🎯</span>
               </div>
               <input type="text" id="inputMsgChat" placeholder="Digite sua mensagem geral..." oninput="notificarDigitandoChat()" onkeypress="if(event.key === 'Enter') enviarMensagemChat()">
-              <button onclick="enviarMensagemChat()">Enviar</button>
+              <button type="button" onclick="enviarMensagemChat()">Enviar</button>
             </div>
           </div>
 
@@ -1460,27 +1456,24 @@
       btn.disabled = true;
       btn.innerText = "VALIDANDO ACESSO...";
 
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ acao: "VERIFICAR_LOGIN", usuario: usr, senha: pass })
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "sucesso" && res.usuario) {
-          concluirAcessoLogin(res.usuario);
-        } else {
-          divErro.innerText = res.mensagem || "Usuário ou senha incorretos.";
+      google.script.run
+        .withSuccessHandler(res => {
+          if (res.sucesso) {
+            concluirAcessoLogin({ nome: res.nome, usuario: usr });
+          } else {
+            divErro.innerText = res.erro || "Usuário ou senha incorretos.";
+            divErro.style.display = "block";
+            btn.disabled = false;
+            btn.innerText = "ENTRAR NO SISTEMA";
+          }
+        })
+        .withFailureHandler(err => {
+          divErro.innerText = "Falha de conexão com o servidor. Tente novamente.";
           divErro.style.display = "block";
           btn.disabled = false;
           btn.innerText = "ENTRAR NO SISTEMA";
-        }
-      })
-      .catch(err => {
-        divErro.innerText = "Falha de conexão com o servidor. Tente novamente.";
-        divErro.style.display = "block";
-        btn.disabled = false;
-        btn.innerText = "ENTRAR NO SISTEMA";
-      });
+        })
+        .efetuarLogin(usr, pass);
     }
 
     function concluirAcessoLogin(usuario) {
@@ -1488,8 +1481,11 @@
       localStorage.setItem("dmasys_usuario", JSON.stringify(usuario));
       document.getElementById('loginOverlay').style.display = "none";
       document.getElementById('appContainer').style.display = "block";
-      document.getElementById('btnEntrarLogin').disabled = false;
-      document.getElementById('btnEntrarLogin').innerText = "ENTRAR NO SISTEMA";
+      const btnL = document.getElementById('btnEntrarLogin');
+      if (btnL) {
+        btnL.disabled = false;
+        btnL.innerText = "ENTRAR NO SISTEMA";
+      }
       preencherSelectTecnicos();
       enviarHeartbeat();
       buscarAtualizacoesSilenciosas();
