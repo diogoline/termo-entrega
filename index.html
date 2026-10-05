@@ -149,15 +149,17 @@
     .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-top: 2px solid #2563eb; }
     .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
 
-    .chat-widget-btn { position: fixed; bottom: 45px; right: 20px; background: #25d366; color: white; border: none; width: 48px; height: 48px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.25); z-index: 101; transition: transform 0.2s; }
-    .chat-widget-btn:hover { transform: scale(1.08); }
-    
-    .chat-box { display: none; position: fixed; bottom: 105px; right: 20px; width: 300px; background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 102; overflow: hidden; border: 1px solid #e2e8f0; }
-    .chat-box.active { display: block; animation: fadeIn 0.2s ease-in-out; }
-    .chat-header { background: #075e54; color: white; padding: 12px 16px; font-weight: bold; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-    .chat-body { padding: 14px; font-size: 12px; color: #444; }
-    .chat-body textarea { width: 100%; height: 70px; border: 1px solid #ccc; border-radius: 6px; padding: 8px; font-size: 12px; margin-top: 8px; resize: none; }
-    .chat-body button { background: #25d366; color: white; border: none; padding: 8px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+    /* Estilos do Chat Interno Integrado */
+    .chat-panel-container { display: flex; flex-direction: column; height: 280px; }
+    .chat-tabs { display: flex; background: #f1f5f9; border-bottom: 1px solid #cbd5e1; }
+    .chat-tab { flex: 1; padding: 8px; text-align: center; font-size: 11px; font-weight: bold; cursor: pointer; background: #f8fafc; border: none; border-bottom: 2px solid transparent; }
+    .chat-tab.active { background: white; color: #1a4d80; border-bottom-color: #1a4d80; }
+    .chat-messages { flex: 1; padding: 10px; overflow-y: auto; background: #fafafa; font-size: 11px; display: flex; flex-direction: column; gap: 6px; }
+    .chat-msg { background: white; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0; max-width: 85%; }
+    .chat-msg.me { background: #dcfce7; align-self: flex-end; border-color: #bbf7d0; }
+    .chat-input-box { display: flex; padding: 8px; background: white; border-top: 1px solid #cbd5e1; gap: 6px; }
+    .chat-input-box input { flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; }
+    .chat-input-box button { background: #1a4d80; color: white; border: none; padding: 0 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; }
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
@@ -201,14 +203,14 @@
 
       <div class="header-right">
         <div style="position: relative; display: inline-block;">
-          <button type="button" class="notification-btn" onclick="toggleUsersDropdown(event)" title="Usuários Conectados">
+          <button type="button" class="notification-btn" onclick="toggleUsersDropdown(event)" title="Usuários Conectados e Chat">
             <i class="fa-solid fa-circle" style="color: #22c55e; font-size: 10px;"></i>
             <span id="onlineCountText">0 Online</span>
           </button>
           
-          <div id="usersDropdown" class="notification-dropdown" style="right: 0; width: 280px;">
+          <div id="usersDropdown" class="notification-dropdown" style="right: 0; width: 320px;">
             <div class="notif-header">
-              <span><i class="fa-solid fa-users"></i> USUÁRIOS REGISTRADOS</span>
+              <span><i class="fa-solid fa-users"></i> EQUIPE CONECTADA</span>
             </div>
             <div class="notif-list" id="usersOnlineList">
               <div style="padding: 12px; text-align: center; color: #888; font-size: 12px;">Carregando usuários...</div>
@@ -773,7 +775,7 @@
               </div>
             </div>
 
-            <button type="submit" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;">
+            <button type="button" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;" onclick="gerarTermo(event)">
               <i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)
             </button>
           </div>
@@ -1050,21 +1052,6 @@
     </div>
   </div>
 
-  <button type="button" class="chat-widget-btn" onclick="toggleChat()"><i class="fa-brands fa-whatsapp"></i></button>
-  <div id="chatBox" class="chat-box">
-    <div class="chat-header"><span>Suporte Técnico DMA Sys</span><span onclick="toggleChat()" style="cursor:pointer;"><i class="fa-solid fa-xmark"></i></span></div>
-    <div class="chat-body">
-      Digite sua dúvida abaixo:
-      <textarea id="msgChat" placeholder="Ex: Dúvida sobre salvar saldo de locação..."></textarea>
-      <button type="button" onclick="enviarWhatsApp()">Enviar WhatsApp</button>
-    </div>
-  </div>
-
-  <footer class="system-footer">
-    <div><b>DMA SYS</b> v2.0 | Sistema de Gestão Operacional & Locação</div>
-    <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
-  </footer>
-
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
     const NUMERO_WHATSAPP_SUPORTE = "5511970116092";
@@ -1074,6 +1061,9 @@
     let protocoloReqEmVinculo = null;
     let usuarioLogado = null;
     let estaBuscandoDados = false;
+    let chatAtivoDestinatario = "GERAL";
+    let tituloOriginalPagina = document.title;
+    let timerPiscarTitulo = null;
 
     function criarDebounce(func, wait = 200) {
       let timeout;
@@ -1111,10 +1101,14 @@
 
     function toggleUsersDropdown(e) {
       if(e) e.stopPropagation();
+      pararPiscarTitulo();
       const dropdown = document.getElementById('usersDropdown');
       const atv = dropdown.classList.contains('active');
       fecharTodosDropdowns();
-      if (!atv) dropdown.classList.add('active');
+      if (!atv) {
+        dropdown.classList.add('active');
+        buscarMensagensChatServidor();
+      }
     }
 
     function toggleNotifications(e) {
@@ -1129,6 +1123,7 @@
       if (!usuarioLogado || (!usuarioLogado.usuario && !usuarioLogado.nome)) return;
       var idUsr = usuarioLogado.usuario || usuarioLogado.nome;
       fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "PING_PRESENCA", usuario: idUsr }) }).catch(e => {});
+      buscarMensagensChatServidor();
     }
 
     function renderizarUsuariosOnline() {
@@ -1157,33 +1152,180 @@
         return;
       }
 
-      let html = '';
-      if (onlines.length > 0) {
-        html += `<div style="padding: 6px 12px; font-size: 10px; font-weight: bold; color: #166534; background: #dcfce7;">🟢 CONECTADOS AGORA (${onlines.length})</div>`;
-        html += onlines.map(u => `
-          <div class="notif-item" style="cursor: default;">
-            <div class="notif-item-title">
-              <span><i class="fa-solid fa-circle" style="color:#22c55e;"></i> ${u.nome || u.usuario || '-'}</span>
-              <span style="font-size:10px; color:#155724; font-weight:bold;">Online</span>
-            </div>
-            <div class="notif-item-sub">Login: <b>${u.usuario || '-'}</b> | Ativo: ${u.ultimoAcesso || 'Agora'}</div>
+      let html = `
+        <div class="chat-panel-container">
+          <div class="chat-tabs">
+            <button class="chat-tab active" id="tabChatGeral" onclick="mudarAbaChat('GERAL')"><i class="fa-solid fa-comments"></i> Geral</button>
+            <button class="chat-tab" id="tabChatPrivado" onclick="mudarAbaChat('PRIVADO')"><i class="fa-solid fa-user"></i> Privado</button>
           </div>
-        `).join('');
-      }
+          
+          <div id="corpoChatGeral" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
+            <div class="chat-messages" id="chatMsgBox">
+              <div style="text-align:center; color:#888; font-size:10px; margin-top:10px;">Carregando bate-papo...</div>
+            </div>
+            <div class="chat-input-box">
+              <input type="text" id="inputMsgChat" placeholder="Digite sua mensagem..." onkeypress="if(event.key === 'Enter') enviarMensagemChat()">
+              <button onclick="enviarMensagemChat()">Enviar</button>
+            </div>
+          </div>
 
-      if (offlines.length > 0) {
-        html += `<div style="padding: 6px 12px; font-size: 10px; font-weight: bold; color: #475569; background: #f1f5f9;">⚪ INDISPONÍVEIS / OFFLINE (${offlines.length})</div>`;
-        html += offlines.map(u => `
-          <div class="notif-item" style="cursor: default; opacity: 0.7;">
-            <div class="notif-item-title">
-              <span><i class="fa-regular fa-circle" style="color:#94a3b8;"></i> ${u.nome || u.usuario || '-'}</span>
+          <div id="corpoListaEquipe" style="display:none; flex-direction:column; flex:1; overflow-y:auto; padding:8px;">
+            <div style="font-size:10px; font-weight:bold; color:#1a4d80; margin-bottom:6px;">CLIQUE EM UM COLEGA PARA CONVERSAR:</div>
+      `;
+
+      onlines.forEach(u => {
+        const nomeU = u.nome || u.usuario || '-';
+        if (usuarioLogado && nomeU.toLowerCase() !== (usuarioLogado.nome || '').toLowerCase()) {
+          html += `
+            <div class="notif-item" onclick="iniciarChatPrivado('${nomeU}')" style="padding:6px 10px; margin-bottom:4px; background:#f8fafc; border-radius:4px;">
+              <div class="notif-item-title" style="font-size:11px;">
+                <span><i class="fa-solid fa-circle" style="color:#22c55e; font-size:8px;"></i> ${nomeU}</span>
+                <span style="font-size:9px; color:#2563eb;">Conversar 💬</span>
+              </div>
             </div>
-            <div class="notif-item-sub">Login: ${u.usuario || '-'} | Última presença: ${u.ultimoAcesso || '-'}</div>
+          `;
+        }
+      });
+
+      html += `
           </div>
-        `).join('');
-      }
+        </div>
+      `;
 
       listContainer.innerHTML = html;
+      renderizarMensagensChatNaTela();
+    }
+
+    let cacheMensagensChat = [];
+    function mudarAbaChat(tipo) {
+      const tabG = document.getElementById('tabChatGeral');
+      const tabP = document.getElementById('tabChatPrivado');
+      const boxG = document.getElementById('corpoChatGeral');
+      const boxP = document.getElementById('corpoListaEquipe');
+      if (!tabG || !tabP) return;
+
+      if (tipo === 'GERAL') {
+        chatAtivoDestinatario = "GERAL";
+        tabG.classList.add('active');
+        tabP.classList.remove('active');
+        boxG.style.display = 'flex';
+        boxP.style.display = 'none';
+        renderizarMensagensChatNaTela();
+      } else {
+        tabP.classList.add('active');
+        tabG.classList.remove('active');
+        boxP.style.display = 'flex';
+        boxG.style.display = 'none';
+      }
+    }
+
+    function iniciarChatPrivado(nomeColega) {
+      chatAtivoDestinatario = nomeColega.toLowerCase().trim();
+      const tabG = document.getElementById('tabChatGeral');
+      const tabP = document.getElementById('tabChatPrivado');
+      const boxG = document.getElementById('corpoChatGeral');
+      const boxP = document.getElementById('corpoListaEquipe');
+
+      tabG.classList.add('active');
+      tabP.classList.remove('active');
+      boxG.style.display = 'flex';
+      boxP.style.display = 'none';
+      const input = document.getElementById('inputMsgChat');
+      if(input) input.placeholder = `Mensagem para ${nomeColega}...`;
+      renderizarMensagensChatNaTela();
+    }
+
+    function enviarMensagemChat() {
+      const input = document.getElementById('inputMsgChat');
+      if (!input) return;
+      const texto = input.value.trim();
+      if (!texto) return;
+
+      const rem = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario) : "Sistema";
+      const dest = chatAtivoDestinatario;
+
+      input.value = "";
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ acao: "ENVIAR_MENSAGEM_CHAT", remetente: rem, destinatario: dest, mensagem: texto })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === "sucesso") {
+          buscarMensagensChatServidor();
+        }
+      }).catch(e => {});
+    }
+
+    function buscarMensagensChatServidor() {
+      if (!usuarioLogado) return;
+      const usr = usuarioLogado.nome || usuarioLogado.usuario || "";
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ acao: "BUSCAR_MENSAGENS_CHAT", usuario: usr })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === "sucesso" && res.mensagens) {
+          const qtdAnterior = cacheMensagensChat.length;
+          cacheMensagensChat = res.mensagens;
+          if (cacheMensagensChat.length > qtdAnterior && qtdAnterior > 0) {
+            iniciarPiscarTitulo();
+          }
+          renderizarMensagensChatNaTela();
+        }
+      }).catch(e => {});
+    }
+
+    function renderizarMensagensChatNaTela() {
+      const box = document.getElementById('chatMsgBox');
+      if (!box) return;
+
+      const meuNome = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario || "").toLowerCase().trim() : "";
+      
+      const filtradas = cacheMensagensChat.filter(m => {
+        const dest = (m.destinatario || "").toLowerCase().trim();
+        const rem = (m.remetente || "").toLowerCase().trim();
+        if (chatAtivoDestinatario === "GERAL") {
+          return dest === "geral" || dest === "";
+        } else {
+          // Privado entre eu e o destinatario ativo
+          return (dest === meuNome && rem === chatAtivoDestinatario) || (dest === chatAtivoDestinatario && rem === meuNome);
+        }
+      });
+
+      if (filtradas.length === 0) {
+        box.innerHTML = '<div style="text-align:center; color:#888; font-size:10px; margin-top:20px;">Nenhuma mensagem ainda. Digite abaixo para iniciar!</div>';
+        return;
+      }
+
+      box.innerHTML = filtradas.map(m => {
+        const isMe = (m.remetente || "").toLowerCase().trim() === meuNome;
+        return `
+          <div class="chat-msg ${isMe ? 'me' : ''}">
+            <div style="font-weight:bold; color:#1a4d80; font-size:10px; margin-bottom:2px;">${m.remetente} <span style="font-weight:normal; color:#888; font-size:9px;">(${m.hora})</span></div>
+            <div>${m.mensagem}</div>
+          </div>
+        `;
+      }).join('');
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function iniciarPiscarTitle() {
+      if (timerPiscarTitulo) return;
+      let alternar = false;
+      timerPiscarTitulo = setInterval(() => {
+        document.title = alternar ? "💬 Nova Mensagem no Chat!" : tituloOriginalPagina;
+        alternar = !alternar;
+      }, 1500);
+    }
+
+    function pararPiscarTitulo() {
+      if (timerPiscarTitulo) {
+        clearInterval(timerPiscarTitulo);
+        timerPiscarTitulo = null;
+      }
+      document.title = tituloOriginalPagina;
     }
 
     function preencherSelectTecnicos() {
@@ -1323,7 +1465,7 @@
       if (document.getElementById('dashFiltroMes')) document.getElementById('dashFiltroMes').value = mesFormatado;
       buscarAtualizacoesSilenciosas();
       setInterval(buscarAtualizacoesSilenciosas, 30000);
-      setInterval(enviarHeartbeat, 60000);
+      setInterval(enviarHeartbeat, 20000);
     };
 
     function salvarRequisicao(e) {
@@ -1420,7 +1562,6 @@
       const tituloEl = document.getElementById('tituloModalReqPDF');
       const btnLink = document.getElementById('btnAbrirNovaAbaPdfReq');
 
-      // Converte o link do Google Drive para o formato /preview para evitar bloqueio de embed/permissão
       let embedUrl = pdfUrl;
       if (embedUrl.includes('/file/d/')) {
         embedUrl = embedUrl.replace(/\/view.*$/, '/preview').replace(/\/edit.*$/, '/preview');
@@ -1692,7 +1833,6 @@
         return;
       }
 
-      // ORDENAÇÃO INTELIGENTE: PENDENTES NO TOPO
       lista.sort((a, b) => {
         const stA = (a.status || "").toUpperCase();
         const stB = (b.status || "").toUpperCase();
@@ -1711,7 +1851,7 @@
         if (st === "ATENDIDO") badgeClass = "badge-atendido";
         if (isRecusado) badgeClass = "badge-recusado";
         
-        const linkPdfReq = r.pdfUrlReq ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${r.pdfUrlReq}', 'Visualizar Requisição: ${r.protocolo}')" title="Visualizar Requisição PDF"><i class="fa-solid fa-eye"></i> REQ</button>` : '';
+        const linkPdfReq = r.pdfUrlReq ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${r.pdfUrlReq}', 'Visualizar Requisição: ${r.protocolo}')" title="Visualizar Requisição"><i class="fa-solid fa-eye"></i> REQ</button>` : '';
         
         let btnAcao = "";
         if (isPendente) {
@@ -2367,14 +2507,6 @@
       if (document.getElementById('filtroTextoReq')) document.getElementById('filtroTextoReq').value = protocolo || "";
       mudarAba('requisicoes');
       filtrarRequisicoes();
-    }
-
-    function toggleChat() { document.getElementById('chatBox')?.classList.toggle('active'); }
-    function enviarWhatsApp() {
-      const msg = document.getElementById('msgChat').value.trim();
-      const textoFinal = encodeURIComponent("Olá Suporte DMA Sys! " + (msg ? msg : "Preciso de auxílio no sistema."));
-      window.open(`https://wa.me/${NUMERO_WHATSAPP_SUPORTE}?text=${textoFinal}`, '_blank');
-      toggleChat();
     }
   </script>
 </body>
