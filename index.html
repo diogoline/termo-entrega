@@ -1182,7 +1182,7 @@
                 <span class="emoji-item" onclick="inserirEmoji('👋')">👋</span>
                 <span class="emoji-item" onclick="inserirEmoji('🎯')">🎯</span>
               </div>
-              <input type="text" id="inputMsgChat" placeholder="Digite sua mensagem..." oninput="notificarDigitandoChat()" onkeypress="if(event.key === 'Enter') enviarMensagemChat()">
+              <input type="text" id="inputMsgChat" placeholder="Digite sua mensagem geral..." oninput="notificarDigitandoChat()" onkeypress="if(event.key === 'Enter') enviarMensagemChat()">
               <button onclick="enviarMensagemChat()">Enviar</button>
             </div>
           </div>
@@ -1429,7 +1429,7 @@
     }
 
     function efetuarLogin() {
-      const usr = document.getElementById('loginUsuario').value.trim().toLowerCase();
+      const usr = document.getElementById('loginUsuario').value.trim();
       const pass = document.getElementById('loginSenha').value.trim();
       const divErro = document.getElementById('loginErro');
       const btn = document.getElementById('btnEntrarLogin');
