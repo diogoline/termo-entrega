@@ -11,7 +11,6 @@
     
     .header { background-color: #1a4d80; color: white; padding: 12px 24px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; box-shadow: 0 3px 6px rgba(0,0,0,0.12); position: relative; }
     .header h1 { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
-    
     .header-right { display: flex; align-items: center; gap: 10px; position: relative; }
     .status-badge { background-color: #ffc107; color: #333; padding: 6px 14px; border-radius: 16px; font-size: 12px; font-weight: bold; transition: all 0.3s; display: inline-flex; align-items: center; gap: 6px; }
     .status-badge.connected { background-color: #28a745; color: white; }
@@ -96,7 +95,7 @@
     .badge-pendente { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
     .badge-atendido { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .badge-recusado { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    .badge-encerrado { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .badge-encerrado { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
 
     .badge-saldo-ok { background: #f1f5f9; color: #334155; }
     .badge-saldo-pendente { background: #fef3c7; color: #92400e; }
@@ -160,6 +159,9 @@
 </head>
 <body>
 
+  <!-- ========================================== -->
+  <!-- BLOCO 1: TELA DE LOGIN E AUTENTICAÇÃO      -->
+  <!-- ========================================== -->
   <div id="loginOverlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0f172a; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px;">
     <div style="background: #ffffff; width: 100%; max-width: 380px; padding: 30px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); text-align: center;">
       <div style="font-size: 24px; font-weight: 800; color: #1a4d80; margin-bottom: 4px;">DMA SYS</div>
@@ -185,6 +187,9 @@
     </div>
   </div>
 
+  <!-- ========================================== -->
+  <!-- BLOCO 2: CABEÇALHO E MENU PRINCIPAL        -->
+  <!-- ========================================== -->
   <div id="appContainer" style="display: none;">
 
     <div class="header">
@@ -244,6 +249,7 @@
       </div>
     </div>
 
+    <!-- Barra de Navegação por Abas -->
     <div class="nav-tabs">
       <button type="button" class="nav-tab active" id="btnNavInicio" onclick="mudarAba('inicio')">
         <i class="fa-solid fa-house"></i> Início
@@ -292,14 +298,17 @@
       </div>
     </div>
 
-    <!-- DATALISTS DINÂMICAS -->
     <datalist id="listDescricoesPadrao"></datalist>
     <datalist id="listModelosPadrao"></datalist>
     <datalist id="listFabricantesPadrao"></datalist>
     <datalist id="listFamiliasLocacao"></datalist>
     <datalist id="listUnidadesLocacao"></datalist>
 
-    <!-- ABA INÍCIO -->
+    <!-- ========================================== -->
+    <!-- BLOCO 3: CONTEÚDO DAS ABAS DO SISTEMA      -->
+    <!-- ========================================== -->
+
+    <!-- Aba Início -->
     <div id="abaInicio" class="tab-content active">
       <div class="welcome-hero">
         <h2>Bem-vindo ao DMA SYS v2.0</h2>
@@ -339,7 +348,7 @@
       </div>
     </div>
 
-    <!-- MÓDULO LOCAÇÃO -->
+    <!-- Módulo Controle de Locação -->
     <div id="abaLocacao" class="tab-content">
       <div class="dash-metrics" style="grid-template-columns: repeat(4, 1fr);">
         <div class="metric-card blue">
@@ -418,7 +427,7 @@
       </div>
     </div>
 
-    <!-- MÓDULO COMPRAS -->
+    <!-- Módulo de Compras -->
     <div id="abaCompras" class="tab-content">
       <div class="card">
         <div class="card-title">
@@ -530,7 +539,7 @@
       </div>
     </div>
 
-    <!-- MÓDULO DASHBOARD -->
+    <!-- Módulo Dashboard -->
     <div id="abaDashboard" class="tab-content">
       <div class="card" style="margin-bottom: 16px;">
         <div class="card-title"><span>Filtro de Período das Métricas</span></div>
@@ -585,7 +594,7 @@
       </div>
     </div>
 
-    <!-- MÓDULO QUALIDADE / REQUISIÇÕES -->
+    <!-- Módulo Qualidade / Requisições -->
     <div id="abaRequisicoes" class="tab-content">
       <div class="card">
         <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
@@ -678,7 +687,7 @@
       </div>
     </div>
 
-    <!-- MÓDULO EMISSÃO TERMO -->
+    <!-- Módulo Emissão de Termos -->
     <div id="abaEmissao" class="tab-content">
       <div id="bannerReqVinculada" style="display: none; background: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 12px; align-items: center; justify-content: space-between;">
         <span><i class="fa-solid fa-link"></i> Atendendo Requisição Pendente: <span id="lblProtReqVinculada" style="color: #1a4d80;">-</span></span>
@@ -776,7 +785,7 @@
       </form>
     </div>
 
-    <!-- MÓDULO CONSULTA TERMOS -->
+    <!-- Módulo Consulta Termos -->
     <div id="abaConsulta" class="tab-content">
       <div class="card">
         <div class="card-title">Histórico e Consulta de Termos Gerados</div>
@@ -806,7 +815,7 @@
       </div>
     </div>
 
-    <!-- MÓDULO MANUTENÇÃO O.S. -->
+    <!-- Módulo Manutenção O.S. -->
     <div id="abaOsGestao" class="tab-content">
       <div class="card">
         <div class="card-title">
@@ -913,7 +922,7 @@
       </div>
     </div>
 
-    <!-- MÓDULOS CADASTROS -->
+    <!-- Módulos de Cadastros -->
     <div id="abaCadEquipamento" class="tab-content">
       <div class="card">
         <div class="card-title">Cadastrar Novo Equipamento (Aba EQUIP)</div>
@@ -967,7 +976,11 @@
 
   </div>
 
-  <!-- MODAL VISUALIZADOR DE REQUISIÇÃO (PDF) -->
+  <!-- ========================================== -->
+  <!-- BLOCO 4: MODAIS DO SISTEMA                 -->
+  <!-- ========================================== -->
+
+  <!-- Modal Visualizador de Requisição (PDF) -->
   <div id="modalVisualizadorReq" class="modal-overlay">
     <div class="modal-box" style="width: 800px; max-width: 95vw; height: 85vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -984,7 +997,7 @@
     </div>
   </div>
 
-  <!-- MODAL LOCAÇÃO ATUALIZADO (CÁLCULO AUTOMÁTICO VALOR TOTAL) -->
+  <!-- Modal Ajuste de Locação (Qtd, Valores e Log) -->
   <div id="modalLocacao" class="modal-overlay">
     <div class="modal-box" style="width: 520px;">
       <div class="modal-title">
@@ -1024,6 +1037,7 @@
     </div>
   </div>
 
+  <!-- Modal Vincular Termo -->
   <div id="modalVincularTermo" class="modal-overlay">
     <div class="modal-box" style="width: 480px;">
       <div class="modal-title">
@@ -1046,6 +1060,7 @@
     </div>
   </div>
 
+  <!-- Modal Material de Apoio -->
   <div class="modal-manual-overlay" id="modalManualUso">
     <div class="modal-manual-card">
       <div class="modal-manual-header">
@@ -1065,6 +1080,9 @@
     </div>
   </div>
 
+  <!-- ========================================== -->
+  <!-- BLOCO 5: SCRIPTS E LÓGICA DO FRONTEND      -->
+  <!-- ========================================== -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
 
