@@ -984,7 +984,7 @@
     </div>
   </div>
 
-  <!-- MODAL LOCAÇÃO ATUALIZADO (AJUSTE COM LOG E VALORES) -->
+  <!-- MODAL LOCAÇÃO ATUALIZADO (CÁLCULO AUTOMÁTICO VALOR TOTAL) -->
   <div id="modalLocacao" class="modal-overlay">
     <div class="modal-box" style="width: 520px;">
       <div class="modal-title">
@@ -997,18 +997,18 @@
       <div class="form-row">
         <div class="form-group">
           <label>Nova Qtd Física Entregue:</label>
-          <input type="number" id="locModalQtdFisica" min="0" style="font-size: 15px; font-weight: bold; padding: 8px;" required>
+          <input type="number" id="locModalQtdFisica" min="0" style="font-size: 15px; font-weight: bold; padding: 8px;" oninput="calcularTotalLocacaoModal()" required>
         </div>
         <div class="form-group">
           <label>Valor Unitário (R$):</label>
-          <input type="number" id="locModalValUnit" step="0.01" min="0" placeholder="0.00" style="font-size: 15px; font-weight: bold; padding: 8px;">
+          <input type="number" id="locModalValUnit" step="0.01" min="0" placeholder="0.00" style="font-size: 15px; font-weight: bold; padding: 8px;" oninput="calcularTotalLocacaoModal()">
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label>Valor Total (R$):</label>
-          <input type="number" id="locModalValTotal" step="0.01" min="0" placeholder="0.00" style="font-size: 15px; font-weight: bold; padding: 8px;">
+          <input type="number" id="locModalValTotal" step="0.01" min="0" placeholder="0.00" style="font-size: 15px; font-weight: bold; padding: 8px; background: #eef2f6;">
         </div>
       </div>
 
@@ -1054,7 +1054,7 @@
       </div>
       <div class="modal-manual-body">
         <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-boxes-packing"></i> 1. Controle de Locação</h4>
-        <p style="margin-bottom:12px;">Consulte saldos contratados vs. entregues por cliente e unidade hospitalar. Ajuste saldos físicos, valores e adicione notas de log com data e hora diretamente pelo botão <b>"Ajustar"</b>.</p>
+        <p style="margin-bottom:12px;">Consulte saldos contratados vs. entregues por cliente e unidade hospitalar. Ajuste saldos físicos, valores com cálculo automático do total e adicione notas de log com data e hora diretamente pelo botão <b>"Ajustar"</b>.</p>
         <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-cart-shopping"></i> 2. Módulo de Compras & Mapa Comparativo</h4>
         <p style="margin-bottom:12px;">Cadastre cotações informando 3 fornecedores. O sistema destaca a menor proposta em verde e registra a cotação com cálculo automático.</p>
         <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-shield-halved"></i> 3. Módulo Qualidade & Termos</h4>
@@ -1767,6 +1767,16 @@
     }
 
     function fecharModalLocacao() { document.getElementById('modalLocacao').classList.remove('active'); }
+
+    function calcularTotalLocacaoModal() {
+      const qtd = parseFloat(document.getElementById('locModalQtdFisica')?.value) || 0;
+      const unit = parseFloat(document.getElementById('locModalValUnit')?.value) || 0;
+      const total = qtd * unit;
+      const inputTotal = document.getElementById('locModalValTotal');
+      if (inputTotal) {
+        inputTotal.value = total > 0 ? total.toFixed(2) : "";
+      }
+    }
 
     function confirmarAjusteLocacao() {
       const id = document.getElementById('locModalId').value;
