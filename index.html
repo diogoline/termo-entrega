@@ -380,8 +380,6 @@
     .signature-container { display: flex; gap: 12px; margin-top: 8px; }
     .sig-box { flex: 1; border: 1.5px dashed #c3cde0; border-radius: 12px; padding: 12px; background: #f8fafc; text-align: center; position: relative; }
     .sig-box canvas { width: 100%; height: 110px; background: white; border: 1px solid var(--line); border-radius: 10px; cursor: crosshair; touch-action: none; }
-    .sig-preview { height: 60px; border: 1px solid var(--line); border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; margin-top: 6px; padding: 4px; }
-    .sig-preview img { max-height: 100%; max-width: 100%; object-fit: contain; }
     .btn-clear { position: absolute; right: 12px; top: 12px; background: #ef4444; color: white; border: none; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,.55); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
@@ -407,26 +405,19 @@
     .manual-secao li { margin-bottom: 6px; }
     .alerta-seguranca { background: #eff6ff; border-left: 4px solid #1a4d80; padding: 10px 14px; font-size: 12px; font-weight: 600; color: #1e40af; border-radius: 0 10px 10px 0; }
 
-    .chat-panel-container { display: flex; flex-direction: column; height: 320px; }
-    .chat-tabs { display: flex; background: #f1f5f9; border-bottom: 1px solid #cbd5e1; }
-    .chat-tab { flex: 1; padding: 8px; text-align: center; font-size: 11px; font-weight: bold; cursor: pointer; background: #f8fafc; border: none; border-bottom: 2px solid transparent; }
-    .chat-tab.active { background: white; color: #1a4d80; border-bottom-color: #1a4d80; }
-    .chat-messages { flex: 1; padding: 10px; overflow-y: auto; background: #fafafa; font-size: 11px; display: flex; flex-direction: column; gap: 6px; }
-    .chat-msg { background: white; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0; max-width: 85%; }
-    .chat-msg.me { background: #dcfce7; align-self: flex-end; border-color: #bbf7d0; }
-    .chat-input-box { display: flex; padding: 8px; background: white; border-top: 1px solid #cbd5e1; gap: 6px; position: relative; align-items: center; }
-    .chat-input-box input { flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; }
-    .chat-input-box button { background: #1a4d80; color: white; border: none; padding: 0 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; height: 30px; }
-    .emoji-picker-dropdown { display: none; position: absolute; bottom: 45px; left: 8px; background: white; border: 1px solid #cbd5e1; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 8px; width: 210px; z-index: 9999; grid-template-columns: repeat(6, 1fr); gap: 4px; text-align: center; }
-    .emoji-picker-dropdown.active { display: grid; }
-    .emoji-item { font-size: 16px; cursor: pointer; padding: 4px; border-radius: 4px; transition: background 0.1s; }
-    .emoji-item:hover { background: #f1f5f9; }
+    /* WIDGET DE CHAT FLUTUANTE CORRIGIDO */
+    .chat-widget-btn { position: fixed; bottom: 45px; right: 20px; background: #25d366; color: white; border: none; width: 48px; height: 48px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 24px rgba(37,211,102,.4); z-index: 101; transition: transform 0.2s; }
+    .chat-widget-btn:hover { transform: scale(1.08); }
+    
+    .chat-box { display: none; position: fixed; bottom: 105px; right: 20px; width: 320px; background: white; border-radius: 16px; box-shadow: 0 20px 44px rgba(15,23,42,.25); z-index: 102; overflow: hidden; border: 1px solid var(--line); }
+    .chat-box.active { display: block; animation: fadeIn 0.2s ease-in-out; }
+    .chat-header { background: #075e54; color: white; padding: 12px 16px; font-weight: bold; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+    .chat-body { padding: 14px; font-size: 12px; color: #444; background: #fff; }
+    .chat-body textarea { width: 100%; height: 70px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px; font-size: 12px; margin-top: 8px; resize: none; background: #f8fafc; }
+    .chat-body button { background: #25d366; color: white; border: none; padding: 10px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 8px; }
 
     .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15,23,42,.96); backdrop-filter: blur(8px); color: #cbd5e1; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-top: 1px solid rgba(255,255,255,.08); }
     .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
-
-    .chat-widget-btn { position: fixed; bottom: 45px; right: 20px; background: #25d366; color: white; border: none; width: 48px; height: 48px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 24px rgba(37,211,102,.4); z-index: 101; transition: transform 0.2s; }
-    .chat-widget-btn:hover { transform: scale(1.08); }
 
     #loginOverlay { background: radial-gradient(700px 400px at 20% 10%, rgba(37,99,235,.35), transparent 70%), radial-gradient(600px 400px at 90% 90%, rgba(34,197,94,.18), transparent 70%), #0b1220 !important; }
     #loginOverlay > div { max-width: 400px !important; padding: 38px 34px !important; border-radius: 22px !important; box-shadow: 0 30px 70px rgba(0,0,0,.5) !important; border: 1px solid rgba(255,255,255,.6); text-align: center; }
@@ -621,6 +612,7 @@
       </div>
     </div>
 
+    <!-- CONTROLE DE LOCAÇÃO -->
     <div id="abaLocacao" class="tab-content">
       <div class="dash-metrics" style="grid-template-columns: repeat(4, 1fr);">
         <div class="metric-card blue">
@@ -699,6 +691,7 @@
       </div>
     </div>
 
+    <!-- MÓDULO DE COMPRAS -->
     <div id="abaCompras" class="tab-content">
       <div class="card">
         <div class="card-title">
@@ -808,6 +801,7 @@
       </div>
     </div>
 
+    <!-- DASHBOARD -->
     <div id="abaDashboard" class="tab-content">
       <div class="card" style="margin-bottom: 16px;">
         <div class="card-title"><span>Filtro de Período das Métricas</span></div>
@@ -862,6 +856,7 @@
       </div>
     </div>
 
+    <!-- REQUISIÇÕES -->
     <div id="abaRequisicoes" class="tab-content">
       <div class="card">
         <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
@@ -950,6 +945,7 @@
       </div>
     </div>
 
+    <!-- EMISSÃO DE TERMO -->
     <div id="abaEmissao" class="tab-content">
       <div id="bannerReqVinculada" style="display: none; background: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 12px; align-items: center; justify-content: space-between;">
         <span><i class="fa-solid fa-link"></i> Atendendo Requisição Pendente: <span id="lblProtReqVinculada" style="color: #1a4d80;">-</span></span>
@@ -1047,6 +1043,7 @@
       </form>
     </div>
 
+    <!-- CONSULTA DE TERMOS -->
     <div id="abaConsulta" class="tab-content">
       <div class="card">
         <div class="card-title">Histórico e Consulta de Termos Gerados</div>
@@ -1076,6 +1073,7 @@
       </div>
     </div>
 
+    <!-- GESTÃO DE O.S. -->
     <div id="abaOsGestao" class="tab-content">
       <div class="card">
         <div class="card-title">
@@ -1121,6 +1119,7 @@
       </div>
     </div>
 
+    <!-- ABERTURA DE O.S. -->
     <div id="abaOsAbertura" class="tab-content">
       <div class="card">
         <div class="card-title">Abrir Nova Ordem de Serviço (Manutenção)</div>
@@ -1182,6 +1181,7 @@
       </div>
     </div>
 
+    <!-- CADASTRO DE EQUIPAMENTO -->
     <div id="abaCadEquipamento" class="tab-content">
       <div class="card">
         <div class="card-title">Cadastrar Novo Equipamento (Aba EQUIP)</div>
@@ -1210,6 +1210,7 @@
       </div>
     </div>
 
+    <!-- CADASTROS AUXILIARES -->
     <div id="abaCadAuxiliares" class="tab-content">
       <div class="card">
         <div class="card-title">Gerenciar Nomenclaturas & Combinações Válidas</div>
@@ -1235,6 +1236,7 @@
 
   </div>
 
+  <!-- MODAIS E WIDGETS -->
   <div id="modalVisualizadorReq" class="modal-overlay">
     <div class="modal-box" style="width: 800px; max-width: 95vw; height: 85vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -1286,28 +1288,6 @@
       <div style="display: flex; gap: 8px; justify-content: flex-end;">
         <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalLocacao()">Cancelar</button>
         <button type="button" id="btnSalvarLocModal" class="btn-submit" onclick="confirmarAjusteLocacao()"><i class="fa-solid fa-floppy-disk"></i> Salvar Ajuste e Log</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="modalVincularTermo" class="modal-overlay">
-    <div class="modal-box" style="width: 480px;">
-      <div class="modal-title">
-        <span>Vincular Termo Existente a <span id="lblProtReqVinculo" style="color:#1a4d80;">-</span></span>
-        <span onclick="fecharModalVincularTermo()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
-      </div>
-      <div style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px; font-size: 12px; color: #334155;">
-        <b>Cliente:</b> <span id="lblClienteReqVinculo">-</span><br>
-        <span style="font-size:11px; color:#64748b;">Utilize este recurso para dar baixa em requisições cujo termo de entrega já foi emitido previamente.</span>
-      </div>
-      <div class="form-group" style="margin-bottom: 16px;">
-        <label>Selecione ou Digite o Protocolo do Termo (Ex: PT0018):</label>
-        <input type="text" id="inputProtocoloTermoVinculo" list="listTermosExistentes" placeholder="Digite ou escolha o Termo..." style="font-size:14px; font-weight:bold; padding:10px;">
-        <datalist id="listTermosExistentes"></datalist>
-      </div>
-      <div style="display: flex; gap: 8px; justify-content: flex-end;">
-        <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalVincularTermo()">Cancelar</button>
-        <button type="button" id="btnConfirmarVinculo" class="btn-submit" onclick="confirmarVinculoTermo()"><i class="fa-solid fa-link"></i> Confirmar Vinculação</button>
       </div>
     </div>
   </div>
@@ -1365,13 +1345,9 @@
 
     let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], relacoesAuxiliares: [], locacoes: [], compras: [] };
     let equipamentoSelecionado = null;
-    let protocoloReqEmVinculo = null;
     let usuarioLogado = null;
     let estaBuscandoDados = false;
     let chatAtivoDestinatario = "GERAL";
-    let tituloOriginalPagina = document.title;
-    let timerPiscarTitulo = null;
-    let ultimoTempoDigitandoEnviado = 0;
 
     function criarDebounce(func, wait = 200) {
       let timeout;
@@ -1409,14 +1385,10 @@
 
     function toggleUsersDropdown(e) {
       if(e) e.stopPropagation();
-      pararPiscarTitulo();
       const dropdown = document.getElementById('usersDropdown');
       const atv = dropdown.classList.contains('active');
       fecharTodosDropdowns();
-      if (!atv) {
-        dropdown.classList.add('active');
-        buscarMensagensChatServidor();
-      }
+      if (!atv) dropdown.classList.add('active');
     }
 
     function toggleNotifications(e) {
@@ -1427,11 +1399,21 @@
       if (!atv) dropdown.classList.add('active');
     }
 
+    function toggleChat() {
+      document.getElementById('chatBox').classList.toggle('active');
+    }
+
+    function enviarWhatsApp() {
+      const msg = document.getElementById('msgChat').value.trim();
+      const textoFinal = encodeURIComponent("Olá Suporte DMA Sys! " + (msg ? msg : "Preciso de auxílio no sistema."));
+      window.open(`https://wa.me/${NUMERO_WHATSAPP_SUPORTE}?text=${textoFinal}`, '_blank');
+      toggleChat();
+    }
+
     function enviarHeartbeat() {
       if (!usuarioLogado || (!usuarioLogado.usuario && !usuarioLogado.nome)) return;
       var idUsr = usuarioLogado.usuario || usuarioLogado.nome;
       fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "PING_PRESENCA", usuario: idUsr }) }).catch(e => {});
-      buscarMensagensChatServidor();
     }
 
     function renderizarUsuariosOnline() {
@@ -1441,14 +1423,6 @@
       if (!listContainer || !countText) return;
 
       const usuarios = bancoDados.usuarios || [];
-      if (usuarioLogado && (usuarioLogado.usuario || usuarioLogado.nome)) {
-        const me = usuarios.find(u => 
-          u && ((u.usuario && u.usuario.toLowerCase() === (usuarioLogado.usuario || '').toLowerCase()) ||
-                (u.nome && u.nome.toLowerCase() === (usuarioLogado.nome || '').toLowerCase()))
-        );
-        if (me) me.online = true;
-      }
-      
       const onlines = usuarios.filter(u => u && u.online);
       countText.innerText = `${onlines.length} Online`;
 
@@ -1457,199 +1431,18 @@
         return;
       }
 
-      let html = `
-        <div class="chat-panel-container" onclick="event.stopPropagation()">
-          <div class="chat-tabs">
-            <button type="button" class="chat-tab ${chatAtivoDestinatario === 'GERAL' ? 'active' : ''}" id="tabChatGeral" onclick="mudarAbaChat('GERAL')"><i class="fa-solid fa-comments"></i> Geral</button>
-            <button type="button" class="chat-tab ${chatAtivoDestinatario !== 'GERAL' ? 'active' : ''}" id="tabChatPrivado" onclick="mudarAbaChat('PRIVADO')"><i class="fa-solid fa-user"></i> Privado</button>
-          </div>
-          
-          <div id="corpoChatGeral" style="display:${chatAtivoDestinatario === 'GERAL' ? 'flex' : 'none'}; flex-direction:column; flex:1; overflow:hidden;">
-            <div class="chat-messages" id="chatMsgBox">
-              <div style="text-align:center; color:#888; font-size:10px; margin-top:10px;">Carregando bate-papo...</div>
-            </div>
-            <div id="chatIndicadorDigitando" style="font-size:10px; color:#1a4d80; padding:2px 8px; font-style:italic; min-height:16px;"></div>
-            <div class="chat-input-box">
-              <button type="button" onclick="toggleEmojiPicker(event)" title="Inserir Emoji" style="background:#f1f5f9; color:#333; border:1px solid #cbd5e1; width:30px; border-radius:4px; font-size:13px; cursor:pointer;">😊</button>
-              <div id="emojiPickerDropdown" class="emoji-picker-dropdown" onclick="event.stopPropagation()">
-                <span class="emoji-item" onclick="inserirEmoji('😀')">😀</span>
-                <span class="emoji-item" onclick="inserirEmoji('😂')">😂</span>
-                <span class="emoji-item" onclick="inserirEmoji('👍')">👍</span>
-                <span class="emoji-item" onclick="inserirEmoji('🚀')">🚀</span>
-                <span class="emoji-item" onclick="inserirEmoji('✅')">✅</span>
-                <span class="emoji-item" onclick="inserirEmoji('⚠️')">⚠️</span>
-                <span class="emoji-item" onclick="inserirEmoji('🔧')">🔧</span>
-                <span class="emoji-item" onclick="inserirEmoji('💡')">💡</span>
-                <span class="emoji-item" onclick="inserirEmoji('🙏')">🙏</span>
-                <span class="emoji-item" onclick="inserirEmoji('❤️')">❤️</span>
-                <span class="emoji-item" onclick="inserirEmoji('👋')">👋</span>
-                <span class="emoji-item" onclick="inserirEmoji('🎯')">🎯</span>
-              </div>
-              <input type="text" id="inputMsgChat" placeholder="Digite sua mensagem geral..." oninput="notificarDigitandoChat()" onkeypress="if(event.key === 'Enter') enviarMensagemChat()">
-              <button type="button" onclick="enviarMensagemChat()">Enviar</button>
-            </div>
-          </div>
-
-          <div id="corpoListaEquipe" style="display:${chatAtivoDestinatario !== 'GERAL' ? 'flex' : 'none'}; flex-direction:column; flex:1; overflow-y:auto; padding:8px;">
-            <div style="font-size:10px; font-weight:bold; color:#1a4d80; margin-bottom:6px;">CLIQUE EM UM COLEGA PARA CONVERSAR:</div>
-      `;
-
-      onlines.forEach(u => {
-        const nomeU = u.nome || '-';
-        const ultAcesso = u.ultimoAcesso ? `Último acesso: ${u.ultimoAcesso}` : 'Online agora';
-        if (usuarioLogado && nomeU.toLowerCase() !== (usuarioLogado.nome || '').toLowerCase()) {
-          html += `
-            <div class="notif-item" onclick="iniciarChatPrivado('${nomeU}')" style="padding:8px 10px; margin-bottom:4px; background:#f8fafc; border-radius:4px; border:1px solid #e2e8f0; cursor:pointer;">
-              <div class="notif-item-title" style="font-size:11px;">
-                <span><i class="fa-solid fa-circle" style="color:#22c55e; font-size:8px;"></i> ${nomeU}</span>
-                <span style="font-size:10px; color:#2563eb; font-weight:bold;">Conversar 💬</span>
-              </div>
-              <div class="notif-item-sub">${ultAcesso}</div>
-            </div>
-          `;
-        }
-      });
-
-      html += `
-          </div>
-        </div>
-      `;
-
-      listContainer.innerHTML = html;
-      renderizarMensagensChatNaTela();
-    }
-
-    let cacheMensagensChat = [];
-    let usuarioDigitandoAtual = "";
-
-    function toggleEmojiPicker(e) { if(e) e.stopPropagation(); document.getElementById('emojiPickerDropdown')?.classList.toggle('active'); }
-    function inserirEmoji(emoji) {
-      const input = document.getElementById('inputMsgChat');
-      if (input) { input.value += emoji; input.focus(); }
-      document.getElementById('emojiPickerDropdown')?.classList.remove('active');
-    }
-
-    function mudarAbaChat(tipo) {
-      const tabG = document.getElementById('tabChatGeral');
-      const tabP = document.getElementById('tabChatPrivado');
-      const boxG = document.getElementById('corpoChatGeral');
-      const boxP = document.getElementById('corpoListaEquipe');
-      if (!tabG || !tabP || !boxG || !boxP) return;
-
-      if (tipo === 'GERAL') {
-        chatAtivoDestinatario = "GERAL";
-        tabG.classList.add('active'); tabP.classList.remove('active');
-        boxG.style.display = 'flex'; boxP.style.display = 'none';
-        const input = document.getElementById('inputMsgChat');
-        if(input) input.placeholder = "Digite sua mensagem geral...";
-        renderizarMensagensChatNaTela();
-      } else {
-        tabP.classList.add('active'); tabG.classList.remove('active');
-        boxP.style.display = 'flex'; boxG.style.display = 'none';
-      }
-    }
-
-    function iniciarChatPrivado(nomeColega) {
-      chatAtivoDestinatario = nomeColega.toLowerCase().trim();
-      const tabG = document.getElementById('tabChatGeral');
-      const tabP = document.getElementById('tabChatPrivado');
-      const boxG = document.getElementById('corpoChatGeral');
-      const boxP = document.getElementById('corpoListaEquipe');
-
-      tabG.classList.add('active'); tabP.classList.remove('active');
-      boxG.style.display = 'flex'; boxP.style.display = 'none';
-      const input = document.getElementById('inputMsgChat');
-      if(input) input.placeholder = `Mensagem para ${nomeColega}...`;
-      renderizarMensagensChatNaTela();
-    }
-
-    function notificarDigitandoChat() {
-      const agora = new Date().getTime();
-      if (agora - ultimoTempoDigitandoEnviado < 600) return;
-      ultimoTempoDigitandoEnviado = agora;
-      const rem = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario) : "Sistema";
-      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "DIGITANDO_CHAT", remetente: rem, destinatario: chatAtivoDestinatario }) }).catch(e => {});
-    }
-
-    function enviarMensagemChat() {
-      const input = document.getElementById('inputMsgChat');
-      if (!input) return;
-      const texto = input.value.trim();
-      if (!texto) return;
-
-      const rem = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario) : "Sistema";
-      const dest = chatAtivoDestinatario;
-
-      input.value = "";
-      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "ENVIAR_MENSAGEM_CHAT", remetente: rem, destinatario: dest, mensagem: texto }) })
-      .then(res => res.json()).then(res => { if (res.status === "sucesso") buscarMensagensChatServidor(); }).catch(e => {});
-    }
-
-    function buscarMensagensChatServidor() {
-      if (!usuarioLogado) return;
-      const usr = usuarioLogado.nome || usuarioLogado.usuario || "";
-      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "BUSCAR_MENSAGENS_CHAT", usuario: usr, chatAtivo: chatAtivoDestinatario }) })
-      .then(res => res.json()).then(res => {
-        if (res.status === "sucesso") {
-          if (res.mensagens) {
-            const qtdAnterior = cacheMensagensChat.length;
-            cacheMensagensChat = res.mensagens;
-            if (cacheMensagensChat.length > qtdAnterior && qtdAnterior > 0) iniciarPiscarTitulo();
-            renderizarMensagensChatNaTela();
-          }
-          usuarioDigitandoAtual = res.digitando || "";
-          const lblDig = document.getElementById('chatIndicadorDigitando');
-          if (lblDig) lblDig.innerText = usuarioDigitandoAtual ? `${usuarioDigitandoAtual} está digitando...` : "";
-        }
-      }).catch(e => {});
-    }
-
-    function renderizarMensagensChatNaTela() {
-      const box = document.getElementById('chatMsgBox');
-      if (!box) return;
-      const meuNome = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario || "").toLowerCase().trim() : "";
-      
-      const filtradas = cacheMensagensChat.filter(m => {
-        const dest = (m.destinatario || "").toLowerCase().trim();
-        const rem = (m.remetente || "").toLowerCase().trim();
-        if (chatAtivoDestinatario === "GERAL") return dest === "geral" || dest === "";
-        else return (dest === meuNome && rem === chatAtivoDestinatario) || (dest === chatAtivoDestinatario && rem === meuNome);
-      });
-
-      if (filtradas.length === 0) {
-        if (box.innerHTML.indexOf("Nenhuma mensagem ainda") === -1) {
-          box.innerHTML = '<div style="text-align:center; color:#888; font-size:10px; margin-top:20px;">Nenhuma mensagem ainda. Digite abaixo para iniciar!</div>';
-        }
-        return;
-      }
-
-      const htmlConteudo = filtradas.map(m => {
-        const isMe = (m.remetente || "").toLowerCase().trim() === meuNome;
+      listContainer.innerHTML = usuarios.map(u => {
+        const online = u.online ? true : false;
+        const statusDot = online ? '<i class="fa-solid fa-circle" style="color:#22c55e; font-size:8px;"></i>' : '<i class="fa-solid fa-circle" style="color:#cbd5e1; font-size:8px;"></i>';
         return `
-          <div class="chat-msg ${isMe ? 'me' : ''}">
-            <div style="font-weight:bold; color:#1a4d80; font-size:10px; margin-bottom:2px;">${m.remetente} <span style="font-weight:normal; color:#888; font-size:9px;">(${m.hora})</span></div>
-            <div>${m.mensagem}</div>
+          <div class="notif-item">
+            <div class="notif-item-title">
+              <span>${statusDot} ${u.nome || '-'}</span>
+            </div>
+            <div class="notif-item-sub">${online ? 'Online agora' : ('Último acesso: ' + (u.ultimoAcesso || '-'))}</div>
           </div>
         `;
       }).join('');
-
-      if (box.innerHTML !== htmlConteudo) {
-        box.innerHTML = htmlConteudo;
-        box.scrollTop = box.scrollHeight;
-      }
-    }
-
-    function iniciarPiscarTitulo() {
-      if (timerPiscarTitulo) return;
-      let alternar = false;
-      timerPiscarTitulo = setInterval(() => {
-        document.title = alternar ? "💬 Nova Mensagem!" : tituloOriginalPagina;
-        alternar = !alternar;
-      }, 1500);
-    }
-    function pararPiscarTitulo() {
-      if (timerPiscarTitulo) { clearInterval(timerPiscarTitulo); timerPiscarTitulo = null; }
-      document.title = tituloOriginalPagina;
     }
 
     function preencherSelectTecnicos() {
@@ -1775,10 +1568,6 @@
       buscarAtualizacoesSilenciosas();
       setInterval(buscarAtualizacoesSilenciosas, 30000);
       setInterval(enviarHeartbeat, 15000);
-      setInterval(() => {
-        const dropUsr = document.getElementById('usersDropdown');
-        if (dropUsr && dropUsr.classList.contains('active')) buscarMensagensChatServidor();
-      }, 1500);
     };
 
     function salvarRequisicao(e) {
@@ -2064,7 +1853,6 @@
           btnAcao = `<div class="btn-action-container">
             ${linkPdfReq}
             <button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}', '${r.operacao || 'LOCAÇÃO'}')"><i class="fa-solid fa-check"></i> Atender</button>
-            <button type="button" class="btn-vincular" onclick="abrirModalVincularTermo('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}')"><i class="fa-solid fa-link"></i> Vincular</button>
             <button type="button" class="btn-negar" onclick="abrirModalRecusa('${r.protocolo}')"><i class="fa-solid fa-xmark"></i> Negar</button>
           </div>`;
         } else if (st === "RECUSADO") {
@@ -2111,39 +1899,6 @@
         return true;
       });
       renderizarTabelaRequisicoes(filtradas);
-    }
-
-    function abrirModalVincularTermo(protReq, cliente) {
-      protocoloReqEmVinculo = protReq;
-      if (document.getElementById('lblProtReqVinculo')) document.getElementById('lblProtReqVinculo').innerText = protReq;
-      if (document.getElementById('lblClienteReqVinculo')) document.getElementById('lblClienteReqVinculo').innerText = cliente;
-      if (document.getElementById('inputProtocoloTermoVinculo')) document.getElementById('inputProtocoloTermoVinculo').value = "";
-
-      const listDL = document.getElementById('listTermosExistentes');
-      if (listDL && bancoDados.termosEmitidos) {
-        const termosDoCliente = bancoDados.termosEmitidos.filter(t => t && (t.cliente || "").toLowerCase().includes((cliente || "").toLowerCase()));
-        listDL.innerHTML = termosDoCliente.map(t => `<option value="${t.protocolo}">Termo ${t.protocolo} | ${t.equipamento || '-'} (${t.dataHora || '-'})</option>`).join('');
-      }
-      document.getElementById('modalVincularTermo').classList.add('active');
-    }
-    function fecharModalVincularTermo() { protocoloReqEmVinculo = null; document.getElementById('modalVincularTermo').classList.remove('active'); }
-
-    function confirmarVinculoTermo() {
-      const protTermo = document.getElementById('inputProtocoloTermoVinculo').value.trim().toUpperCase();
-      if (!protTermo) { alert("Informe o protocolo do Termo."); return; }
-      const btn = document.getElementById('btnConfirmarVinculo');
-      btn.disabled = true; btn.innerText = "VINCULANDO...";
-
-      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "VINCULAR_TERMO_REQUISICAO", protocoloReq: protocoloReqEmVinculo, protocoloTermo: protTermo }) })
-      .then(res => res.json()).then(res => {
-        if (res.status === "sucesso") {
-          fecharModalVincularTermo();
-          buscarAtualizacoesSilenciosas();
-        } else { alert("Erro ao vincular termo: " + (res.mensagem || "Erro")); }
-        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-link"></i> Confirmar Vinculação';
-      }).catch(err => {
-        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-link"></i> Confirmar Vinculação';
-      });
     }
 
     function atenderRequisicao(protReq, cliente, operacao) {
@@ -2491,6 +2246,51 @@
       if (document.getElementById('filtroTextoReq')) document.getElementById('filtroTextoReq').value = protocolo || "";
       mudarAba('requisicoes');
       filtrarRequisicoes();
+    }
+
+    function mudarAba(nomeAba) {
+      fecharTodosDropdowns();
+      document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      if (nomeAba === 'inicio') {
+        document.getElementById('btnNavInicio')?.classList.add('active');
+        document.getElementById('abaInicio')?.classList.add('active');
+      } else if (nomeAba === 'dashboard') {
+        document.getElementById('btnNavDashboard')?.classList.add('active');
+        document.getElementById('abaDashboard')?.classList.add('active');
+        atualizarDashboard();
+      } else if (nomeAba === 'locacao') {
+        document.getElementById('btnNavLocacao')?.classList.add('active');
+        document.getElementById('abaLocacao')?.classList.add('active');
+        renderizarTabelaLocacao();
+      } else if (nomeAba === 'compras') {
+        document.getElementById('btnNavCompras')?.classList.add('active');
+        document.getElementById('abaCompras')?.classList.add('active');
+        renderizarTabelaCompras();
+      } else if (nomeAba === 'requisicoes') {
+        document.getElementById('btnNavQualidade')?.classList.add('active');
+        document.getElementById('abaRequisicoes')?.classList.add('active');
+      } else if (nomeAba === 'emissao') {
+        document.getElementById('btnNavQualidade')?.classList.add('active');
+        document.getElementById('abaEmissao')?.classList.add('active');
+      } else if (nomeAba === 'consulta') {
+        document.getElementById('btnNavQualidade')?.classList.add('active');
+        document.getElementById('abaConsulta')?.classList.add('active');
+      } else if (nomeAba === 'os_gestao') {
+        document.getElementById('btnNavManutencao')?.classList.add('active');
+        document.getElementById('abaOsGestao')?.classList.add('active');
+        renderizarTabelaOS();
+      } else if (nomeAba === 'os_abertura') {
+        document.getElementById('btnNavManutencao')?.classList.add('active');
+        document.getElementById('abaOsAbertura')?.classList.add('active');
+      } else if (nomeAba === 'cad_equipamento') {
+        document.getElementById('btnNavCadastros')?.classList.add('active');
+        document.getElementById('abaCadEquipamento')?.classList.add('active');
+      } else if (nomeAba === 'cad_auxiliares') {
+        document.getElementById('btnNavCadastros')?.classList.add('active');
+        document.getElementById('abaCadAuxiliares')?.classList.add('active');
+      }
     }
   </script>
 </body>
