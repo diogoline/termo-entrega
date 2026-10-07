@@ -92,7 +92,13 @@
       border: 2px solid var(--blue);
       display: none;
     }
-    .notification-badge.active { display: block; }
+    .notification-badge.active { display: block; animation: pulseBadge 1.5s infinite; }
+
+    @keyframes pulseBadge {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(220, 53, 69, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+    }
 
     .dropdown-ajuda-container { position: relative; display: inline-block; }
     .menu-ajuda-dropdown, .notification-dropdown, .dropdown-content {
@@ -129,7 +135,7 @@
     }
     .menu-ajuda-item:hover, .dropdown-content button:hover { background: #eff6ff; color: var(--accent); }
 
-    .notif-header { background: #f8fafc; padding: 10px 14px; font-size: 11.5px; font-weight: bold; color: var(--blue); border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+    .notif-header { background: #f8fafc; padding: 10px 14px; font-size: 11.5px; font-weight: bold; color: var(--blue); border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; letter-spacing: .4px; }
     .notif-list { max-height: 280px; overflow-y: auto; }
     .notif-item { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: background 0.2s; }
     .notif-item:hover { background: #eff6ff; }
@@ -222,6 +228,7 @@
       color: var(--ink);
       transition: border-color .15s, box-shadow .15s, background .15s;
     }
+    input[type="text"]:hover, select:hover, textarea:hover { border-color: #b6c2d6; }
     input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
       border-color: var(--accent);
       outline: none;
@@ -236,6 +243,9 @@
       border: 1px solid var(--line);
       border-radius: 999px;
       background: #fbfcfe;
+      transition: all .15s;
+      text-transform: none;
+      letter-spacing: 0;
       font-size: 13px;
       color: #334155;
       margin: 0;
@@ -244,13 +254,16 @@
       align-items: center;
       gap: 6px;
     }
+    .radio-group label:hover { border-color: var(--accent); background: #eff6ff; }
     input[type="radio"] { accent-color: var(--accent); width: 16px; height: 16px; }
 
     .table-container { border: 1px solid var(--line); border-radius: 12px; background: #fff; overflow-x: auto; overflow-y: auto; min-height: 200px; max-height: 500px; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
-    th { background: #f8fafc; color: #475569; padding: 12px 8px; text-align: left; position: sticky; top: 0; border-bottom: 1px solid var(--line); font-weight: bold; font-size: 10.5px; text-transform: uppercase; z-index: 10; }
+    th { background: #f8fafc; color: #475569; padding: 12px 8px; text-align: left; position: sticky; top: 0; border-bottom: 1px solid var(--line); font-weight: bold; font-size: 10.5px; text-transform: uppercase; letter-spacing: .8px; z-index: 10; }
     td { padding: 11px 8px; border-bottom: 1px solid #eef1f6; color: #1e293b; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; }
+    tbody tr { transition: background .12s; }
     tbody tr:hover { background: #f5f8ff; }
+    tbody tr:last-child td { border-bottom: none; }
     .td-center { text-align: center; }
 
     .btn-submit {
@@ -263,7 +276,8 @@
       border-radius: 12px;
       cursor: pointer;
       text-transform: uppercase;
-      transition: transform .15s, box-shadow .15s;
+      letter-spacing: .5px;
+      transition: transform .15s, box-shadow .15s, filter .15s;
       box-shadow: 0 8px 18px rgba(37,99,235,.28);
       display: inline-flex;
       align-items: center;
@@ -271,6 +285,8 @@
       gap: 8px;
     }
     .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 12px 24px rgba(37,99,235,.34); }
+    .btn-submit:active { transform: translateY(0); }
+    .btn-submit:disabled { background: #94a3b8; box-shadow: none; transform: none; cursor: not-allowed; }
 
     .btn-pdf, .btn-termo-link, .btn-atender, .btn-negar, .btn-vincular, .btn-editar-saldo {
       height: 28px;
@@ -289,14 +305,20 @@
       text-decoration: none;
     }
     .btn-pdf { background: var(--blue); color: white; }
-    .btn-pdf:hover { background: var(--navy); }
+    .btn-pdf:hover { background: var(--navy); transform: translateY(-1px); }
     .btn-termo-link { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 10px; }
+    .btn-termo-link:hover { background: #d1fae5; }
     .btn-atender { background: #f59e0b; color: white; }
+    .btn-atender:hover { background: #d97706; transform: translateY(-1px); }
     .btn-negar { background: #ef4444; color: white; }
+    .btn-negar:hover { background: #dc2626; transform: translateY(-1px); }
+    .btn-vincular { background: #2563eb; color: white; }
+    .btn-vincular:hover { background: #1d4ed8; transform: translateY(-1px); }
     .btn-editar-saldo { background: #2563eb; color: white; font-size: 10px; }
     .btn-editar-saldo:hover { background: #1d4ed8; }
 
-    .badge-status { white-space: nowrap; padding: 4px 9px; font-size: 10px; border-radius: 999px; font-weight: bold; text-transform: uppercase; display: inline-block; text-align: center; }
+    .badge-status { white-space: nowrap; padding: 4px 9px; font-size: 10px; letter-spacing: .5px; border-radius: 999px; font-weight: bold; text-transform: uppercase; display: inline-block; text-align: center; }
+    .badge-status::before { content: ""; display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: currentColor; margin-right: 5px; vertical-align: middle; }
     .badge-pendente { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
     .badge-atendido { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
     .badge-recusado { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
@@ -304,6 +326,35 @@
     .badge-saldo-ok { background: #f1f5f9; color: #334155; }
     .badge-saldo-pendente { background: #fef3c7; color: #92400e; }
     .badge-saldo-alerta { background: #fee2e2; color: #991b1b; }
+
+    .btn-action-container { display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; align-items: center !important; justify-content: center !important; gap: 4px !important; width: 100% !important; }
+
+    .welcome-hero {
+      background: radial-gradient(500px 220px at 90% 0%, rgba(96,165,250,.35), transparent 70%), linear-gradient(135deg, var(--blue) 0%, var(--navy) 100%);
+      color: white;
+      border-radius: 18px;
+      padding: 38px 32px;
+      box-shadow: 0 14px 34px rgba(15,42,74,.28);
+      margin-bottom: 20px;
+    }
+    .welcome-hero h2 { font-size: 26px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 8px; }
+    .welcome-hero p { font-size: 14px; opacity: 0.9; max-width: 800px; line-height: 1.5; }
+    
+    .quick-actions-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
+    .quick-card {
+      background: var(--card);
+      border-radius: var(--r);
+      padding: 24px 18px;
+      border: 1px solid var(--line);
+      text-align: center;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: var(--sh);
+    }
+    .quick-card:hover { transform: translateY(-4px); border-color: #bfd3f5; box-shadow: 0 16px 32px rgba(37,99,235,.16); }
+    .quick-icon { width: 56px; height: 56px; margin: 0 auto 14px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: linear-gradient(135deg, #eff6ff, #dbeafe); color: var(--accent); }
+    .quick-title { font-size: 14.5px; font-weight: bold; color: var(--ink); margin-bottom: 6px; }
+    .quick-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
 
     .dash-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 18px; }
     .metric-card {
@@ -319,16 +370,47 @@
     .metric-card.red { border-top-color: #ef4444; }
     .metric-card.blue { border-top-color: #2563eb; }
     .metric-title { font-size: 11px; font-weight: bold; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; }
-    .metric-value { font-size: 30px; font-weight: 800; color: #1e293b; margin-top: 4px; }
+    .metric-value { font-size: 30px; font-weight: 800; color: #1e293b; margin-top: 4px; letter-spacing: -.5px; }
+
+    .dash-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .bar-container { margin-bottom: 12px; }
+    .bar-label { display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; color: #475569; margin-bottom: 3px; }
+    .bar-bg { background: #eef2f9; height: 14px; border-radius: 9px; overflow: hidden; }
+    .bar-fill { background: linear-gradient(90deg, var(--accent), #60a5fa); height: 100%; border-radius: 9px; transition: width 0.5s; }
+
+    .signature-container { display: flex; gap: 12px; margin-top: 8px; }
+    .sig-box { flex: 1; border: 1.5px dashed #c3cde0; border-radius: 12px; padding: 12px; background: #f8fafc; text-align: center; position: relative; }
+    .sig-box canvas { width: 100%; height: 110px; background: white; border: 1px solid var(--line); border-radius: 10px; cursor: crosshair; touch-action: none; }
+    .btn-clear { position: absolute; right: 12px; top: 12px; background: #ef4444; color: white; border: none; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,.55); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
     .modal-overlay.active { display: flex; }
-    .modal-box { background: white; padding: 28px; border-radius: 18px; width: 680px; max-width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 60px rgba(15,23,42,.35); }
+    .modal-box { background: white; padding: 28px; border-radius: 18px; width: 680px; max-width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 60px rgba(15,23,42,.35); animation: fadeIn .2s ease-out; }
     .modal-title { font-size: 16px; font-weight: bold; color: var(--navy); margin-bottom: 16px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
 
-    .chat-widget-btn { position: fixed; bottom: 45px; right: 20px; background: #25d366; color: white; border: none; width: 48px; height: 48px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 24px rgba(37,211,102,.4); z-index: 101; }
+    .galeria-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; width: 100%; }
+    .galeria-thumb { width: 85px; height: 85px; border-radius: 10px; border: 1px solid #cbd5e1; overflow: hidden; background: #f8fafc; position: relative; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+    .galeria-thumb:hover { transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.18); border-color: #2563eb; }
+    .galeria-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .modal-manual-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(3px); z-index: 20000; align-items: center; justify-content: center; }
+    .modal-manual-overlay.ativo { display: flex; }
+    .modal-manual-card { background: #ffffff; width: 90%; max-width: 820px; height: 85vh; border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); display: flex; flex-direction: column; overflow: hidden; -webkit-user-select: none; -moz-user-select: none; user-select: none; }
+    .modal-manual-header { background: linear-gradient(120deg, var(--navy), var(--blue)); color: #ffffff; padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; }
+    .modal-manual-header h3 { margin: 0; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .btn-fechar-manual { background: transparent; border: none; color: #ffffff; font-size: 20px; cursor: pointer; }
+    .modal-manual-body { padding: 20px 24px; overflow-y: auto; font-size: 13px; line-height: 1.6; color: #334155; }
+    .manual-secao { margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; }
+    .manual-secao h4 { margin: 0 0 8px 0; color: #1a4d80; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .manual-secao ul { margin: 0; padding-left: 20px; }
+    .manual-secao li { margin-bottom: 6px; }
+    .alerta-seguranca { background: #eff6ff; border-left: 4px solid #1a4d80; padding: 10px 14px; font-size: 12px; font-weight: 600; color: #1e40af; border-radius: 0 10px 10px 0; }
+
+    .chat-widget-btn { position: fixed; bottom: 45px; right: 20px; background: #25d366; color: white; border: none; width: 48px; height: 48px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 24px rgba(37,211,102,.4); z-index: 101; transition: transform 0.2s; }
+    .chat-widget-btn:hover { transform: scale(1.08); }
+    
     .chat-box { display: none; position: fixed; bottom: 105px; right: 20px; width: 320px; background: white; border-radius: 16px; box-shadow: 0 20px 44px rgba(15,23,42,.25); z-index: 102; overflow: hidden; border: 1px solid var(--line); }
-    .chat-box.active { display: block; }
+    .chat-box.active { display: block; animation: fadeIn 0.2s ease-in-out; }
     .chat-header { background: #075e54; color: white; padding: 12px 16px; font-weight: bold; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
     .chat-body { padding: 14px; font-size: 12px; color: #444; background: #fff; }
     .chat-body textarea { width: 100%; height: 70px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px; font-size: 12px; margin-top: 8px; resize: none; background: #f8fafc; }
@@ -337,79 +419,217 @@
     .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15,23,42,.96); backdrop-filter: blur(8px); color: #cbd5e1; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-top: 1px solid rgba(255,255,255,.08); }
     .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
 
-    #loginOverlay { background: radial-gradient(700px 400px at 20% 10%, rgba(37,99,235,.35), transparent 70%), #0b1220 !important; }
+    #loginOverlay { background: radial-gradient(700px 400px at 20% 10%, rgba(37,99,235,.35), transparent 70%), radial-gradient(600px 400px at 90% 90%, rgba(34,197,94,.18), transparent 70%), #0b1220 !important; }
+    #loginOverlay > div { max-width: 400px !important; padding: 38px 34px !important; border-radius: 22px !important; box-shadow: 0 30px 70px rgba(0,0,0,.5) !important; border: 1px solid rgba(255,255,255,.6); text-align: center; }
+    #loginOverlay > div > div:first-child { font-size: 28px !important; letter-spacing: -.5px; background: linear-gradient(120deg, var(--navy), var(--accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
+    #loginOverlay input { padding: 12px 14px !important; border: 1px solid #d5dbe7 !important; border-radius: 12px !important; background: #fbfcfe; transition: box-shadow .15s, border-color .15s; }
+    #loginOverlay input:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 4px rgba(37,99,235,.15); outline: none; background: #fff; }
+    #btnEntrarLogin { background: linear-gradient(135deg, var(--accent), var(--blue)) !important; border-radius: 12px !important; padding: 14px !important; letter-spacing: .6px; box-shadow: 0 10px 22px rgba(37,99,235,.35); transition: transform .15s, box-shadow .15s; font-weight: 700; color: white; border: none; cursor: pointer; width: 100%; }
+    #btnEntrarLogin:hover { transform: translateY(-1px); box-shadow: 0 14px 28px rgba(37,99,235,.42); }
+
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 1000px) { .main-grid, .dash-charts-grid { grid-template-columns: 1fr; } .quick-actions-grid, .dash-metrics { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { body { padding: 10px; padding-bottom: 60px; } .header { flex-direction: column; align-items: flex-start; gap: 10px; } .header-right { flex-wrap: wrap; } .form-row { flex-wrap: wrap; } .quick-actions-grid, .dash-metrics { grid-template-columns: 1fr; } .signature-container { flex-direction: column; } }
   </style>
 </head>
 <body>
 
   <div id="loginOverlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0f172a; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px;">
-    <div style="background: white; max-width: 400px; width: 100%; padding: 38px 34px; border-radius: 22px; box-shadow: 0 30px 70px rgba(0,0,0,.5); text-align: center;">
-      <div style="font-size: 26px; font-weight: 800; color: #1a4d80; margin-bottom: 4px;">DMA SYS</div>
+    <div>
+      <div style="font-size: 24px; font-weight: 800; color: #1a4d80; margin-bottom: 4px;">DMA SYS</div>
       <div style="font-size: 11px; color: #64748b; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.5px;">Acesso ao Sistema Operacional</div>
       
-      <div id="loginErro" style="display: none; background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 16px;"></div>
+      <div id="loginErro" style="display: none; background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 16px;">
+        Usuário ou senha incorretos.
+      </div>
 
       <div style="text-align: left; margin-bottom: 16px;">
-        <label>Usuário</label>
-        <input type="text" id="loginUsuario" placeholder="Digite seu usuário..." onkeypress="if(event.key === 'Enter') efetuarLogin()">
+        <label style="font-size: 11px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">USUÁRIO</label>
+        <input type="text" id="loginUsuario" placeholder="Digite seu usuário..." style="width: 100%; box-sizing: border-box;" onkeypress="if(event.key === 'Enter') efetuarLogin()">
       </div>
 
       <div style="text-align: left; margin-bottom: 24px;">
-        <label>Senha</label>
-        <input type="password" id="loginSenha" placeholder="Digite sua senha..." onkeypress="if(event.key === 'Enter') efetuarLogin()">
+        <label style="font-size: 11px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">SENHA</label>
+        <input type="password" id="loginSenha" placeholder="Digite sua senha..." style="width: 100%; box-sizing: border-box;" onkeypress="if(event.key === 'Enter') efetuarLogin()">
       </div>
 
-      <button type="button" id="btnEntrarLogin" onclick="efetuarLogin()" class="btn-submit" style="width: 100%;">ENTRAR NO SISTEMA</button>
+      <button type="button" id="btnEntrarLogin" onclick="efetuarLogin()">
+        ENTRAR NO SISTEMA
+      </button>
     </div>
   </div>
 
   <div id="appContainer" style="display: none;">
+
     <div class="header">
-      <h1><i class="fa-solid fa-layer-group"></i> DMA SYS | Plataforma de Gestão Operacional</h1>
+      <h1>
+        <i class="fa-solid fa-layer-group" style="font-size: 22px; background: linear-gradient(180deg, #60a5fa 0%, #fef08a 50%, #22c55e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i> 
+        DMA SYS | Plataforma de Gestão Operacional
+      </h1>
+
       <div class="header-right">
-        <button type="button" class="notification-btn" onclick="toggleUsersDropdown(event)" title="Equipe Online">
-          <i class="fa-solid fa-circle" style="color: #22c55e; font-size: 10px;"></i>
-          <span id="onlineCountText">0 Online</span>
-        </button>
-        <div id="usersDropdown" class="notification-dropdown" style="right: 0; width: 340px;" onclick="event.stopPropagation()">
-          <div class="notif-header"><span><i class="fa-solid fa-users"></i> EQUIPE CONECTADA</span></div>
-          <div class="notif-list" id="usersOnlineList"></div>
+        <div style="position: relative; display: inline-block;" id="containerMenuUsuarioChat">
+          <button type="button" class="notification-btn" onclick="toggleUsersDropdown(event)" title="Usuários Conectados e Chat">
+            <i class="fa-solid fa-circle" style="color: #22c55e; font-size: 10px;"></i>
+            <span id="onlineCountText">0 Online</span>
+          </button>
+          
+          <div id="usersDropdown" class="notification-dropdown" style="right: 0; width: 340px;" onclick="event.stopPropagation()">
+            <div class="notif-header">
+              <span><i class="fa-solid fa-users"></i> EQUIPE CONECTADA</span>
+            </div>
+            <div class="notif-list" id="usersOnlineList">
+              <div style="padding: 12px; text-align: center; color: #888; font-size: 12px;">Carregando usuários...</div>
+            </div>
+          </div>
         </div>
 
-        <button type="button" class="notification-btn" onclick="toggleNotifications(event)" title="Notificações">
+        <button type="button" class="notification-btn" onclick="toggleNotifications(event)" title="Notificações de Requisições">
           <i class="fa-solid fa-bell"></i>
           <span id="notifBadge" class="notification-badge">0</span>
         </button>
+
         <div id="notifDropdown" class="notification-dropdown">
-          <div class="notif-header"><span>REQUISIÇÕES PENDENTES</span><span id="notifCountText">0 novas</span></div>
-          <div class="notif-list" id="notifList"></div>
+          <div class="notif-header">
+            <span>REQUISIÇÕES PENDENTES</span>
+            <span id="notifCountText">0 novas</span>
+          </div>
+          <div class="notif-list" id="notifList">
+            <div style="padding: 16px; text-align: center; color: #888; font-size: 12px;">Nenhuma pendência no momento.</div>
+          </div>
         </div>
 
         <span id="statusBadge" class="status-badge"><i class="fa-solid fa-plug"></i> Conectando...</span>
-        <button type="button" class="btn-logout" onclick="efetuarLogout()"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+
+        <div class="dropdown-ajuda-container">
+          <button type="button" class="btn-header-ajuda" onclick="alternarMenuAjuda(event)" title="Opções do Sistema">
+            <i class="fa-solid fa-gear"></i>
+          </button>
+          <div class="menu-ajuda-dropdown" id="menuAjudaDropdown">
+            <div class="menu-ajuda-item" onclick="abrirModalManual()">
+              <i class="fa-solid fa-book-bookmark" style="color:#1a4d80;"></i> Material de Apoio
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-logout" onclick="efetuarLogout()" title="Sair do Sistema">
+          <i class="fa-solid fa-right-from-bracket"></i> Sair
+        </button>
       </div>
     </div>
 
     <div class="nav-tabs">
-      <button type="button" class="nav-tab active" id="btnNavInicio" onclick="mudarAba('inicio')"><i class="fa-solid fa-house"></i> Início</button>
-      <button type="button" class="nav-tab" id="btnNavDashboard" onclick="mudarAba('dashboard')"><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
-      <button type="button" class="nav-tab" id="btnNavLocacao" onclick="mudarAba('locacao')"><i class="fa-solid fa-boxes-packing"></i> Controle de Locação</button>
-      <button type="button" class="nav-tab" id="btnNavCompras" onclick="mudarAba('compras')"><i class="fa-solid fa-cart-shopping"></i> Compras</button>
-      <button type="button" class="nav-tab" id="btnNavQualidade" onclick="mudarAba('requisicoes')"><i class="fa-solid fa-shield-halved"></i> Qualidade</button>
-      <button type="button" class="nav-tab" id="btnNavManutencao" onclick="mudarAba('os_gestao')"><i class="fa-solid fa-screwdriver-wrench"></i> Manutenção (O.S.)</button>
+      <button type="button" class="nav-tab active" id="btnNavInicio" onclick="mudarAba('inicio')">
+        <i class="fa-solid fa-house"></i> Início
+      </button>
+      <button type="button" class="nav-tab" id="btnNavDashboard" onclick="mudarAba('dashboard')">
+        <i class="fa-solid fa-chart-pie"></i> Dashboard
+      </button>
+
+      <button type="button" class="nav-tab" id="btnNavLocacao" onclick="mudarAba('locacao')">
+        <i class="fa-solid fa-boxes-packing"></i> Controle de Locação
+      </button>
+
+      <button type="button" class="nav-tab" id="btnNavCompras" onclick="mudarAba('compras')">
+        <i class="fa-solid fa-cart-shopping"></i> Módulo de Compras
+      </button>
+
+      <div class="dropdown" id="dropQualidade">
+        <button type="button" class="nav-tab" id="btnNavQualidade" onclick="toggleMenuDropdown(event, 'dropQualidade')">
+          <i class="fa-solid fa-shield-halved"></i> Módulo Qualidade <i class="fa-solid fa-chevron-down" style="font-size: 10px;"></i>
+        </button>
+        <div class="dropdown-content">
+          <button type="button" onclick="mudarAba('requisicoes')"><i class="fa-solid fa-clipboard-list"></i> Requisições Internas</button>
+          <button type="button" onclick="mudarAba('emissao')"><i class="fa-solid fa-file-signature"></i> Emitir Novo Termo</button>
+          <button type="button" onclick="mudarAba('consulta')"><i class="fa-solid fa-magnifying-glass"></i> Consultar Termos Emitidos</button>
+        </div>
+      </div>
+
+      <div class="dropdown" id="dropManutencao">
+        <button type="button" class="nav-tab" id="btnNavManutencao" onclick="toggleMenuDropdown(event, 'dropManutencao')">
+          <i class="fa-solid fa-screwdriver-wrench"></i> Manutenção (O.S.) <i class="fa-solid fa-chevron-down" style="font-size: 10px;"></i>
+        </button>
+        <div class="dropdown-content">
+          <button type="button" onclick="mudarAba('os_gestao')"><i class="fa-solid fa-list-check"></i> Central de Gestão de O.S.</button>
+          <button type="button" onclick="mudarAba('os_abertura')"><i class="fa-solid fa-square-plus"></i> Abrir / Registrar Nova O.S.</button>
+        </div>
+      </div>
+
+      <div class="dropdown" id="dropCadastros">
+        <button type="button" class="nav-tab" id="btnNavCadastros" onclick="toggleMenuDropdown(event, 'dropCadastros')">
+          <i class="fa-solid fa-database"></i> Cadastros <i class="fa-solid fa-chevron-down" style="font-size: 10px;"></i>
+        </button>
+        <div class="dropdown-content">
+          <button type="button" onclick="mudarAba('cad_equipamento')"><i class="fa-solid fa-truck-medical"></i> Cadastrar Novo Equipamento</button>
+          <button type="button" onclick="mudarAba('cad_auxiliares')"><i class="fa-solid fa-tags"></i> Nomenclaturas Padrão</button>
+        </div>
+      </div>
     </div>
 
-    <datalist id="listClientes"></datalist>
-    <datalist id="listUnidadesLocacao"></datalist>
+    <!-- DATALISTS -->
+    <datalist id="listDescricoesPadrao"></datalist>
+    <datalist id="listModelosPadrao"></datalist>
+    <datalist id="listFabricantesPadrao"></datalist>
     <datalist id="listFamiliasLocacao"></datalist>
+    <datalist id="listUnidadesLocacao"></datalist>
+
+    <div id="abaInicio" class="tab-content active">
+      <div class="welcome-hero">
+        <h2>Bem-vindo ao DMA SYS v2.0</h2>
+        <p>Plataforma corporativa para gestão de saldo de locações, cotações de compras, movimentação de ativos médicos, acompanhamento de ordens de serviço e emissão digital de termos.</p>
+      </div>
+
+      <div class="quick-actions-grid">
+        <div class="quick-card" onclick="mudarAba('locacao')">
+          <div class="quick-icon"><i class="fa-solid fa-boxes-packing"></i></div>
+          <div class="quick-title">Controle de Locação</div>
+          <div class="quick-desc">Consulte o saldo contratado vs. físico por cliente, unidade e família de equipamento.</div>
+        </div>
+
+        <div class="quick-card" onclick="mudarAba('compras')">
+          <div class="quick-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+          <div class="quick-title">Módulo de Compras</div>
+          <div class="quick-desc">Crie solicitações com mapa comparativo de 3 fornecedores e aprovação direta.</div>
+        </div>
+
+        <div class="quick-card" onclick="mudarAba('dashboard')">
+          <div class="quick-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <div class="quick-title">Dashboard & Métricas</div>
+          <div class="quick-desc">Acompanhe indicadores gerais de movimentação e chamados em tempo real.</div>
+        </div>
+
+        <div class="quick-card" onclick="mudarAba('os_gestao')">
+          <div class="quick-icon"><i class="fa-solid fa-wrench"></i></div>
+          <div class="quick-title">Ordens de Serviço (O.S.)</div>
+          <div class="quick-desc">Gerencie manutenções corretivas e preventivas com visual por prioridade.</div>
+        </div>
+
+        <div class="quick-card" onclick="mudarAba('emissao')">
+          <div class="quick-icon"><i class="fa-solid fa-file-contract"></i></div>
+          <div class="quick-title">Emitir Novo Termo</div>
+          <div class="quick-desc">Gere o Termo Duplo em PDF (Entrega + Higienização) com assinaturas.</div>
+        </div>
+      </div>
+    </div>
 
     <div id="abaLocacao" class="tab-content">
       <div class="dash-metrics" style="grid-template-columns: repeat(4, 1fr);">
-        <div class="metric-card blue"><div class="metric-title">Total de Registros</div><div class="metric-value" id="locTotalRegistros">0</div></div>
-        <div class="metric-card"><div class="metric-title">Total Contratada</div><div class="metric-value" id="locTotalContratada">0</div></div>
-        <div class="metric-card green"><div class="metric-title">Total Física (Entregue)</div><div class="metric-value" id="locTotalFisica">0</div></div>
-        <div class="metric-card yellow"><div class="metric-title">Saldo Global</div><div class="metric-value" id="locTotalSaldo">0</div></div>
+        <div class="metric-card blue">
+          <div class="metric-title">Total de Registros / Famílias</div>
+          <div class="metric-value" id="locTotalRegistros">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">Total Qtd Contratada</div>
+          <div class="metric-value" id="locTotalContratada">0</div>
+        </div>
+        <div class="metric-card green">
+          <div class="metric-title">Total Qtd Física (Entregue)</div>
+          <div class="metric-value" id="locTotalFisica">0</div>
+        </div>
+        <div class="metric-card yellow">
+          <div class="metric-title">Saldo Global (Pendente / Sobra)</div>
+          <div class="metric-value" id="locTotalSaldo">0</div>
+        </div>
       </div>
 
       <div class="card">
@@ -419,18 +639,30 @@
         </div>
 
         <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px; flex-wrap: wrap;">
-          <div class="form-group" style="flex: 1.2;"><label>Cliente:</label><input type="text" id="locFiltroCliente" list="listClientes" placeholder="Todos..." oninput="filtrarTabelaLocacao()"></div>
-          <div class="form-group" style="flex: 1.2;"><label>Unidade:</label><input type="text" id="locFiltroUnidade" list="listUnidadesLocacao" placeholder="Todas..." oninput="filtrarTabelaLocacao()"></div>
-          <div class="form-group" style="flex: 1.2;"><label>Família:</label><input type="text" id="locFiltroFamilia" list="listFamiliasLocacao" placeholder="Todas..." oninput="filtrarTabelaLocacao()"></div>
+          <div class="form-group" style="flex: 1.2;">
+            <label>Cliente:</label>
+            <input type="text" id="locFiltroCliente" list="listClientes" placeholder="Todos os clientes..." oninput="filtrarTabelaLocacaoDebounced()">
+          </div>
+          <div class="form-group" style="flex: 1.2;">
+            <label>Unidade / Hospital:</label>
+            <input type="text" id="locFiltroUnidade" list="listUnidadesLocacao" placeholder="Todas as unidades..." oninput="filtrarTabelaLocacaoDebounced()">
+          </div>
+          <div class="form-group" style="flex: 1.2;">
+            <label>Família do Equipamento:</label>
+            <input type="text" id="locFiltroFamilia" list="listFamiliasLocacao" placeholder="Todas as famílias..." oninput="filtrarTabelaLocacaoDebounced()">
+          </div>
           <div class="form-group" style="flex: 1;">
             <label>Situação:</label>
             <select id="locFiltroSituacao" onchange="filtrarTabelaLocacao()">
-              <option value="TODOS" selected>Todas</option>
-              <option value="ATIVO">ATIVO</option>
-              <option value="ENCERRADO">ENCERRADO</option>
+              <option value="TODOS" selected>Todas as Situações</option>
+              <option value="ATIVO">Apenas ATIVO</option>
+              <option value="ENCERRADO">Apenas ENCERRADO</option>
             </select>
           </div>
-          <div class="form-group" style="flex: 1.5;"><label>Busca Rápida:</label><input type="text" id="locFiltroTexto" placeholder="Contrato, ID..." oninput="filtrarTabelaLocacao()"></div>
+          <div class="form-group" style="flex: 1.5;">
+            <label>Busca Rápida (Contrato, ID, Cidade):</label>
+            <input type="text" id="locFiltroTexto" placeholder="Digite para buscar..." oninput="filtrarTabelaLocacaoDebounced()">
+          </div>
         </div>
 
         <div class="table-container">
@@ -458,21 +690,560 @@
       </div>
     </div>
 
-    <!-- Outras abas padrão do sistema -->
-    <div id="abaInicio" class="tab-content active">
-      <div class="welcome-hero" style="background: linear-gradient(135deg, var(--blue), var(--navy)); color: white; border-radius: 16px; padding: 36px; margin-bottom: 20px;">
-        <h2>Bem-vindo ao DMA SYS v2.0</h2>
-        <p>Plataforma corporativa de gestão de saldos de locações, cotações, requisições e ordens de serviço.</p>
+    <div id="abaCompras" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span><i class="fa-solid fa-cart-plus"></i> Nova Solicitação & Mapa de Cotação de Compras</span>
+        </div>
+
+        <form id="formCompras" onsubmit="return salvarSolicitacaoCompra(event)">
+          <div class="form-row">
+            <div class="form-group" style="flex: 1;">
+              <label>Nº O.S. do Sistema Externo (Manual):</label>
+              <input type="text" id="compOsExterna" placeholder="Ex: OS-2026-8849" required>
+            </div>
+            <div class="form-group" style="flex: 1.5;">
+              <label>Nome do Solicitante / Comprador:</label>
+              <input type="text" id="compSolicitante" placeholder="Nome do comprador ou solicitante..." required>
+            </div>
+            <div class="form-group" style="flex: 2;">
+              <label>Nome do Produto / Peça Solicitada:</label>
+              <input type="text" id="compProduto" placeholder="Ex: SENSORES DE FLUXO PARA VENTILADOR..." required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label>Observações / Justificativa Técnica:</label>
+            <input type="text" id="compObservacao" placeholder="Ex: Peça necessária para atendimento da OS de manutenção corretiva urgente.">
+          </div>
+
+          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px; margin-bottom: 14px;">
+            <div style="font-size: 12px; font-weight: bold; color: #1a4d80; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-scale-balanced"></i> Mapa de Cotação de Preços (3 Fornecedores)
+            </div>
+
+            <div class="form-row">
+              <div class="form-group" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: white;">
+                <label>Fornecedor 1:</label>
+                <input type="text" id="compForn1" placeholder="Nome da empresa 1..." style="margin-bottom: 6px;">
+                <label>Valor Orçado (R$):</label>
+                <input type="number" id="compVal1" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
+              </div>
+
+              <div class="form-group" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: white;">
+                <label>Fornecedor 2:</label>
+                <input type="text" id="compForn2" placeholder="Nome da empresa 2..." style="margin-bottom: 6px;">
+                <label>Valor Orçado (R$):</label>
+                <input type="number" id="compVal2" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
+              </div>
+
+              <div class="form-group" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: white;">
+                <label>Fornecedor 3:</label>
+                <input type="text" id="compForn3" placeholder="Nome da empresa 3..." style="margin-bottom: 6px;">
+                <label>Valor Orçado (R$):</label>
+                <input type="number" id="compVal3" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
+              </div>
+            </div>
+
+            <div id="painelMenorPreco" style="background: #e6f4ea; border: 1px solid #a8dab5; color: #137333; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 13px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
+              <span><i class="fa-solid fa-trophy"></i> Menor Proposta Identificada: <span id="lblFornVencedor">-</span></span>
+              <span>Valor: <span id="lblMenorValor">R$ 0,00</span></span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Prazo de Entrega:</label>
+              <input type="text" id="compPrazo" placeholder="Ex: 5 dias úteis">
+            </div>
+            <div class="form-group">
+              <label>Condição de Pagamento:</label>
+              <input type="text" id="compCondPagto" placeholder="Ex: 28 dias / Pix / Faturado">
+            </div>
+            <div class="form-group">
+              <label>Frete:</label>
+              <input type="text" id="compFrete" placeholder="Ex: CIF (Incluso) ou R$ 45,00">
+            </div>
+          </div>
+
+          <div style="text-align: right; margin-top: 12px;">
+            <button type="submit" id="btnSalvarCompra" class="btn-submit">
+              <i class="fa-solid fa-file-signature"></i> Salvar Cotação
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Central de Gestão de Cotações & Compras</div>
+        <div class="table-container">
+          <table style="table-layout: auto;">
+            <thead>
+              <tr>
+                <th class="td-center">ID</th>
+                <th>Data / Hora</th>
+                <th>Nº OS Ext.</th>
+                <th>Solicitante</th>
+                <th>Produto / Peça</th>
+                <th>Fornecedor Escolhido</th>
+                <th class="td-center">Menor Valor</th>
+                <th class="td-center">Status</th>
+                <th class="td-center">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="corpoTabelaCompras">
+              <tr><td colspan="9" class="td-center" style="color:#888; padding:20px;">Carregando cotações de compras...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-    <div id="abaDashboard" class="tab-content"><div class="card"><div class="card-title">Dashboard</div></div></div>
-    <div id="abaCompras" class="tab-content"><div class="card"><div class="card-title">Módulo de Compras</div></div></div>
-    <div id="abaRequisicoes" class="tab-content"><div class="card"><div class="card-title">Módulo Qualidade</div></div></div>
-    <div id="abaOsGestao" class="tab-content"><div class="card"><div class="card-title">Gestão de O.S.</div></div></div>
+
+    <div id="abaDashboard" class="tab-content">
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-title"><span>Filtro de Período das Métricas</span></div>
+        <div class="form-row" style="align-items: center; margin-bottom: 0;">
+          <div class="form-group" style="flex: 1;">
+            <label>Selecione o Mês / Ano:</label>
+            <input type="month" id="dashFiltroMes" onchange="atualizarDashboard()">
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>Modo de Período:</label>
+            <select id="dashModoPeriodo" onchange="atualizarDashboard()">
+              <option value="MES">Apenas o Mês Selecionado</option>
+              <option value="GERAL">Todo o Histórico (Geral)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-metrics">
+        <div class="metric-card">
+          <div class="metric-title">Total de Requisições</div>
+          <div class="metric-value" id="dashTotalReq">0</div>
+        </div>
+        <div class="metric-card yellow">
+          <div class="metric-title">Pendentes de Envio</div>
+          <div class="metric-value" id="dashPendentes">0</div>
+        </div>
+        <div class="metric-card green">
+          <div class="metric-title">Atendidas pela Qualidade</div>
+          <div class="metric-value" id="dashAtendidos">0</div>
+        </div>
+        <div class="metric-card red">
+          <div class="metric-title">Recusadas / Negadas</div>
+          <div class="metric-value" id="dashRecusados">0</div>
+        </div>
+      </div>
+
+      <div class="dash-charts-grid">
+        <div class="card">
+          <div class="card-title">Top Clientes em Demandas de Troca</div>
+          <div id="chartClientes" style="padding-top: 10px;">
+            <div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Demandas por Família de Equipamentos</div>
+          <div id="chartFamilias" style="padding-top: 10px;">
+            <div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="abaRequisicoes" class="tab-content">
+      <div class="card">
+        <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
+        <form id="formReq" onsubmit="return salvarRequisicao(event)">
+          <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+              <label>Cliente / Locatário Solicitante:</label>
+              <input type="text" id="reqCliente" list="listClientes" placeholder="Selecione ou digite o cliente..." required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Operação:</label>
+              <div class="radio-group">
+                <label><input type="radio" name="reqOperacao" value="LOCAÇÃO" checked> Locação</label>
+                <label><input type="radio" name="reqOperacao" value="EMPRÉSTIMO"> Empréstimo</label>
+                <label><input type="radio" name="reqOperacao" value="VENDA"> Venda</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Equipamento a Substituir (TAG / Nome atual no cliente):</label>
+              <input type="text" id="reqEqAntigo" placeholder="Ex: LMD-5384 - Ventilador com defeito" required>
+            </div>
+            <div class="form-group">
+              <label>Equipamento Solicitado para a Qualidade enviar:</label>
+              <input type="text" id="reqEqSolicitado" list="listDescricoesPadrao" placeholder="Ex: MONITOR MULTIPARAMÉTRICO" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Motivo / Observações da Troca:</label>
+            <input type="text" id="reqMotivo" placeholder="Ex: Falha na bateria interna, solicitar troca urgente.">
+          </div>
+
+          <div style="text-align: right;">
+            <button type="submit" id="btnSalvarReq" class="btn-submit">
+              <i class="fa-solid fa-paper-plane"></i> Enviar Requisição e Gerar PDF
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>Acompanhamento de Solicitações</span></div>
+
+        <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Filtrar por Status:</label>
+            <select id="filtroStatusReq" onchange="filtrarRequisicoes()">
+              <option value="TODOS">Todos os Status</option>
+              <option value="PENDENTE">Apenas Pendentes</option>
+              <option value="ATENDIDO">Apenas Atendidos</option>
+              <option value="RECUSADO">Apenas Recusados</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>Filtrar por Mês/Ano:</label>
+            <input type="month" id="filtroMesReq" onchange="filtrarRequisicoes()">
+          </div>
+          <div class="form-group" style="flex: 2;">
+            <label>Buscar na Tabela (Cliente, Req # ou Equipamento):</label>
+            <input type="text" id="filtroTextoReq" oninput="filtrarRequisicoesDebounced()" placeholder="Digite para buscar...">
+          </div>
+        </div>
+        
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th class="td-center" style="width: 70px;">Req #</th>
+                <th style="width: 110px;">Data / Hora</th>
+                <th style="width: 220px;">Cliente / Locatário</th>
+                <th style="width: 200px;">Equipamento Solicitado</th>
+                <th>Motivo / Obs.</th>
+                <th class="td-center" style="width: 80px;">Operação</th>
+                <th class="td-center" style="width: 80px;">Status</th>
+                <th class="td-center" style="width: 310px;">Ações / Qualidade</th>
+              </tr>
+            </thead>
+            <tbody id="corpoRequisicoes">
+              <tr><td colspan="8" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="abaEmissao" class="tab-content">
+      <div id="bannerReqVinculada" style="display: none; background: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 12px; align-items: center; justify-content: space-between;">
+        <span><i class="fa-solid fa-link"></i> Atendendo Requisição Pendente: <span id="lblProtReqVinculada" style="color: #1a4d80;">-</span></span>
+        <button type="button" onclick="desvincularRequisicao()" style="background: transparent; border: none; color: #dc3545; font-weight: bold; cursor: pointer; font-size: 11px;"><i class="fa-solid fa-xmark"></i> Cancelar Vínculo</button>
+      </div>
+
+      <form id="termoForm" class="main-grid" onsubmit="gerarTermo(event)">
+        <input type="hidden" id="reqVinculadaProtocolo" value="">
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="card">
+            <div class="card-title">1. Cliente / Locatário</div>
+            <div class="form-group">
+              <label for="inputCliente">Buscar / Selecionar Cliente:</label>
+              <input type="text" id="inputCliente" list="listClientes" placeholder="Digite o nome do cliente..." required>
+              <datalist id="listClientes"></datalist>
+            </div>
+          </div>
+
+          <div class="card" style="flex: 1;">
+            <div class="card-title">2. Identificação do Equipamento</div>
+            
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label>Pesquisar Equipamento (TAG, Série ou Patrimônio):</label>
+              <input type="text" id="buscaEquipamento" list="listEquipamentos" placeholder="Ex: LMD-4654 ou 2329918..." oninput="autoPreencherEquipamento()" required>
+              <datalist id="listEquipamentos"></datalist>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group"><label>TAG:</label><input type="text" id="eqTag" readonly placeholder="-"></div>
+              <div class="form-group"><label>Nº de Série:</label><input type="text" id="eqSerie" readonly placeholder="-"></div>
+              <div class="form-group"><label>Patrimônio:</label><input type="text" id="eqPatrimonio" readonly placeholder="-"></div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group"><label>Equipamento:</label><input type="text" id="eqNome" readonly placeholder="-"></div>
+              <div class="form-group"><label>Modelo:</label><input type="text" id="eqModelo" readonly placeholder="-"></div>
+              <div class="form-group"><label>Fabricante:</label><input type="text" id="eqFabricante" readonly placeholder="-"></div>
+            </div>
+
+            <div class="form-group" style="margin-top: 6px;">
+              <label>Operação:</label>
+              <div class="radio-group">
+                <label><input type="radio" name="tipoOperacao" value="LOCAÇÃO" checked> Locação</label>
+                <label><input type="radio" name="tipoOperacao" value="EMPRÉSTIMO"> Empréstimo</label>
+                <label><input type="radio" name="tipoOperacao" value="VENDA"> Venda</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="card" style="flex: 1;">
+            <div class="card-title">3. Lista de Acessórios</div>
+            <div class="table-container">
+              <table style="table-layout: auto;">
+                <thead>
+                  <tr>
+                    <th class="td-center" style="width: 40px;">#</th>
+                    <th class="td-center" style="width: 70px;">QTD</th>
+                    <th>Descrição do Acessório</th>
+                    <th class="td-center" style="width: 110px;">Conformidade</th>
+                  </tr>
+                </thead>
+                <tbody id="corpoAcessorios">
+                  <tr><td colspan="4" class="td-center" style="color: #888; padding: 24px;">Selecione um equipamento para visualizar os acessórios.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">4. Liberação e Assinaturas</div>
+            
+            <div class="form-group">
+              <label>Técnico Responsável:</label>
+              <select id="selectTecnico" required>
+                <option value="">Selecione o técnico...</option>
+              </select>
+            </div>
+
+            <div class="signature-container" style="margin-top: 12px;">
+              <div class="sig-box">
+                <label>Assinatura do Recebedor / Cliente:</label>
+                <button type="button" class="btn-clear" onclick="limparAssinatura()">Limpar</button>
+                <canvas id="canvasAssinatura" width="500" height="110"></canvas>
+              </div>
+            </div>
+
+            <button type="button" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;" onclick="gerarTermo(event)">
+              <i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div id="abaConsulta" class="tab-content">
+      <div class="card">
+        <div class="card-title">Histórico e Consulta de Termos Gerados</div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Filtrar por Protocolo, Cliente, TAG ou Técnico:</label>
+          <input type="text" id="filtroTermos" oninput="filtrarTabelaTermosDebounced()" placeholder="Digite aqui para buscar...">
+        </div>
+        <div class="table-container">
+          <table style="table-layout: auto;">
+            <thead>
+              <tr>
+                <th class="td-center">Protocolo</th>
+                <th>Data / Hora</th>
+                <th>Cliente / Locatário</th>
+                <th class="td-center">TAG</th>
+                <th>Equipamento</th>
+                <th class="td-center">Operação</th>
+                <th>Técnico</th>
+                <th class="td-center">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="corpoTermos">
+              <tr><td colspan="8" class="td-center" style="color: #888; padding: 24px;">Carregando histórico...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="abaOsGestao" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span>Central de Ordens de Serviço (Engenharia Clínica)</span>
+          <button type="button" class="btn-submit" style="padding: 6px 12px; font-size: 11px;" onclick="mudarAba('os_abertura')"><i class="fa-solid fa-plus"></i> Nova O.S.</button>
+        </div>
+
+        <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Status da O.S.:</label>
+            <select id="filtroStatusOS" onchange="renderizarTabelaOS()">
+              <option value="TODOS">Todos os Status</option>
+              <option value="ABERTA">Apenas Abertas</option>
+              <option value="CONCLUÍDA">Apenas Concluídas</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 2;">
+            <label>Buscar O.S. (Nº OS, TAG, Cliente ou Equipamento):</label>
+            <input type="text" id="filtroTextoOS" oninput="renderizarTabelaOSDebounced()" placeholder="Digite para filtrar...">
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table style="table-layout: auto;">
+            <thead>
+              <tr>
+                <th class="td-center" style="width: 90px;">Nº O.S.</th>
+                <th style="width: 110px;">Abertura</th>
+                <th>Cliente / Unidade</th>
+                <th class="td-center" style="width: 80px;">TAG</th>
+                <th>Equipamento</th>
+                <th class="td-center" style="width: 90px;">Tipo</th>
+                <th class="td-center" style="width: 80px;">Prioridade</th>
+                <th class="td-center" style="width: 80px;">Status</th>
+                <th class="td-center" style="width: 140px;">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="corpoOS">
+              <tr><td colspan="9" class="td-center" style="color: #888; padding: 24px;">Carregando Ordens de Serviço...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="abaOsAbertura" class="tab-content">
+      <div class="card">
+        <div class="card-title">Abrir Nova Ordem de Serviço (Manutenção)</div>
+        <form id="formNovaOS" onsubmit="return salvarNovaOS(event)">
+          <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+              <label>Cliente / Unidade Hospitalar:</label>
+              <input type="text" id="osCliente" list="listClientes" placeholder="Selecione o cliente..." required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Tipo de Manutenção:</label>
+              <select id="osTipo">
+                <option value="CORRETIVA">CORRETIVA</option>
+                <option value="PREVENTIVA">PREVENTIVA</option>
+                <option value="CALIBRAÇÃO">CALIBRAÇÃO</option>
+                <option value="INSPEÇÃO">INSPEÇÃO / HIGIENIZAÇÃO</option>
+                <option value="OFICINA">OFICINA</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Prioridade do Atendimento:</label>
+              <select id="osPrioridade">
+                <option value="MÉDIA" selected>MÉDIA</option>
+                <option value="ALTA">ALTA</option>
+                <option value="CRÍTICA">CRÍTICA</option>
+                <option value="BAIXA">BAIXA</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+              <label>Pesquisar Equipamento (TAG / Série / Patrimônio):</label>
+              <input type="text" id="osBuscaEquip" list="listEquipamentos" placeholder="Digite para buscar..." oninput="autoPreencherOSEquipamento()" required>
+            </div>
+            <div class="form-group" style="flex: 1;"><label>TAG:</label><input type="text" id="osTag" readonly placeholder="-"></div>
+            <div class="form-group" style="flex: 1;"><label>Nº de Série:</label><input type="text" id="osSerie" readonly placeholder="-"></div>
+            <div class="form-group" style="flex: 1;"><label>Patrimônio:</label><input type="text" id="osPatrimonio" readonly placeholder="-"></div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Equipamento / Modelo Selecionado:</label>
+            <input type="text" id="osNomeEquip" readonly placeholder="-">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group"><label>Solicitante / Reclamante:</label><input type="text" id="osSolicitante" placeholder="Ex: Enfermagem / Eng. Clínica" required></div>
+            <div class="form-group"><label>Técnico Responsável:</label><input type="text" id="osTecnico" placeholder="Nome do técnico executante" required></div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;"><label>Defeito Relatado:</label><textarea id="osDefeito" style="height: 60px;" required></textarea></div>
+          <div class="form-group" style="margin-bottom: 12px;"><label>Diagnóstico Técnico:</label><textarea id="osDiagnostico" style="height: 60px;" required></textarea></div>
+          <div class="form-group" style="margin-bottom: 16px;"><label>Serviço Realizado:</label><textarea id="osServico" style="height: 60px;" required></textarea></div>
+
+          <div style="text-align: right;">
+            <button type="submit" id="btnSalvarOS" class="btn-submit"><i class="fa-solid fa-floppy-disk"></i> Registrar O.S.</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="abaCadEquipamento" class="tab-content">
+      <div class="card">
+        <div class="card-title">Cadastrar Novo Equipamento (Aba EQUIP)</div>
+        <form id="formNovoEquip" onsubmit="salvarNovoEquipamento(event)">
+          <div class="form-row">
+            <div class="form-group"><label>TAG do Equipamento:</label><input type="text" id="cadTag" placeholder="Ex: LMD-9999" required></div>
+            <div class="form-group"><label>Nº de Série:</label><input type="text" id="cadSerie" placeholder="Ex: 849302" required></div>
+            <div class="form-group"><label>Patrimônio:</label><input type="text" id="cadPatrimonio" placeholder="Ex: 00984" required></div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="flex: 2;"><label>Descrição do Equipamento:</label><input type="text" id="cadNome" list="listDescricoesPadrao" required></div>
+            <div class="form-group" style="flex: 1;"><label>Modelo:</label><input type="text" id="cadModelo" list="listModelosPadrao" required></div>
+            <div class="form-group" style="flex: 1;"><label>Fabricante:</label><input type="text" id="cadFabricante" list="listFabricantesPadrao" required></div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label>Acessórios Padrão (Separados por ;):</label>
+            <input type="text" id="cadAcessorios" placeholder="Ex: CABO DE FORÇA; CIRCUITO PACIENTE; SENSOR FLUXO">
+          </div>
+
+          <div style="text-align: right;">
+            <button type="submit" id="btnSalvarCadEquip" class="btn-submit"><i class="fa-solid fa-server"></i> Salvar Equipamento</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="abaCadAuxiliares" class="tab-content">
+      <div class="card">
+        <div class="card-title">Gerenciar Nomenclaturas & Combinações Válidas</div>
+        <form onsubmit="salvarAuxiliarVinculado(event)" style="background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+          <div class="form-row">
+            <div class="form-group" style="flex: 2;"><label>Descrição / Família:</label><input type="text" id="vinculoDescricao" list="listDescricoesPadrao" required></div>
+            <div class="form-group" style="flex: 1;"><label>Modelo:</label><input type="text" id="vinculoModelo" required></div>
+            <div class="form-group" style="flex: 1;"><label>Fabricante:</label><input type="text" id="vinculoFabricante" required></div>
+          </div>
+          <div style="text-align: right;">
+            <button type="submit" class="btn-submit"><i class="fa-solid fa-plus"></i> Cadastrar Vínculo</button>
+          </div>
+        </form>
+
+        <div class="table-container">
+          <table style="table-layout: auto;">
+            <thead><tr><th>Descrição / Família</th><th>Modelo Autorizado</th><th>Fabricante</th></tr></thead>
+            <tbody id="tabelaAuxiliaresList"><tr><td colspan="3" class="td-center" style="color:#888;">Carregando combinações...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="modalVisualizadorReq" class="modal-overlay">
+    <div class="modal-box" style="width: 800px; max-width: 95vw; height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-title">
+        <span id="tituloModalReqPDF">Visualizar Documento (PDF)</span>
+        <span onclick="fecharModalVisualizadorReq()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div style="flex: 1; background: #e2e8f0; border-radius: 6px; overflow: hidden; position: relative;">
+        <iframe id="iframeVisualizadorReq" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+      </div>
+      <div style="margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalVisualizadorReq()">Fechar</button>
+        <a id="btnAbrirNovaAbaPdfReq" href="#" target="_blank" class="btn-submit" style="padding: 8px 16px; text-decoration: none; font-size: 12px;"><i class="fa-solid fa-external-link-alt"></i> Abrir em Nova Guia / Imprimir</a>
+      </div>
+    </div>
   </div>
 
   <div id="modalLocacao" class="modal-overlay">
-    <div class="modal-box" style="width: 580px;">
+    <div class="modal-box" style="width: 520px;">
       <div class="modal-title">
         <span>Ajuste de Locação, Valores e Observações</span>
         <span onclick="fecharModalLocacao()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
@@ -483,28 +1254,24 @@
       <div class="form-row">
         <div class="form-group">
           <label>Nova Qtd Física Entregue:</label>
-          <input type="number" id="locModalQtdFisica" min="0" oninput="calcularTotalLocModal()" style="font-size: 15px; font-weight: bold; padding: 8px;" required>
+          <input type="number" id="locModalQtdFisica" min="0" style="font-size: 15px; font-weight: bold; padding: 8px;" required>
         </div>
         <div class="form-group">
           <label>Valor Unitário (R$):</label>
-          <input type="number" id="locModalValUnit" step="0.01" min="0" placeholder="0.00" oninput="calcularTotalLocModal()" style="font-size: 15px; font-weight: bold; padding: 8px;">
+          <input type="number" id="locModalValUnit" step="0.01" min="0" placeholder="0.00" style="font-size: 15px; font-weight: bold; padding: 8px;">
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label>Valor Total (R$): (Calculado Automático)</label>
-          <input type="number" id="locModalValTotal" step="0.01" min="0" placeholder="0.00" style="font-size: 15px; font-weight: bold; padding: 8px; background:#f1f5f9;" readonly>
+          <label>Valor Total (R$):</label>
+          <input type="number" id="locModalValTotal" step="0.01" min="0" placeholder="0.00" style="font-size: 15px; font-weight: bold; padding: 8px;">
         </div>
       </div>
 
       <div class="form-group" style="margin-bottom: 16px;">
-        <label>Observação / Nota para o Log:</label>
-        <textarea id="locModalObservacao" placeholder="Ex: Ajuste de saldo conforme termo assinado..." style="height: 70px;"></textarea>
-      </div>
-
-      <div style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 14px; max-height: 120px; overflow-y: auto; font-size: 11px;" id="locModalHistoricoLog">
-        <b>Histórico de Log:</b> <span id="locModalLogTexto" style="color: #64748b; display: block; white-space: pre-wrap; margin-top: 4px;">Nenhum log registrado.</span>
+        <label>Observação / Nota (Histórico de Log):</label>
+        <textarea id="locModalObservacao" placeholder="Ex: Aumentou a quantidade conforme aditivo..." style="height: 70px;"></textarea>
       </div>
 
       <div style="display: flex; gap: 8px; justify-content: flex-end;">
@@ -514,10 +1281,46 @@
     </div>
   </div>
 
-  <button type="button" class="chat-widget-btn" onclick="toggleChat()"><i class="fa-brands fa-whatsapp"></i></button>
+  <div class="modal-manual-overlay" id="modalManualUso" oncontextmenu="return false;">
+    <div class="modal-manual-card">
+      <div class="modal-manual-header">
+        <h3><i class="fa-solid fa-book-open"></i> Material de Apoio & Manual de Operação — DMA SYS v2.0</h3>
+        <button type="button" class="btn-fechar-manual" onclick="fecharModalManual()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-manual-body">
+        <div class="manual-secao">
+          <h4><i class="fa-solid fa-boxes-packing"></i> 1. Controle de Locação</h4>
+          <p>Consulte saldos contratados vs. entregues por cliente e unidade hospitalar. Ajuste saldos físicos, valores e adicione notas de log.</p>
+        </div>
+        <div class="manual-secao">
+          <h4><i class="fa-solid fa-cart-shopping"></i> 2. Módulo de Compras & Mapa Comparativo</h4>
+          <p>Cadastre cotações informando 3 fornecedores. O sistema destaca a menor proposta em verde e registra a cotação com cálculo automático.</p>
+        </div>
+        <div class="manual-secao">
+          <h4><i class="fa-solid fa-shield-halved"></i> 3. Módulo Qualidade & Termos</h4>
+          <p>Acompanhe requisições internas, atenda com emissão do Termo Duplo de Entrega e Higienização ou vincule termos já emitidos.</p>
+        </div>
+        <div class="alerta-seguranca">
+          <i class="fa-solid fa-shield-halved"></i> <b>Aviso de Segurança:</b> Este manual é de consulta interna e exclusiva do sistema DMA SYS v2.0.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="chat-widget-btn" onclick="toggleChat()" title="Suporte / Dúvidas">
+    <i class="fa-brands fa-whatsapp"></i>
+  </button>
+  
   <div id="chatBox" class="chat-box">
-    <div class="chat-header"><span><i class="fa-brands fa-whatsapp"></i> Suporte DMA Sys</span><span onclick="toggleChat()" style="cursor:pointer;"><i class="fa-solid fa-xmark"></i></span></div>
-    <div class="chat-body">Precisa de ajuda? Digite sua mensagem:<textarea id="msgChat" placeholder="Escreva sua dúvida..."></textarea><button type="button" onclick="enviarWhatsApp()">Enviar no WhatsApp</button></div>
+    <div class="chat-header">
+      <span><i class="fa-brands fa-whatsapp"></i> Suporte Técnico DMA Sys</span>
+      <span onclick="toggleChat()" style="cursor:pointer;"><i class="fa-solid fa-xmark"></i></span>
+    </div>
+    <div class="chat-body">
+      Precisa de ajuda ou encontrou algum problema no sistema? Digite sua mensagem abaixo:
+      <textarea id="msgChat" placeholder="Ex: Tive dúvidas ao cadastrar o equipamento LMD..."></textarea>
+      <button type="button" onclick="enviarWhatsApp()">Iniciar Conversa no WhatsApp</button>
+    </div>
   </div>
 
   <footer class="system-footer">
@@ -529,9 +1332,123 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
     const NUMERO_WHATSAPP_SUPORTE = "5511970116092";
 
-    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], locacoes: [], compras: [], relacoesAuxiliares: [] };
+    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], relacoesAuxiliares: [], locacoes: [], compras: [] };
+    let equipamentoSelecionado = null;
     let usuarioLogado = null;
     let estaBuscandoDados = false;
+
+    function criarDebounce(func, wait = 200) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    const filtrarTabelaLocacaoDebounced = criarDebounce(() => filtrarTabelaLocacao(), 200);
+    const filtrarRequisicoesDebounced = criarDebounce(() => filtrarRequisicoes(), 200);
+    const filtrarTabelaTermosDebounced = criarDebounce(() => filtrarTabelaTermos(), 200);
+    const renderizarTabelaOSDebounced = criarDebounce(() => renderizarTabelaOS(), 200);
+
+    function alternarMenuAjuda(e) { if(e) e.stopPropagation(); document.getElementById("menuAjudaDropdown")?.classList.toggle("ativo"); }
+    function abrirModalManual() { document.getElementById("modalManualUso")?.classList.add("ativo"); document.getElementById("menuAjudaDropdown")?.classList.remove("ativo"); }
+    function fecharModalManual() { document.getElementById("modalManualUso")?.classList.remove("ativo"); }
+
+    function toggleMenuDropdown(event, dropId) {
+      event.stopPropagation();
+      const el = document.getElementById(dropId);
+      const estaAberto = el.classList.contains('open');
+      fecharTodosDropdowns();
+      if (!estaAberto) el.classList.add('open');
+    }
+
+    function fecharTodosDropdowns() {
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+      document.getElementById('notifDropdown')?.classList.remove('active');
+      document.getElementById('usersDropdown')?.classList.remove('active');
+      document.getElementById('menuAjudaDropdown')?.classList.remove('ativo');
+    }
+
+    document.addEventListener('click', fecharTodosDropdowns);
+
+    function toggleUsersDropdown(e) {
+      if(e) e.stopPropagation();
+      const dropdown = document.getElementById('usersDropdown');
+      const atv = dropdown.classList.contains('active');
+      fecharTodosDropdowns();
+      if (!atv) dropdown.classList.add('active');
+    }
+
+    function toggleNotifications(e) {
+      if(e) e.stopPropagation();
+      const dropdown = document.getElementById('notifDropdown');
+      const atv = dropdown.classList.contains('active');
+      fecharTodosDropdowns();
+      if (!atv) dropdown.classList.add('active');
+    }
+
+    function toggleChat() {
+      document.getElementById('chatBox').classList.toggle('active');
+    }
+
+    function enviarWhatsApp() {
+      const msg = document.getElementById('msgChat').value.trim();
+      const textoFinal = encodeURIComponent("Olá Suporte DMA Sys! " + (msg ? msg : "Preciso de auxílio no sistema."));
+      window.open(`https://wa.me/${NUMERO_WHATSAPP_SUPORTE}?text=${textoFinal}`, '_blank');
+      toggleChat();
+    }
+
+    function enviarHeartbeat() {
+      if (!usuarioLogado || (!usuarioLogado.usuario && !usuarioLogado.nome)) return;
+      var idUsr = usuarioLogado.usuario || usuarioLogado.nome;
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "PING_PRESENCA", usuario: idUsr }) }).catch(e => {});
+    }
+
+    function renderizarUsuariosOnline() {
+      if (!bancoDados || !bancoDados.usuarios) return;
+      const listContainer = document.getElementById('usersOnlineList');
+      const countText = document.getElementById('onlineCountText');
+      if (!listContainer || !countText) return;
+
+      const usuarios = bancoDados.usuarios || [];
+      const onlines = usuarios.filter(u => u && u.online);
+      countText.innerText = `${onlines.length} Online`;
+
+      if (usuarios.length === 0) {
+        listContainer.innerHTML = '<div style="padding: 12px; text-align: center; color: #888; font-size: 12px;">Nenhum usuário cadastrado.</div>';
+        return;
+      }
+
+      listContainer.innerHTML = usuarios.map(u => {
+        const online = u.online ? true : false;
+        const statusDot = online ? '<i class="fa-solid fa-circle" style="color:#22c55e; font-size:8px;"></i>' : '<i class="fa-solid fa-circle" style="color:#cbd5e1; font-size:8px;"></i>';
+        return `
+          <div class="notif-item">
+            <div class="notif-item-title">
+              <span>${statusDot} ${u.nome || '-'}</span>
+            </div>
+            <div class="notif-item-sub">${online ? 'Online agora' : ('Último acesso: ' + (u.ultimoAcesso || '-'))}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function preencherSelectTecnicos() {
+      const selTec = document.getElementById('selectTecnico');
+      if (!selTec) return;
+      const valAnterior = selTec.value;
+      let htmlOptions = '<option value="">Selecione o técnico...</option>';
+      if (bancoDados && bancoDados.usuarios) {
+        bancoDados.usuarios.forEach(u => {
+          if (u && (u.nome || u.usuario)) {
+            const nomeExibir = u.nome || u.usuario;
+            htmlOptions += `<option value="${nomeExibir}">${nomeExibir}</option>`;
+          }
+        });
+      }
+      selTec.innerHTML = htmlOptions;
+      if (valAnterior !== "") selTec.value = valAnterior;
+    }
 
     function verificarSessao() {
       const sessaoSalva = localStorage.getItem("dmasys_usuario");
@@ -540,7 +1457,8 @@
         if (usuarioLogado) {
           document.getElementById('loginOverlay').style.display = "none";
           document.getElementById('appContainer').style.display = "block";
-          buscarAtualizacoesSilenciosas();
+          preencherSelectTecnicos();
+          enviarHeartbeat();
         } else {
           document.getElementById('loginOverlay').style.display = "flex";
           document.getElementById('appContainer').style.display = "none";
@@ -566,22 +1484,31 @@
       fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "VERIFICAR_LOGIN", usuario: usr, senha: pass }) })
       .then(res => res.json()).then(res => {
         if (res.status === "sucesso" && res.usuario) {
-          usuarioLogado = res.usuario;
-          localStorage.setItem("dmasys_usuario", JSON.stringify(res.usuario));
-          document.getElementById('loginOverlay').style.display = "none";
-          document.getElementById('appContainer').style.display = "block";
-          btn.disabled = false; btn.innerText = "ENTRAR NO SISTEMA";
-          buscarAtualizacoesSilenciosas();
+          concluirAcessoLogin(res.usuario);
         } else {
           divErro.innerText = res.mensagem || "Usuário ou senha incorretos.";
           divErro.style.display = "block";
-          btn.disabled = false; btn.innerText = "ENTRAR NO SISTEMA";
+          btn.disabled = false;
+          btn.innerText = "ENTRAR NO SISTEMA";
         }
       }).catch(err => {
         divErro.innerText = "Falha de conexão com o servidor.";
         divErro.style.display = "block";
-        btn.disabled = false; btn.innerText = "ENTRAR NO SISTEMA";
+        btn.disabled = false;
+        btn.innerText = "ENTRAR NO SISTEMA";
       });
+    }
+
+    function concluirAcessoLogin(usuario) {
+      usuarioLogado = usuario;
+      localStorage.setItem("dmasys_usuario", JSON.stringify(usuario));
+      document.getElementById('loginOverlay').style.display = "none";
+      document.getElementById('appContainer').style.display = "block";
+      const btnL = document.getElementById('btnEntrarLogin');
+      if (btnL) { btnL.disabled = false; btnL.innerText = "ENTRAR NO SISTEMA"; }
+      preencherSelectTecnicos();
+      enviarHeartbeat();
+      buscarAtualizacoesSilenciosas();
     }
 
     function efetuarLogout() { localStorage.removeItem("dmasys_usuario"); window.location.reload(); }
@@ -594,7 +1521,19 @@
         if (badge) { badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Conectado'; badge.classList.add('connected'); }
         
         try { popularAutocomplete(); } catch(e) {}
+        try { preencherSelectTecnicos(); } catch(e) {}
+        try { renderizarTabelaTermos(bancoDados.termosEmitidos || []); } catch(e) {}
+        try { filtrarRequisicoes(); } catch(e) {}
+        try { renderizarTabelaOS(); } catch(e) {}
         try { renderizarTabelaLocacao(); } catch(e) {}
+        try { renderizarTabelaCompras(); } catch(e) {}
+        try { atualizarDashboard(); } catch(e) {}
+        try { atualizarNotificacoes(); } catch(e) {}
+        try { renderizarUsuariosOnline(); } catch(e) {}
+        try { renderizarListasAuxiliares(); } catch(e) {}
+      } else {
+        const badge = document.getElementById('statusBadge');
+        if (badge) badge.innerText = "Erro nos Dados";
       }
     }
 
@@ -608,30 +1547,71 @@
       document.body.appendChild(script);
     }
 
-    window.onload = function() { verificarSessao(); };
+    window.onload = function() {
+      verificarSessao();
+      const hoje = new Date();
+      const mesFormatado = hoje.getFullYear() + "-" + String(hoje.getMonth() + 1).padStart(2, '0');
+      if (document.getElementById('filtroMesReq')) document.getElementById('filtroMesReq').value = mesFormatado;
+      if (document.getElementById('dashFiltroMes')) document.getElementById('dashFiltroMes').value = mesFormatado;
+      buscarAtualizacoesSilenciosas();
+      setInterval(buscarAtualizacoesSilenciosas, 30000);
+      setInterval(enviarHeartbeat, 15000);
+    };
 
-    function popularAutocomplete() {
-      let listaClientesUnicos = new Set();
-      if (bancoDados.clientes) bancoDados.clientes.forEach(c => c && listaClientesUnicos.add(c));
-      if (bancoDados.locacoes) bancoDados.locacoes.forEach(l => l && l.cliente && listaClientesUnicos.add(l.cliente));
-      const listC = document.getElementById('listClientes');
-      if (listC) listC.innerHTML = Array.from(listaClientesUnicos).sort().map(c => `<option value="${c}">`).join('');
+    function salvarRequisicao(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      const cliente = document.getElementById('reqCliente').value.trim();
+      const operacao = document.querySelector('input[name="reqOperacao"]:checked')?.value || "LOCAÇÃO";
+      const eqAntigo = document.getElementById('reqEqAntigo').value.trim();
+      const eqSolicitado = document.getElementById('reqEqSolicitado').value.trim();
+      const motivo = document.getElementById('reqMotivo').value.trim();
+      const solicitante = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario || "Solicitante") : "Solicitante";
 
-      if (bancoDados.locacoes) {
-        const unidades = Array.from(new Set(bancoDados.locacoes.map(l => l ? l.unidade : '').filter(Boolean))).sort();
-        const familias = Array.from(new Set(bancoDados.locacoes.map(l => l ? l.equipamento : '').filter(Boolean))).sort();
-        const dlUni = document.getElementById('listUnidadesLocacao');
-        if (dlUni) dlUni.innerHTML = unidades.map(u => `<option value="${u}">`).join('');
-        const dlFam = document.getElementById('listFamiliasLocacao');
-        if (dlFam) dlFam.innerHTML = familias.map(f => `<option value="${f}">`).join('');
-      }
+      if (!cliente || !eqAntigo || !eqSolicitado) { return false; }
+
+      const btn = document.getElementById('btnSalvarReq');
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO...'; }
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ acao: "CRIAR_REQUISICAO", cliente, operacao, equipamentoAntigo: eqAntigo, equipamentoSolicitado: eqSolicitado, motivo, solicitante })
+      }).then(res => res.json()).then(res => {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Requisição e Gerar PDF'; }
+        if (res.status === "sucesso") {
+          document.getElementById('formReq').reset();
+          buscarAtualizacoesSilenciosas();
+          if (res.pdfUrlReq) abrirModalVisualizadorReq(res.pdfUrlReq, "Visualizar Requisição: " + res.protocoloReq);
+        }
+      }).catch(err => {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Requisição e Gerar PDF'; }
+      });
+      return false;
+    }
+
+    function abrirModalVisualizadorReq(pdfUrl, titulo) {
+      const modal = document.getElementById('modalVisualizadorReq');
+      const iframe = document.getElementById('iframeVisualizadorReq');
+      const tituloEl = document.getElementById('tituloModalReqPDF');
+      const btnLink = document.getElementById('btnAbrirNovaAbaPdfReq');
+      let embedUrl = pdfUrl;
+      if (embedUrl.includes('/file/d/')) embedUrl = embedUrl.replace(/\/view.*$/, '/preview').replace(/\/edit.*$/, '/preview');
+      if (iframe) iframe.src = embedUrl;
+      if (tituloEl) tituloEl.innerText = titulo || "Visualizar Documento (PDF)";
+      if (btnLink) btnLink.href = pdfUrl;
+      if (modal) modal.classList.add('active');
+    }
+
+    function fecharModalVisualizadorReq() {
+      const modal = document.getElementById('modalVisualizadorReq');
+      const iframe = document.getElementById('iframeVisualizadorReq');
+      if (iframe) iframe.src = "";
+      if (modal) modal.classList.remove('active');
     }
 
     function renderizarTabelaLocacao() {
       const tbody = document.getElementById('corpoTabelaLocacao');
       if (!tbody) return;
       const locacoes = bancoDados.locacoes || [];
-      
       if (locacoes.length === 0) {
         tbody.innerHTML = '<tr><td colspan="11" class="td-center" style="color:#888; padding:20px;">Nenhum registro de locação encontrado.</td></tr>';
         atualizarMetricasLocacao([]);
@@ -658,8 +1638,9 @@
         if (txtFiltro) {
           const matchCont = (l.contrato || "").toLowerCase().includes(txtFiltro);
           const matchId = (l.id || "").toString().toLowerCase().includes(txtFiltro);
+          const matchLoc = (l.localizacao || "").toLowerCase().includes(txtFiltro);
           const matchCli = cCliente.includes(txtFiltro);
-          if (!matchCont && !matchId && !matchCli) return false;
+          if (!matchCont && !matchId && !matchLoc && !matchCli) return false;
         }
         return true;
       });
@@ -700,7 +1681,6 @@
     }
 
     function filtrarTabelaLocacao() { renderizarTabelaLocacao(); }
-
     function atualizarMetricasLocacao(lista) {
       let totalReg = (lista || []).length, totalCont = 0, totalFis = 0;
       (lista || []).forEach(l => { totalCont += Number(l.qtdContratada) || 0; totalFis += Number(l.qtdFisica) || 0; });
@@ -721,18 +1701,9 @@
       document.getElementById('locModalValUnit').value = loc.valorUnitario ?? "";
       document.getElementById('locModalValTotal').value = loc.valorTotal ?? "";
       document.getElementById('locModalObservacao').value = "";
-      document.getElementById('locModalLogTexto').innerText = loc.log ? loc.log : "Nenhum log registrado.";
       document.getElementById('modalLocacao').classList.add('active');
     }
-
     function fecharModalLocacao() { document.getElementById('modalLocacao').classList.remove('active'); }
-
-    function calcularTotalLocModal() {
-      const qtd = parseFloat(document.getElementById('locModalQtdFisica').value) || 0;
-      const unit = parseFloat(document.getElementById('locModalValUnit').value) || 0;
-      const total = qtd * unit;
-      document.getElementById('locModalValTotal').value = total.toFixed(2);
-    }
 
     function confirmarAjusteLocacao() {
       const id = document.getElementById('locModalId').value;
@@ -745,18 +1716,524 @@
       const btn = document.getElementById('btnSalvarLocModal');
       btn.disabled = true; btn.innerText = "SALVANDO...";
 
-      const nomeUsr = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario || "Usuário") : "Usuário";
-
       fetch(API_URL, {
         method: 'POST',
-        body: JSON.stringify({ acao: "ATUALIZAR_QTD_FISICA_LOCACAO", id, qtdFisica: Number(novaQtd), valorUnitario: Number(valUnit) || 0, valorTotal: Number(valTotal) || 0, observacao: obs, usuario: nomeUsr })
+        body: JSON.stringify({ acao: "ATUALIZAR_QTD_FISICA_LOCACAO", id, qtdFisica: Number(novaQtd), valorUnitario: Number(valUnit) || 0, valorTotal: Number(valTotal) || 0, observacao: obs })
       }).then(res => res.json()).then(res => {
         if (res.status === "sucesso") { fecharModalLocacao(); buscarAtualizacoesSilenciosas(); }
         btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Salvar Ajuste e Log';
       }).catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Salvar Ajuste e Log'; });
     }
 
+    function renderizarTabelaCompras() {
+      const tbody = document.getElementById('corpoTabelaCompras');
+      if (!tbody) return;
+      const lista = bancoDados.compras || [];
+      if (lista.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color:#888; padding:20px;">Nenhuma cotação de compra registrada.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = lista.map(c => {
+        if (!c) return '';
+        const st = (c.status || "PENDENTE").toUpperCase();
+        let badgeClass = st === "APROVADO" ? "badge-atendido" : (st === "RECUSADO" ? "badge-recusado" : "badge-pendente");
+        const linkPdf = c.pdfUrlCompra ? `<a href="${c.pdfUrlCompra}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> Mapa PDF</a>` : '-';
+        return `
+          <tr>
+            <td class="td-center"><b>${c.protocolo || '-'}</b></td>
+            <td>${c.dataHora || '-'}</td>
+            <td><b>${c.osExterna || '-'}</b></td>
+            <td>${c.solicitante || '-'}</td>
+            <td>${c.produto || '-'}</td>
+            <td><b>${c.fornVencedor || '-'}</b></td>
+            <td class="td-center" style="font-weight:bold; color:#137333;">R$ ${Number(c.menorValor || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span></td>
+            <td class="td-center">${linkPdf}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function calcularMenorPrecoCotacao() {
+      const f1 = document.getElementById('compForn1')?.value.trim() || "Fornecedor 1";
+      const v1 = parseFloat(document.getElementById('compVal1')?.value) || 0;
+      const f2 = document.getElementById('compForn2')?.value.trim() || "Fornecedor 2";
+      const v2 = parseFloat(document.getElementById('compVal2')?.value) || 0;
+      const f3 = document.getElementById('compForn3')?.value.trim() || "Fornecedor 3";
+      const v3 = parseFloat(document.getElementById('compVal3')?.value) || 0;
+
+      let opcoes = [];
+      if (v1 > 0) opcoes.push({ nome: f1, valor: v1 });
+      if (v2 > 0) opcoes.push({ nome: f2, valor: v2 });
+      if (v3 > 0) opcoes.push({ nome: f3, valor: v3 });
+
+      const lblVencedor = document.getElementById('lblFornVencedor');
+      const lblValor = document.getElementById('lblMenorValor');
+      if (opcoes.length === 0) {
+        if (lblVencedor) lblVencedor.innerText = "-";
+        if (lblValor) lblValor.innerText = "R$ 0,00";
+        return;
+      }
+      opcoes.sort((a, b) => a.valor - b.valor);
+      const vencedor = opcoes[0];
+      if (lblVencedor) lblVencedor.innerText = vencedor.nome;
+      if (lblValor) lblValor.innerText = "R$ " + vencedor.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function salvarSolicitacaoCompra(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      const osExterna = document.getElementById('compOsExterna').value.trim();
+      const solicitante = document.getElementById('compSolicitante').value.trim();
+      const produto = document.getElementById('compProduto').value.trim();
+      if (!osExterna || !solicitante || !produto) { return false; }
+
+      const btn = document.getElementById('btnSalvarCompra');
+      btn.disabled = true; btn.innerText = "SALVANDO...";
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          acao: "CRIAR_SOLICITACAO_COMPRA", osExterna, solicitante, produto,
+          observacao: document.getElementById('compObservacao').value.trim(),
+          forn1: document.getElementById('compForn1').value.trim(), val1: parseFloat(document.getElementById('compVal1').value) || 0,
+          forn2: document.getElementById('compForn2').value.trim(), val2: parseFloat(document.getElementById('compVal2').value) || 0,
+          forn3: document.getElementById('compForn3').value.trim(), val3: parseFloat(document.getElementById('compVal3').value) || 0,
+          prazo: document.getElementById('compPrazo').value.trim(), condPagto: document.getElementById('compCondPagto').value.trim(), frete: document.getElementById('compFrete').value.trim()
+        })
+      }).then(res => res.json()).then(res => {
+        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação';
+        if (res.status === "sucesso") {
+          document.getElementById('formCompras').reset();
+          calcularMenorPrecoCotacao();
+          buscarAtualizacoesSilenciosas();
+        }
+      }).catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação'; });
+      return false;
+    }
+
+    function renderizarTabelaRequisicoes(lista) {
+      const tbody = document.getElementById('corpoRequisicoes');
+      if (!tbody) return;
+      if (!lista || lista.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição encontrada.</td></tr>';
+        return;
+      }
+
+      lista.sort((a, b) => {
+        const stA = (a.status || "").toUpperCase();
+        const stB = (b.status || "").toUpperCase();
+        if (stA === "PENDENTE" && stB !== "PENDENTE") return -1;
+        if (stA !== "PENDENTE" && stB === "PENDENTE") return 1;
+        return 0;
+      });
+
+      tbody.innerHTML = lista.map(r => {
+        if (!r) return '';
+        let st = (r.status || "PENDENTE").toUpperCase();
+        let badgeClass = st === "ATENDIDO" ? "badge-atendido" : (st === "RECUSADO" ? "badge-recusado" : "badge-pendente");
+        const linkPdfReq = r.pdfUrlReq ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${r.pdfUrlReq}', 'Visualizar Requisição: ${r.protocolo}')" title="Visualizar Requisição"><i class="fa-solid fa-eye"></i></button>` : '';
+        
+        let btnAcao = "";
+        if (st === "PENDENTE") {
+          btnAcao = `<div class="btn-action-container">
+            ${linkPdfReq}
+            <button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}', '${r.operacao || 'LOCAÇÃO'}')"><i class="fa-solid fa-check"></i> Atender</button>
+            <button type="button" class="btn-negar" onclick="abrirModalRecusa('${r.protocolo}')"><i class="fa-solid fa-xmark"></i> Negar</button>
+          </div>`;
+        } else if (st === "RECUSADO") {
+          btnAcao = `<div class="btn-action-container">${linkPdfReq}<span style="color:#dc3545; font-weight:bold; font-size:11px;">Recusado</span></div>`;
+        } else {
+          let termoTexto = r.protocoloTermo ? `Termo: ${r.protocoloTermo}` : 'Termo Gerado';
+          btnAcao = `<div class="btn-action-container">${linkPdfReq}<span class="btn-termo-link">${termoTexto}</span></div>`;
+        }
+
+        return `
+          <tr>
+            <td class="td-center"><b>${r.protocolo || '-'}</b></td>
+            <td>${r.dataHora || '-'}</td>
+            <td>${r.cliente || '-'}</td>
+            <td><b>${r.equipamentoSolicitado || '-'}</b></td>
+            <td style="color:#555; font-style:italic;">${r.motivo || "-"}</td>
+            <td class="td-center"><b>${r.operacao || 'LOCAÇÃO'}</b></td>
+            <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span></td>
+            <td class="td-center">${btnAcao}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filtrarRequisicoes() {
+      const requisicoes = bancoDados.requisicoes || [];
+      const statusFiltro = document.getElementById('filtroStatusReq')?.value || "TODOS";
+      const mesFiltro = document.getElementById('filtroMesReq')?.value || "";
+      const textoFiltro = (document.getElementById('filtroTextoReq')?.value || "").toLowerCase().trim();
+
+      let filtradas = requisicoes.filter(r => {
+        if (!r) return false;
+        if (statusFiltro !== "TODOS" && (r.status || "PENDENTE").toUpperCase() !== statusFiltro) return false;
+        if (mesFiltro && r.dataHora) {
+          const partesData = String(r.dataHora).split(' ')[0].split('/');
+          if (partesData.length === 3 && `${partesData[2]}-${partesData[1].padStart(2, '0')}` !== mesFiltro) return false;
+        }
+        if (textoFiltro) {
+          const matchProt = (r.protocolo || "").toLowerCase().includes(textoFiltro);
+          const matchCli = (r.cliente || "").toLowerCase().includes(textoFiltro);
+          const matchEq = (r.equipamentoSolicitado || "").toLowerCase().includes(textoFiltro);
+          if (!matchProt && !matchCli && !matchEq) return false;
+        }
+        return true;
+      });
+      renderizarTabelaRequisicoes(filtradas);
+    }
+
+    function atenderRequisicao(protReq, cliente, operacao) {
+      document.getElementById('reqVinculadaProtocolo').value = protReq;
+      document.getElementById('inputCliente').value = cliente;
+      const banner = document.getElementById('bannerReqVinculada');
+      const lbl = document.getElementById('lblProtReqVinculada');
+      if (banner && lbl) { lbl.innerText = protReq; banner.style.display = "flex"; }
+      const radioOp = document.querySelector(`input[name="tipoOperacao"][value="${operacao}"]`);
+      if (radioOp) radioOp.checked = true;
+      mudarAba('emissao');
+    }
+    function desvincularRequisicao() {
+      document.getElementById('reqVinculadaProtocolo').value = "";
+      const banner = document.getElementById('bannerReqVinculada');
+      if (banner) banner.style.display = "none";
+    }
+
+    function popularAutocomplete() {
+      let listaClientesUnicos = new Set();
+      if (bancoDados.clientes) bancoDados.clientes.forEach(c => c && listaClientesUnicos.add(c));
+      if (bancoDados.locacoes) bancoDados.locacoes.forEach(l => l && l.cliente && listaClientesUnicos.add(l.cliente));
+      const listC = document.getElementById('listClientes');
+      if (listC) listC.innerHTML = Array.from(listaClientesUnicos).sort().map(c => `<option value="${c}">`).join('');
+
+      if (bancoDados.equipamentos) {
+        const listE = document.getElementById('listEquipamentos');
+        if (listE) listE.innerHTML = bancoDados.equipamentos.map(eq => `<option value="TAG: ${eq.tag} | ${eq.nome} | Série: ${eq.serie}">`).join('');
+      }
+
+      if (bancoDados.locacoes) {
+        const unidades = Array.from(new Set(bancoDados.locacoes.map(l => l ? l.unidade : '').filter(Boolean))).sort();
+        const familias = Array.from(new Set(bancoDados.locacoes.map(l => l ? l.equipamento : '').filter(Boolean))).sort();
+        const dlUni = document.getElementById('listUnidadesLocacao');
+        if (dlUni) dlUni.innerHTML = unidades.map(u => `<option value="${u}">`).join('');
+        const dlFam = document.getElementById('listFamiliasLocacao');
+        if (dlFam) dlFam.innerHTML = familias.map(f => `<option value="${f}">`).join('');
+      }
+    }
+
+    function autoPreencherEquipamento() {
+      const val = document.getElementById('buscaEquipamento').value.toLowerCase().trim();
+      const tbody = document.getElementById('corpoAcessorios');
+      if (!val || !bancoDados.equipamentos) return;
+      const eq = bancoDados.equipamentos.find(i => `tag: ${i.tag} | ${i.nome} | série: ${i.serie}`.toLowerCase() === val || (i.tag || '').toLowerCase() === val);
+      if (eq) {
+        equipamentoSelecionado = eq;
+        document.getElementById('eqTag').value = eq.tag || "-";
+        document.getElementById('eqSerie').value = eq.serie || "-";
+        document.getElementById('eqPatrimonio').value = eq.patrimonio || "-";
+        document.getElementById('eqNome').value = eq.nome || "-";
+        document.getElementById('eqModelo').value = eq.modelo || "-";
+        document.getElementById('eqFabricante').value = eq.fabricante || "-";
+
+        const rawAcs = eq.acessorios ? eq.acessorios.toString().trim() : "";
+        if (!rawAcs || rawAcs.toUpperCase() === "NÃO POSSUI") {
+          tbody.innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 20px;">NÃO POSSUI ACESSÓRIOS CADASTRADOS.</td></tr>';
+        } else {
+          const listaAcs = rawAcs.split(';').map(a => a.trim()).filter(Boolean);
+          tbody.innerHTML = listaAcs.map((ac, idx) => `
+            <tr>
+              <td class="td-center">${idx + 1}</td>
+              <td class="td-center"><input type="number" class="qtd-acessorio" value="1" min="0" style="width: 50px; text-align: center; font-weight: bold; border: 1px solid #1a4d80; color: #1a4d80; border-radius: 4px; padding: 2px;"></td>
+              <td><b>${ac.toUpperCase()}</b></td>
+              <td class="td-center" style="color:#166534; font-weight:bold;">CONFORME</td>
+            </tr>
+          `).join('');
+        }
+      }
+    }
+
+    function autoPreencherOSEquipamento() {
+      const val = document.getElementById('osBuscaEquip').value.toLowerCase().trim();
+      if (!val || !bancoDados.equipamentos) return;
+      const eq = bancoDados.equipamentos.find(i => `tag: ${i.tag} | ${i.nome} | série: ${i.serie}`.toLowerCase() === val || (i.tag || '').toLowerCase() === val);
+      if (eq) {
+        document.getElementById('osTag').value = eq.tag || "-";
+        document.getElementById('osSerie').value = eq.serie || "-";
+        document.getElementById('osPatrimonio').value = eq.patrimonio || "-";
+        document.getElementById('osNomeEquip').value = `${eq.nome || ''} ${eq.modelo ? '(' + eq.modelo + ')' : ''}`.trim() || "-";
+      }
+    }
+
+    const canvas = document.getElementById('canvasAssinatura');
+    const ctx = canvas?.getContext('2d');
+    let desenhando = false;
+    function obterPosicao(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+    function iniciarDesenho(e) { desenhando = true; desenhar(e); }
+    function pararDesenho() { desenhando = false; ctx?.beginPath(); }
+    function desenhar(e) {
+      if (!desenhando || !ctx) return;
+      e.preventDefault();
+      const pos = obterPosicao(e);
+      ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineTo(pos.x, pos.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
+    }
+    if (canvas) {
+      canvas.addEventListener('mousedown', iniciarDesenho); canvas.addEventListener('mouseup', pararDesenho); canvas.addEventListener('mousemove', desenhar);
+      canvas.addEventListener('touchstart', iniciarDesenho); canvas.addEventListener('touchend', pararDesenho); canvas.addEventListener('touchmove', desenhar);
+    }
+    function limparAssinatura() { ctx?.clearRect(0, 0, canvas.width, canvas.height); }
+
+    function gerarTermo(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      if (!equipamentoSelecionado) { return false; }
+      const nomeTec = document.getElementById('selectTecnico').value;
+      if (!nomeTec) { return false; }
+
+      let acessoriosList = [];
+      document.querySelectorAll('#corpoAcessorios tr').forEach((tr, idx) => {
+        const tds = tr.querySelectorAll('td');
+        if (tds.length >= 3 && !tr.innerText.includes("NÃO POSSUI")) {
+          const inputQtd = tr.querySelector('.qtd-acessorio');
+          acessoriosList.push({ item: idx + 1, qtd: inputQtd ? (parseInt(inputQtd.value) || 1) : 1, descricao: tds[2].innerText.trim(), conformidade: "CONFORME" });
+        }
+      });
+
+      const btn = document.getElementById('btnEnviar');
+      btn.disabled = true; btn.innerText = "GERANDO PDF...";
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          acao: "CRIAR_TERMO",
+          cliente: document.getElementById('inputCliente').value,
+          equipamento: equipamentoSelecionado,
+          tipoOperacao: document.querySelector('input[name="tipoOperacao"]:checked').value,
+          acessorios: acessoriosList,
+          tecnico: { nome: nomeTec },
+          assinaturaCliente: canvas ? canvas.toDataURL() : "",
+          protocoloReq: document.getElementById('reqVinculadaProtocolo').value
+        })
+      }).then(res => res.json()).then(res => {
+        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)';
+        if (res.status === "sucesso") {
+          desvincularRequisicao();
+          document.getElementById('termoForm').reset();
+          limparAssinatura();
+          equipamentoSelecionado = null;
+          document.getElementById('corpoAcessorios').innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 24px;">Selecione um equipamento para visualizar os acessórios.</td></tr>';
+          buscarAtualizacoesSilenciosas();
+          if (res.pdfUrl) abrirModalVisualizadorReq(res.pdfUrl, "Termo Gerado: " + res.protocolo);
+          mudarAba('consulta');
+        }
+      }).catch(err => {
+        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)';
+      });
+      return false;
+    }
+
+    function renderizarTabelaOS() {
+      const tbody = document.getElementById('corpoOS');
+      if (!tbody) return;
+      const listaOS = bancoDados.ordensServico || [];
+      if (listaOS.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color: #888; padding: 20px;">Nenhuma Ordem de Serviço registrada.</td></tr>';
+        return;
+      }
+      const statusFiltro = document.getElementById('filtroStatusOS')?.value || "TODOS";
+      const textoFiltro = (document.getElementById('filtroTextoOS')?.value || "").toLowerCase().trim();
+
+      let filtradas = listaOS.filter(os => {
+        if (!os) return false;
+        if (statusFiltro !== "TODOS" && (os.status || "").toUpperCase() !== statusFiltro) return false;
+        if (textoFiltro) {
+          const matchProt = (os.protocoloOS || "").toLowerCase().includes(textoFiltro);
+          const matchCli = (os.cliente || "").toLowerCase().includes(textoFiltro);
+          const matchTag = (os.tag || "").toLowerCase().includes(textoFiltro);
+          const matchEq = (os.equipamento || "").toLowerCase().includes(textoFiltro);
+          if (!matchProt && !matchCli && !matchTag && !matchEq) return false;
+        }
+        return true;
+      });
+
+      tbody.innerHTML = filtradas.map(os => `
+        <tr>
+          <td class="td-center"><b>${os.protocoloOS || '-'}</b></td>
+          <td>${os.dataAbertura || '-'}</td>
+          <td>${os.cliente || '-'}</td>
+          <td class="td-center"><b>${os.tag || '-'}</b></td>
+          <td>${os.equipamento || '-'}</td>
+          <td class="td-center">${os.tipoManutencao || '-'}</td>
+          <td class="td-center"><b>${os.prioridade || '-'}</b></td>
+          <td class="td-center"><span class="badge-status ${os.status === 'CONCLUÍDA' ? 'badge-atendido' : 'badge-pendente'}">${os.status || 'ABERTA'}</span></td>
+          <td class="td-center">
+            ${os.pdfUrlOS ? `<a href="${os.pdfUrlOS}" target="_blank" class="btn-pdf" style="padding:4px 8px; font-size:10px;"><i class="fa-solid fa-file-pdf"></i> PDF</a>` : '-'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function salvarNovaOS(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      const cliente = document.getElementById('osCliente').value.trim();
+      const solicitante = document.getElementById('osSolicitante').value.trim();
+      const defeito = document.getElementById('osDefeito').value.trim();
+      if (!cliente || !solicitante || !defeito) { return false; }
+
+      const btn = document.getElementById('btnSalvarOS');
+      btn.disabled = true; btn.innerText = "REGISTRANDO...";
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          acao: "CRIAR_OS", cliente, tipoManutencao: document.getElementById('osTipo').value,
+          prioridade: document.getElementById('osPrioridade').value, tag: document.getElementById('osTag').value.trim(),
+          equipamento: document.getElementById('osNomeEquip').value.trim(), solicitante, tecnico: document.getElementById('osTecnico').value.trim(),
+          defeitoRelatado: defeito, diagnosticoTecnico: document.getElementById('osDiagnostico').value.trim(), servicoRealizado: document.getElementById('osServico').value.trim()
+        })
+      }).then(res => res.json()).then(res => {
+        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar O.S.';
+        if (res.status === "sucesso") {
+          document.getElementById('formNovaOS').reset();
+          buscarAtualizacoesSilenciosas();
+          mudarAba('os_gestao');
+        }
+      }).catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar O.S.'; });
+      return false;
+    }
+
+    function renderizarTabelaTermos(lista) {
+      const tbody = document.getElementById('corpoTermos');
+      if (!tbody) return;
+      if (!lista || lista.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 24px;">Nenhum termo emitido encontrado.</td></tr>';
+        return;
+      }
+      const filtroVal = (document.getElementById('filtroTermos')?.value || "").toLowerCase().trim();
+      let dadosExibir = lista;
+      if (filtroVal) {
+        dadosExibir = lista.filter(t => t && ((t.protocolo || "").toLowerCase().includes(filtroVal) || (t.cliente || "").toLowerCase().includes(filtroVal) || (t.tag || "").toLowerCase().includes(filtroVal) || (t.equipamento || "").toLowerCase().includes(filtroVal) || (t.tecnico || "").toLowerCase().includes(filtroVal)));
+      }
+      tbody.innerHTML = dadosExibir.map(t => `
+        <tr>
+          <td class="td-center"><b>${t.protocolo || '-'}</b></td>
+          <td>${t.dataHora || '-'}</td>
+          <td>${t.cliente || '-'}</td>
+          <td class="td-center"><b>${t.tag || '-'}</b></td>
+          <td>${t.equipamento || '-'}</td>
+          <td class="td-center">${t.tipo || '-'}</td>
+          <td>${t.tecnico || '-'}</td>
+          <td class="td-center">
+            ${t.pdfUrl ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${t.pdfUrl}', 'Visualizar Termo: ${t.protocolo}')"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : '-'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderizarListasAuxiliares() {
+      const rels = bancoDados.relacoesAuxiliares || [];
+      const descricoesUnicas = Array.from(new Set(rels.map(r => r ? r.descricao : '').filter(Boolean))).sort();
+      const dlDesc = document.getElementById('listDescricoesPadrao');
+      if (dlDesc) dlDesc.innerHTML = descricoesUnicas.map(d => `<option value="${d}">`).join('');
+
+      const tbody = document.getElementById('tabelaAuxiliaresList');
+      if (tbody) {
+        tbody.innerHTML = rels.length === 0 ? '<tr><td colspan="3" class="td-center" style="color:#888;">Nenhuma combinação registrada.</td></tr>' :
+          rels.map(r => `<tr><td><b>${r.descricao || '-'}</b></td><td>${r.modelo || "-"}</td><td>${r.fabricante || "-"}</td></tr>`).join('');
+      }
+    }
+
+    function atualizarDashboard() {
+      if (!bancoDados || !bancoDados.requisicoes) return;
+      const modo = document.getElementById('dashModoPeriodo')?.value || "MES";
+      const mesFiltro = document.getElementById('dashFiltroMes')?.value || "";
+      let reqs = bancoDados.requisicoes || [];
+
+      if (modo === "MES" && mesFiltro) {
+        reqs = reqs.filter(r => {
+          if (!r || !r.dataHora) return false;
+          const partesData = String(r.dataHora).split(' ')[0].split('/');
+          return partesData.length === 3 && `${partesData[2]}-${partesData[1].padStart(2, '0')}` === mesFiltro;
+        });
+      }
+
+      if (document.getElementById('dashTotalReq')) document.getElementById('dashTotalReq').innerText = reqs.length;
+      let pendentes = 0, atendidos = 0, recusados = 0;
+      let contagemClientes = {}, contagemFamilias = {};
+
+      reqs.forEach(r => {
+        let st = (r.status || "PENDENTE").toUpperCase();
+        if (st === "PENDENTE") pendentes++;
+        else if (st === "ATENDIDO") atendidos++;
+        else if (st === "RECUSADO") recusados++;
+
+        let cli = r.cliente || "Não informado";
+        contagemClientes[cli] = (contagemClientes[cli] || 0) + 1;
+        let eq = r.equipamentoSolicitado || "Diversos";
+        contagemFamilias[eq] = (contagemFamilias[eq] || 0) + 1;
+      });
+
+      if (document.getElementById('dashPendentes')) document.getElementById('dashPendentes').innerText = pendentes;
+      if (document.getElementById('dashAtendidos')) document.getElementById('dashAtendidos').innerText = atendidos;
+      if (document.getElementById('dashRecusados')) document.getElementById('dashRecusados').innerText = recusados;
+
+      const divCli = document.getElementById('chartClientes');
+      if (divCli) {
+        const topCli = Object.entries(contagemClientes).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        divCli.innerHTML = topCli.length === 0 ? '<div style="color:#888; text-align:center; padding: 20px;">Sem dados.</div>' :
+          topCli.map(([nome, qtd]) => `<div class="bar-container"><div class="bar-label"><span>${nome}</span><span>${qtd} reqs</span></div><div class="bar-bg"><div class="bar-fill" style="width: ${Math.round((qtd / topCli[0][1]) * 100)}%;"></div></div></div>`).join('');
+      }
+
+      const divFam = document.getElementById('chartFamilias');
+      if (divFam) {
+        const topFam = Object.entries(contagemFamilias).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        divFam.innerHTML = topFam.length === 0 ? '<div style="color:#888; text-align:center; padding: 20px;">Sem dados.</div>' :
+          topFam.map(([nome, qtd]) => `<div class="bar-container"><div class="bar-label"><span>${nome}</span><span>${qtd} reqs</span></div><div class="bar-bg"><div class="bar-fill" style="width: ${Math.round((qtd / topFam[0][1]) * 100)}%; background: linear-gradient(90deg, #10b981, #34d399);"></div></div></div>`).join('');
+      }
+    }
+
+    function atualizarNotificacoes() {
+      if (!bancoDados || !bancoDados.requisicoes) return;
+      const pendentes = bancoDados.requisicoes.filter(r => r && (r.status || '').toUpperCase() === "PENDENTE");
+      const badge = document.getElementById('notifBadge');
+      const textCount = document.getElementById('notifCountText');
+      const listContainer = document.getElementById('notifList');
+      if (!badge || !textCount || !listContainer) return;
+
+      if (pendentes.length > 0) {
+        badge.innerText = pendentes.length; badge.classList.add('active');
+        textCount.innerText = `${pendentes.length} pendente(s)`;
+        listContainer.innerHTML = pendentes.map(p => `
+          <div class="notif-item" onclick="irParaRequisicaoEspecifica(event, '${p.protocolo}')">
+            <div class="notif-item-title"><span>${p.protocolo || '-'}</span><span style="color:#e0a800;"><i class="fa-solid fa-clock"></i> Pendente</span></div>
+            <div class="notif-item-sub"><b>${p.cliente || '-'}</b></div>
+            <div class="notif-item-sub">${p.equipamentoSolicitado || '-'}</div>
+          </div>
+        `).join('');
+      } else {
+        badge.innerText = "0"; badge.classList.remove('active');
+        textCount.innerText = "0 pendentes";
+        listContainer.innerHTML = '<div style="padding: 16px; text-align: center; color: #888; font-size: 12px;">Nenhuma pendência no momento.</div>';
+      }
+    }
+
+    function irParaRequisicaoEspecifica(e, protocolo) {
+      if (e) e.stopPropagation();
+      fecharTodosDropdowns();
+      if (document.getElementById('filtroStatusReq')) document.getElementById('filtroStatusReq').value = "PENDENTE";
+      if (document.getElementById('filtroTextoReq')) document.getElementById('filtroTextoReq').value = protocolo || "";
+      mudarAba('requisicoes');
+      filtrarRequisicoes();
+    }
+
     function mudarAba(nomeAba) {
+      fecharTodosDropdowns();
       document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
@@ -766,6 +2243,7 @@
       } else if (nomeAba === 'dashboard') {
         document.getElementById('btnNavDashboard')?.classList.add('active');
         document.getElementById('abaDashboard')?.classList.add('active');
+        atualizarDashboard();
       } else if (nomeAba === 'locacao') {
         document.getElementById('btnNavLocacao')?.classList.add('active');
         document.getElementById('abaLocacao')?.classList.add('active');
@@ -773,27 +2251,31 @@
       } else if (nomeAba === 'compras') {
         document.getElementById('btnNavCompras')?.classList.add('active');
         document.getElementById('abaCompras')?.classList.add('active');
+        renderizarTabelaCompras();
       } else if (nomeAba === 'requisicoes') {
         document.getElementById('btnNavQualidade')?.classList.add('active');
         document.getElementById('abaRequisicoes')?.classList.add('active');
+      } else if (nomeAba === 'emissao') {
+        document.getElementById('btnNavQualidade')?.classList.add('active');
+        document.getElementById('abaEmissao')?.classList.add('active');
+      } else if (nomeAba === 'consulta') {
+        document.getElementById('btnNavQualidade')?.classList.add('active');
+        document.getElementById('abaConsulta')?.classList.add('active');
       } else if (nomeAba === 'os_gestao') {
         document.getElementById('btnNavManutencao')?.classList.add('active');
         document.getElementById('abaOsGestao')?.classList.add('active');
+        renderizarTabelaOS();
+      } else if (nomeAba === 'os_abertura') {
+        document.getElementById('btnNavManutencao')?.classList.add('active');
+        document.getElementById('abaOsAbertura')?.classList.add('active');
+      } else if (nomeAba === 'cad_equipamento') {
+        document.getElementById('btnNavCadastros')?.classList.add('active');
+        document.getElementById('abaCadEquipamento')?.classList.add('active');
+      } else if (nomeAba === 'cad_auxiliares') {
+        document.getElementById('btnNavCadastros')?.classList.add('active');
+        document.getElementById('abaCadAuxiliares')?.classList.add('active');
       }
     }
-
-    function toggleChat() { document.getElementById('chatBox').classList.toggle('active'); }
-    function enviarWhatsApp() {
-      const msg = document.getElementById('msgChat').value.trim();
-      window.open(`https://wa.me/${NUMERO_WHATSAPP_SUPORTE}?text=${encodeURIComponent("Olá Suporte DMA Sys! " + (msg || "Preciso de auxílio."))}`, '_blank');
-      toggleChat();
-    }
-    function toggleUsersDropdown(e) { if(e) e.stopPropagation(); document.getElementById('usersDropdown').classList.toggle('active'); }
-    function toggleNotifications(e) { if(e) e.stopPropagation(); document.getElementById('notifDropdown').classList.toggle('active'); }
-    document.addEventListener('click', () => {
-      document.getElementById('usersDropdown')?.classList.remove('active');
-      document.getElementById('notifDropdown')?.classList.remove('active');
-    });
   </script>
 </body>
 </html>
