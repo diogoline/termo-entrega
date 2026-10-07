@@ -7,7 +7,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #f0f2f5; color: #333; min-height: 100vh; display: flex; flex-direction: column; padding: 16px; padding-bottom: 70px; overflow-x: hidden; }
+    /* CORREÇÃO 1: Removido o display:flex e flex-direction:column que estava conflitando com o rodapé */
+    body { background-color: #f0f2f5; color: #333; min-height: 100vh; padding: 16px; padding-bottom: 70px; overflow-x: hidden; }
     
     .header { background-color: #1a4d80; color: white; padding: 12px 24px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; box-shadow: 0 3px 6px rgba(0,0,0,0.12); position: relative; }
     .header h1 { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
@@ -161,14 +162,11 @@
     .chat-box-wa { display: none; position: fixed; bottom: 105px; right: 20px; width: 300px; background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 102; overflow: hidden; border: 1px solid #e2e8f0; }
     .chat-box-wa.active { display: block; animation: fadeIn 0.2s ease-in-out; }
 
-   
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-   
-    body { padding-bottom: 70px; }
-
+    /* CORREÇÃO 2: z-index ajustado para 99999 */
     /* --- RODAPÉ FIXO --- */
-    .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; border-top: 2px solid #2563eb; }
+    .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 99999; border-top: 2px solid #2563eb; }
     .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
     
   </style>
@@ -979,7 +977,14 @@
       </div>
     </div>
 
-  </div>
+    <!-- CORREÇÃO 3: RODAPÉ MOVIDO PARA DENTRO DO APP CONTAINER -->
+    <!-- RODAPÉ DO SISTEMA -->
+    <footer class="system-footer">
+      <div><b>DMA SYS</b> v2.0 | Sistema de Gestão Operacional</div>
+      <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
+    </footer>
+
+  </div> <!-- FIM DO APP CONTAINER -->
 
   <!-- MODAL VISUALIZADOR DE REQUISIÇÃO (PDF) -->
   <div id="modalVisualizadorReq" class="modal-overlay">
@@ -1091,11 +1096,6 @@
       <button type="button" onclick="enviarWhatsAppSuporte()" style="background:#25d366; color:white; border:none; padding:8px; width:100%; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:8px;">Iniciar Conversa no WhatsApp</button>
     </div>
   </div>
-
-  <footer class="system-footer">
-    <div><b>DMA SYS</b> v2.0 | Sistema de Gestão Operacional</div>
-    <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
-  </footer>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
@@ -2672,11 +2672,5 @@
       filtrarRequisicoes();
     }
   </script>
-
-  <!-- RODAPÉ DO SISTEMA -->
-  <footer class="system-footer">
-    <div><b>DMA SYS</b> v2.0 | Sistema de Gestão Operacional</div>
-    <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
-  </footer>
 </body>
 </html>
