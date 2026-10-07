@@ -165,6 +165,10 @@
     .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* --- RODAPÉ FIXO --- */
+    .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; border-top: 2px solid #2563eb; }
+    .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -2666,5 +2670,11 @@
       filtrarRequisicoes();
     }
   </script>
+
+  <!-- RODAPÉ DO SISTEMA -->
+  <footer class="system-footer">
+    <div><b>DMA SYS</b> v2.0 | Sistema de Gestão Operacional</div>
+    <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
+  </footer>
 </body>
 </html>
