@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DMA SYS - Gestão de Termos, Requisições, O.S., Locação e Compras</title>
+  <title>DMA SYS - Plataforma Completa e Moderna</title>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -172,6 +172,7 @@
 
     .dropdown { position: relative; display: inline-block; }
     .dropdown-content { top: 100%; left: 0; min-width: 220px; margin-top: 4px; }
+    .dropdown.open .dropdown-content { display: block; animation: fadeIn 0.15s ease-in-out; }
 
     .tab-content { display: none; }
     .tab-content.active { display: block; animation: fadeIn .25s ease-out; }
@@ -405,7 +406,6 @@
     .manual-secao li { margin-bottom: 6px; }
     .alerta-seguranca { background: #eff6ff; border-left: 4px solid #1a4d80; padding: 10px 14px; font-size: 12px; font-weight: 600; color: #1e40af; border-radius: 0 10px 10px 0; }
 
-    /* WIDGET DE CHAT FLUTUANTE CORRIGIDO */
     .chat-widget-btn { position: fixed; bottom: 45px; right: 20px; background: #25d366; color: white; border: none; width: 48px; height: 48px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 24px rgba(37,211,102,.4); z-index: 101; transition: transform 0.2s; }
     .chat-widget-btn:hover { transform: scale(1.08); }
     
@@ -612,7 +612,6 @@
       </div>
     </div>
 
-    <!-- CONTROLE DE LOCAÇÃO -->
     <div id="abaLocacao" class="tab-content">
       <div class="dash-metrics" style="grid-template-columns: repeat(4, 1fr);">
         <div class="metric-card blue">
@@ -691,7 +690,6 @@
       </div>
     </div>
 
-    <!-- MÓDULO DE COMPRAS -->
     <div id="abaCompras" class="tab-content">
       <div class="card">
         <div class="card-title">
@@ -801,7 +799,6 @@
       </div>
     </div>
 
-    <!-- DASHBOARD -->
     <div id="abaDashboard" class="tab-content">
       <div class="card" style="margin-bottom: 16px;">
         <div class="card-title"><span>Filtro de Período das Métricas</span></div>
@@ -856,7 +853,6 @@
       </div>
     </div>
 
-    <!-- REQUISIÇÕES -->
     <div id="abaRequisicoes" class="tab-content">
       <div class="card">
         <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
@@ -945,7 +941,6 @@
       </div>
     </div>
 
-    <!-- EMISSÃO DE TERMO -->
     <div id="abaEmissao" class="tab-content">
       <div id="bannerReqVinculada" style="display: none; background: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 12px; align-items: center; justify-content: space-between;">
         <span><i class="fa-solid fa-link"></i> Atendendo Requisição Pendente: <span id="lblProtReqVinculada" style="color: #1a4d80;">-</span></span>
@@ -1043,7 +1038,6 @@
       </form>
     </div>
 
-    <!-- CONSULTA DE TERMOS -->
     <div id="abaConsulta" class="tab-content">
       <div class="card">
         <div class="card-title">Histórico e Consulta de Termos Gerados</div>
@@ -1073,7 +1067,6 @@
       </div>
     </div>
 
-    <!-- GESTÃO DE O.S. -->
     <div id="abaOsGestao" class="tab-content">
       <div class="card">
         <div class="card-title">
@@ -1119,7 +1112,6 @@
       </div>
     </div>
 
-    <!-- ABERTURA DE O.S. -->
     <div id="abaOsAbertura" class="tab-content">
       <div class="card">
         <div class="card-title">Abrir Nova Ordem de Serviço (Manutenção)</div>
@@ -1181,7 +1173,6 @@
       </div>
     </div>
 
-    <!-- CADASTRO DE EQUIPAMENTO -->
     <div id="abaCadEquipamento" class="tab-content">
       <div class="card">
         <div class="card-title">Cadastrar Novo Equipamento (Aba EQUIP)</div>
@@ -1210,7 +1201,6 @@
       </div>
     </div>
 
-    <!-- CADASTROS AUXILIARES -->
     <div id="abaCadAuxiliares" class="tab-content">
       <div class="card">
         <div class="card-title">Gerenciar Nomenclaturas & Combinações Válidas</div>
@@ -1236,7 +1226,6 @@
 
   </div>
 
-  <!-- MODAIS E WIDGETS -->
   <div id="modalVisualizadorReq" class="modal-overlay">
     <div class="modal-box" style="width: 800px; max-width: 95vw; height: 85vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -1347,7 +1336,6 @@
     let equipamentoSelecionado = null;
     let usuarioLogado = null;
     let estaBuscandoDados = false;
-    let chatAtivoDestinatario = "GERAL";
 
     function criarDebounce(func, wait = 200) {
       let timeout;
@@ -1579,7 +1567,7 @@
       const motivo = document.getElementById('reqMotivo').value.trim();
       const solicitante = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario || "Solicitante") : "Solicitante";
 
-      if (!cliente || !eqAntigo || !eqSolicitado) { alert("Preencha os campos obrigatórios."); return false; }
+      if (!cliente || !eqAntigo || !eqSolicitado) { return false; }
 
       const btn = document.getElementById('btnSalvarReq');
       if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO...'; }
@@ -1593,10 +1581,9 @@
           document.getElementById('formReq').reset();
           buscarAtualizacoesSilenciosas();
           if (res.pdfUrlReq) abrirModalVisualizadorReq(res.pdfUrlReq, "Visualizar Requisição: " + res.protocoloReq);
-        } else { alert("Erro ao enviar requisição."); }
+        }
       }).catch(err => {
         if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Requisição e Gerar PDF'; }
-        alert("Falha de conexão.");
       });
       return false;
     }
@@ -1725,7 +1712,7 @@
       const valTotal = document.getElementById('locModalValTotal').value;
       const obs = document.getElementById('locModalObservacao').value.trim();
 
-      if (novaQtd === "" || isNaN(novaQtd) || Number(novaQtd) < 0) { alert("Informe uma quantidade física válida."); return; }
+      if (novaQtd === "" || isNaN(novaQtd) || Number(novaQtd) < 0) { return; }
       const btn = document.getElementById('btnSalvarLocModal');
       btn.disabled = true; btn.innerText = "SALVANDO...";
 
@@ -1734,7 +1721,6 @@
         body: JSON.stringify({ acao: "ATUALIZAR_QTD_FISICA_LOCACAO", id, qtdFisica: Number(novaQtd), valorUnitario: Number(valUnit) || 0, valorTotal: Number(valTotal) || 0, observacao: obs })
       }).then(res => res.json()).then(res => {
         if (res.status === "sucesso") { fecharModalLocacao(); buscarAtualizacoesSilenciosas(); }
-        else { alert("Erro ao atualizar locação."); }
         btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Salvar Ajuste e Log';
       }).catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Salvar Ajuste e Log'; });
     }
@@ -1799,7 +1785,7 @@
       const osExterna = document.getElementById('compOsExterna').value.trim();
       const solicitante = document.getElementById('compSolicitante').value.trim();
       const produto = document.getElementById('compProduto').value.trim();
-      if (!osExterna || !solicitante || !produto) { alert("Preencha os campos obrigatórios."); return false; }
+      if (!osExterna || !solicitante || !produto) { return false; }
 
       const btn = document.getElementById('btnSalvarCompra');
       btn.disabled = true; btn.innerText = "SALVANDO...";
@@ -1820,8 +1806,7 @@
           document.getElementById('formCompras').reset();
           calcularMenorPrecoCotacao();
           buscarAtualizacoesSilenciosas();
-          alert(`Cotação ${res.protocolo} criada com sucesso!`);
-        } else { alert("Erro ao salvar cotação."); }
+        }
       }).catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação'; });
       return false;
     }
@@ -2007,9 +1992,9 @@
 
     function gerarTermo(e) {
       if (e) { e.preventDefault(); e.stopPropagation(); }
-      if (!equipamentoSelecionado) { alert("Selecione um equipamento válido."); return false; }
+      if (!equipamentoSelecionado) { return false; }
       const nomeTec = document.getElementById('selectTecnico').value;
-      if (!nomeTec) { alert("Selecione o técnico responsável."); return false; }
+      if (!nomeTec) { return false; }
 
       let acessoriosList = [];
       document.querySelectorAll('#corpoAcessorios tr').forEach((tr, idx) => {
@@ -2046,7 +2031,7 @@
           buscarAtualizacoesSilenciosas();
           if (res.pdfUrl) abrirModalVisualizadorReq(res.pdfUrl, "Termo Gerado: " + res.protocolo);
           mudarAba('consulta');
-        } else { alert("Erro ao gerar termo."); }
+        }
       }).catch(err => {
         btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)';
       });
@@ -2099,7 +2084,7 @@
       const cliente = document.getElementById('osCliente').value.trim();
       const solicitante = document.getElementById('osSolicitante').value.trim();
       const defeito = document.getElementById('osDefeito').value.trim();
-      if (!cliente || !solicitante || !defeito) { alert("Preencha os campos obrigatórios."); return false; }
+      if (!cliente || !solicitante || !defeito) { return false; }
 
       const btn = document.getElementById('btnSalvarOS');
       btn.disabled = true; btn.innerText = "REGISTRANDO...";
@@ -2116,10 +2101,9 @@
         btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar O.S.';
         if (res.status === "sucesso") {
           document.getElementById('formNovaOS').reset();
-          alert(`Ordem de Serviço ${res.protocoloOS} criada com sucesso!`);
           buscarAtualizacoesSilenciosas();
           mudarAba('os_gestao');
-        } else { alert("Erro ao criar O.S."); }
+        }
       }).catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar O.S.'; });
       return false;
     }
@@ -2128,7 +2112,7 @@
       const tbody = document.getElementById('corpoTermos');
       if (!tbody) return;
       if (!lista || lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhum termo emitido encontrado.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 24px;">Nenhum termo emitido encontrado.</td></tr>';
         return;
       }
       const filtroVal = (document.getElementById('filtroTermos')?.value || "").toLowerCase().trim();
