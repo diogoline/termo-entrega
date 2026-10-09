@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    /* CORREÇÃO 1: Removido o display:flex e flex-direction:column que estava conflitando com o rodapé */
     body { background-color: #f0f2f5; color: #333; min-height: 100vh; padding: 16px; padding-bottom: 70px; overflow-x: hidden; }
     
     .header { background-color: #1a4d80; color: white; padding: 12px 24px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; box-shadow: 0 3px 6px rgba(0,0,0,0.12); position: relative; }
@@ -156,7 +155,6 @@
     .emoji-item { font-size: 16px; cursor: pointer; padding: 4px; border-radius: 4px; transition: background 0.1s; }
     .emoji-item:hover { background: #f1f5f9; }
 
-    /* WIDGET WHATSAPP FLUTUANTE */
     .chat-widget-btn { position: fixed; bottom: 45px; right: 20px; background: #25d366; color: white; border: none; width: 48px; height: 48px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.25); z-index: 101; transition: transform 0.2s; }
     .chat-widget-btn:hover { transform: scale(1.08); }
     .chat-box-wa { display: none; position: fixed; bottom: 105px; right: 20px; width: 300px; background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 102; overflow: hidden; border: 1px solid #e2e8f0; }
@@ -164,11 +162,125 @@
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* CORREÇÃO 2: z-index ajustado para 99999 */
     /* --- RODAPÉ FIXO --- */
     .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 99999; border-top: 2px solid #2563eb; }
     .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
-    
+
+    /* ===================================================================
+       TEMA VISUAL DMA SYS (v3) — SOMENTE cores, sombras, degradês e cantos.
+       =================================================================== */
+    body { background:#eef2f8; color:#1e293b; }
+
+    /* Cabeçalho */
+    .header { background:linear-gradient(120deg,#0f2a4a 0%,#1a4d80 60%,#2b6cb0 100%); border-radius:12px; box-shadow:0 8px 22px rgba(15,42,74,.28); }
+    .status-badge { background:#fbbf24; }
+    .status-badge.connected { background:#22c55e; box-shadow:0 0 0 3px rgba(34,197,94,.25); }
+    .notification-btn, .btn-header-ajuda, .btn-logout { background:rgba(255,255,255,.12); }
+    .btn-header-ajuda, .btn-logout { border-color:rgba(255,255,255,.28); }
+    .notification-btn:hover, .btn-header-ajuda:hover { background:rgba(255,255,255,.26); }
+    .notification-dropdown, .menu-ajuda-dropdown, .dropdown-content { border-radius:12px; border-color:#e2e8f0; box-shadow:0 16px 38px rgba(15,23,42,.2); }
+    .notif-header { background:#f1f6fd; }
+    .notif-item:hover, .menu-ajuda-item:hover, .dropdown-content button:hover { background:#eaf2ff; color:#1d4ed8; }
+
+    /* Navegação */
+    .nav-tabs { border-radius:12px; border-color:#e2e8f0; box-shadow:0 2px 10px rgba(15,23,42,.06); }
+    .nav-tab { background:#eef2f9; color:#334155; border-radius:9px; }
+    .nav-tab:hover { background:#dde8f8; color:#1a4d80; }
+    .nav-tab.active { background:linear-gradient(135deg,#2563eb,#1a4d80); color:#fff; box-shadow:0 5px 12px rgba(37,99,235,.35); }
+
+    /* Cartões e títulos */
+    .card { border-radius:12px; border-color:#e2e8f0; box-shadow:0 2px 12px rgba(15,23,42,.07); }
+    .card-title { color:#0f2a4a; border-bottom-color:#2563eb; }
+
+    /* Campos */
+    label { color:#475569; }
+    input[type="text"], input[type="password"], input[type="month"], select, textarea { border-color:#d3dbe8; border-radius:8px; background:#fbfcfe; }
+    input[type="text"]:hover, select:hover, textarea:hover { border-color:#9fb3d1; }
+    input[type="text"]:focus, input[type="password"]:focus, input[type="month"]:focus, select:focus, textarea:focus { border-color:#2563eb; background:#fff; box-shadow:0 0 0 3px rgba(37,99,235,.16); }
+    input[readonly] { background-color:#eef2f8; color:#1e293b; }
+    input[type="radio"], input[type="checkbox"] { accent-color:#2563eb; }
+
+    /* Tabelas */
+    .table-container { border-color:#dbe3ef; border-radius:10px; }
+    th { background:linear-gradient(180deg,#eef4fc,#e3edf9); color:#0f2a4a; border-bottom-color:#2563eb; }
+    td { border-bottom-color:#edf1f7; }
+    tbody tr:hover { background:#f2f7ff; }
+
+    /* Botões */
+    .btn-submit { background:linear-gradient(135deg,#2563eb,#1a4d80); border-radius:9px; box-shadow:0 6px 14px rgba(37,99,235,.3); }
+    .btn-submit:hover { background:linear-gradient(135deg,#3b82f6,#13427a); box-shadow:0 8px 18px rgba(37,99,235,.4); }
+    .btn-submit:disabled { background:#94a3b8; box-shadow:none; }
+    .btn-pdf { background:linear-gradient(135deg,#2563eb,#1a4d80); border-radius:6px; box-shadow:0 2px 6px rgba(37,99,235,.28); }
+    .btn-pdf:hover { background:linear-gradient(135deg,#3b82f6,#13427a); }
+    .btn-termo-link { background:#ecfdf5; color:#047857; border-color:#86efac; border-radius:6px; }
+    .btn-termo-link:hover { background:#d1fae5; }
+    .btn-logout { border-radius:8px; }
+    .btn-logout:hover { background:#dc3545; border-color:#dc3545; }
+
+    /* Selos de status */
+    .badge-pendente { background:#fffbeb; color:#b45309; border-color:#fcd34d; }
+    .badge-atendido { background:#ecfdf5; color:#047857; border-color:#86efac; }
+    .badge-recusado { background:#fef2f2; color:#b91c1c; border-color:#fca5a5; }
+
+    /* Início e dashboard */
+    .welcome-hero { background:radial-gradient(500px 220px at 90% 0%,rgba(96,165,250,.38),transparent 70%),linear-gradient(135deg,#1a4d80 0%,#0f2a4a 100%); border-radius:16px; box-shadow:0 12px 30px rgba(15,42,74,.3); }
+    .quick-card { border-radius:12px; border-color:#e2e8f0; box-shadow:0 2px 10px rgba(15,23,42,.07); }
+    .quick-card:hover { border-color:#2563eb; box-shadow:0 12px 26px rgba(37,99,235,.2); }
+    .quick-icon { color:#2563eb; }
+    .quick-title { color:#0f2a4a; }
+    .metric-card { border-radius:12px; border-color:#e2e8f0; border-left-color:#2563eb; box-shadow:0 2px 10px rgba(15,23,42,.07); }
+    .metric-card.yellow { border-left-color:#f59e0b; } .metric-card.green { border-left-color:#22c55e; } .metric-card.red { border-left-color:#ef4444; }
+    .bar-bg { background:#e8eef7; }
+    .bar-fill { background:linear-gradient(90deg,#2563eb,#60a5fa); }
+
+    /* Modais */
+    .modal-overlay { background:rgba(15,23,42,.58); }
+    .modal-box { border-radius:14px; box-shadow:0 26px 56px rgba(15,23,42,.38); }
+    .modal-title { color:#0f2a4a; border-bottom-color:#2563eb; }
+    .galeria-thumb { border-radius:8px; }
+    .modal-manual-card { border-radius:14px; }
+    .modal-manual-header { background:linear-gradient(120deg,#0f2a4a,#1a4d80); }
+
+    /* Login */
+    #loginOverlay { background:radial-gradient(700px 400px at 20% 10%,rgba(37,99,235,.35),transparent 70%),radial-gradient(600px 400px at 90% 90%,rgba(34,197,94,.18),transparent 70%),#0b1220 !important; }
+    #loginOverlay > div { border-radius:18px !important; box-shadow:0 28px 64px rgba(0,0,0,.5) !important; }
+    #loginOverlay input { border-radius:8px !important; border-color:#d3dbe8 !important; }
+    #loginOverlay input:focus { border-color:#2563eb !important; box-shadow:0 0 0 3px rgba(37,99,235,.18); outline:none; }
+    #btnEntrarLogin { background:linear-gradient(135deg,#2563eb,#1a4d80) !important; border-radius:9px !important; box-shadow:0 8px 18px rgba(37,99,235,.35); }
+
+    /* Locação, Compras, Chat */
+    .btn-editar-saldo { background:linear-gradient(135deg,#2563eb,#1d4ed8); border-radius:6px; box-shadow:0 2px 6px rgba(37,99,235,.3); }
+    .btn-editar-saldo:hover { background:linear-gradient(135deg,#3b82f6,#1e40af); }
+    .badge-encerrado { background:#fef2f2; color:#b91c1c; border-color:#fca5a5; }
+    .badge-saldo-ok { background:#eef2f8; color:#334155; }
+    .badge-saldo-pendente { background:#fef3c7; color:#92400e; }
+    .badge-saldo-alerta { background:#fee2e2; color:#991b1b; }
+    .metric-card.blue { border-left-color:#2563eb; }
+    .chat-tabs { background:#eef2f9; }
+    .chat-tab { background:#f6f9fd; }
+    .chat-tab.active { color:#1a4d80; border-bottom-color:#2563eb; }
+    .chat-messages { background:#f8fafc; }
+    .chat-msg { border-color:#e2e8f0; border-radius:8px; box-shadow:0 1px 2px rgba(15,23,42,.05); }
+    .chat-msg.me { background:#dbeafe; border-color:#bfdbfe; }
+    .chat-input-box { border-top-color:#e2e8f0; }
+    .chat-input-box input { border-color:#d3dbe8; border-radius:6px; }
+    .chat-input-box button { background:linear-gradient(135deg,#2563eb,#1a4d80); border-radius:6px; }
+    .emoji-picker-dropdown { border-radius:10px; box-shadow:0 10px 24px rgba(15,23,42,.18); }
+    .chat-box-wa { border-radius:16px; box-shadow:0 20px 44px rgba(15,23,42,.25); }
+    .chat-widget-btn { box-shadow:0 10px 24px rgba(37,211,102,.4); }
+    #modalLocacao .modal-box, #modalVincularTermo .modal-box, #modalVisualizadorReq .modal-box { border-radius:14px; }
+
+    /* Botões Extras */
+    .btn-action-container { display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important; align-items:center !important; justify-content:center !important; gap:4px !important; width:100% !important; white-space:nowrap !important; }
+    .btn-atender, .btn-negar, .btn-vincular { color:#fff; border:none; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer; white-space:nowrap; height:26px; display:inline-flex; align-items:center; gap:4px; justify-content:center; transition:filter .15s; }
+    .btn-atender { background:linear-gradient(135deg,#f59e0b,#d97706); box-shadow:0 2px 6px rgba(217,119,6,.3); }
+    .btn-negar { background:linear-gradient(135deg,#ef4444,#dc2626); box-shadow:0 2px 6px rgba(220,38,38,.3); }
+    .btn-vincular { background:linear-gradient(135deg,#0ea5e9,#0369a1); box-shadow:0 2px 6px rgba(3,105,161,.3); }
+    .btn-atender:hover, .btn-negar:hover, .btn-vincular:hover { filter:brightness(1.1); }
+    .btn-clear { position:absolute; right:12px; top:12px; background:#ef4444; color:#fff; border:none; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer; }
+    .signature-container { display:flex; gap:12px; margin-top:8px; }
+    .sig-box { flex:1; border:1px dashed #b9c7de; border-radius:10px; padding:10px; background:#f6f9fd; text-align:center; position:relative; }
+    .sig-box canvas { width:100%; height:110px; background:#fff; border:1px solid #d3dbe8; border-radius:8px; cursor:crosshair; touch-action:none; }
   </style>
 </head>
 <body>
@@ -305,7 +417,6 @@
       </div>
     </div>
 
-    <!-- DATALISTS DINÂMICAS -->
     <datalist id="listDescricoesPadrao"></datalist>
     <datalist id="listModelosPadrao"></datalist>
     <datalist id="listFabricantesPadrao"></datalist>
@@ -351,7 +462,6 @@
       </div>
     </div>
 
-    <!-- MÓDULO LOCAÇÃO -->
     <div id="abaLocacao" class="tab-content">
       <div class="dash-metrics" style="grid-template-columns: repeat(4, 1fr);">
         <div class="metric-card blue">
@@ -430,7 +540,6 @@
       </div>
     </div>
 
-    <!-- MÓDULO COMPRAS -->
     <div id="abaCompras" class="tab-content">
       <div class="card">
         <div class="card-title">
@@ -542,7 +651,6 @@
       </div>
     </div>
 
-    <!-- MÓDULO DASHBOARD -->
     <div id="abaDashboard" class="tab-content">
       <div class="card" style="margin-bottom: 16px;">
         <div class="card-title"><span>Filtro de Período das Métricas</span></div>
@@ -597,7 +705,6 @@
       </div>
     </div>
 
-    <!-- MÓDULO QUALIDADE / REQUISIÇÕES -->
     <div id="abaRequisicoes" class="tab-content">
       <div class="card">
         <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
@@ -690,7 +797,6 @@
       </div>
     </div>
 
-    <!-- MÓDULO EMISSÃO TERMO -->
     <div id="abaEmissao" class="tab-content">
       <div id="bannerReqVinculada" style="display: none; background: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 12px; align-items: center; justify-content: space-between;">
         <span><i class="fa-solid fa-link"></i> Atendendo Requisição Pendente: <span id="lblProtReqVinculada" style="color: #1a4d80;">-</span></span>
@@ -788,7 +894,6 @@
       </form>
     </div>
 
-    <!-- MÓDULO CONSULTA TERMOS -->
     <div id="abaConsulta" class="tab-content">
       <div class="card">
         <div class="card-title">Histórico e Consulta de Termos Gerados</div>
@@ -818,7 +923,6 @@
       </div>
     </div>
 
-    <!-- MÓDULO MANUTENÇÃO O.S. -->
     <div id="abaOsGestao" class="tab-content">
       <div class="card">
         <div class="card-title">
@@ -925,7 +1029,6 @@
       </div>
     </div>
 
-    <!-- MÓDULOS CADASTROS -->
     <div id="abaCadEquipamento" class="tab-content">
       <div class="card">
         <div class="card-title">Cadastrar Novo Equipamento (Aba EQUIP)</div>
@@ -977,8 +1080,7 @@
       </div>
     </div>
 
-    <!-- CORREÇÃO 3: RODAPÉ MOVIDO PARA DENTRO DO APP CONTAINER -->
-    <!-- RODAPÉ DO SISTEMA -->
+    <!-- RODAPÉ FIXADO MOVIDO PARA DENTRO DA ÁREA VISÍVEL DO APP CONTAINER -->
     <footer class="system-footer">
       <div><b>DMA SYS</b> v2.0 | Sistema de Gestão Operacional</div>
       <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
@@ -986,7 +1088,6 @@
 
   </div> <!-- FIM DO APP CONTAINER -->
 
-  <!-- MODAL VISUALIZADOR DE REQUISIÇÃO (PDF) -->
   <div id="modalVisualizadorReq" class="modal-overlay">
     <div class="modal-box" style="width: 800px; max-width: 95vw; height: 85vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -1003,7 +1104,6 @@
     </div>
   </div>
 
-  <!-- MODAL LOCAÇÃO ATUALIZADO -->
   <div id="modalLocacao" class="modal-overlay">
     <div class="modal-box" style="width: 520px;">
       <div class="modal-title">
