@@ -6,6 +6,9 @@
   <title>DMA SYS - Gestão de Termos, Requisições, O.S., Locação e Compras</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    /* ===================================================================
+       CONFIGURAÇÕES GERAIS E BASE
+       =================================================================== */
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #f0f2f5; color: #333; min-height: 100vh; padding: 16px; padding-bottom: 70px; overflow-x: hidden; }
     
@@ -162,14 +165,10 @@
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* --- RODAPÉ FIXO --- */
-    .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 99999; border-top: 2px solid #2563eb; }
-    .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
-
     /* ===================================================================
        TEMA VISUAL DMA SYS (v3) — SOMENTE cores, sombras, degradês e cantos.
        =================================================================== */
-    body { background:#eef2f8; color:#1e293b; }
+    body { background:#eef2f8; color:#1e293b; padding-bottom: 70px; }
 
     /* Cabeçalho */
     .header { background:linear-gradient(120deg,#0f2a4a 0%,#1a4d80 60%,#2b6cb0 100%); border-radius:12px; box-shadow:0 8px 22px rgba(15,42,74,.28); }
@@ -281,6 +280,10 @@
     .signature-container { display:flex; gap:12px; margin-top:8px; }
     .sig-box { flex:1; border:1px dashed #b9c7de; border-radius:10px; padding:10px; background:#f6f9fd; text-align:center; position:relative; }
     .sig-box canvas { width:100%; height:110px; background:#fff; border:1px solid #d3dbe8; border-radius:8px; cursor:crosshair; touch-action:none; }
+
+    /* --- RODAPÉ FIXO --- */
+    .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #0f1f36; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-top: 2px solid #2563eb; }
+    .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -1080,7 +1083,6 @@
       </div>
     </div>
 
-    <!-- RODAPÉ FIXADO MOVIDO PARA DENTRO DA ÁREA VISÍVEL DO APP CONTAINER -->
     <footer class="system-footer">
       <div><b>DMA SYS</b> v2.0 | Sistema de Gestão Operacional</div>
       <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
