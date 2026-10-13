@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    /* CORREÇÃO 1: Removido o display:flex e flex-direction:column que estava conflitando com o rodapé */
     body { background-color: #f0f2f5; color: #333; min-height: 100vh; padding: 16px; padding-bottom: 70px; overflow-x: hidden; }
     
     .header { background-color: #1a4d80; color: white; padding: 12px 24px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; box-shadow: 0 3px 6px rgba(0,0,0,0.12); position: relative; }
@@ -155,6 +156,7 @@
     .emoji-item { font-size: 16px; cursor: pointer; padding: 4px; border-radius: 4px; transition: background 0.1s; }
     .emoji-item:hover { background: #f1f5f9; }
 
+    /* WIDGET WHATSAPP FLUTUANTE */
     .chat-widget-btn { position: fixed; bottom: 45px; right: 20px; background: #25d366; color: white; border: none; width: 48px; height: 48px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.25); z-index: 101; transition: transform 0.2s; }
     .chat-widget-btn:hover { transform: scale(1.08); }
     .chat-box-wa { display: none; position: fixed; bottom: 105px; right: 20px; width: 300px; background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 102; overflow: hidden; border: 1px solid #e2e8f0; }
@@ -162,14 +164,21 @@
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+    /* CORREÇÃO 2: z-index ajustado para 99999 */
+    /* --- RODAPÉ FIXO --- */
+    .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 99999; border-top: 2px solid #2563eb; }
+    .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
+    
     /* ===================================================================
-       TEMA VISUAL DMA SYS (Premium Completo) — Sombras, cantos e cores.
+       TEMA VISUAL DMA SYS (v4) — SOMENTE cores, sombras, degradês e cantos.
+       Não altera tamanhos, margens, fontes, posições, HTML, JS nem PDFs.
        =================================================================== */
     html { scrollbar-color:#b7c4da #eef2f8; }
     ::selection { background:#bfdbfe; color:#0b2545; }
     :focus-visible { outline:2px solid #60a5fa; outline-offset:2px; }
     body { background:radial-gradient(900px 420px at 8% -8%,rgba(37,99,235,.14),transparent 60%),radial-gradient(800px 380px at 100% 0%,rgba(6,182,212,.10),transparent 60%),#eef2f8; background-attachment:fixed; color:#1e293b; padding-bottom:70px; }
 
+    /* Cabeçalho */
     .header { background:linear-gradient(115deg,#0b2545 0%,#123a6b 45%,#1d5fa8 100%); border-radius:14px; box-shadow:0 10px 30px rgba(11,37,69,.35),inset 0 1px 0 rgba(255,255,255,.12); }
     .header h1 { text-shadow:0 1px 2px rgba(0,0,0,.25); }
     .status-badge { background:#fbbf24; box-shadow:0 2px 8px rgba(251,191,36,.35); }
@@ -181,11 +190,13 @@
     .notif-header { background:linear-gradient(180deg,#f4f8fe,#e9f1fc); }
     .notif-item:hover, .menu-ajuda-item:hover, .dropdown-content button:hover { background:#eaf2ff; color:#1d4ed8; }
 
+    /* Navegação */
     .nav-tabs { border-radius:14px; border-color:#e2e8f0; box-shadow:0 4px 18px rgba(11,37,69,.08); }
     .nav-tab { background:#eef2f9; color:#334155; border-radius:999px; transition:all .2s; }
     .nav-tab:hover { background:#dbe7fa; color:#1a4d80; transform:translateY(-1px); }
     .nav-tab.active { background:linear-gradient(135deg,#2563eb,#1a4d80); color:#fff; box-shadow:0 6px 16px rgba(37,99,235,.4); }
 
+    /* Cartões */
     .card { border-radius:14px; border-color:#e3e9f3; box-shadow:0 1px 2px rgba(11,37,69,.05),0 10px 28px rgba(11,37,69,.07),inset 0 3px 0 0 #2563eb; }
     .card-title { color:#0b2545; border-bottom:2px solid transparent; border-image:linear-gradient(90deg,#2563eb,#06b6d4 55%,#22c55e) 1; }
     .welcome-hero { position:relative; overflow:hidden; background:radial-gradient(520px 240px at 92% 0%,rgba(96,165,250,.45),transparent 70%),radial-gradient(380px 200px at 0% 100%,rgba(6,182,212,.28),transparent 70%),linear-gradient(135deg,#1a4d80 0%,#0b2545 100%); border-radius:18px; box-shadow:0 16px 38px rgba(11,37,69,.34); }
@@ -198,13 +209,17 @@
     .metric-card { border-radius:14px; border-color:#e3e9f3; border-left-color:#2563eb; box-shadow:0 2px 12px rgba(11,37,69,.08); }
     .metric-card.yellow { border-left-color:#f59e0b; } .metric-card.green { border-left-color:#22c55e; } .metric-card.red { border-left-color:#ef4444; } .metric-card.blue { border-left-color:#2563eb; }
     .metric-value { color:#0b2545; }
+    .bar-bg { background:#e8eef7; } .bar-fill { background:linear-gradient(90deg,#2563eb,#60a5fa); }
 
+    /* Campos */
     label { color:#475569; }
     input[type="text"], input[type="password"], input[type="month"], input[type="number"], select, textarea { border-color:#d3dbe8; border-radius:10px; background:#fbfcfe; box-shadow:inset 0 1px 2px rgba(11,37,69,.04); }
     input[type="text"]:hover, input[type="number"]:hover, select:hover, textarea:hover { border-color:#9fb3d1; }
     input[type="text"]:focus, input[type="password"]:focus, input[type="month"]:focus, input[type="number"]:focus, select:focus, textarea:focus { border-color:#2563eb; background:#fff; box-shadow:0 0 0 4px rgba(37,99,235,.16); }
     input[readonly] { background-color:#eef2f8; color:#1e293b; }
+    input[type="radio"], input[type="checkbox"] { accent-color:#2563eb; }
 
+    /* Tabelas */
     .table-container { border-color:#dbe3ef; border-radius:12px; scrollbar-color:#b7c4da #f1f5fb; }
     th { background:linear-gradient(180deg,#f1f6fd,#e1ecf9); color:#0b2545; border-bottom-color:#2563eb; }
     td { border-bottom-color:#edf1f7; }
@@ -212,47 +227,73 @@
     tbody tr { transition:background .15s; }
     tbody tr:hover { background:#eef5ff; }
 
+    /* Botões */
     .btn-submit { background:linear-gradient(135deg,#2563eb,#1a4d80); border-radius:11px; box-shadow:0 8px 18px rgba(37,99,235,.32); transition:transform .15s,box-shadow .15s,background .15s; }
     .btn-submit:hover { background:linear-gradient(135deg,#3b82f6,#13427a); box-shadow:0 12px 24px rgba(37,99,235,.42); transform:translateY(-1px); }
+    .btn-submit:active { transform:translateY(0); }
     .btn-submit:disabled { background:#94a3b8; box-shadow:none; transform:none; }
     .btn-pdf { background:linear-gradient(135deg,#2563eb,#1a4d80); border-radius:7px; box-shadow:0 3px 8px rgba(37,99,235,.3); transition:transform .15s; }
     .btn-pdf:hover { background:linear-gradient(135deg,#3b82f6,#13427a); transform:translateY(-1px); }
+    .btn-termo-link { background:#ecfdf5; color:#047857; border-color:#86efac; border-radius:7px; }
     .btn-editar-saldo { background:linear-gradient(135deg,#2563eb,#1d4ed8); border-radius:7px; box-shadow:0 3px 8px rgba(37,99,235,.3); transition:transform .15s; }
     .btn-editar-saldo:hover { background:linear-gradient(135deg,#3b82f6,#1e40af); transform:translateY(-1px); }
     .btn-logout { border-radius:10px; } .btn-logout:hover { background:#dc3545; border-color:#dc3545; }
 
+    /* Selos */
     .badge-pendente { background:#fffbeb; color:#b45309; border-color:#fcd34d; }
     .badge-atendido { background:#ecfdf5; color:#047857; border-color:#86efac; }
     .badge-recusado { background:#fef2f2; color:#b91c1c; border-color:#fca5a5; }
     .badge-encerrado { background:#fef2f2; color:#b91c1c; border-color:#fca5a5; }
+    .badge-saldo-ok { background:#eef2f8; color:#334155; } .badge-saldo-pendente { background:#fef3c7; color:#92400e; } .badge-saldo-alerta { background:#fee2e2; color:#991b1b; }
 
+    /* Modais */
     .modal-overlay { background:rgba(11,37,69,.6); backdrop-filter:blur(4px); }
     .modal-box { border-radius:18px; box-shadow:0 30px 70px rgba(11,37,69,.45); }
     .modal-overlay.active .modal-box { animation:fadeIn .22s ease-out; }
     .modal-title { color:#0b2545; border-bottom:2px solid transparent; border-image:linear-gradient(90deg,#2563eb,#06b6d4 60%,#22c55e) 1; }
+    .modal-manual-card { border-radius:18px; } .modal-manual-header { background:linear-gradient(115deg,#0b2545,#1a4d80); }
 
+    /* Chat */
+    .chat-tabs { background:#eef2f9; } .chat-tab { background:#f6f9fd; } .chat-tab.active { color:#1a4d80; border-bottom-color:#2563eb; }
+    .chat-messages { background:#f8fafc; }
+    .chat-msg { border-color:#e2e8f0; border-radius:10px; box-shadow:0 1px 3px rgba(11,37,69,.06); }
+    .chat-msg.me { background:#dbeafe; border-color:#bfdbfe; }
+    .chat-input-box { border-top-color:#e2e8f0; } .chat-input-box input { border-color:#d3dbe8; border-radius:8px; }
+    .chat-input-box button { background:linear-gradient(135deg,#2563eb,#1a4d80); border-radius:8px; }
+    .emoji-picker-dropdown { border-radius:12px; box-shadow:0 12px 28px rgba(11,37,69,.2); }
+    .chat-box-wa { border-radius:18px; box-shadow:0 22px 50px rgba(11,37,69,.3); }
+    .chat-widget-btn { box-shadow:0 10px 24px rgba(37,211,102,.45); }
+
+    /* SEÇÃO B — itens que o seu arquivo usa mas NUNCA estilizou (hoje aparecem como botões crus do navegador).
+       Única parte do tema que altera tamanho, só nesses itens. Para manter exatamente como está hoje, apague SOMENTE esta seção B (até o comentário Login). */
     .btn-action-container { display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important; align-items:center !important; justify-content:center !important; gap:4px !important; width:100% !important; white-space:nowrap !important; }
-    .btn-atender, .btn-negar, .btn-vincular, .btn-remover-item { color:#fff; border:none; padding:4px 10px; border-radius:7px; font-size:11px; font-weight:bold; cursor:pointer; white-space:nowrap; height:26px; display:inline-flex; align-items:center; gap:4px; justify-content:center; transition:filter .15s,transform .15s; }
+    .btn-atender, .btn-negar, .btn-vincular { color:#fff; border:none; padding:4px 10px; border-radius:7px; font-size:11px; font-weight:bold; cursor:pointer; white-space:nowrap; height:26px; display:inline-flex; align-items:center; gap:4px; justify-content:center; transition:filter .15s,transform .15s; }
     .btn-atender { background:linear-gradient(135deg,#f59e0b,#d97706); box-shadow:0 3px 8px rgba(217,119,6,.32); }
     .btn-negar { background:linear-gradient(135deg,#ef4444,#dc2626); box-shadow:0 3px 8px rgba(220,38,38,.32); }
     .btn-vincular { background:linear-gradient(135deg,#0ea5e9,#0369a1); box-shadow:0 3px 8px rgba(3,105,161,.32); }
-    .btn-remover-item { background:linear-gradient(135deg,#ef4444,#dc2626); }
-    .btn-atender:hover, .btn-negar:hover, .btn-vincular:hover, .btn-remover-item:hover { filter:brightness(1.1); transform:translateY(-1px); }
+    .btn-atender:hover, .btn-negar:hover, .btn-vincular:hover { filter:brightness(1.1); transform:translateY(-1px); }
     .btn-clear { position:absolute; right:12px; top:12px; background:#ef4444; color:#fff; border:none; padding:4px 10px; border-radius:7px; font-size:11px; font-weight:bold; cursor:pointer; }
-    
     .signature-container { display:flex; gap:12px; margin-top:8px; }
     .sig-box { flex:1; border:1px dashed #b9c7de; border-radius:12px; padding:10px; background:#f6f9fd; text-align:center; position:relative; }
-    .sig-box canvas { touch-action:none; width: 100%; height: 110px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fafafa; cursor: crosshair; }
+    .sig-box canvas { touch-action:none; }
 
+    /* Login */
     #loginOverlay { background:radial-gradient(700px 400px at 18% 8%,rgba(37,99,235,.42),transparent 70%),radial-gradient(600px 400px at 92% 92%,rgba(6,182,212,.22),transparent 70%),#0a1424 !important; }
     #loginOverlay > div { border-radius:22px !important; box-shadow:0 34px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.08) !important; }
     #loginOverlay > div > div:first-child { background:linear-gradient(120deg,#0b2545,#2563eb); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
     #loginOverlay input { border-radius:10px !important; border-color:#d3dbe8 !important; background:#fbfcfe; }
     #loginOverlay input:focus { border-color:#2563eb !important; box-shadow:0 0 0 4px rgba(37,99,235,.18); outline:none; background:#fff; }
     #btnEntrarLogin { background:linear-gradient(135deg,#2563eb,#1a4d80) !important; border-radius:11px !important; box-shadow:0 10px 22px rgba(37,99,235,.4); transition:transform .15s,box-shadow .15s; }
-    
+    #btnEntrarLogin:hover { transform:translateY(-1px); box-shadow:0 14px 28px rgba(37,99,235,.5); }
+    #loginOverlay::after { content:"DMA SYS v2.0 | Sistema de Gestão Operacional"; position:absolute; left:0; right:0; bottom:0; padding:10px 20px; text-align:center; font-size:11px; color:#94a3b8; background:rgba(11,27,51,.85); border-top:2px solid #2563eb; pointer-events:none; }
+
+    /* --- RODAPÉ FIXO (reforçado: sempre visível, acima de tudo) --- */
     .system-footer { position:fixed !important; left:0 !important; right:0 !important; bottom:0 !important; z-index:2147483000 !important; display:flex !important; visibility:visible !important; opacity:1 !important; transform:none !important; justify-content:space-between; align-items:center; background:linear-gradient(90deg,#0b1b33,#12305a 55%,#0b1b33); color:#cbd5e1; font-size:11px; padding:8px 20px; border-top:2px solid #2563eb; box-shadow:0 -6px 20px rgba(11,37,69,.25); }
     .system-footer a { color:#7dd3fc; text-decoration:none; font-weight:bold; }
+    .system-footer a:hover { color:#fff; }
+
+    /* Evita o bug de iOS/Safari em que overflow-x:hidden no body esconde elementos fixos (rodapé). Visual idêntico. */
+    @supports (overflow-x: clip) { body { overflow-x: clip !important; } }
   </style>
 </head>
 <body>
@@ -342,10 +383,20 @@
     </div>
 
     <div class="nav-tabs">
-      <button type="button" class="nav-tab active" id="btnNavInicio" onclick="mudarAba('inicio')"><i class="fa-solid fa-house"></i> Início</button>
-      <button type="button" class="nav-tab" id="btnNavDashboard" onclick="mudarAba('dashboard')"><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
-      <button type="button" class="nav-tab" id="btnNavLocacao" onclick="mudarAba('locacao')"><i class="fa-solid fa-boxes-packing"></i> Controle de Locação</button>
-      <button type="button" class="nav-tab" id="btnNavCompras" onclick="mudarAba('compras')"><i class="fa-solid fa-cart-shopping"></i> Módulo de Compras</button>
+      <button type="button" class="nav-tab active" id="btnNavInicio" onclick="mudarAba('inicio')">
+        <i class="fa-solid fa-house"></i> Início
+      </button>
+      <button type="button" class="nav-tab" id="btnNavDashboard" onclick="mudarAba('dashboard')">
+        <i class="fa-solid fa-chart-pie"></i> Dashboard
+      </button>
+
+      <button type="button" class="nav-tab" id="btnNavLocacao" onclick="mudarAba('locacao')">
+        <i class="fa-solid fa-boxes-packing"></i> Controle de Locação
+      </button>
+
+      <button type="button" class="nav-tab" id="btnNavCompras" onclick="mudarAba('compras')">
+        <i class="fa-solid fa-cart-shopping"></i> Módulo de Compras
+      </button>
 
       <div class="dropdown" id="dropQualidade">
         <button type="button" class="nav-tab" id="btnNavQualidade" onclick="toggleMenuDropdown(event, 'dropQualidade')">
@@ -353,8 +404,7 @@
         </button>
         <div class="dropdown-content">
           <button type="button" onclick="mudarAba('requisicoes')"><i class="fa-solid fa-clipboard-list"></i> Requisições Internas</button>
-          <button type="button" onclick="mudarAba('emissao')"><i class="fa-solid fa-file-signature"></i> Emitir Termo Individual</button>
-          <button type="button" onclick="mudarAba('emissao_lote')"><i class="fa-solid fa-layer-group"></i> Emitir Termo em Lote (Múltiplo)</button>
+          <button type="button" onclick="mudarAba('emissao')"><i class="fa-solid fa-file-signature"></i> Emitir Novo Termo</button>
           <button type="button" onclick="mudarAba('consulta')"><i class="fa-solid fa-magnifying-glass"></i> Consultar Termos Emitidos</button>
         </div>
       </div>
@@ -386,8 +436,6 @@
     <datalist id="listFabricantesPadrao"></datalist>
     <datalist id="listFamiliasLocacao"></datalist>
     <datalist id="listUnidadesLocacao"></datalist>
-    <datalist id="listClientes"></datalist>
-    <datalist id="listEquipamentos"></datalist>
 
     <div id="abaInicio" class="tab-content active">
       <div class="welcome-hero">
@@ -401,29 +449,34 @@
           <div class="quick-title">Controle de Locação</div>
           <div class="quick-desc">Consulte o saldo contratado vs. físico por cliente, unidade e família de equipamento.</div>
         </div>
+
         <div class="quick-card" onclick="mudarAba('compras')">
           <div class="quick-icon"><i class="fa-solid fa-cart-shopping"></i></div>
           <div class="quick-title">Módulo de Compras</div>
           <div class="quick-desc">Crie solicitações com mapa comparativo de 3 fornecedores e aprovação direta.</div>
         </div>
+
         <div class="quick-card" onclick="mudarAba('dashboard')">
           <div class="quick-icon"><i class="fa-solid fa-chart-line"></i></div>
           <div class="quick-title">Dashboard & Métricas</div>
           <div class="quick-desc">Acompanhe indicadores gerais de movimentação e chamados em tempo real.</div>
         </div>
+
         <div class="quick-card" onclick="mudarAba('os_gestao')">
           <div class="quick-icon"><i class="fa-solid fa-wrench"></i></div>
           <div class="quick-title">Ordens de Serviço (O.S.)</div>
           <div class="quick-desc">Gerencie manutenções corretivas e preventivas com visual por prioridade.</div>
         </div>
-        <div class="quick-card" onclick="mudarAba('emissao_lote')">
+
+        <div class="quick-card" onclick="mudarAba('emissao')">
           <div class="quick-icon"><i class="fa-solid fa-file-contract"></i></div>
-          <div class="quick-title">Emitir Termo Múltiplo</div>
-          <div class="quick-desc">Gere um único Termo em PDF para a entrega de dezenas de equipamentos.</div>
+          <div class="quick-title">Emitir Novo Termo</div>
+          <div class="quick-desc">Gere o Termo Duplo em PDF (Entrega + Higienização) com assinaturas.</div>
         </div>
       </div>
     </div>
 
+    <!-- MÓDULO LOCAÇÃO -->
     <div id="abaLocacao" class="tab-content">
       <div class="dash-metrics" style="grid-template-columns: repeat(4, 1fr);">
         <div class="metric-card blue">
@@ -502,6 +555,7 @@
       </div>
     </div>
 
+    <!-- MÓDULO COMPRAS -->
     <div id="abaCompras" class="tab-content">
       <div class="card">
         <div class="card-title">
@@ -514,10 +568,12 @@
               <label>Nº O.S. do Sistema Externo (Manual):</label>
               <input type="text" id="compOsExterna" placeholder="Ex: OS-2026-8849" required>
             </div>
+
             <div class="form-group" style="flex: 1.5;">
               <label>Nome do Solicitante / Comprador:</label>
               <input type="text" id="compSolicitante" placeholder="Nome do comprador ou solicitante..." required>
             </div>
+
             <div class="form-group" style="flex: 2;">
               <label>Nome do Produto / Peça Solicitada:</label>
               <input type="text" id="compProduto" placeholder="Ex: SENSORES DE FLUXO PARA VENTILADOR MONNAL T75" required>
@@ -533,20 +589,30 @@
             <div style="font-size: 12px; font-weight: bold; color: #1a4d80; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
               <i class="fa-solid fa-scale-balanced"></i> Mapa de Cotação de Preços (3 Fornecedores)
             </div>
+
             <div class="form-row">
               <div class="form-group" id="boxForn1" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: white;">
-                <label>Fornecedor 1:</label><input type="text" id="compForn1" placeholder="Nome da empresa 1..." style="margin-bottom: 6px;">
-                <label>Valor Orçado (R$):</label><input type="number" id="compVal1" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
+                <label>Fornecedor 1:</label>
+                <input type="text" id="compForn1" placeholder="Nome da empresa 1..." style="margin-bottom: 6px;">
+                <label>Valor Orçado (R$):</label>
+                <input type="number" id="compVal1" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
               </div>
+
               <div class="form-group" id="boxForn2" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: white;">
-                <label>Fornecedor 2:</label><input type="text" id="compForn2" placeholder="Nome da empresa 2..." style="margin-bottom: 6px;">
-                <label>Valor Orçado (R$):</label><input type="number" id="compVal2" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
+                <label>Fornecedor 2:</label>
+                <input type="text" id="compForn2" placeholder="Nome da empresa 2..." style="margin-bottom: 6px;">
+                <label>Valor Orçado (R$):</label>
+                <input type="number" id="compVal2" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
               </div>
+
               <div class="form-group" id="boxForn3" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: white;">
-                <label>Fornecedor 3:</label><input type="text" id="compForn3" placeholder="Nome da empresa 3..." style="margin-bottom: 6px;">
-                <label>Valor Orçado (R$):</label><input type="number" id="compVal3" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
+                <label>Fornecedor 3:</label>
+                <input type="text" id="compForn3" placeholder="Nome da empresa 3..." style="margin-bottom: 6px;">
+                <label>Valor Orçado (R$):</label>
+                <input type="number" id="compVal3" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
               </div>
             </div>
+
             <div id="painelMenorPreco" style="background: #e6f4ea; border: 1px solid #a8dab5; color: #137333; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 13px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
               <span><i class="fa-solid fa-trophy"></i> Menor Proposta Identificada: <span id="lblFornVencedor">-</span></span>
               <span>Valor: <span id="lblMenorValor">R$ 0,00</span></span>
@@ -554,12 +620,24 @@
           </div>
 
           <div class="form-row">
-            <div class="form-group"><label>Prazo de Entrega:</label><input type="text" id="compPrazo" placeholder="Ex: 5 dias úteis"></div>
-            <div class="form-group"><label>Condição de Pagamento:</label><input type="text" id="compCondPagto" placeholder="Ex: 28 dias / Pix / Faturado"></div>
-            <div class="form-group"><label>Frete:</label><input type="text" id="compFrete" placeholder="Ex: CIF (Incluso) ou R$ 45,00"></div>
+            <div class="form-group">
+              <label>Prazo de Entrega:</label>
+              <input type="text" id="compPrazo" placeholder="Ex: 5 dias úteis">
+            </div>
+            <div class="form-group">
+              <label>Condição de Pagamento:</label>
+              <input type="text" id="compCondPagto" placeholder="Ex: 28 dias / Pix / Faturado">
+            </div>
+            <div class="form-group">
+              <label>Frete:</label>
+              <input type="text" id="compFrete" placeholder="Ex: CIF (Incluso) ou R$ 45,00">
+            </div>
           </div>
+
           <div style="text-align: right; margin-top: 12px;">
-            <button type="submit" id="btnSalvarCompra" class="btn-submit"><i class="fa-solid fa-file-signature"></i> Salvar Cotação</button>
+            <button type="submit" id="btnSalvarCompra" class="btn-submit">
+              <i class="fa-solid fa-file-signature"></i> Salvar Cotação
+            </button>
           </div>
         </form>
       </div>
@@ -570,8 +648,15 @@
           <table style="table-layout: auto;">
             <thead>
               <tr>
-                <th class="td-center">ID</th><th>Data / Hora</th><th>Nº OS Ext.</th><th>Solicitante</th><th>Produto / Peça</th>
-                <th>Fornecedor Escolhido</th><th class="td-center">Menor Valor</th><th class="td-center">Status</th><th class="td-center">Ações</th>
+                <th class="td-center">ID</th>
+                <th>Data / Hora</th>
+                <th>Nº OS Ext.</th>
+                <th>Solicitante</th>
+                <th>Produto / Peça</th>
+                <th>Fornecedor Escolhido</th>
+                <th class="td-center">Menor Valor</th>
+                <th class="td-center">Status</th>
+                <th class="td-center">Ações</th>
               </tr>
             </thead>
             <tbody id="corpoTabelaCompras">
@@ -582,62 +667,72 @@
       </div>
     </div>
 
+    <!-- MÓDULO DASHBOARD -->
     <div id="abaDashboard" class="tab-content">
       <div class="card" style="margin-bottom: 16px;">
         <div class="card-title"><span>Filtro de Período das Métricas</span></div>
         <div class="form-row" style="align-items: center; margin-bottom: 0;">
-          <div class="form-group" style="flex: 1;"><label>Selecione o Mês / Ano:</label><input type="month" id="dashFiltroMes" onchange="atualizarDashboard()"></div>
+          <div class="form-group" style="flex: 1;">
+            <label>Selecione o Mês / Ano:</label>
+            <input type="month" id="dashFiltroMes" onchange="atualizarDashboard()">
+          </div>
           <div class="form-group" style="flex: 1;">
             <label>Modo de Período:</label>
             <select id="dashModoPeriodo" onchange="atualizarDashboard()">
-              <option value="MES">Apenas o Mês Selecionado</option><option value="GERAL">Todo o Histórico (Geral)</option>
+              <option value="MES">Apenas o Mês Selecionado</option>
+              <option value="GERAL">Todo o Histórico (Geral)</option>
             </select>
           </div>
         </div>
       </div>
 
       <div class="dash-metrics">
-        <div class="metric-card"><div class="metric-title">Total de Requisições</div><div class="metric-value" id="dashTotalReq">0</div></div>
-        <div class="metric-card yellow"><div class="metric-title">Pendentes de Envio</div><div class="metric-value" id="dashPendentes">0</div></div>
-        <div class="metric-card green"><div class="metric-title">Atendidas pela Qualidade</div><div class="metric-value" id="dashAtendidos">0</div></div>
-        <div class="metric-card red"><div class="metric-title">Recusadas / Negadas</div><div class="metric-value" id="dashRecusados">0</div></div>
+        <div class="metric-card">
+          <div class="metric-title">Total de Requisições</div>
+          <div class="metric-value" id="dashTotalReq">0</div>
+        </div>
+        <div class="metric-card yellow">
+          <div class="metric-title">Pendentes de Envio</div>
+          <div class="metric-value" id="dashPendentes">0</div>
+        </div>
+        <div class="metric-card green">
+          <div class="metric-title">Atendidas pela Qualidade</div>
+          <div class="metric-value" id="dashAtendidos">0</div>
+        </div>
+        <div class="metric-card red">
+          <div class="metric-title">Recusadas / Negadas</div>
+          <div class="metric-value" id="dashRecusados">0</div>
+        </div>
       </div>
 
       <div class="dash-charts-grid">
         <div class="card">
           <div class="card-title">Top Clientes em Demandas de Troca</div>
-          <div id="chartClientes" style="padding-top: 10px;"><div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div></div>
+          <div id="chartClientes" style="padding-top: 10px;">
+            <div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>
+          </div>
         </div>
+
         <div class="card">
           <div class="card-title">Demandas por Família de Equipamentos</div>
-          <div id="chartFamilias" style="padding-top: 10px;"><div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div></div>
+          <div id="chartFamilias" style="padding-top: 10px;">
+            <div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- MÓDULO QUALIDADE / REQUISIÇÕES -->
     <div id="abaRequisicoes" class="tab-content">
       <div class="card">
         <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
         <form id="formReq" onsubmit="return salvarRequisicao(event)">
-          
           <div class="form-row">
             <div class="form-group" style="flex: 2;">
               <label>Cliente / Locatário Solicitante:</label>
               <input type="text" id="reqCliente" list="listClientes" placeholder="Selecione ou digite o cliente..." required>
             </div>
-            
-            <!-- CAMPO TIPO DE REQUISIÇÃO (ADICIONADO) -->
             <div class="form-group" style="flex: 1;">
-              <label>TIPO DE REQUISIÇÃO:</label>
-              <select id="reqTipo" required>
-                <option value="" disabled selected>Selecione...</option>
-                <option value="SUBSTITUIÇÃO">Substituição</option>
-                <option value="REPOSIÇÃO">Reposição</option>
-                <option value="NOVO ENVIO">Novo Envio</option>
-              </select>
-            </div>
-
-            <div class="form-group" style="flex: 1.5;">
               <label>Operação:</label>
               <div class="radio-group">
                 <label><input type="radio" name="reqOperacao" value="LOCAÇÃO" checked> Locação</label>
@@ -672,7 +767,10 @@
       </div>
 
       <div class="card">
-        <div class="card-title"><span>Acompanhamento de Solicitações</span></div>
+        <div class="card-title">
+          <span>Acompanhamento de Solicitações</span>
+        </div>
+
         <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
           <div class="form-group" style="flex: 1;">
             <label>Filtrar por Status:</label>
@@ -683,10 +781,12 @@
               <option value="RECUSADO">Apenas Recusados</option>
             </select>
           </div>
+
           <div class="form-group" style="flex: 1;">
             <label>Filtrar por Mês/Ano:</label>
             <input type="month" id="filtroMesReq" onchange="filtrarRequisicoes()">
           </div>
+
           <div class="form-group" style="flex: 2;">
             <label>Buscar na Tabela (Cliente, Req # ou Equipamento):</label>
             <input type="text" id="filtroTextoReq" oninput="filtrarRequisicoesDebounced()" placeholder="Digite para buscar...">
@@ -702,20 +802,20 @@
                 <th style="width: 220px;">Cliente / Locatário</th>
                 <th style="width: 200px;">Equipamento Solicitado</th>
                 <th>Motivo / Obs.</th>
-                <th class="td-center" style="width: 110px;">Tipo Req.</th> <!-- COLUNA ADICIONADA -->
                 <th class="td-center" style="width: 80px;">Operação</th>
                 <th class="td-center" style="width: 80px;">Status</th>
                 <th class="td-center" style="width: 310px;">Ações / Qualidade</th>
               </tr>
             </thead>
             <tbody id="corpoRequisicoes">
-              <tr><td colspan="9" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td></tr>
+              <tr><td colspan="8" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
 
+    <!-- MÓDULO EMISSÃO TERMO -->
     <div id="abaEmissao" class="tab-content">
       <div id="bannerReqVinculada" style="display: none; background: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 12px; align-items: center; justify-content: space-between;">
         <span><i class="fa-solid fa-link"></i> Atendendo Requisição Pendente: <span id="lblProtReqVinculada" style="color: #1a4d80;">-</span></span>
@@ -731,25 +831,31 @@
             <div class="form-group">
               <label for="inputCliente">Buscar / Selecionar Cliente:</label>
               <input type="text" id="inputCliente" list="listClientes" placeholder="Digite o nome do cliente..." required>
+              <datalist id="listClientes"></datalist>
             </div>
           </div>
 
           <div class="card" style="flex: 1;">
             <div class="card-title">2. Identificação do Equipamento</div>
+            
             <div class="form-group" style="margin-bottom: 12px;">
               <label>Pesquisar Equipamento (Digite a TAG, Série ou Patrimônio):</label>
               <input type="text" id="buscaEquipamento" list="listEquipamentos" placeholder="Ex: LMD-4654 ou 2329918..." oninput="autoPreencherEquipamento()" required>
+              <datalist id="listEquipamentos"></datalist>
             </div>
+
             <div class="form-row">
               <div class="form-group"><label>TAG:</label><input type="text" id="eqTag" readonly placeholder="-"></div>
               <div class="form-group"><label>Nº de Série:</label><input type="text" id="eqSerie" readonly placeholder="-"></div>
               <div class="form-group"><label>Patrimônio:</label><input type="text" id="eqPatrimonio" readonly placeholder="-"></div>
             </div>
+
             <div class="form-row">
               <div class="form-group"><label>Equipamento:</label><input type="text" id="eqNome" readonly placeholder="-"></div>
               <div class="form-group"><label>Modelo:</label><input type="text" id="eqModelo" readonly placeholder="-"></div>
               <div class="form-group"><label>Fabricante:</label><input type="text" id="eqFabricante" readonly placeholder="-"></div>
             </div>
+
             <div class="form-group" style="margin-top: 6px;">
               <label>Operação:</label>
               <div class="radio-group">
@@ -783,17 +889,22 @@
 
           <div class="card">
             <div class="card-title">4. Liberação e Assinaturas</div>
+            
             <div class="form-group">
               <label>Técnico Responsável:</label>
-              <select id="selectTecnico" required><option value="">Selecione o técnico...</option></select>
+              <select id="selectTecnico" required>
+                <option value="">Selecione o técnico...</option>
+              </select>
             </div>
+
             <div class="signature-container" style="margin-top: 12px;">
               <div class="sig-box">
                 <label>Assinatura do Recebedor / Cliente:</label>
                 <button type="button" class="btn-clear" onclick="limparAssinatura()" style="float: right; margin-bottom: 4px; padding: 2px 8px; font-size: 11px;">Limpar</button>
-                <canvas id="canvasAssinatura" width="500" height="110"></canvas>
+                <canvas id="canvasAssinatura" width="500" height="110" style="border: 1px solid #cbd5e1; border-radius: 6px; background: #fafafa; cursor: crosshair; width: 100%;"></canvas>
               </div>
             </div>
+
             <button type="button" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;" onclick="gerarTermo(event)">
               <i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)
             </button>
@@ -802,95 +913,7 @@
       </form>
     </div>
 
-    <div id="abaEmissaoLote" class="tab-content">
-      <div id="bannerReqVinculadaLote" style="display: none; background: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 12px; align-items: center; justify-content: space-between;">
-        <span><i class="fa-solid fa-boxes-stacked"></i> Atendendo Requisição Pendente (LOTE): <span id="lblProtReqVinculadaLote" style="color: #1a4d80;">-</span></span>
-        <button type="button" onclick="desvincularRequisicaoLote()" style="background: transparent; border: none; color: #dc3545; font-weight: bold; cursor: pointer; font-size: 11px;"><i class="fa-solid fa-xmark"></i> Cancelar Vínculo</button>
-      </div>
-
-      <form id="termoLoteForm" onsubmit="gerarTermoLote(event)">
-        <input type="hidden" id="reqVinculadaProtocoloLote" value="">
-
-        <div class="card" style="margin-bottom: 16px;">
-          <div class="card-title">1. Informações Principais da Entrega (Lote)</div>
-          <div class="form-row">
-            <div class="form-group" style="flex: 2;">
-              <label>Buscar / Selecionar Cliente:</label>
-              <input type="text" id="inputClienteLote" list="listClientes" placeholder="Digite o nome do cliente..." required>
-            </div>
-            <div class="form-group" style="flex: 1;">
-              <label>Operação:</label>
-              <div class="radio-group" style="padding: 10px 0;">
-                <label><input type="radio" name="tipoOperacaoLote" value="LOCAÇÃO" checked> Locação</label>
-                <label><input type="radio" name="tipoOperacaoLote" value="EMPRÉSTIMO"> Empréstimo</label>
-              </div>
-            </div>
-            <div class="form-group" style="flex: 1.5;">
-              <label>Técnico Responsável:</label>
-              <select id="selectTecnicoLote" required><option value="">Selecione o técnico...</option></select>
-            </div>
-          </div>
-        </div>
-
-        <div class="main-grid">
-          <div style="display: flex; flex-direction: column; gap: 16px;">
-            <div class="card" style="flex: 1;">
-              <div class="card-title">2. Carrinho de Equipamentos (<span id="contadorLote">0</span>)</div>
-              
-              <div class="form-row" style="align-items: flex-end; margin-bottom: 12px; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                <div class="form-group" style="flex: 1;">
-                  <label>Bipe ou Digite a TAG para Adicionar:</label>
-                  <input type="text" id="buscaEquipLote" list="listEquipamentos" placeholder="Ex: LMD-101..." onkeypress="if(event.key === 'Enter') { event.preventDefault(); adicionarEquipamentoLote(); }">
-                </div>
-                <button type="button" class="btn-submit" onclick="adicionarEquipamentoLote()" style="height: 35px; margin-bottom: 2px;"><i class="fa-solid fa-plus"></i> Adicionar à Lista</button>
-              </div>
-
-              <div class="table-container" style="max-height: 250px;">
-                <table style="table-layout: auto;">
-                  <thead>
-                    <tr><th style="width: 30px;">#</th><th style="width: 80px;">TAG</th><th>Equipamento / Modelo</th><th>Série</th><th style="width: 80px;" class="td-center">Ação</th></tr>
-                  </thead>
-                  <tbody id="corpoCarrinhoLote">
-                    <tr><td colspan="5" class="td-center" style="color:#888; padding:20px;">A lista está vazia. Adicione equipamentos acima.</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <div style="display: flex; flex-direction: column; gap: 16px;">
-            <div class="card" style="flex: 1;">
-              <div class="card-title">3. Agrupamento de Acessórios (Automático)</div>
-              <div class="table-container" style="max-height: 200px;">
-                <table style="table-layout: auto;">
-                  <thead>
-                    <tr><th style="width:30px;">#</th><th style="width:60px;" class="td-center">QTD</th><th>Descrição do Acessório Consolidada</th></tr>
-                  </thead>
-                  <tbody id="corpoAcessoriosLote">
-                    <tr><td colspan="3" class="td-center" style="color:#888; padding:20px;">Adicione equipamentos para calcular acessórios.</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-title">4. Assinatura e Emissão</div>
-              <div class="signature-container" style="margin-top: 0;">
-                <div class="sig-box">
-                  <label>Assinatura do Recebedor / Cliente:</label>
-                  <button type="button" class="btn-clear" onclick="limparAssinaturaLote()" style="float: right; margin-bottom: 4px; padding: 2px 8px; font-size: 11px;">Limpar</button>
-                  <canvas id="canvasAssinaturaLote" width="500" height="110"></canvas>
-                </div>
-              </div>
-              <button type="button" id="btnEnviarLote" class="btn-submit" style="margin-top: 12px; width: 100%; background: linear-gradient(135deg, #059669, #064e3b);" onclick="gerarTermoLote(event)">
-                <i class="fa-solid fa-file-pdf"></i> Gerar Termo Múltiplo (Lote) em PDF
-              </button>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-
+    <!-- MÓDULO CONSULTA TERMOS -->
     <div id="abaConsulta" class="tab-content">
       <div class="card">
         <div class="card-title">Histórico e Consulta de Termos Gerados</div>
@@ -920,6 +943,7 @@
       </div>
     </div>
 
+    <!-- MÓDULO MANUTENÇÃO O.S. -->
     <div id="abaOsGestao" class="tab-content">
       <div class="card">
         <div class="card-title">
@@ -1026,6 +1050,7 @@
       </div>
     </div>
 
+    <!-- MÓDULOS CADASTROS -->
     <div id="abaCadEquipamento" class="tab-content">
       <div class="card">
         <div class="card-title">Cadastrar Novo Equipamento (Aba EQUIP)</div>
@@ -1077,6 +1102,8 @@
       </div>
     </div>
 
+    <!-- CORREÇÃO 3: RODAPÉ MOVIDO PARA DENTRO DO APP CONTAINER -->
+    <!-- RODAPÉ DO SISTEMA -->
     <footer class="system-footer">
       <div><b>DMA SYS</b> v2.0 | Sistema de Gestão Operacional</div>
       <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
@@ -1084,6 +1111,7 @@
 
   </div> <!-- FIM DO APP CONTAINER -->
 
+  <!-- MODAL VISUALIZADOR DE REQUISIÇÃO (PDF) -->
   <div id="modalVisualizadorReq" class="modal-overlay">
     <div class="modal-box" style="width: 800px; max-width: 95vw; height: 85vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -1100,6 +1128,7 @@
     </div>
   </div>
 
+  <!-- MODAL LOCAÇÃO ATUALIZADO -->
   <div id="modalLocacao" class="modal-overlay">
     <div class="modal-box" style="width: 520px;">
       <div class="modal-title">
@@ -1206,9 +1235,6 @@
     let tituloOriginalPagina = document.title;
     let timerPiscarTitulo = null;
     let ultimoTempoDigitandoEnviado = 0;
-    
-    // VARIÁVEIS PARA O CARRINHO (LOTE)
-    let carrinhoLote = [];
 
     function criarDebounce(func, wait = 200) {
       let timeout;
@@ -1547,11 +1573,8 @@
 
     function preencherSelectTecnicos() {
       const selTec = document.getElementById('selectTecnico');
-      const selTecLote = document.getElementById('selectTecnicoLote'); // Lote
-      
-      const valAnterior = selTec ? selTec.value : "";
-      const valAnteriorLote = selTecLote ? selTecLote.value : "";
-      
+      if (!selTec) return;
+      const valAnterior = selTec.value;
       let htmlOptions = '<option value="">Selecione o técnico...</option>';
       if (bancoDados && bancoDados.usuarios) {
         bancoDados.usuarios.forEach((u) => {
@@ -1561,16 +1584,8 @@
           }
         });
       }
-      
-      if (selTec) {
-        selTec.innerHTML = htmlOptions;
-        if (valAnterior !== "") selTec.value = valAnterior;
-      }
-      
-      if (selTecLote) {
-        selTecLote.innerHTML = htmlOptions;
-        if (valAnteriorLote !== "") selTecLote.value = valAnteriorLote;
-      }
+      selTec.innerHTML = htmlOptions;
+      if (valAnterior !== "") selTec.value = valAnterior;
     }
 
     function verificarSessao() {
@@ -1712,15 +1727,14 @@
       }
       
       const cliente = document.getElementById('reqCliente').value.trim();
-      const tipoReq = document.getElementById('reqTipo').value; // CAMPO NOVO
       const operacao = document.querySelector('input[name="reqOperacao"]:checked')?.value || "LOCAÇÃO";
       const eqAntigo = document.getElementById('reqEqAntigo').value.trim();
       const eqSolicitado = document.getElementById('reqEqSolicitado').value.trim();
       const motivo = document.getElementById('reqMotivo').value.trim();
       const solicitante = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario || "Solicitante") : "Solicitante";
 
-      if (!cliente || !tipoReq || !eqAntigo || !eqSolicitado) {
-        alert("Preencha os campos obrigatórios (Cliente, Tipo de Requisição, Equipamento a Substituir e Equipamento Solicitado).");
+      if (!cliente || !eqAntigo || !eqSolicitado) {
+        alert("Preencha os campos obrigatórios (Cliente, Equipamento a Substituir e Equipamento Solicitado).");
         return false;
       }
 
@@ -1733,7 +1747,6 @@
       const payload = {
         acao: "CRIAR_REQUISICAO",
         cliente: cliente,
-        tipoRequisicao: tipoReq, // DADO NOVO ENVIADO AO BACKEND
         operacao: operacao,
         equipamentoAntigo: eqAntigo,
         equipamentoSolicitado: eqSolicitado,
@@ -1758,7 +1771,6 @@
             protocolo: res.protocoloReq || res.protocolo,
             dataHora: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
             cliente: cliente,
-            tipoRequisicao: tipoReq, // DADO NOVO INSERIDO NO FRONTEND
             operacao: operacao,
             equipamentoAntigo: eqAntigo,
             equipamentoSolicitado: eqSolicitado,
@@ -1808,7 +1820,7 @@
       }
 
       if (iframe) iframe.src = embedUrl;
-      if (tituloEl) tituloEl.innerText = titulo || "Visualizar Documento (PDF)";
+      if (tituloEl) tituloEl.innerText = titulo || "Visualizar Requisição (PDF)";
       if (btnLink) btnLink.href = pdfUrl;
       if (modal) modal.classList.add('active');
     }
@@ -2105,7 +2117,7 @@
       const tbody = document.getElementById('corpoRequisicoes');
       if (!tbody) return;
       if (!lista || lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição encontrada para o filtro selecionado.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição encontrada para o filtro selecionado.</td></tr>';
         return;
       }
 
@@ -2133,8 +2145,7 @@
         if (isPendente) {
           btnAcao = `<div class="btn-action-container">
             ${linkPdfReq}
-            <button type="button" class="btn-atender" style="background: linear-gradient(135deg, #059669, #064e3b);" onclick="atenderRequisicaoLote('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}', '${r.operacao || 'LOCAÇÃO'}')" title="Emitir Lote"><i class="fa-solid fa-layer-group"></i> Lote</button>
-            <button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}', '${r.operacao || 'LOCAÇÃO'}')"><i class="fa-solid fa-check"></i> Indiv.</button>
+            <button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}', '${r.operacao || 'LOCAÇÃO'}')"><i class="fa-solid fa-check"></i> Atender</button>
             <button type="button" class="btn-vincular" onclick="abrirModalVincularTermo('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}')"><i class="fa-solid fa-link"></i> Vincular</button>
             <button type="button" class="btn-negar" onclick="abrirModalRecusa('${r.protocolo}')"><i class="fa-solid fa-xmark"></i> Negar</button>
           </div>`;
@@ -2151,8 +2162,7 @@
             <td>${r.dataHora || '-'}</td>
             <td>${r.cliente || '-'}</td>
             <td><b>${r.equipamentoSolicitado || '-'}</b></td>
-            <td style="color:#555; font-style:italic; font-size:11px;">${r.motivo || "-"}</td>
-            <td class="td-center"><span style="font-size:10px; font-weight:bold; background:#eef2f9; color:#1a4d80; padding:4px 8px; border-radius:6px; border:1px solid #cbd5e1;">${r.tipoRequisicao || 'SUBSTITUIÇÃO'}</span></td>
+            <td style="color:#555; font-style:italic;">${r.motivo || "-"}</td>
             <td class="td-center"><b>${r.operacao || 'LOCAÇÃO'}</b></td>
             <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span></td>
             <td class="td-center">${btnAcao}</td>
@@ -2279,182 +2289,6 @@
       mudarAba('emissao');
     }
 
-    function atenderRequisicaoLote(protReq, cliente, operacao) {
-      document.getElementById('reqVinculadaProtocoloLote').value = protReq;
-      document.getElementById('inputClienteLote').value = cliente;
-      
-      const banner = document.getElementById('bannerReqVinculadaLote');
-      const lbl = document.getElementById('lblProtReqVinculadaLote');
-      if (banner && lbl) { lbl.innerText = protReq; banner.style.display = "flex"; }
-
-      const radioOp = document.querySelector(`input[name="tipoOperacaoLote"][value="${operacao}"]`);
-      if (radioOp) radioOp.checked = true;
-
-      mudarAba('emissao_lote');
-    }
-
-    function desvincularRequisicaoLote() {
-      document.getElementById('reqVinculadaProtocoloLote').value = "";
-      const banner = document.getElementById('bannerReqVinculadaLote');
-      if (banner) banner.style.display = "none";
-    }
-
-    function adicionarEquipamentoLote() {
-      const inputVal = document.getElementById('buscaEquipLote').value.toLowerCase().trim();
-      if (!inputVal) return;
-      
-      if (!bancoDados.equipamentos || bancoDados.equipamentos.length === 0) {
-        alert("Aguarde, banco de equipamentos ainda está a carregar.");
-        return;
-      }
-      
-      const eq = bancoDados.equipamentos.find(i => `tag: ${i.tag} | ${i.nome} | série: ${i.serie}`.toLowerCase() === inputVal || (i.tag || '').toLowerCase() === inputVal);
-      
-      if (eq) {
-        if (carrinhoLote.find(item => item.tag === eq.tag)) {
-          alert(`O equipamento TAG ${eq.tag} já foi adicionado ao carrinho.`);
-          return;
-        }
-        
-        carrinhoLote.push(eq);
-        document.getElementById('buscaEquipLote').value = "";
-        atualizarInterfaceLote();
-      } else {
-        alert("Equipamento não encontrado! Digite a TAG ou nome válido.");
-      }
-    }
-
-    function removerEquipamentoLote(tag) {
-      carrinhoLote = carrinhoLote.filter(item => item.tag !== tag);
-      atualizarInterfaceLote();
-    }
-
-    function atualizarInterfaceLote() {
-      document.getElementById('contadorLote').innerText = carrinhoLote.length;
-
-      const tbodyCarrinho = document.getElementById('corpoCarrinhoLote');
-      if (carrinhoLote.length === 0) {
-        tbodyCarrinho.innerHTML = '<tr><td colspan="5" class="td-center" style="color:#888; padding:20px;">A lista está vazia. Adicione equipamentos acima.</td></tr>';
-      } else {
-        tbodyCarrinho.innerHTML = carrinhoLote.map((eq, i) => `
-          <tr>
-            <td class="td-center">${i + 1}</td>
-            <td class="td-center"><b>${eq.tag || '-'}</b></td>
-            <td>${eq.nome || '-'} ${eq.modelo ? '('+eq.modelo+')' : ''}</td>
-            <td>${eq.serie || '-'}</td>
-            <td class="td-center">
-              <button type="button" class="btn-remover-item" onclick="removerEquipamentoLote('${eq.tag}')"><i class="fa-solid fa-trash"></i></button>
-            </td>
-          </tr>
-        `).join('');
-      }
-
-      let contagemAcs = {};
-      carrinhoLote.forEach(eq => {
-        const rawAcs = eq.acessorios ? eq.acessorios.toString().trim() : "";
-        if (rawAcs && rawAcs.toUpperCase() !== "NÃO POSSUI" && !rawNulo(rawAcs)) {
-          const listaAcs = rawAcs.split(';').map(a => a.trim().toUpperCase()).filter(Boolean);
-          listaAcs.forEach(ac => {
-            contagemAcs[ac] = (contagemAcs[ac] || 0) + 1;
-          });
-        }
-      });
-
-      const tbodyAcs = document.getElementById('corpoAcessoriosLote');
-      const keysAcs = Object.keys(contagemAcs).sort();
-      
-      if (keysAcs.length === 0) {
-        tbodyAcs.innerHTML = '<tr><td colspan="3" class="td-center" style="color:#888; padding:20px;">Sem acessórios associados a estes equipamentos.</td></tr>';
-      } else {
-        tbodyAcs.innerHTML = keysAcs.map((acNome, idx) => `
-          <tr>
-            <td class="td-center">${idx + 1}</td>
-            <td class="td-center">
-              <input type="number" class="qtd-acessorio-multiplo" data-nome="${acNome}" value="${contagemAcs[acNome]}" min="0" style="width: 50px; text-align: center; font-weight: bold; border: 1px solid #059669; color: #059669; border-radius: 4px; padding: 2px;">
-            </td>
-            <td><b>${acNome}</b></td>
-          </tr>
-        `).join('');
-      }
-    }
-
-    function gerarTermoLote(e) {
-      if (e) { e.preventDefault(); e.stopPropagation(); }
-
-      if (carrinhoLote.length === 0) {
-        alert("O carrinho está vazio! Adicione equipamentos antes de gerar o termo.");
-        return false;
-      }
-
-      const cliente = document.getElementById('inputClienteLote').value.trim();
-      const nomeTec = document.getElementById('selectTecnicoLote').value;
-
-      if (!cliente) { alert("Informe o Cliente."); return false; }
-      if (!nomeTec) { alert("Selecione o Técnico."); return false; }
-
-      // Acessórios consolidados (já com as quantidades eventualmente ajustadas na tabela)
-      let acessoriosList = [];
-      document.querySelectorAll('#corpoAcessoriosLote tr').forEach((tr) => {
-        const inputQtd = tr.querySelector('.qtd-acessorio-multiplo');
-        if (!inputQtd) return;
-        const tds = tr.querySelectorAll('td');
-        const qtdVal = parseInt(inputQtd.value);
-        if (isNaN(qtdVal) || qtdVal <= 0) return;
-        acessoriosList.push({
-          item: acessoriosList.length + 1,
-          qtd: qtdVal,
-          descricao: tds[2].innerText.trim(),
-          conformidade: "CONFORME"
-        });
-      });
-
-      const payload = {
-        acao: "CRIAR_TERMO_LOTE",
-        cliente: cliente,
-        equipamentos: carrinhoLote,
-        tipoOperacao: document.querySelector('input[name="tipoOperacaoLote"]:checked').value,
-        acessorios: acessoriosList,
-        tecnico: { nome: nomeTec },
-        assinaturaCliente: canvasLote ? canvasLote.toDataURL() : "",
-        protocoloReq: document.getElementById('reqVinculadaProtocoloLote').value
-      };
-
-      const textoBtnLote = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Múltiplo (Lote) em PDF';
-      const btn = document.getElementById('btnEnviarLote');
-      btn.disabled = true; btn.innerText = "GERANDO PDF NO SERVIDOR...";
-
-      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
-      .then(res => res.json())
-      .then(res => {
-        btn.disabled = false;
-        btn.innerHTML = textoBtnLote;
-
-        if (res.status === "sucesso") {
-          desvincularRequisicaoLote();
-          document.getElementById('termoLoteForm').reset();
-          limparAssinaturaLote();
-          carrinhoLote = [];
-          atualizarInterfaceLote();
-
-          buscarAtualizacoesSilenciosas();
-
-          if (res.pdfUrl && confirm(`Termo ${res.protocolo} gerado com sucesso!\n\nDeseja abrir o PDF gerado agora?`)) {
-            window.open(res.pdfUrl, '_blank');
-          }
-          mudarAba('consulta');
-        } else {
-          alert("Erro ao gerar termo em lote: " + (res.mensagem || "Erro desconhecido."));
-        }
-      })
-      .catch(err => {
-        btn.disabled = false;
-        btn.innerHTML = textoBtnLote;
-        alert("Falha de conexão ao gerar termo em lote.");
-      });
-
-      return false;
-    }
-
     function desvincularRequisicao() {
       document.getElementById('reqVinculadaProtocolo').value = "";
       const banner = document.getElementById('bannerReqVinculada');
@@ -2472,7 +2306,6 @@
       else if (nomeAba === 'dashboard') { document.getElementById('btnNavDashboard').classList.add('active'); document.getElementById('abaDashboard').classList.add('active'); atualizarDashboard(); }
       else if (nomeAba === 'requisicoes') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaRequisicoes').classList.add('active'); }
       else if (nomeAba === 'emissao') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaEmissao').classList.add('active'); }
-      else if (nomeAba === 'emissao_lote') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaEmissaoLote').classList.add('active'); }
       else if (nomeAba === 'consulta') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaConsulta').classList.add('active'); }
       else if (nomeAba === 'os_gestao') { document.getElementById('btnNavManutencao').classList.add('active'); document.getElementById('abaOsGestao').classList.add('active'); renderizarTabelaOS(); }
       else if (nomeAba === 'os_abertura') { document.getElementById('btnNavManutencao').classList.add('active'); document.getElementById('abaOsAbertura').classList.add('active'); }
@@ -2559,45 +2392,25 @@
     const canvas = document.getElementById('canvasAssinatura');
     const ctx = canvas?.getContext('2d');
     let desenhando = false;
-    
-    const canvasLote = document.getElementById('canvasAssinaturaLote');
-    const ctxLote = canvasLote?.getContext('2d');
-    let desenhandoLote = false;
-
-    function obterPosicao(e, cvs) {
-      const rect = cvs.getBoundingClientRect();
+    function obterPosicao(e) {
+      const rect = canvas.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
       return { x: clientX - rect.left, y: clientY - rect.top };
     }
-    
-    function iniciarDesenho(e) { desenhando = true; desenhar(e, ctx, canvas); }
+    function iniciarDesenho(e) { desenhando = true; desenhar(e); }
     function pararDesenho() { desenhando = false; ctx?.beginPath(); }
-    function tracaDesenho(e) { desenhar(e, ctx, canvas); }
-    
-    function iniciarDesenhoLote(e) { desenhandoLote = true; desenhar(e, ctxLote, canvasLote, true); }
-    function pararDesenhoLote() { desenhandoLote = false; ctxLote?.beginPath(); }
-    function tracaDesenhoLote(e) { desenhar(e, ctxLote, canvasLote, true); }
-
-    function desenhar(e, context, cvs, isLote = false) {
-      const isDrawing = isLote ? desenhandoLote : desenhando;
-      if (!isDrawing || !context) return;
+    function desenhar(e) {
+      if (!desenhando || !ctx) return;
       e.preventDefault();
-      const pos = obterPosicao(e, cvs);
-      context.lineWidth = 2; context.lineCap = 'round'; context.lineTo(pos.x, pos.y); context.stroke(); context.beginPath(); context.moveTo(pos.x, pos.y);
+      const pos = obterPosicao(e);
+      ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineTo(pos.x, pos.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
     }
-    
     if (canvas) {
-      canvas.addEventListener('mousedown', iniciarDesenho); canvas.addEventListener('mouseup', pararDesenho); canvas.addEventListener('mousemove', tracaDesenho);
-      canvas.addEventListener('touchstart', iniciarDesenho); canvas.addEventListener('touchend', pararDesenho); canvas.addEventListener('touchmove', tracaDesenho);
+      canvas.addEventListener('mousedown', iniciarDesenho); canvas.addEventListener('mouseup', pararDesenho); canvas.addEventListener('mousemove', desenhar);
+      canvas.addEventListener('touchstart', iniciarDesenho); canvas.addEventListener('touchend', pararDesenho); canvas.addEventListener('touchmove', desenhar);
     }
-    if (canvasLote) {
-      canvasLote.addEventListener('mousedown', iniciarDesenhoLote); canvasLote.addEventListener('mouseup', pararDesenhoLote); canvasLote.addEventListener('mousemove', tracaDesenhoLote);
-      canvasLote.addEventListener('touchstart', iniciarDesenhoLote); canvasLote.addEventListener('touchend', pararDesenhoLote); canvasLote.addEventListener('touchmove', tracaDesenhoLote);
-    }
-    
     function limparAssinatura() { ctx?.clearRect(0, 0, canvas.width, canvas.height); }
-    function limparAssinaturaLote() { ctxLote?.clearRect(0, 0, canvasLote.width, canvasLote.height); }
 
     function gerarTermo(e) {
       if (e) {
