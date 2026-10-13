@@ -155,7 +155,6 @@
     .emoji-item { font-size: 16px; cursor: pointer; padding: 4px; border-radius: 4px; transition: background 0.1s; }
     .emoji-item:hover { background: #f1f5f9; }
 
-    /* WIDGET WHATSAPP FLUTUANTE */
     .chat-widget-btn { position: fixed; bottom: 45px; right: 20px; background: #25d366; color: white; border: none; width: 48px; height: 48px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.25); z-index: 101; transition: transform 0.2s; }
     .chat-widget-btn:hover { transform: scale(1.08); }
     .chat-box-wa { display: none; position: fixed; bottom: 105px; right: 20px; width: 300px; background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 102; overflow: hidden; border: 1px solid #e2e8f0; }
@@ -163,12 +162,8 @@
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* --- RODAPÉ FIXO --- */
-    .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 99999; border-top: 2px solid #2563eb; }
-    .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
-    
     /* ===================================================================
-       TEMA VISUAL DMA SYS (v4) — SOMENTE cores, sombras, degradês e cantos.
+       TEMA VISUAL DMA SYS (Premium Completo) — Sombras, cantos e cores.
        =================================================================== */
     html { scrollbar-color:#b7c4da #eef2f8; }
     ::selection { background:#bfdbfe; color:#0b2545; }
@@ -203,14 +198,12 @@
     .metric-card { border-radius:14px; border-color:#e3e9f3; border-left-color:#2563eb; box-shadow:0 2px 12px rgba(11,37,69,.08); }
     .metric-card.yellow { border-left-color:#f59e0b; } .metric-card.green { border-left-color:#22c55e; } .metric-card.red { border-left-color:#ef4444; } .metric-card.blue { border-left-color:#2563eb; }
     .metric-value { color:#0b2545; }
-    .bar-bg { background:#e8eef7; } .bar-fill { background:linear-gradient(90deg,#2563eb,#60a5fa); }
 
     label { color:#475569; }
     input[type="text"], input[type="password"], input[type="month"], input[type="number"], select, textarea { border-color:#d3dbe8; border-radius:10px; background:#fbfcfe; box-shadow:inset 0 1px 2px rgba(11,37,69,.04); }
     input[type="text"]:hover, input[type="number"]:hover, select:hover, textarea:hover { border-color:#9fb3d1; }
     input[type="text"]:focus, input[type="password"]:focus, input[type="month"]:focus, input[type="number"]:focus, select:focus, textarea:focus { border-color:#2563eb; background:#fff; box-shadow:0 0 0 4px rgba(37,99,235,.16); }
     input[readonly] { background-color:#eef2f8; color:#1e293b; }
-    input[type="radio"], input[type="checkbox"] { accent-color:#2563eb; }
 
     .table-container { border-color:#dbe3ef; border-radius:12px; scrollbar-color:#b7c4da #f1f5fb; }
     th { background:linear-gradient(180deg,#f1f6fd,#e1ecf9); color:#0b2545; border-bottom-color:#2563eb; }
@@ -221,11 +214,9 @@
 
     .btn-submit { background:linear-gradient(135deg,#2563eb,#1a4d80); border-radius:11px; box-shadow:0 8px 18px rgba(37,99,235,.32); transition:transform .15s,box-shadow .15s,background .15s; }
     .btn-submit:hover { background:linear-gradient(135deg,#3b82f6,#13427a); box-shadow:0 12px 24px rgba(37,99,235,.42); transform:translateY(-1px); }
-    .btn-submit:active { transform:translateY(0); }
     .btn-submit:disabled { background:#94a3b8; box-shadow:none; transform:none; }
     .btn-pdf { background:linear-gradient(135deg,#2563eb,#1a4d80); border-radius:7px; box-shadow:0 3px 8px rgba(37,99,235,.3); transition:transform .15s; }
     .btn-pdf:hover { background:linear-gradient(135deg,#3b82f6,#13427a); transform:translateY(-1px); }
-    .btn-termo-link { background:#ecfdf5; color:#047857; border-color:#86efac; border-radius:7px; }
     .btn-editar-saldo { background:linear-gradient(135deg,#2563eb,#1d4ed8); border-radius:7px; box-shadow:0 3px 8px rgba(37,99,235,.3); transition:transform .15s; }
     .btn-editar-saldo:hover { background:linear-gradient(135deg,#3b82f6,#1e40af); transform:translateY(-1px); }
     .btn-logout { border-radius:10px; } .btn-logout:hover { background:#dc3545; border-color:#dc3545; }
@@ -234,23 +225,11 @@
     .badge-atendido { background:#ecfdf5; color:#047857; border-color:#86efac; }
     .badge-recusado { background:#fef2f2; color:#b91c1c; border-color:#fca5a5; }
     .badge-encerrado { background:#fef2f2; color:#b91c1c; border-color:#fca5a5; }
-    .badge-saldo-ok { background:#eef2f8; color:#334155; } .badge-saldo-pendente { background:#fef3c7; color:#92400e; } .badge-saldo-alerta { background:#fee2e2; color:#991b1b; }
 
     .modal-overlay { background:rgba(11,37,69,.6); backdrop-filter:blur(4px); }
     .modal-box { border-radius:18px; box-shadow:0 30px 70px rgba(11,37,69,.45); }
     .modal-overlay.active .modal-box { animation:fadeIn .22s ease-out; }
     .modal-title { color:#0b2545; border-bottom:2px solid transparent; border-image:linear-gradient(90deg,#2563eb,#06b6d4 60%,#22c55e) 1; }
-    .modal-manual-card { border-radius:18px; } .modal-manual-header { background:linear-gradient(115deg,#0b2545,#1a4d80); }
-
-    .chat-tabs { background:#eef2f9; } .chat-tab { background:#f6f9fd; } .chat-tab.active { color:#1a4d80; border-bottom-color:#2563eb; }
-    .chat-messages { background:#f8fafc; }
-    .chat-msg { border-color:#e2e8f0; border-radius:10px; box-shadow:0 1px 3px rgba(11,37,69,.06); }
-    .chat-msg.me { background:#dbeafe; border-color:#bfdbfe; }
-    .chat-input-box { border-top-color:#e2e8f0; } .chat-input-box input { border-color:#d3dbe8; border-radius:8px; }
-    .chat-input-box button { background:linear-gradient(135deg,#2563eb,#1a4d80); border-radius:8px; }
-    .emoji-picker-dropdown { border-radius:12px; box-shadow:0 12px 28px rgba(11,37,69,.2); }
-    .chat-box-wa { border-radius:18px; box-shadow:0 22px 50px rgba(11,37,69,.3); }
-    .chat-widget-btn { box-shadow:0 10px 24px rgba(37,211,102,.45); }
 
     .btn-action-container { display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important; align-items:center !important; justify-content:center !important; gap:4px !important; width:100% !important; white-space:nowrap !important; }
     .btn-atender, .btn-negar, .btn-vincular, .btn-remover-item { color:#fff; border:none; padding:4px 10px; border-radius:7px; font-size:11px; font-weight:bold; cursor:pointer; white-space:nowrap; height:26px; display:inline-flex; align-items:center; gap:4px; justify-content:center; transition:filter .15s,transform .15s; }
@@ -260,9 +239,10 @@
     .btn-remover-item { background:linear-gradient(135deg,#ef4444,#dc2626); }
     .btn-atender:hover, .btn-negar:hover, .btn-vincular:hover, .btn-remover-item:hover { filter:brightness(1.1); transform:translateY(-1px); }
     .btn-clear { position:absolute; right:12px; top:12px; background:#ef4444; color:#fff; border:none; padding:4px 10px; border-radius:7px; font-size:11px; font-weight:bold; cursor:pointer; }
+    
     .signature-container { display:flex; gap:12px; margin-top:8px; }
     .sig-box { flex:1; border:1px dashed #b9c7de; border-radius:12px; padding:10px; background:#f6f9fd; text-align:center; position:relative; }
-    .sig-box canvas { touch-action:none; }
+    .sig-box canvas { touch-action:none; width: 100%; height: 110px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fafafa; cursor: crosshair; }
 
     #loginOverlay { background:radial-gradient(700px 400px at 18% 8%,rgba(37,99,235,.42),transparent 70%),radial-gradient(600px 400px at 92% 92%,rgba(6,182,212,.22),transparent 70%),#0a1424 !important; }
     #loginOverlay > div { border-radius:22px !important; box-shadow:0 34px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.08) !important; }
@@ -270,14 +250,9 @@
     #loginOverlay input { border-radius:10px !important; border-color:#d3dbe8 !important; background:#fbfcfe; }
     #loginOverlay input:focus { border-color:#2563eb !important; box-shadow:0 0 0 4px rgba(37,99,235,.18); outline:none; background:#fff; }
     #btnEntrarLogin { background:linear-gradient(135deg,#2563eb,#1a4d80) !important; border-radius:11px !important; box-shadow:0 10px 22px rgba(37,99,235,.4); transition:transform .15s,box-shadow .15s; }
-    #btnEntrarLogin:hover { transform:translateY(-1px); box-shadow:0 14px 28px rgba(37,99,235,.5); }
-    #loginOverlay::after { content:"DMA SYS v2.0 | Sistema de Gestão Operacional"; position:absolute; left:0; right:0; bottom:0; padding:10px 20px; text-align:center; font-size:11px; color:#94a3b8; background:rgba(11,27,51,.85); border-top:2px solid #2563eb; pointer-events:none; }
-
+    
     .system-footer { position:fixed !important; left:0 !important; right:0 !important; bottom:0 !important; z-index:2147483000 !important; display:flex !important; visibility:visible !important; opacity:1 !important; transform:none !important; justify-content:space-between; align-items:center; background:linear-gradient(90deg,#0b1b33,#12305a 55%,#0b1b33); color:#cbd5e1; font-size:11px; padding:8px 20px; border-top:2px solid #2563eb; box-shadow:0 -6px 20px rgba(11,37,69,.25); }
     .system-footer a { color:#7dd3fc; text-decoration:none; font-weight:bold; }
-    .system-footer a:hover { color:#fff; }
-
-    @supports (overflow-x: clip) { body { overflow-x: clip !important; } }
   </style>
 </head>
 <body>
@@ -449,7 +424,6 @@
       </div>
     </div>
 
-    <!-- MÓDULO LOCAÇÃO -->
     <div id="abaLocacao" class="tab-content">
       <div class="dash-metrics" style="grid-template-columns: repeat(4, 1fr);">
         <div class="metric-card blue">
@@ -528,7 +502,6 @@
       </div>
     </div>
 
-    <!-- MÓDULO COMPRAS -->
     <div id="abaCompras" class="tab-content">
       <div class="card">
         <div class="card-title">
@@ -609,7 +582,6 @@
       </div>
     </div>
 
-    <!-- MÓDULO DASHBOARD -->
     <div id="abaDashboard" class="tab-content">
       <div class="card" style="margin-bottom: 16px;">
         <div class="card-title"><span>Filtro de Período das Métricas</span></div>
@@ -643,16 +615,18 @@
       </div>
     </div>
 
-    <!-- MÓDULO QUALIDADE / REQUISIÇÕES -->
     <div id="abaRequisicoes" class="tab-content">
       <div class="card">
         <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
         <form id="formReq" onsubmit="return salvarRequisicao(event)">
+          
           <div class="form-row">
             <div class="form-group" style="flex: 2;">
               <label>Cliente / Locatário Solicitante:</label>
               <input type="text" id="reqCliente" list="listClientes" placeholder="Selecione ou digite o cliente..." required>
             </div>
+            
+            <!-- CAMPO TIPO DE REQUISIÇÃO (ADICIONADO) -->
             <div class="form-group" style="flex: 1;">
               <label>TIPO DE REQUISIÇÃO:</label>
               <select id="reqTipo" required>
@@ -662,6 +636,7 @@
                 <option value="NOVO ENVIO">Novo Envio</option>
               </select>
             </div>
+
             <div class="form-group" style="flex: 1.5;">
               <label>Operação:</label>
               <div class="radio-group">
@@ -727,7 +702,7 @@
                 <th style="width: 220px;">Cliente / Locatário</th>
                 <th style="width: 200px;">Equipamento Solicitado</th>
                 <th>Motivo / Obs.</th>
-                <th class="td-center" style="width: 110px;">Tipo Req.</th>
+                <th class="td-center" style="width: 110px;">Tipo Req.</th> <!-- COLUNA ADICIONADA -->
                 <th class="td-center" style="width: 80px;">Operação</th>
                 <th class="td-center" style="width: 80px;">Status</th>
                 <th class="td-center" style="width: 310px;">Ações / Qualidade</th>
@@ -741,7 +716,6 @@
       </div>
     </div>
 
-    <!-- MÓDULO EMISSÃO TERMO INDIVIDUAL -->
     <div id="abaEmissao" class="tab-content">
       <div id="bannerReqVinculada" style="display: none; background: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 12px; align-items: center; justify-content: space-between;">
         <span><i class="fa-solid fa-link"></i> Atendendo Requisição Pendente: <span id="lblProtReqVinculada" style="color: #1a4d80;">-</span></span>
@@ -817,7 +791,7 @@
               <div class="sig-box">
                 <label>Assinatura do Recebedor / Cliente:</label>
                 <button type="button" class="btn-clear" onclick="limparAssinatura()" style="float: right; margin-bottom: 4px; padding: 2px 8px; font-size: 11px;">Limpar</button>
-                <canvas id="canvasAssinatura" width="500" height="110" style="border: 1px solid #cbd5e1; border-radius: 6px; background: #fafafa; cursor: crosshair; width: 100%;"></canvas>
+                <canvas id="canvasAssinatura" width="500" height="110"></canvas>
               </div>
             </div>
             <button type="button" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;" onclick="gerarTermo(event)">
@@ -828,7 +802,6 @@
       </form>
     </div>
 
-    <!-- MÓDULO EMISSÃO TERMO EM LOTE (MÚLTIPLO) -->
     <div id="abaEmissaoLote" class="tab-content">
       <div id="bannerReqVinculadaLote" style="display: none; background: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 12px; align-items: center; justify-content: space-between;">
         <span><i class="fa-solid fa-boxes-stacked"></i> Atendendo Requisição Pendente (LOTE): <span id="lblProtReqVinculadaLote" style="color: #1a4d80;">-</span></span>
@@ -906,7 +879,7 @@
                 <div class="sig-box">
                   <label>Assinatura do Recebedor / Cliente:</label>
                   <button type="button" class="btn-clear" onclick="limparAssinaturaLote()" style="float: right; margin-bottom: 4px; padding: 2px 8px; font-size: 11px;">Limpar</button>
-                  <canvas id="canvasAssinaturaLote" width="500" height="110" style="border: 1px solid #cbd5e1; border-radius: 6px; background: #fafafa; cursor: crosshair; width: 100%;"></canvas>
+                  <canvas id="canvasAssinaturaLote" width="500" height="110"></canvas>
                 </div>
               </div>
               <button type="button" id="btnEnviarLote" class="btn-submit" style="margin-top: 12px; width: 100%; background: linear-gradient(135deg, #059669, #064e3b);" onclick="gerarTermoLote(event)">
@@ -918,7 +891,6 @@
       </form>
     </div>
 
-    <!-- MÓDULO CONSULTA TERMOS -->
     <div id="abaConsulta" class="tab-content">
       <div class="card">
         <div class="card-title">Histórico e Consulta de Termos Gerados</div>
@@ -948,7 +920,6 @@
       </div>
     </div>
 
-    <!-- MÓDULO MANUTENÇÃO O.S. -->
     <div id="abaOsGestao" class="tab-content">
       <div class="card">
         <div class="card-title">
@@ -1055,7 +1026,6 @@
       </div>
     </div>
 
-    <!-- MÓDULOS CADASTROS -->
     <div id="abaCadEquipamento" class="tab-content">
       <div class="card">
         <div class="card-title">Cadastrar Novo Equipamento (Aba EQUIP)</div>
@@ -1107,7 +1077,6 @@
       </div>
     </div>
 
-    <!-- RODAPÉ DO SISTEMA -->
     <footer class="system-footer">
       <div><b>DMA SYS</b> v2.0 | Sistema de Gestão Operacional</div>
       <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
@@ -1115,7 +1084,6 @@
 
   </div> <!-- FIM DO APP CONTAINER -->
 
-  <!-- MODAL VISUALIZADOR DE REQUISIÇÃO (PDF) -->
   <div id="modalVisualizadorReq" class="modal-overlay">
     <div class="modal-box" style="width: 800px; max-width: 95vw; height: 85vh; display: flex; flex-direction: column;">
       <div class="modal-title">
@@ -1132,7 +1100,6 @@
     </div>
   </div>
 
-  <!-- MODAL LOCAÇÃO ATUALIZADO -->
   <div id="modalLocacao" class="modal-overlay">
     <div class="modal-box" style="width: 520px;">
       <div class="modal-title">
@@ -1580,7 +1547,7 @@
 
     function preencherSelectTecnicos() {
       const selTec = document.getElementById('selectTecnico');
-      const selTecLote = document.getElementById('selectTecnicoLote'); // Novo select do Lote
+      const selTecLote = document.getElementById('selectTecnicoLote'); // Lote
       
       const valAnterior = selTec ? selTec.value : "";
       const valAnteriorLote = selTecLote ? selTecLote.value : "";
@@ -1745,7 +1712,7 @@
       }
       
       const cliente = document.getElementById('reqCliente').value.trim();
-      const tipoReq = document.getElementById('reqTipo').value;
+      const tipoReq = document.getElementById('reqTipo').value; // CAMPO NOVO
       const operacao = document.querySelector('input[name="reqOperacao"]:checked')?.value || "LOCAÇÃO";
       const eqAntigo = document.getElementById('reqEqAntigo').value.trim();
       const eqSolicitado = document.getElementById('reqEqSolicitado').value.trim();
@@ -1766,7 +1733,7 @@
       const payload = {
         acao: "CRIAR_REQUISICAO",
         cliente: cliente,
-        tipoRequisicao: tipoReq,
+        tipoRequisicao: tipoReq, // DADO NOVO ENVIADO AO BACKEND
         operacao: operacao,
         equipamentoAntigo: eqAntigo,
         equipamentoSolicitado: eqSolicitado,
@@ -1791,7 +1758,7 @@
             protocolo: res.protocoloReq || res.protocolo,
             dataHora: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
             cliente: cliente,
-            tipoRequisicao: tipoReq,
+            tipoRequisicao: tipoReq, // DADO NOVO INSERIDO NO FRONTEND
             operacao: operacao,
             equipamentoAntigo: eqAntigo,
             equipamentoSolicitado: eqSolicitado,
@@ -2311,10 +2278,7 @@
 
       mudarAba('emissao');
     }
-    
-    // ==========================================
-    // LÓGICA DO CARRINHO (TERMO EM LOTE)
-    // ==========================================
+
     function atenderRequisicaoLote(protReq, cliente, operacao) {
       document.getElementById('reqVinculadaProtocoloLote').value = protReq;
       document.getElementById('inputClienteLote').value = cliente;
@@ -2347,7 +2311,6 @@
       const eq = bancoDados.equipamentos.find(i => `tag: ${i.tag} | ${i.nome} | série: ${i.serie}`.toLowerCase() === inputVal || (i.tag || '').toLowerCase() === inputVal);
       
       if (eq) {
-        // Verifica se a TAG já está no carrinho
         if (carrinhoLote.find(item => item.tag === eq.tag)) {
           alert(`O equipamento TAG ${eq.tag} já foi adicionado ao carrinho.`);
           return;
@@ -2367,10 +2330,8 @@
     }
 
     function atualizarInterfaceLote() {
-      // 1. Atualizar Contador
       document.getElementById('contadorLote').innerText = carrinhoLote.length;
 
-      // 2. Renderizar Tabela do Carrinho
       const tbodyCarrinho = document.getElementById('corpoCarrinhoLote');
       if (carrinhoLote.length === 0) {
         tbodyCarrinho.innerHTML = '<tr><td colspan="5" class="td-center" style="color:#888; padding:20px;">A lista está vazia. Adicione equipamentos acima.</td></tr>';
@@ -2388,7 +2349,6 @@
         `).join('');
       }
 
-      // 3. Somar Acessórios
       let contagemAcs = {};
       carrinhoLote.forEach(eq => {
         const rawAcs = eq.acessorios ? eq.acessorios.toString().trim() : "";
@@ -2400,7 +2360,6 @@
         }
       });
 
-      // 4. Renderizar Tabela de Acessórios (Agrupados)
       const tbodyAcs = document.getElementById('corpoAcessoriosLote');
       const keysAcs = Object.keys(contagemAcs).sort();
       
@@ -2429,19 +2388,14 @@
 
       const cliente = document.getElementById('inputClienteLote').value.trim();
       const nomeTec = document.getElementById('selectTecnicoLote').value;
-      const operacao = document.querySelector('input[name="tipoOperacaoLote"]:checked').value;
-      const protReq = document.getElementById('reqVinculadaProtocoloLote').value;
-
+      
       if (!cliente) { alert("Informe o Cliente."); return false; }
       if (!nomeTec) { alert("Selecione o Técnico."); return false; }
 
-      // Como o backend (Code.gs) ainda não tem a função CRIAR_TERMO_LOTE, 
-      // mostramos o aviso para o usuário. Assim testamos o carrinho sem erros API.
-      alert(`SUCESSO NO CARRINHO!\n\nVocê agrupou ${carrinhoLote.length} equipamentos para o cliente ${cliente}.\n\nO próximo passo é pedir ao Claude para criar a função 'CRIAR_TERMO_LOTE' no Google Apps Script (Code.gs) para gerar este PDF múltiplo!`);
+      alert(`SUCESSO NO CARRINHO!\n\nVocê agrupou ${carrinhoLote.length} equipamentos para o cliente ${cliente}.\n\nO próximo passo é atualizar o Backend (Code.gs) para gerar este PDF múltiplo!`);
       
       return false;
     }
-    // ==========================================
 
     function desvincularRequisicao() {
       document.getElementById('reqVinculadaProtocolo').value = "";
@@ -2460,7 +2414,7 @@
       else if (nomeAba === 'dashboard') { document.getElementById('btnNavDashboard').classList.add('active'); document.getElementById('abaDashboard').classList.add('active'); atualizarDashboard(); }
       else if (nomeAba === 'requisicoes') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaRequisicoes').classList.add('active'); }
       else if (nomeAba === 'emissao') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaEmissao').classList.add('active'); }
-      else if (nomeAba === 'emissao_lote') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaEmissaoLote').classList.add('active'); } // NOVA ABA LOTE
+      else if (nomeAba === 'emissao_lote') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaEmissaoLote').classList.add('active'); }
       else if (nomeAba === 'consulta') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaConsulta').classList.add('active'); }
       else if (nomeAba === 'os_gestao') { document.getElementById('btnNavManutencao').classList.add('active'); document.getElementById('abaOsGestao').classList.add('active'); renderizarTabelaOS(); }
       else if (nomeAba === 'os_abertura') { document.getElementById('btnNavManutencao').classList.add('active'); document.getElementById('abaOsAbertura').classList.add('active'); }
@@ -2544,11 +2498,10 @@
       }
     }
 
-    // Canvas Assinatura Termo Individual
     const canvas = document.getElementById('canvasAssinatura');
     const ctx = canvas?.getContext('2d');
     let desenhando = false;
-    // Canvas Assinatura Termo Lote
+    
     const canvasLote = document.getElementById('canvasAssinaturaLote');
     const ctxLote = canvasLote?.getContext('2d');
     let desenhandoLote = false;
@@ -2560,12 +2513,10 @@
       return { x: clientX - rect.left, y: clientY - rect.top };
     }
     
-    // Funções Assinatura Individual
     function iniciarDesenho(e) { desenhando = true; desenhar(e, ctx, canvas); }
     function pararDesenho() { desenhando = false; ctx?.beginPath(); }
     function tracaDesenho(e) { desenhar(e, ctx, canvas); }
     
-    // Funções Assinatura Lote
     function iniciarDesenhoLote(e) { desenhandoLote = true; desenhar(e, ctxLote, canvasLote, true); }
     function pararDesenhoLote() { desenhandoLote = false; ctxLote?.beginPath(); }
     function tracaDesenhoLote(e) { desenhar(e, ctxLote, canvasLote, true); }
