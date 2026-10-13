@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    /* CORREÇÃO 1: Removido o display:flex e flex-direction:column que estava conflitando com o rodapé */
     body { background-color: #f0f2f5; color: #333; min-height: 100vh; padding: 16px; padding-bottom: 70px; overflow-x: hidden; }
     
     .header { background-color: #1a4d80; color: white; padding: 12px 24px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; box-shadow: 0 3px 6px rgba(0,0,0,0.12); position: relative; }
@@ -164,21 +163,14 @@
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* CORREÇÃO 2: z-index ajustado para 99999 */
-    /* --- RODAPÉ FIXO --- */
-    .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 99999; border-top: 2px solid #2563eb; }
-    .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
-    
     /* ===================================================================
        TEMA VISUAL DMA SYS (v4) — SOMENTE cores, sombras, degradês e cantos.
-       Não altera tamanhos, margens, fontes, posições, HTML, JS nem PDFs.
        =================================================================== */
     html { scrollbar-color:#b7c4da #eef2f8; }
     ::selection { background:#bfdbfe; color:#0b2545; }
     :focus-visible { outline:2px solid #60a5fa; outline-offset:2px; }
     body { background:radial-gradient(900px 420px at 8% -8%,rgba(37,99,235,.14),transparent 60%),radial-gradient(800px 380px at 100% 0%,rgba(6,182,212,.10),transparent 60%),#eef2f8; background-attachment:fixed; color:#1e293b; padding-bottom:70px; }
 
-    /* Cabeçalho */
     .header { background:linear-gradient(115deg,#0b2545 0%,#123a6b 45%,#1d5fa8 100%); border-radius:14px; box-shadow:0 10px 30px rgba(11,37,69,.35),inset 0 1px 0 rgba(255,255,255,.12); }
     .header h1 { text-shadow:0 1px 2px rgba(0,0,0,.25); }
     .status-badge { background:#fbbf24; box-shadow:0 2px 8px rgba(251,191,36,.35); }
@@ -190,13 +182,11 @@
     .notif-header { background:linear-gradient(180deg,#f4f8fe,#e9f1fc); }
     .notif-item:hover, .menu-ajuda-item:hover, .dropdown-content button:hover { background:#eaf2ff; color:#1d4ed8; }
 
-    /* Navegação */
     .nav-tabs { border-radius:14px; border-color:#e2e8f0; box-shadow:0 4px 18px rgba(11,37,69,.08); }
     .nav-tab { background:#eef2f9; color:#334155; border-radius:999px; transition:all .2s; }
     .nav-tab:hover { background:#dbe7fa; color:#1a4d80; transform:translateY(-1px); }
     .nav-tab.active { background:linear-gradient(135deg,#2563eb,#1a4d80); color:#fff; box-shadow:0 6px 16px rgba(37,99,235,.4); }
 
-    /* Cartões */
     .card { border-radius:14px; border-color:#e3e9f3; box-shadow:0 1px 2px rgba(11,37,69,.05),0 10px 28px rgba(11,37,69,.07),inset 0 3px 0 0 #2563eb; }
     .card-title { color:#0b2545; border-bottom:2px solid transparent; border-image:linear-gradient(90deg,#2563eb,#06b6d4 55%,#22c55e) 1; }
     .welcome-hero { position:relative; overflow:hidden; background:radial-gradient(520px 240px at 92% 0%,rgba(96,165,250,.45),transparent 70%),radial-gradient(380px 200px at 0% 100%,rgba(6,182,212,.28),transparent 70%),linear-gradient(135deg,#1a4d80 0%,#0b2545 100%); border-radius:18px; box-shadow:0 16px 38px rgba(11,37,69,.34); }
@@ -209,9 +199,7 @@
     .metric-card { border-radius:14px; border-color:#e3e9f3; border-left-color:#2563eb; box-shadow:0 2px 12px rgba(11,37,69,.08); }
     .metric-card.yellow { border-left-color:#f59e0b; } .metric-card.green { border-left-color:#22c55e; } .metric-card.red { border-left-color:#ef4444; } .metric-card.blue { border-left-color:#2563eb; }
     .metric-value { color:#0b2545; }
-    .bar-bg { background:#e8eef7; } .bar-fill { background:linear-gradient(90deg,#2563eb,#60a5fa); }
 
-    /* Campos */
     label { color:#475569; }
     input[type="text"], input[type="password"], input[type="month"], input[type="number"], select, textarea { border-color:#d3dbe8; border-radius:10px; background:#fbfcfe; box-shadow:inset 0 1px 2px rgba(11,37,69,.04); }
     input[type="text"]:hover, input[type="number"]:hover, select:hover, textarea:hover { border-color:#9fb3d1; }
@@ -219,7 +207,6 @@
     input[readonly] { background-color:#eef2f8; color:#1e293b; }
     input[type="radio"], input[type="checkbox"] { accent-color:#2563eb; }
 
-    /* Tabelas */
     .table-container { border-color:#dbe3ef; border-radius:12px; scrollbar-color:#b7c4da #f1f5fb; }
     th { background:linear-gradient(180deg,#f1f6fd,#e1ecf9); color:#0b2545; border-bottom-color:#2563eb; }
     td { border-bottom-color:#edf1f7; }
@@ -227,7 +214,6 @@
     tbody tr { transition:background .15s; }
     tbody tr:hover { background:#eef5ff; }
 
-    /* Botões */
     .btn-submit { background:linear-gradient(135deg,#2563eb,#1a4d80); border-radius:11px; box-shadow:0 8px 18px rgba(37,99,235,.32); transition:transform .15s,box-shadow .15s,background .15s; }
     .btn-submit:hover { background:linear-gradient(135deg,#3b82f6,#13427a); box-shadow:0 12px 24px rgba(37,99,235,.42); transform:translateY(-1px); }
     .btn-submit:active { transform:translateY(0); }
@@ -239,21 +225,18 @@
     .btn-editar-saldo:hover { background:linear-gradient(135deg,#3b82f6,#1e40af); transform:translateY(-1px); }
     .btn-logout { border-radius:10px; } .btn-logout:hover { background:#dc3545; border-color:#dc3545; }
 
-    /* Selos */
     .badge-pendente { background:#fffbeb; color:#b45309; border-color:#fcd34d; }
     .badge-atendido { background:#ecfdf5; color:#047857; border-color:#86efac; }
     .badge-recusado { background:#fef2f2; color:#b91c1c; border-color:#fca5a5; }
     .badge-encerrado { background:#fef2f2; color:#b91c1c; border-color:#fca5a5; }
     .badge-saldo-ok { background:#eef2f8; color:#334155; } .badge-saldo-pendente { background:#fef3c7; color:#92400e; } .badge-saldo-alerta { background:#fee2e2; color:#991b1b; }
 
-    /* Modais */
     .modal-overlay { background:rgba(11,37,69,.6); backdrop-filter:blur(4px); }
     .modal-box { border-radius:18px; box-shadow:0 30px 70px rgba(11,37,69,.45); }
     .modal-overlay.active .modal-box { animation:fadeIn .22s ease-out; }
     .modal-title { color:#0b2545; border-bottom:2px solid transparent; border-image:linear-gradient(90deg,#2563eb,#06b6d4 60%,#22c55e) 1; }
     .modal-manual-card { border-radius:18px; } .modal-manual-header { background:linear-gradient(115deg,#0b2545,#1a4d80); }
 
-    /* Chat */
     .chat-tabs { background:#eef2f9; } .chat-tab { background:#f6f9fd; } .chat-tab.active { color:#1a4d80; border-bottom-color:#2563eb; }
     .chat-messages { background:#f8fafc; }
     .chat-msg { border-color:#e2e8f0; border-radius:10px; box-shadow:0 1px 3px rgba(11,37,69,.06); }
@@ -264,7 +247,6 @@
     .chat-box-wa { border-radius:18px; box-shadow:0 22px 50px rgba(11,37,69,.3); }
     .chat-widget-btn { box-shadow:0 10px 24px rgba(37,211,102,.45); }
 
-    /* SEÇÃO B — itens que o seu arquivo usa mas NUNCA estilizou */
     .btn-action-container { display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important; align-items:center !important; justify-content:center !important; gap:4px !important; width:100% !important; white-space:nowrap !important; }
     .btn-atender, .btn-negar, .btn-vincular { color:#fff; border:none; padding:4px 10px; border-radius:7px; font-size:11px; font-weight:bold; cursor:pointer; white-space:nowrap; height:26px; display:inline-flex; align-items:center; gap:4px; justify-content:center; transition:filter .15s,transform .15s; }
     .btn-atender { background:linear-gradient(135deg,#f59e0b,#d97706); box-shadow:0 3px 8px rgba(217,119,6,.32); }
@@ -276,7 +258,6 @@
     .sig-box { flex:1; border:1px dashed #b9c7de; border-radius:12px; padding:10px; background:#f6f9fd; text-align:center; position:relative; }
     .sig-box canvas { touch-action:none; }
 
-    /* Login */
     #loginOverlay { background:radial-gradient(700px 400px at 18% 8%,rgba(37,99,235,.42),transparent 70%),radial-gradient(600px 400px at 92% 92%,rgba(6,182,212,.22),transparent 70%),#0a1424 !important; }
     #loginOverlay > div { border-radius:22px !important; box-shadow:0 34px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.08) !important; }
     #loginOverlay > div > div:first-child { background:linear-gradient(120deg,#0b2545,#2563eb); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
@@ -286,7 +267,6 @@
     #btnEntrarLogin:hover { transform:translateY(-1px); box-shadow:0 14px 28px rgba(37,99,235,.5); }
     #loginOverlay::after { content:"DMA SYS v2.0 | Sistema de Gestão Operacional"; position:absolute; left:0; right:0; bottom:0; padding:10px 20px; text-align:center; font-size:11px; color:#94a3b8; background:rgba(11,27,51,.85); border-top:2px solid #2563eb; pointer-events:none; }
 
-    /* --- RODAPÉ FIXO (reforçado: sempre visível, acima de tudo) --- */
     .system-footer { position:fixed !important; left:0 !important; right:0 !important; bottom:0 !important; z-index:2147483000 !important; display:flex !important; visibility:visible !important; opacity:1 !important; transform:none !important; justify-content:space-between; align-items:center; background:linear-gradient(90deg,#0b1b33,#12305a 55%,#0b1b33); color:#cbd5e1; font-size:11px; padding:8px 20px; border-top:2px solid #2563eb; box-shadow:0 -6px 20px rgba(11,37,69,.25); }
     .system-footer a { color:#7dd3fc; text-decoration:none; font-weight:bold; }
     .system-footer a:hover { color:#fff; }
@@ -381,20 +361,10 @@
     </div>
 
     <div class="nav-tabs">
-      <button type="button" class="nav-tab active" id="btnNavInicio" onclick="mudarAba('inicio')">
-        <i class="fa-solid fa-house"></i> Início
-      </button>
-      <button type="button" class="nav-tab" id="btnNavDashboard" onclick="mudarAba('dashboard')">
-        <i class="fa-solid fa-chart-pie"></i> Dashboard
-      </button>
-
-      <button type="button" class="nav-tab" id="btnNavLocacao" onclick="mudarAba('locacao')">
-        <i class="fa-solid fa-boxes-packing"></i> Controle de Locação
-      </button>
-
-      <button type="button" class="nav-tab" id="btnNavCompras" onclick="mudarAba('compras')">
-        <i class="fa-solid fa-cart-shopping"></i> Módulo de Compras
-      </button>
+      <button type="button" class="nav-tab active" id="btnNavInicio" onclick="mudarAba('inicio')"><i class="fa-solid fa-house"></i> Início</button>
+      <button type="button" class="nav-tab" id="btnNavDashboard" onclick="mudarAba('dashboard')"><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
+      <button type="button" class="nav-tab" id="btnNavLocacao" onclick="mudarAba('locacao')"><i class="fa-solid fa-boxes-packing"></i> Controle de Locação</button>
+      <button type="button" class="nav-tab" id="btnNavCompras" onclick="mudarAba('compras')"><i class="fa-solid fa-cart-shopping"></i> Módulo de Compras</button>
 
       <div class="dropdown" id="dropQualidade">
         <button type="button" class="nav-tab" id="btnNavQualidade" onclick="toggleMenuDropdown(event, 'dropQualidade')">
@@ -428,12 +398,13 @@
       </div>
     </div>
 
-    <!-- DATALISTS DINÂMICAS -->
     <datalist id="listDescricoesPadrao"></datalist>
     <datalist id="listModelosPadrao"></datalist>
     <datalist id="listFabricantesPadrao"></datalist>
     <datalist id="listFamiliasLocacao"></datalist>
     <datalist id="listUnidadesLocacao"></datalist>
+    <datalist id="listClientes"></datalist>
+    <datalist id="listEquipamentos"></datalist>
 
     <div id="abaInicio" class="tab-content active">
       <div class="welcome-hero">
@@ -447,25 +418,21 @@
           <div class="quick-title">Controle de Locação</div>
           <div class="quick-desc">Consulte o saldo contratado vs. físico por cliente, unidade e família de equipamento.</div>
         </div>
-
         <div class="quick-card" onclick="mudarAba('compras')">
           <div class="quick-icon"><i class="fa-solid fa-cart-shopping"></i></div>
           <div class="quick-title">Módulo de Compras</div>
           <div class="quick-desc">Crie solicitações com mapa comparativo de 3 fornecedores e aprovação direta.</div>
         </div>
-
         <div class="quick-card" onclick="mudarAba('dashboard')">
           <div class="quick-icon"><i class="fa-solid fa-chart-line"></i></div>
           <div class="quick-title">Dashboard & Métricas</div>
           <div class="quick-desc">Acompanhe indicadores gerais de movimentação e chamados em tempo real.</div>
         </div>
-
         <div class="quick-card" onclick="mudarAba('os_gestao')">
           <div class="quick-icon"><i class="fa-solid fa-wrench"></i></div>
           <div class="quick-title">Ordens de Serviço (O.S.)</div>
           <div class="quick-desc">Gerencie manutenções corretivas e preventivas com visual por prioridade.</div>
         </div>
-
         <div class="quick-card" onclick="mudarAba('emissao')">
           <div class="quick-icon"><i class="fa-solid fa-file-contract"></i></div>
           <div class="quick-title">Emitir Novo Termo</div>
@@ -474,7 +441,6 @@
       </div>
     </div>
 
-    <!-- MÓDULO LOCAÇÃO -->
     <div id="abaLocacao" class="tab-content">
       <div class="dash-metrics" style="grid-template-columns: repeat(4, 1fr);">
         <div class="metric-card blue">
@@ -553,89 +519,58 @@
       </div>
     </div>
 
-    <!-- MÓDULO COMPRAS -->
     <div id="abaCompras" class="tab-content">
       <div class="card">
-        <div class="card-title">
-          <span><i class="fa-solid fa-cart-plus"></i> Nova Solicitação & Mapa de Cotação de Compras</span>
-        </div>
-
+        <div class="card-title"><span><i class="fa-solid fa-cart-plus"></i> Nova Solicitação & Mapa de Cotação de Compras</span></div>
         <form id="formCompras" onsubmit="return salvarSolicitacaoCompra(event)">
           <div class="form-row">
             <div class="form-group" style="flex: 1;">
               <label>Nº O.S. do Sistema Externo (Manual):</label>
               <input type="text" id="compOsExterna" placeholder="Ex: OS-2026-8849" required>
             </div>
-
             <div class="form-group" style="flex: 1.5;">
               <label>Nome do Solicitante / Comprador:</label>
               <input type="text" id="compSolicitante" placeholder="Nome do comprador ou solicitante..." required>
             </div>
-
             <div class="form-group" style="flex: 2;">
               <label>Nome do Produto / Peça Solicitada:</label>
               <input type="text" id="compProduto" placeholder="Ex: SENSORES DE FLUXO PARA VENTILADOR MONNAL T75" required>
             </div>
           </div>
-
           <div class="form-group" style="margin-bottom: 14px;">
             <label>Observações / Justificativa Técnica:</label>
             <input type="text" id="compObservacao" placeholder="Ex: Peça necessária para atendimento da OS de manutenção corretiva urgente.">
           </div>
-
           <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px; margin-bottom: 14px;">
             <div style="font-size: 12px; font-weight: bold; color: #1a4d80; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
               <i class="fa-solid fa-scale-balanced"></i> Mapa de Cotação de Preços (3 Fornecedores)
             </div>
-
             <div class="form-row">
               <div class="form-group" id="boxForn1" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: white;">
-                <label>Fornecedor 1:</label>
-                <input type="text" id="compForn1" placeholder="Nome da empresa 1..." style="margin-bottom: 6px;">
-                <label>Valor Orçado (R$):</label>
-                <input type="number" id="compVal1" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
+                <label>Fornecedor 1:</label><input type="text" id="compForn1" placeholder="Nome da empresa 1..." style="margin-bottom: 6px;">
+                <label>Valor Orçado (R$):</label><input type="number" id="compVal1" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
               </div>
-
               <div class="form-group" id="boxForn2" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: white;">
-                <label>Fornecedor 2:</label>
-                <input type="text" id="compForn2" placeholder="Nome da empresa 2..." style="margin-bottom: 6px;">
-                <label>Valor Orçado (R$):</label>
-                <input type="number" id="compVal2" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
+                <label>Fornecedor 2:</label><input type="text" id="compForn2" placeholder="Nome da empresa 2..." style="margin-bottom: 6px;">
+                <label>Valor Orçado (R$):</label><input type="number" id="compVal2" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
               </div>
-
               <div class="form-group" id="boxForn3" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: white;">
-                <label>Fornecedor 3:</label>
-                <input type="text" id="compForn3" placeholder="Nome da empresa 3..." style="margin-bottom: 6px;">
-                <label>Valor Orçado (R$):</label>
-                <input type="number" id="compVal3" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
+                <label>Fornecedor 3:</label><input type="text" id="compForn3" placeholder="Nome da empresa 3..." style="margin-bottom: 6px;">
+                <label>Valor Orçado (R$):</label><input type="number" id="compVal3" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
               </div>
             </div>
-
             <div id="painelMenorPreco" style="background: #e6f4ea; border: 1px solid #a8dab5; color: #137333; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 13px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
               <span><i class="fa-solid fa-trophy"></i> Menor Proposta Identificada: <span id="lblFornVencedor">-</span></span>
               <span>Valor: <span id="lblMenorValor">R$ 0,00</span></span>
             </div>
           </div>
-
           <div class="form-row">
-            <div class="form-group">
-              <label>Prazo de Entrega:</label>
-              <input type="text" id="compPrazo" placeholder="Ex: 5 dias úteis">
-            </div>
-            <div class="form-group">
-              <label>Condição de Pagamento:</label>
-              <input type="text" id="compCondPagto" placeholder="Ex: 28 dias / Pix / Faturado">
-            </div>
-            <div class="form-group">
-              <label>Frete:</label>
-              <input type="text" id="compFrete" placeholder="Ex: CIF (Incluso) ou R$ 45,00">
-            </div>
+            <div class="form-group"><label>Prazo de Entrega:</label><input type="text" id="compPrazo" placeholder="Ex: 5 dias úteis"></div>
+            <div class="form-group"><label>Condição de Pagamento:</label><input type="text" id="compCondPagto" placeholder="Ex: 28 dias / Pix / Faturado"></div>
+            <div class="form-group"><label>Frete:</label><input type="text" id="compFrete" placeholder="Ex: CIF (Incluso) ou R$ 45,00"></div>
           </div>
-
           <div style="text-align: right; margin-top: 12px;">
-            <button type="submit" id="btnSalvarCompra" class="btn-submit">
-              <i class="fa-solid fa-file-signature"></i> Salvar Cotação
-            </button>
+            <button type="submit" id="btnSalvarCompra" class="btn-submit"><i class="fa-solid fa-file-signature"></i> Salvar Cotação</button>
           </div>
         </form>
       </div>
@@ -646,15 +581,8 @@
           <table style="table-layout: auto;">
             <thead>
               <tr>
-                <th class="td-center">ID</th>
-                <th>Data / Hora</th>
-                <th>Nº OS Ext.</th>
-                <th>Solicitante</th>
-                <th>Produto / Peça</th>
-                <th>Fornecedor Escolhido</th>
-                <th class="td-center">Menor Valor</th>
-                <th class="td-center">Status</th>
-                <th class="td-center">Ações</th>
+                <th class="td-center">ID</th><th>Data / Hora</th><th>Nº OS Ext.</th><th>Solicitante</th><th>Produto / Peça</th>
+                <th>Fornecedor Escolhido</th><th class="td-center">Menor Valor</th><th class="td-center">Status</th><th class="td-center">Ações</th>
               </tr>
             </thead>
             <tbody id="corpoTabelaCompras">
@@ -665,68 +593,45 @@
       </div>
     </div>
 
-    <!-- MÓDULO DASHBOARD -->
     <div id="abaDashboard" class="tab-content">
       <div class="card" style="margin-bottom: 16px;">
         <div class="card-title"><span>Filtro de Período das Métricas</span></div>
         <div class="form-row" style="align-items: center; margin-bottom: 0;">
-          <div class="form-group" style="flex: 1;">
-            <label>Selecione o Mês / Ano:</label>
-            <input type="month" id="dashFiltroMes" onchange="atualizarDashboard()">
-          </div>
+          <div class="form-group" style="flex: 1;"><label>Selecione o Mês / Ano:</label><input type="month" id="dashFiltroMes" onchange="atualizarDashboard()"></div>
           <div class="form-group" style="flex: 1;">
             <label>Modo de Período:</label>
             <select id="dashModoPeriodo" onchange="atualizarDashboard()">
-              <option value="MES">Apenas o Mês Selecionado</option>
-              <option value="GERAL">Todo o Histórico (Geral)</option>
+              <option value="MES">Apenas o Mês Selecionado</option><option value="GERAL">Todo o Histórico (Geral)</option>
             </select>
           </div>
         </div>
       </div>
 
       <div class="dash-metrics">
-        <div class="metric-card">
-          <div class="metric-title">Total de Requisições</div>
-          <div class="metric-value" id="dashTotalReq">0</div>
-        </div>
-        <div class="metric-card yellow">
-          <div class="metric-title">Pendentes de Envio</div>
-          <div class="metric-value" id="dashPendentes">0</div>
-        </div>
-        <div class="metric-card green">
-          <div class="metric-title">Atendidas pela Qualidade</div>
-          <div class="metric-value" id="dashAtendidos">0</div>
-        </div>
-        <div class="metric-card red">
-          <div class="metric-title">Recusadas / Negadas</div>
-          <div class="metric-value" id="dashRecusados">0</div>
-        </div>
+        <div class="metric-card"><div class="metric-title">Total de Requisições</div><div class="metric-value" id="dashTotalReq">0</div></div>
+        <div class="metric-card yellow"><div class="metric-title">Pendentes de Envio</div><div class="metric-value" id="dashPendentes">0</div></div>
+        <div class="metric-card green"><div class="metric-title">Atendidas pela Qualidade</div><div class="metric-value" id="dashAtendidos">0</div></div>
+        <div class="metric-card red"><div class="metric-title">Recusadas / Negadas</div><div class="metric-value" id="dashRecusados">0</div></div>
       </div>
 
       <div class="dash-charts-grid">
         <div class="card">
           <div class="card-title">Top Clientes em Demandas de Troca</div>
-          <div id="chartClientes" style="padding-top: 10px;">
-            <div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>
-          </div>
+          <div id="chartClientes" style="padding-top: 10px;"><div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div></div>
         </div>
-
         <div class="card">
           <div class="card-title">Demandas por Família de Equipamentos</div>
-          <div id="chartFamilias" style="padding-top: 10px;">
-            <div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>
-          </div>
+          <div id="chartFamilias" style="padding-top: 10px;"><div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div></div>
         </div>
       </div>
     </div>
 
-    <!-- MÓDULO QUALIDADE / REQUISIÇÕES -->
     <div id="abaRequisicoes" class="tab-content">
       <div class="card">
         <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
         <form id="formReq" onsubmit="return salvarRequisicao(event)">
           
-          <!-- ATUALIZADO: CAMPO TIPO DE REQUISIÇÃO ADICIONADO AQUI -->
+          <!-- INÍCIO DA ATUALIZAÇÃO NO FORMULÁRIO -->
           <div class="form-row">
             <div class="form-group" style="flex: 2;">
               <label>Cliente / Locatário Solicitante:</label>
@@ -752,6 +657,7 @@
               </div>
             </div>
           </div>
+          <!-- FIM DA ATUALIZAÇÃO -->
 
           <div class="form-row">
             <div class="form-group">
@@ -807,13 +713,13 @@
         <div class="table-container">
           <table>
             <thead>
-              <!-- ATUALIZADO: COLUNA TIPO REQ ADICIONADA -->
               <tr>
                 <th class="td-center" style="width: 70px;">Req #</th>
                 <th style="width: 110px;">Data / Hora</th>
                 <th style="width: 220px;">Cliente / Locatário</th>
                 <th style="width: 200px;">Equipamento Solicitado</th>
                 <th>Motivo / Obs.</th>
+                <!-- NOVA COLUNA NA TABELA -->
                 <th class="td-center" style="width: 90px;">Tipo Req.</th>
                 <th class="td-center" style="width: 80px;">Operação</th>
                 <th class="td-center" style="width: 80px;">Status</th>
@@ -828,7 +734,6 @@
       </div>
     </div>
 
-    <!-- MÓDULO EMISSÃO TERMO -->
     <div id="abaEmissao" class="tab-content">
       <div id="bannerReqVinculada" style="display: none; background: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 12px; align-items: center; justify-content: space-between;">
         <span><i class="fa-solid fa-link"></i> Atendendo Requisição Pendente: <span id="lblProtReqVinculada" style="color: #1a4d80;">-</span></span>
@@ -844,31 +749,25 @@
             <div class="form-group">
               <label for="inputCliente">Buscar / Selecionar Cliente:</label>
               <input type="text" id="inputCliente" list="listClientes" placeholder="Digite o nome do cliente..." required>
-              <datalist id="listClientes"></datalist>
             </div>
           </div>
 
           <div class="card" style="flex: 1;">
             <div class="card-title">2. Identificação do Equipamento</div>
-            
             <div class="form-group" style="margin-bottom: 12px;">
               <label>Pesquisar Equipamento (Digite a TAG, Série ou Patrimônio):</label>
               <input type="text" id="buscaEquipamento" list="listEquipamentos" placeholder="Ex: LMD-4654 ou 2329918..." oninput="autoPreencherEquipamento()" required>
-              <datalist id="listEquipamentos"></datalist>
             </div>
-
             <div class="form-row">
               <div class="form-group"><label>TAG:</label><input type="text" id="eqTag" readonly placeholder="-"></div>
               <div class="form-group"><label>Nº de Série:</label><input type="text" id="eqSerie" readonly placeholder="-"></div>
               <div class="form-group"><label>Patrimônio:</label><input type="text" id="eqPatrimonio" readonly placeholder="-"></div>
             </div>
-
             <div class="form-row">
               <div class="form-group"><label>Equipamento:</label><input type="text" id="eqNome" readonly placeholder="-"></div>
               <div class="form-group"><label>Modelo:</label><input type="text" id="eqModelo" readonly placeholder="-"></div>
               <div class="form-group"><label>Fabricante:</label><input type="text" id="eqFabricante" readonly placeholder="-"></div>
             </div>
-
             <div class="form-group" style="margin-top: 6px;">
               <label>Operação:</label>
               <div class="radio-group">
@@ -902,31 +801,25 @@
 
           <div class="card">
             <div class="card-title">4. Liberação e Assinaturas</div>
-            
             <div class="form-group">
               <label>Técnico Responsável:</label>
-              <select id="selectTecnico" required>
-                <option value="">Selecione o técnico...</option>
-              </select>
+              <select id="selectTecnico" required><option value="">Selecione o técnico...</option></select>
             </div>
-
             <div class="signature-container" style="margin-top: 12px;">
               <div class="sig-box">
                 <label>Assinatura do Recebedor / Cliente:</label>
                 <button type="button" class="btn-clear" onclick="limparAssinatura()" style="float: right; margin-bottom: 4px; padding: 2px 8px; font-size: 11px;">Limpar</button>
-                <canvas id="canvasAssinatura" width="500" height="110" style="border: 1px solid #cbd5e1; border-radius: 6px; background: #fafafa; cursor: crosshair; width: 100%;"></canvas>
+                <canvas id="canvasAssinatura" width="500" height="110"></canvas>
               </div>
             </div>
-
             <button type="button" id="btnEnviar" class="btn-submit" style="margin-top: 12px; width: 100%;" onclick="gerarTermo(event)">
-              <i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)
+              <i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF
             </button>
           </div>
         </div>
       </form>
     </div>
 
-    <!-- MÓDULO CONSULTA TERMOS -->
     <div id="abaConsulta" class="tab-content">
       <div class="card">
         <div class="card-title">Histórico e Consulta de Termos Gerados</div>
@@ -938,14 +831,9 @@
           <table style="table-layout: auto;">
             <thead>
               <tr>
-                <th class="td-center">Protocolo</th>
-                <th>Data / Hora</th>
-                <th>Cliente / Locatário</th>
-                <th class="td-center">TAG</th>
-                <th>Equipamento</th>
-                <th class="td-center">Operação</th>
-                <th>Técnico</th>
-                <th class="td-center">Ação</th>
+                <th class="td-center">Protocolo</th><th>Data / Hora</th><th>Cliente / Locatário</th>
+                <th class="td-center">TAG</th><th>Equipamento</th><th class="td-center">Operação</th>
+                <th>Técnico</th><th class="td-center">Ação</th>
               </tr>
             </thead>
             <tbody id="corpoTermos">
@@ -956,42 +844,29 @@
       </div>
     </div>
 
-    <!-- MÓDULO MANUTENÇÃO O.S. -->
     <div id="abaOsGestao" class="tab-content">
       <div class="card">
         <div class="card-title">
           <span>Central de Ordens de Serviço (Engenharia Clínica)</span>
           <button type="button" class="btn-submit" style="padding: 6px 12px; font-size: 11px;" onclick="mudarAba('os_abertura')"><i class="fa-solid fa-plus"></i> Nova O.S.</button>
         </div>
-
         <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
           <div class="form-group" style="flex: 1;">
             <label>Status da O.S.:</label>
-            <select id="filtroStatusOS" onchange="renderizarTabelaOS()">
-              <option value="TODOS">Todos os Status</option>
-              <option value="ABERTA">Apenas Abertas</option>
-              <option value="CONCLUÍDA">Apenas Concluídas</option>
-            </select>
+            <select id="filtroStatusOS" onchange="renderizarTabelaOS()"><option value="TODOS">Todos os Status</option><option value="ABERTA">Apenas Abertas</option><option value="CONCLUÍDA">Apenas Concluídas</option></select>
           </div>
           <div class="form-group" style="flex: 2;">
             <label>Buscar O.S. (Nº OS, TAG, Cliente ou Equipamento):</label>
             <input type="text" id="filtroTextoOS" oninput="renderizarTabelaOSDebounced()" placeholder="Digite para filtrar...">
           </div>
         </div>
-
         <div class="table-container">
           <table style="table-layout: auto;">
             <thead>
               <tr>
-                <th class="td-center" style="width: 90px;">Nº O.S.</th>
-                <th style="width: 110px;">Abertura</th>
-                <th>Cliente / Unidade</th>
-                <th class="td-center" style="width: 80px;">TAG</th>
-                <th>Equipamento</th>
-                <th class="td-center" style="width: 90px;">Tipo</th>
-                <th class="td-center" style="width: 80px;">Prioridade</th>
-                <th class="td-center" style="width: 80px;">Status</th>
-                <th class="td-center" style="width: 140px;">Ações</th>
+                <th class="td-center" style="width: 90px;">Nº O.S.</th><th style="width: 110px;">Abertura</th><th>Cliente / Unidade</th>
+                <th class="td-center" style="width: 80px;">TAG</th><th>Equipamento</th><th class="td-center" style="width: 90px;">Tipo</th>
+                <th class="td-center" style="width: 80px;">Prioridade</th><th class="td-center" style="width: 80px;">Status</th><th class="td-center" style="width: 140px;">Ações</th>
               </tr>
             </thead>
             <tbody id="corpoOS">
@@ -1007,87 +882,45 @@
         <div class="card-title">Abrir Nova Ordem de Serviço (Manutenção)</div>
         <form id="formNovaOS" onsubmit="return salvarNovaOS(event)">
           <div class="form-row">
-            <div class="form-group" style="flex: 2;">
-              <label>Cliente / Unidade Hospitalar:</label>
-              <input type="text" id="osCliente" list="listClientes" placeholder="Selecione o cliente..." required>
-            </div>
-            <div class="form-group" style="flex: 1;">
-              <label>Tipo de Manutenção:</label>
-              <select id="osTipo">
-                <option value="CORRETIVA">CORRETIVA</option>
-                <option value="PREVENTIVA">PREVENTIVA</option>
-                <option value="CALIBRAÇÃO">CALIBRAÇÃO</option>
-                <option value="INSPEÇÃO">INSPEÇÃO / HIGIENIZAÇÃO</option>
-                <option value="OFICINA">OFICINA</option>
-              </select>
-            </div>
-            <div class="form-group" style="flex: 1;">
-              <label>Prioridade do Atendimento:</label>
-              <select id="osPrioridade">
-                <option value="MÉDIA" selected>MÉDIA</option>
-                <option value="ALTA">ALTA</option>
-                <option value="CRÍTICA">CRÍTICA</option>
-                <option value="BAIXA">BAIXA</option>
-              </select>
-            </div>
+            <div class="form-group" style="flex: 2;"><label>Cliente / Unidade Hospitalar:</label><input type="text" id="osCliente" list="listClientes" placeholder="Selecione o cliente..." required></div>
+            <div class="form-group" style="flex: 1;"><label>Tipo de Manutenção:</label><select id="osTipo"><option value="CORRETIVA">CORRETIVA</option><option value="PREVENTIVA">PREVENTIVA</option><option value="CALIBRAÇÃO">CALIBRAÇÃO</option><option value="INSPEÇÃO">INSPEÇÃO / HIGIENIZAÇÃO</option><option value="OFICINA">OFICINA</option></select></div>
+            <div class="form-group" style="flex: 1;"><label>Prioridade:</label><select id="osPrioridade"><option value="MÉDIA" selected>MÉDIA</option><option value="ALTA">ALTA</option><option value="CRÍTICA">CRÍTICA</option><option value="BAIXA">BAIXA</option></select></div>
           </div>
-
           <div class="form-row">
-            <div class="form-group" style="flex: 2;">
-              <label>Pesquisar Equipamento (TAG / Série / Patrimônio):</label>
-              <input type="text" id="osBuscaEquip" list="listEquipamentos" placeholder="Digite para buscar..." oninput="autoPreencherOSEquipamento()" required>
-            </div>
+            <div class="form-group" style="flex: 2;"><label>Pesquisar Equipamento (TAG / Série / Patrimônio):</label><input type="text" id="osBuscaEquip" list="listEquipamentos" placeholder="Digite para buscar..." oninput="autoPreencherOSEquipamento()" required></div>
             <div class="form-group" style="flex: 1;"><label>TAG:</label><input type="text" id="osTag" readonly placeholder="-"></div>
             <div class="form-group" style="flex: 1;"><label>Nº de Série:</label><input type="text" id="osSerie" readonly placeholder="-"></div>
             <div class="form-group" style="flex: 1;"><label>Patrimônio:</label><input type="text" id="osPatrimonio" readonly placeholder="-"></div>
           </div>
-
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>Equipamento / Modelo Selecionado:</label>
-            <input type="text" id="osNomeEquip" readonly placeholder="-">
-          </div>
-
+          <div class="form-group" style="margin-bottom: 12px;"><label>Equipamento / Modelo Selecionado:</label><input type="text" id="osNomeEquip" readonly placeholder="-"></div>
           <div class="form-row">
             <div class="form-group"><label>Solicitante / Reclamante:</label><input type="text" id="osSolicitante" placeholder="Ex: Enfermagem / Eng. Clínica" required></div>
             <div class="form-group"><label>Técnico Responsável:</label><input type="text" id="osTecnico" placeholder="Nome do técnico executante" required></div>
           </div>
-
           <div class="form-group" style="margin-bottom: 12px;"><label>Defeito Relatado:</label><textarea id="osDefeito" style="height: 60px;" required></textarea></div>
           <div class="form-group" style="margin-bottom: 12px;"><label>Diagnóstico Técnico:</label><textarea id="osDiagnostico" style="height: 60px;" required></textarea></div>
           <div class="form-group" style="margin-bottom: 16px;"><label>Serviço Realizado:</label><textarea id="osServico" style="height: 60px;" required></textarea></div>
-
-          <div style="text-align: right;">
-            <button type="submit" id="btnSalvarOS" class="btn-submit"><i class="fa-solid fa-floppy-disk"></i> Registrar O.S.</button>
-          </div>
+          <div style="text-align: right;"><button type="submit" id="btnSalvarOS" class="btn-submit"><i class="fa-solid fa-floppy-disk"></i> Registrar O.S.</button></div>
         </form>
       </div>
     </div>
 
-    <!-- MÓDULOS CADASTROS -->
     <div id="abaCadEquipamento" class="tab-content">
       <div class="card">
         <div class="card-title">Cadastrar Novo Equipamento (Aba EQUIP)</div>
         <form id="formNovoEquip" onsubmit="salvarNovoEquipamento(event)">
           <div class="form-row">
-            <div class="form-group"><label>TAG do Equipamento:</label><input type="text" id="cadTag" placeholder="Ex: LMD-9999" required></div>
-            <div class="form-group"><label>Nº de Série:</label><input type="text" id="cadSerie" placeholder="Ex: 849302" required></div>
-            <div class="form-group"><label>Patrimônio:</label><input type="text" id="cadPatrimonio" placeholder="Ex: 00984" required></div>
+            <div class="form-group"><label>TAG:</label><input type="text" id="cadTag" required></div>
+            <div class="form-group"><label>Nº de Série:</label><input type="text" id="cadSerie" required></div>
+            <div class="form-group"><label>Patrimônio:</label><input type="text" id="cadPatrimonio" required></div>
           </div>
-
           <div class="form-row">
-            <div class="form-group" style="flex: 2;"><label>Descrição do Equipamento:</label><input type="text" id="cadNome" list="listDescricoesPadrao" required></div>
+            <div class="form-group" style="flex: 2;"><label>Descrição:</label><input type="text" id="cadNome" list="listDescricoesPadrao" required></div>
             <div class="form-group" style="flex: 1;"><label>Modelo:</label><input type="text" id="cadModelo" list="listModelosPadrao" required></div>
             <div class="form-group" style="flex: 1;"><label>Fabricante:</label><input type="text" id="cadFabricante" list="listFabricantesPadrao" required></div>
           </div>
-
-          <div class="form-group" style="margin-bottom: 16px;">
-            <label>Acessórios Padrão (Separados por ;):</label>
-            <input type="text" id="cadAcessorios" placeholder="Ex: CABO DE FORÇA; CIRCUITO PACIENTE; SENSOR FLUXO">
-          </div>
-
-          <div style="text-align: right;">
-            <button type="submit" id="btnSalvarCadEquip" class="btn-submit"><i class="fa-solid fa-server"></i> Salvar Equipamento</button>
-          </div>
+          <div class="form-group" style="margin-bottom: 16px;"><label>Acessórios Padrão (Separados por ;):</label><input type="text" id="cadAcessorios"></div>
+          <div style="text-align: right;"><button type="submit" class="btn-submit"><i class="fa-solid fa-server"></i> Salvar Equipamento</button></div>
         </form>
       </div>
     </div>
@@ -1101,11 +934,8 @@
             <div class="form-group" style="flex: 1;"><label>Modelo:</label><input type="text" id="vinculoModelo" required></div>
             <div class="form-group" style="flex: 1;"><label>Fabricante:</label><input type="text" id="vinculoFabricante" required></div>
           </div>
-          <div style="text-align: right;">
-            <button type="submit" class="btn-submit"><i class="fa-solid fa-plus"></i> Cadastrar Vínculo</button>
-          </div>
+          <div style="text-align: right;"><button type="submit" class="btn-submit"><i class="fa-solid fa-plus"></i> Cadastrar Vínculo</button></div>
         </form>
-
         <div class="table-container">
           <table style="table-layout: auto;">
             <thead><tr><th>Descrição / Família</th><th>Modelo Autorizado</th><th>Fabricante</th></tr></thead>
@@ -1115,64 +945,35 @@
       </div>
     </div>
 
-    <!-- RODAPÉ DO SISTEMA -->
     <footer class="system-footer">
       <div><b>DMA SYS</b> v2.0 | Sistema de Gestão Operacional</div>
       <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
     </footer>
 
-  </div> <!-- FIM DO APP CONTAINER -->
+  </div>
 
-  <!-- MODAL VISUALIZADOR DE REQUISIÇÃO (PDF) -->
   <div id="modalVisualizadorReq" class="modal-overlay">
     <div class="modal-box" style="width: 800px; max-width: 95vw; height: 85vh; display: flex; flex-direction: column;">
-      <div class="modal-title">
-        <span id="tituloModalReqPDF">Visualizar Requisição (PDF)</span>
-        <span onclick="fecharModalVisualizadorReq()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
-      </div>
-      <div style="flex: 1; background: #e2e8f0; border-radius: 6px; overflow: hidden; position: relative;">
-        <iframe id="iframeVisualizadorReq" src="" style="width: 100%; height: 100%; border: none;"></iframe>
-      </div>
+      <div class="modal-title"><span id="tituloModalReqPDF">Visualizar Requisição</span><span onclick="fecharModalVisualizadorReq()" style="cursor:pointer;"><i class="fa-solid fa-xmark"></i></span></div>
+      <div style="flex: 1; background: #e2e8f0; border-radius: 6px; overflow: hidden; position: relative;"><iframe id="iframeVisualizadorReq" src="" style="width: 100%; height: 100%; border: none;"></iframe></div>
       <div style="margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px;">
         <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalVisualizadorReq()">Fechar</button>
-        <a id="btnAbrirNovaAbaPdfReq" href="#" target="_blank" class="btn-submit" style="padding: 8px 16px; text-decoration: none; font-size: 12px;"><i class="fa-solid fa-external-link-alt"></i> Abrir em Nova Guia / Imprimir</a>
+        <a id="btnAbrirNovaAbaPdfReq" href="#" target="_blank" class="btn-submit" style="padding: 8px 16px; text-decoration: none; font-size: 12px;"><i class="fa-solid fa-external-link-alt"></i> Abrir em Nova Guia</a>
       </div>
     </div>
   </div>
 
-  <!-- MODAL LOCAÇÃO ATUALIZADO -->
   <div id="modalLocacao" class="modal-overlay">
     <div class="modal-box" style="width: 520px;">
-      <div class="modal-title">
-        <span>Ajuste de Locação, Valores e Observações</span>
-        <span onclick="fecharModalLocacao()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
-      </div>
+      <div class="modal-title"><span>Ajuste de Locação</span><span onclick="fecharModalLocacao()" style="cursor:pointer;"><i class="fa-solid fa-xmark"></i></span></div>
       <input type="hidden" id="locModalId" value="">
       <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 14px; font-size: 12px; color: #334155;" id="locModalDetalhes"></div>
-      
       <div class="form-row">
-        <div class="form-group">
-          <label>Nova Qtd Física Entregue:</label>
-          <input type="number" id="locModalQtdFisica" min="0" oninput="calcularTotalLocModal()" style="font-size: 15px; font-weight: bold; padding: 8px;" required>
-        </div>
-        <div class="form-group">
-          <label>Valor Unitário (R$):</label>
-          <input type="number" id="locModalValUnit" step="0.01" min="0" placeholder="0.00" oninput="calcularTotalLocModal()" style="font-size: 15px; font-weight: bold; padding: 8px;">
-        </div>
+        <div class="form-group"><label>Nova Qtd Física Entregue:</label><input type="number" id="locModalQtdFisica" min="0" oninput="calcularTotalLocModal()" style="font-size: 15px; font-weight: bold; padding: 8px;" required></div>
+        <div class="form-group"><label>Valor Unitário (R$):</label><input type="number" id="locModalValUnit" step="0.01" min="0" oninput="calcularTotalLocModal()" style="font-size: 15px; font-weight: bold; padding: 8px;"></div>
       </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>Valor Total (R$): (Calculado Automático)</label>
-          <input type="number" id="locModalValTotal" step="0.01" min="0" placeholder="0.00" style="font-size: 15px; font-weight: bold; padding: 8px; background:#f1f5f9;" readonly>
-        </div>
-      </div>
-
-      <div class="form-group" style="margin-bottom: 16px;">
-        <label>Observação / Nota para o Log:</label>
-        <textarea id="locModalObservacao" placeholder="Ex: Ajuste de saldo conforme termo assinado..." style="height: 70px;"></textarea>
-      </div>
-
+      <div class="form-row"><div class="form-group"><label>Valor Total (R$):</label><input type="number" id="locModalValTotal" step="0.01" min="0" style="font-size: 15px; font-weight: bold; padding: 8px; background:#f1f5f9;" readonly></div></div>
+      <div class="form-group" style="margin-bottom: 16px;"><label>Observação / Log:</label><textarea id="locModalObservacao" style="height: 70px;"></textarea></div>
       <div style="display: flex; gap: 8px; justify-content: flex-end;">
         <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalLocacao()">Cancelar</button>
         <button type="button" id="btnSalvarLocModal" class="btn-submit" onclick="confirmarAjusteLocacao()"><i class="fa-solid fa-floppy-disk"></i> Salvar Ajuste e Log</button>
@@ -1182,19 +983,9 @@
 
   <div id="modalVincularTermo" class="modal-overlay">
     <div class="modal-box" style="width: 480px;">
-      <div class="modal-title">
-        <span>Vincular Termo Existente a <span id="lblProtReqVinculo" style="color:#1a4d80;">-</span></span>
-        <span onclick="fecharModalVincularTermo()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
-      </div>
-      <div style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px; font-size: 12px; color: #334155;">
-        <b>Cliente:</b> <span id="lblClienteReqVinculo">-</span><br>
-        <span style="font-size:11px; color:#64748b;">Utilize este recurso para dar baixa in requisições cujo termo de entrega já foi emitido previamente.</span>
-      </div>
-      <div class="form-group" style="margin-bottom: 16px;">
-        <label>Selecione ou Digite o Protocolo do Termo (Ex: PT0018):</label>
-        <input type="text" id="inputProtocoloTermoVinculo" list="listTermosExistentes" placeholder="Digite ou escolha o Termo (Ex: PT0018)..." style="font-size:14px; font-weight:bold; padding:10px;">
-        <datalist id="listTermosExistentes"></datalist>
-      </div>
+      <div class="modal-title"><span>Vincular Termo <span id="lblProtReqVinculo"></span></span><span onclick="fecharModalVincularTermo()" style="cursor:pointer;"><i class="fa-solid fa-xmark"></i></span></div>
+      <div style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px; font-size: 12px; color: #334155;"><b>Cliente:</b> <span id="lblClienteReqVinculo"></span></div>
+      <div class="form-group" style="margin-bottom: 16px;"><label>Protocolo do Termo:</label><input type="text" id="inputProtocoloTermoVinculo" list="listTermosExistentes" style="font-size:14px; font-weight:bold; padding:10px;"><datalist id="listTermosExistentes"></datalist></div>
       <div style="display: flex; gap: 8px; justify-content: flex-end;">
         <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalVincularTermo()">Cancelar</button>
         <button type="button" id="btnConfirmarVinculo" class="btn-submit" onclick="confirmarVinculoTermo()"><i class="fa-solid fa-link"></i> Confirmar Vinculação</button>
@@ -1204,34 +995,15 @@
 
   <div class="modal-manual-overlay" id="modalManualUso">
     <div class="modal-manual-card">
-      <div class="modal-manual-header">
-        <h3><i class="fa-solid fa-book-open"></i> Material de Apoio & Manual de Operação — DMA SYS v2.0</h3>
-        <button type="button" class="btn-fechar-manual" onclick="fecharModalManual()"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="modal-manual-body">
-        <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-boxes-packing"></i> 1. Controle de Locação</h4>
-        <p style="margin-bottom:12px;">Consulte saldos contratados vs. entregues por cliente e unidade hospitalar. Ajuste saldos físicos, valores e adicione notas de log com data e hora diretamente pelo botão <b>"Ajustar"</b>.</p>
-        <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-cart-shopping"></i> 2. Módulo de Compras & Mapa Comparativo</h4>
-        <p style="margin-bottom:12px;">Cadastre cotações informando 3 fornecedores. O sistema destaca a menor proposta em verde e registra a cotação com cálculo automático.</p>
-        <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-shield-halved"></i> 3. Módulo Qualidade & Termos</h4>
-        <p style="margin-bottom:12px;">Acompanhe requisições internas, atenda com emissão do Termo Duplo de Entrega e Higienização ou vincule termos já emitidos pelo botão <b>"Vincular"</b>.</p>
-        <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-screwdriver-wrench"></i> 4. Manutenção e O.S.</h4>
-        <p>Acompanhe e abra ordens de serviço preventivas e corretivas com priorização por cores.</p>
-      </div>
+      <div class="modal-manual-header"><h3><i class="fa-solid fa-book-open"></i> Material de Apoio</h3><button type="button" class="btn-fechar-manual" onclick="fecharModalManual()"><i class="fa-solid fa-xmark"></i></button></div>
+      <div class="modal-manual-body"><p>Conteúdo de ajuda e manuais operacionais.</p></div>
     </div>
   </div>
 
   <button type="button" class="chat-widget-btn" onclick="toggleChatWhatsApp()" title="Suporte / WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
   <div id="chatBoxWhatsApp" class="chat-box-wa">
-    <div class="chat-header" style="background:#075e54; color:white; padding:12px 16px; font-weight:bold; font-size:13px; display:flex; justify-content:space-between; align-items:center;">
-      <span><i class="fa-brands fa-whatsapp"></i> Suporte Técnico DMA Sys</span>
-      <span onclick="toggleChatWhatsApp()" style="cursor:pointer;"><i class="fa-solid fa-xmark"></i></span>
-    </div>
-    <div class="chat-body" style="padding:14px; font-size:12px; color:#444;">
-      Precisa de ajuda ou encontrou algum problema no sistema? Digite sua mensagem abaixo:
-      <textarea id="msgChatWa" placeholder="Ex: Tive dúvidas ao cadastrar o equipamento..." style="width:100%; height:70px; border:1px solid #ccc; border-radius:6px; padding:8px; font-size:12px; margin-top:8px; resize:none;"></textarea>
-      <button type="button" onclick="enviarWhatsAppSuporte()" style="background:#25d366; color:white; border:none; padding:8px; width:100%; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:8px;">Iniciar Conversa no WhatsApp</button>
-    </div>
+    <div class="chat-header" style="background:#075e54; color:white; padding:12px 16px; font-weight:bold; font-size:13px; display:flex; justify-content:space-between; align-items:center;"><span><i class="fa-brands fa-whatsapp"></i> Suporte Técnico DMA Sys</span><span onclick="toggleChatWhatsApp()" style="cursor:pointer;"><i class="fa-solid fa-xmark"></i></span></div>
+    <div class="chat-body" style="padding:14px; font-size:12px; color:#444;"><textarea id="msgChatWa" style="width:100%; height:70px; border:1px solid #ccc; border-radius:6px; padding:8px; font-size:12px; margin-top:8px; resize:none;"></textarea><button type="button" onclick="enviarWhatsAppSuporte()" style="background:#25d366; color:white; border:none; padding:8px; width:100%; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:8px;">Iniciar Conversa</button></div>
   </div>
 
   <script>
@@ -1265,10 +1037,7 @@
     function abrirModalManual() { document.getElementById("modalManualUso")?.classList.add("ativo"); document.getElementById("menuAjudaDropdown")?.classList.remove("ativo"); }
     function fecharModalManual() { document.getElementById("modalManualUso")?.classList.remove("ativo"); }
 
-    function toggleChatWhatsApp() {
-      document.getElementById('chatBoxWhatsApp')?.classList.toggle('active');
-    }
-
+    function toggleChatWhatsApp() { document.getElementById('chatBoxWhatsApp')?.classList.toggle('active'); }
     function enviarWhatsAppSuporte() {
       const msg = document.getElementById('msgChatWa')?.value.trim() || "";
       window.open(`https://wa.me/${NUMERO_WHATSAPP_SUPORTE}?text=${encodeURIComponent("Olá Suporte DMA Sys! " + msg)}`, '_blank');
@@ -1298,10 +1067,7 @@
       const dropdown = document.getElementById('usersDropdown');
       const atv = dropdown.classList.contains('active');
       fecharTodosDropdowns();
-      if (!atv) {
-        dropdown.classList.add('active');
-        buscarMensagensChatServidor();
-      }
+      if (!atv) { dropdown.classList.add('active'); buscarMensagensChatServidor(); }
     }
 
     function toggleNotifications(e) {
@@ -1359,17 +1125,10 @@
               <button type="button" onclick="toggleEmojiPicker(event)" title="Inserir Emoji" style="background:#f1f5f9; color:#333; border:1px solid #cbd5e1; width:30px; border-radius:4px; font-size:13px; cursor:pointer;">😊</button>
               <div id="emojiPickerDropdown" class="emoji-picker-dropdown" onclick="event.stopPropagation()">
                 <span class="emoji-item" onclick="inserirEmoji('😀')">😀</span>
-                <span class="emoji-item" onclick="inserirEmoji('😂')">😂</span>
                 <span class="emoji-item" onclick="inserirEmoji('👍')">👍</span>
-                <span class="emoji-item" onclick="inserirEmoji('🚀')">🚀</span>
                 <span class="emoji-item" onclick="inserirEmoji('✅')">✅</span>
                 <span class="emoji-item" onclick="inserirEmoji('⚠️')">⚠️</span>
                 <span class="emoji-item" onclick="inserirEmoji('🔧')">🔧</span>
-                <span class="emoji-item" onclick="inserirEmoji('💡')">💡</span>
-                <span class="emoji-item" onclick="inserirEmoji('🙏')">🙏</span>
-                <span class="emoji-item" onclick="inserirEmoji('❤️')">❤️</span>
-                <span class="emoji-item" onclick="inserirEmoji('👋')">👋</span>
-                <span class="emoji-item" onclick="inserirEmoji('🎯')">🎯</span>
               </div>
               <input type="text" id="inputMsgChat" placeholder="Digite sua mensagem geral..." oninput="notificarDigitandoChat()" onkeypress="if(event.key === 'Enter') enviarMensagemChat()">
               <button type="button" onclick="enviarMensagemChat()">Enviar</button>
@@ -1396,11 +1155,7 @@
         }
       });
 
-      html += `
-          </div>
-        </div>
-      `;
-
+      html += `</div></div>`;
       listContainer.innerHTML = html;
       renderizarMensagensChatNaTela();
     }
@@ -1415,10 +1170,7 @@
 
     function inserirEmoji(emoji) {
       const input = document.getElementById('inputMsgChat');
-      if (input) {
-        input.value += emoji;
-        input.focus();
-      }
+      if (input) { input.value += emoji; input.focus(); }
       document.getElementById('emojiPickerDropdown')?.classList.remove('active');
     }
 
@@ -1431,32 +1183,26 @@
 
       if (tipo === 'GERAL') {
         chatAtivoDestinatario = "GERAL";
-        tabG.classList.add('active');
-        tabP.classList.remove('active');
-        boxG.style.display = 'flex';
-        boxP.style.display = 'none';
+        tabG.classList.add('active'); tabP.classList.remove('active');
+        boxG.style.display = 'flex'; boxP.style.display = 'none';
         const input = document.getElementById('inputMsgChat');
         if(input) input.placeholder = "Digite sua mensagem geral...";
         renderizarMensagensChatNaTela();
       } else {
-        tabP.classList.add('active');
-        tabG.classList.remove('active');
-        boxP.style.display = 'flex';
-        boxG.style.display = 'none';
+        tabP.classList.add('active'); tabG.classList.remove('active');
+        boxP.style.display = 'flex'; boxG.style.display = 'none';
       }
     }
 
     function iniciarChatPrivado(nomeColega) {
       chatAtivoDestinatario = nomeColega.toLowerCase().trim();
-      const tabG = document.getElementById('tabChatGeral');
+      mudarAbaChat('PRIVADO');
       const tabP = document.getElementById('tabChatPrivado');
       const boxG = document.getElementById('corpoChatGeral');
       const boxP = document.getElementById('corpoListaEquipe');
-
-      tabG.classList.add('active');
-      tabP.classList.remove('active');
-      boxG.style.display = 'flex';
-      boxP.style.display = 'none';
+      
+      tabP.classList.add('active');
+      boxG.style.display = 'flex'; boxP.style.display = 'none';
       const input = document.getElementById('inputMsgChat');
       if(input) input.placeholder = `Mensagem para ${nomeColega}...`;
       renderizarMensagensChatNaTela();
@@ -1466,12 +1212,8 @@
       const agora = new Date().getTime();
       if (agora - ultimoTempoDigitandoEnviado < 600) return;
       ultimoTempoDigitandoEnviado = agora;
-
       const rem = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario) : "Sistema";
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ acao: "DIGITANDO_CHAT", remetente: rem, destinatario: chatAtivoDestinatario })
-      }).catch(e => {});
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "DIGITANDO_CHAT", remetente: rem, destinatario: chatAtivoDestinatario }) }).catch(e => {});
     }
 
     function enviarMensagemChat() {
@@ -1481,18 +1223,12 @@
       if (!texto) return;
 
       const rem = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario) : "Sistema";
-      const dest = chatAtivoDestinatario;
-
       input.value = "";
       fetch(API_URL, {
         method: 'POST',
-        body: JSON.stringify({ acao: "ENVIAR_MENSAGEM_CHAT", remetente: rem, destinatario: dest, mensagem: texto })
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "sucesso") {
-          buscarMensagensChatServidor();
-        }
+        body: JSON.stringify({ acao: "ENVIAR_MENSAGEM_CHAT", remetente: rem, destinatario: chatAtivoDestinatario, mensagem: texto })
+      }).then(res => res.json()).then(res => {
+        if (res.status === "sucesso") buscarMensagensChatServidor();
       }).catch(e => {});
     }
 
@@ -1502,27 +1238,17 @@
       fetch(API_URL, {
         method: 'POST',
         body: JSON.stringify({ acao: "BUSCAR_MENSAGENS_CHAT", usuario: usr, chatAtivo: chatAtivoDestinatario })
-      })
-      .then(res => res.json())
-      .then(res => {
+      }).then(res => res.json()).then(res => {
         if (res.status === "sucesso") {
           if (res.mensagens) {
             const qtdAnterior = cacheMensagensChat.length;
             cacheMensagensChat = res.mensagens;
-            if (cacheMensagensChat.length > qtdAnterior && qtdAnterior > 0) {
-              iniciarPiscarTitulo();
-            }
+            if (cacheMensagensChat.length > qtdAnterior && qtdAnterior > 0) iniciarPiscarTitulo();
             renderizarMensagensChatNaTela();
           }
-          if (res.digitando) {
-            usuarioDigitandoAtual = res.digitando;
-          } else {
-            usuarioDigitandoAtual = "";
-          }
+          usuarioDigitandoAtual = res.digitando || "";
           const lblDig = document.getElementById('chatIndicadorDigitando');
-          if (lblDig) {
-            lblDig.innerText = usuarioDigitandoAtual ? `${usuarioDigitandoAtual} está digitando...` : "";
-          }
+          if (lblDig) lblDig.innerText = usuarioDigitandoAtual ? `${usuarioDigitandoAtual} está digitando...` : "";
         }
       }).catch(e => {});
     }
@@ -1536,11 +1262,8 @@
       const filtradas = cacheMensagensChat.filter(m => {
         const dest = (m.destinatario || "").toLowerCase().trim();
         const rem = (m.remetente || "").toLowerCase().trim();
-        if (chatAtivoDestinatario === "GERAL") {
-          return dest === "geral" || dest === "";
-        } else {
-          return (dest === meuNome && rem === chatAtivoDestinatario) || (dest === chatAtivoDestinatario && rem === meuNome);
-        }
+        if (chatAtivoDestinatario === "GERAL") return dest === "geral" || dest === "";
+        return (dest === meuNome && rem === chatAtivoDestinatario) || (dest === chatAtivoDestinatario && rem === meuNome);
       });
 
       if (filtradas.length === 0) {
@@ -1569,17 +1292,11 @@
     function iniciarPiscarTitulo() {
       if (timerPiscarTitulo) return;
       let alternar = false;
-      timerPiscarTitulo = setInterval(() => {
-        document.title = alternar ? "💬 Nova Mensagem!" : tituloOriginalPagina;
-        alternar = !alternar;
-      }, 1500);
+      timerPiscarTitulo = setInterval(() => { document.title = alternar ? "💬 Nova Mensagem!" : tituloOriginalPagina; alternar = !alternar; }, 1500);
     }
 
     function pararPiscarTitulo() {
-      if (timerPiscarTitulo) {
-        clearInterval(timerPiscarTitulo);
-        timerPiscarTitulo = null;
-      }
+      if (timerPiscarTitulo) { clearInterval(timerPiscarTitulo); timerPiscarTitulo = null; }
       document.title = tituloOriginalPagina;
     }
 
@@ -1625,36 +1342,24 @@
       const divErro = document.getElementById('loginErro');
       const btn = document.getElementById('btnEntrarLogin');
 
-      if (!usr || !pass) {
-        divErro.innerText = "Preencha o usuário e a senha.";
-        divErro.style.display = "block";
-        return;
-      }
+      if (!usr || !pass) { divErro.innerText = "Preencha o usuário e a senha."; divErro.style.display = "block"; return; }
 
       divErro.style.display = "none";
-      btn.disabled = true;
-      btn.innerText = "VALIDANDO ACESSO...";
+      btn.disabled = true; btn.innerText = "VALIDANDO ACESSO...";
 
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ acao: "VERIFICAR_LOGIN", usuario: usr, senha: pass })
-      })
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "VERIFICAR_LOGIN", usuario: usr, senha: pass }) })
       .then(res => res.json())
       .then(res => {
-        if (res.status === "sucesso" && res.usuario) {
-          concluirAcessoLogin(res.usuario);
-        } else {
+        if (res.status === "sucesso" && res.usuario) { concluirAcessoLogin(res.usuario); } 
+        else {
           divErro.innerText = res.mensagem || "Usuário ou senha incorretos.";
           divErro.style.display = "block";
-          btn.disabled = false;
-          btn.innerText = "ENTRAR NO SISTEMA";
+          btn.disabled = false; btn.innerText = "ENTRAR NO SISTEMA";
         }
-      })
-      .catch(err => {
+      }).catch(err => {
         divErro.innerText = "Falha de conexão com o servidor. Tente novamente.";
         divErro.style.display = "block";
-        btn.disabled = false;
-        btn.innerText = "ENTRAR NO SISTEMA";
+        btn.disabled = false; btn.innerText = "ENTRAR NO SISTEMA";
       });
     }
 
@@ -1664,29 +1369,20 @@
       document.getElementById('loginOverlay').style.display = "none";
       document.getElementById('appContainer').style.display = "block";
       const btnL = document.getElementById('btnEntrarLogin');
-      if (btnL) {
-        btnL.disabled = false;
-        btnL.innerText = "ENTRAR NO SISTEMA";
-      }
+      if (btnL) { btnL.disabled = false; btnL.innerText = "ENTRAR NO SISTEMA"; }
       preencherSelectTecnicos();
       enviarHeartbeat();
       buscarAtualizacoesSilenciosas();
     }
 
-    function efetuarLogout() {
-      localStorage.removeItem("dmasys_usuario");
-      window.location.reload();
-    }
+    function efetuarLogout() { localStorage.removeItem("dmasys_usuario"); window.location.reload(); }
 
     function carregarDadosPlanilha(data) {
       estaBuscandoDados = false;
       if (data && !data.erro) {
         bancoDados = data;
         const badge = document.getElementById('statusBadge');
-        if (badge) {
-          badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Conectado';
-          badge.classList.add('connected');
-        }
+        if (badge) { badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Conectado'; badge.classList.add('connected'); }
         
         try { popularAutocomplete(); } catch(e) {}
         try { preencherSelectTecnicos(); } catch(e) {}
@@ -1726,58 +1422,45 @@
       setInterval(enviarHeartbeat, 15000);
       setInterval(() => {
         const dropUsr = document.getElementById('usersDropdown');
-        if (dropUsr && dropUsr.classList.contains('active')) {
-          buscarMensagensChatServidor();
-        }
+        if (dropUsr && dropUsr.classList.contains('active')) buscarMensagensChatServidor();
       }, 1500);
     };
 
     function salvarRequisicao(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
+      if (e) { e.preventDefault(); e.stopPropagation(); }
       
       const cliente = document.getElementById('reqCliente').value.trim();
-      const tipoReq = document.getElementById('reqTipo').value; // ATUALIZADO AQUI
+      const tipoReq = document.getElementById('reqTipo').value; // CAMPO NOVO
       const operacao = document.querySelector('input[name="reqOperacao"]:checked')?.value || "LOCAÇÃO";
       const eqAntigo = document.getElementById('reqEqAntigo').value.trim();
       const eqSolicitado = document.getElementById('reqEqSolicitado').value.trim();
       const motivo = document.getElementById('reqMotivo').value.trim();
       const solicitante = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario || "Solicitante") : "Solicitante";
 
-      if (!cliente || !tipoReq || !eqAntigo || !eqSolicitado) { // VALIDAÇÃO ATUALIZADA
-        alert("Preencha os campos obrigatórios (Cliente, Tipo, Equip. a Substituir e Solicitado).");
+      // Validação atualizada com tipoReq
+      if (!cliente || !tipoReq || !eqAntigo || !eqSolicitado) {
+        alert("Preencha os campos obrigatórios (Cliente, Tipo, Equip. a Substituir e Equipamento Solicitado).");
         return false;
       }
 
       const btn = document.getElementById('btnSalvarReq');
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO REQUISIÇÃO...';
-      }
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO REQUISIÇÃO...'; }
 
       const payload = {
         acao: "CRIAR_REQUISICAO",
         cliente: cliente,
         operacao: operacao,
-        tipoRequisicao: tipoReq, // DADO ENVIADO PARA O SCRIPT AQUI
+        tipoRequisicao: tipoReq, // CAMPO NOVO
         equipamentoAntigo: eqAntigo,
         equipamentoSolicitado: eqSolicitado,
         motivo: motivo,
         solicitante: solicitante
       };
 
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
       .then(res => res.json())
       .then(res => {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Requisição e Gerar PDF';
-        }
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Requisição e Gerar PDF'; }
         if (res.status === "sucesso") {
           document.getElementById('formReq').reset();
           
@@ -1786,7 +1469,7 @@
             dataHora: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
             cliente: cliente,
             operacao: operacao,
-            tipoRequisicao: tipoReq, // DADO GUARDADO NA TABELA
+            tipoRequisicao: tipoReq, // CAMPO NOVO
             equipamentoAntigo: eqAntigo,
             equipamentoSolicitado: eqSolicitado,
             motivo: motivo,
@@ -1803,20 +1486,14 @@
           atualizarNotificacoes();
           atualizarDashboard();
 
-          if (novaReq.pdfUrlReq) {
-            abrirModalVisualizadorReq(novaReq.pdfUrlReq, "Visualizar Requisição: " + novaReq.protocolo);
-          }
-
+          if (novaReq.pdfUrlReq) abrirModalVisualizadorReq(novaReq.pdfUrlReq, "Visualizar Requisição: " + novaReq.protocolo);
           buscarAtualizacoesSilenciosas();
         } else {
           alert("Erro ao enviar requisição: " + (res.mensagem || "Erro desconhecido."));
         }
       })
       .catch(err => {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Requisição e Gerar PDF';
-        }
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Requisição e Gerar PDF'; }
         alert("Falha de conexão ao enviar requisição.");
       });
 
@@ -1830,12 +1507,10 @@
       const btnLink = document.getElementById('btnAbrirNovaAbaPdfReq');
 
       let embedUrl = pdfUrl;
-      if (embedUrl.includes('/file/d/')) {
-        embedUrl = embedUrl.replace(/\/view.*$/, '/preview').replace(/\/edit.*$/, '/preview');
-      }
+      if (embedUrl.includes('/file/d/')) embedUrl = embedUrl.replace(/\/view.*$/, '/preview').replace(/\/edit.*$/, '/preview');
 
       if (iframe) iframe.src = embedUrl;
-      if (tituloEl) tituloEl.innerText = titulo || "Visualizar Requisição (PDF)";
+      if (tituloEl) tituloEl.innerText = titulo || "Visualizar Requisição";
       if (btnLink) btnLink.href = pdfUrl;
       if (modal) modal.classList.add('active');
     }
@@ -1845,6 +1520,101 @@
       const iframe = document.getElementById('iframeVisualizadorReq');
       if (iframe) iframe.src = "";
       if (modal) modal.classList.remove('active');
+    }
+
+    function renderizarTabelaRequisicoes(lista) {
+      const tbody = document.getElementById('corpoRequisicoes');
+      if (!tbody) return;
+      if (!lista || lista.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição encontrada.</td></tr>';
+        return;
+      }
+
+      lista.sort((a, b) => {
+        const stA = (a.status || "").toUpperCase();
+        const stB = (b.status || "").toUpperCase();
+        if (stA === "PENDENTE" && stB !== "PENDENTE") return -1;
+        if (stA !== "PENDENTE" && stB === "PENDENTE") return 1;
+        return 0;
+      });
+
+      tbody.innerHTML = lista.map(r => {
+        if (!r) return '';
+        let st = (r.status || "PENDENTE").toUpperCase();
+        const isPendente = st === "PENDENTE";
+        const isRecusado = st === "RECUSADO";
+
+        let badgeClass = "badge-pendente";
+        if (st === "ATENDIDO") badgeClass = "badge-atendido";
+        if (isRecusado) badgeClass = "badge-recusado";
+        
+        const linkPdfReq = r.pdfUrlReq ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${r.pdfUrlReq}', 'Visualizar Requisição: ${r.protocolo}')" title="Visualizar Requisição"><i class="fa-solid fa-eye"></i></button>` : '';
+        
+        let btnAcao = "";
+        if (isPendente) {
+          btnAcao = `<div class="btn-action-container">
+            ${linkPdfReq}
+            <button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}', '${r.operacao || 'LOCAÇÃO'}')"><i class="fa-solid fa-check"></i> Atender</button>
+            <button type="button" class="btn-vincular" onclick="abrirModalVincularTermo('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}')"><i class="fa-solid fa-link"></i> Vincular</button>
+            <button type="button" class="btn-negar" onclick="abrirModalRecusa('${r.protocolo}')"><i class="fa-solid fa-xmark"></i> Negar</button>
+          </div>`;
+        } else if (isRecusado) {
+          btnAcao = `<div class="btn-action-container">${linkPdfReq}<span style="color:#dc3545; font-weight:bold; font-size:11px;">Recusado</span></div>`;
+        } else {
+          let termoTexto = r.protocoloTermo ? `Termo: ${r.protocoloTermo}` : 'Termo Gerado';
+          btnAcao = `<div class="btn-action-container">${linkPdfReq}<span class="btn-termo-link">${termoTexto}</span></div>`;
+        }
+
+        return `
+          <tr>
+            <td class="td-center"><b>${r.protocolo || '-'}</b></td>
+            <td>${r.dataHora || '-'}</td>
+            <td>${r.cliente || '-'}</td>
+            <td><b>${r.equipamentoSolicitado || '-'}</b></td>
+            <td style="color:#555; font-style:italic;">${r.motivo || "-"}</td>
+            
+            <!-- NOVA COLUNA NA TABELA RENDENRIZADA -->
+            <td class="td-center"><span style="font-size:10px; font-weight:bold; background:#eef2f9; color:#1a4d80; padding:4px 8px; border-radius:6px; border:1px solid #cbd5e1;">${r.tipoRequisicao || 'SUBSTITUIÇÃO'}</span></td>
+            
+            <td class="td-center"><b>${r.operacao || 'LOCAÇÃO'}</b></td>
+            <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span></td>
+            <td class="td-center">${btnAcao}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filtrarRequisicoes() {
+      const requisicoes = bancoDados.requisicoes || [];
+      const statusFiltro = document.getElementById('filtroStatusReq')?.value || "TODOS";
+      const mesFiltro = document.getElementById('filtroMesReq')?.value || "";
+      const textoFiltro = (document.getElementById('filtroTextoReq')?.value || "").toLowerCase().trim();
+
+      let filtradas = requisicoes.filter(r => {
+        if (!r) return false;
+        const st = (r.status || "PENDENTE").toUpperCase();
+        if (statusFiltro !== "TODOS" && st !== statusFiltro) return false;
+
+        if (mesFiltro && r.dataHora) {
+          const partesData = String(r.dataHora).split(' ')[0].split('/');
+          if (partesData.length === 3) {
+            const anoMesReg = `${partesData[2]}-${partesData[1].padStart(2, '0')}`;
+            if (anoMesReg !== mesFiltro) return false;
+          }
+        }
+
+        if (textoFiltro) {
+          const matchProt = (r.protocolo || "").toLowerCase().includes(textoFiltro);
+          const matchCli = (r.cliente || "").toLowerCase().includes(textoFiltro);
+          const matchEq = (r.equipamentoSolicitado || "").toLowerCase().includes(textoFiltro);
+          const matchMotivo = (r.motivo || "").toLowerCase().includes(textoFiltro);
+          if (!matchProt && !matchCli && !matchEq && !matchMotivo) return false;
+        }
+
+        return true;
+      });
+
+      renderizarTabelaRequisicoes(filtradas);
     }
 
     function renderizarTabelaLocacao() {
@@ -1873,10 +1643,7 @@
         if (cliFiltro && !cCliente.includes(cliFiltro)) return false;
         if (uniFiltro && !cUnidade.includes(uniFiltro)) return false;
         if (famFiltro && !cEquip.includes(famFiltro)) return false;
-        
-        if (sitFiltro !== "TODOS") {
-          if (cSituacao !== sitFiltro) return false;
-        }
+        if (sitFiltro !== "TODOS" && cSituacao !== sitFiltro) return false;
 
         if (txtFiltro) {
           const matchCont = (l.contrato || "").toLowerCase().includes(txtFiltro);
@@ -1942,9 +1709,7 @@
       const loc = (bancoDados.locacoes || []).find(l => l && l.id && l.id.toString() === id.toString());
       if (!loc) return;
       document.getElementById('locModalId').value = loc.id;
-      document.getElementById('locModalDetalhes').innerHTML = `
-        <b>Cliente:</b> ${loc.cliente || '-'}<br><b>Contrato:</b> ${loc.contrato || "N/A"} | <b>Unidade:</b> ${loc.unidade || "N/A"}<br><b>Equipamento:</b> ${loc.equipamento || '-'}<br><b>Qtd Contratada:</b> ${loc.qtdContratada ?? 0}<br>${loc.observacaoLog ? '<span style="color:#1a4d80;"><b>Último Log:</b> ' + loc.observacaoLog + '</span>' : ''}
-      `;
+      document.getElementById('locModalDetalhes').innerHTML = `<b>Cliente:</b> ${loc.cliente || '-'}<br><b>Contrato:</b> ${loc.contrato || "N/A"} | <b>Unidade:</b> ${loc.unidade || "N/A"}<br><b>Equipamento:</b> ${loc.equipamento || '-'}<br><b>Qtd Contratada:</b> ${loc.qtdContratada ?? 0}<br>${loc.observacaoLog ? '<span style="color:#1a4d80;"><b>Último Log:</b> ' + loc.observacaoLog + '</span>' : ''}`;
       document.getElementById('locModalQtdFisica').value = loc.qtdFisica ?? 0;
       document.getElementById('locModalValUnit').value = loc.valorUnitario ?? "";
       document.getElementById('locModalValTotal').value = loc.valorTotal ?? "";
@@ -1957,9 +1722,8 @@
     function calcularTotalLocModal() {
       const qtd = parseFloat(document.getElementById('locModalQtdFisica')?.value) || 0;
       const unit = parseFloat(document.getElementById('locModalValUnit')?.value) || 0;
-      const total = qtd * unit;
       const totalEl = document.getElementById('locModalValTotal');
-      if (totalEl) totalEl.value = total.toFixed(2);
+      if (totalEl) totalEl.value = (qtd * unit).toFixed(2);
     }
 
     function confirmarAjusteLocacao() {
@@ -1972,37 +1736,22 @@
       if (novaQtd === "" || isNaN(novaQtd) || Number(novaQtd) < 0) { alert("Informe uma quantidade física válida."); return; }
 
       const btn = document.getElementById('btnSalvarLocModal');
-      btn.disabled = true;
-      btn.innerText = "SALVANDO AJUSTE...";
-
+      btn.disabled = true; btn.innerText = "SALVANDO AJUSTE...";
       const nomeUsr = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario) : "Sistema";
 
       fetch(API_URL, {
         method: 'POST',
         body: JSON.stringify({
-          acao: "ATUALIZAR_QTD_FISICA_LOCACAO",
-          id: id,
-          qtdFisica: Number(novaQtd),
-          valorUnitario: Number(valUnit) || 0,
-          valorTotal: Number(valTotal) || 0,
-          observacao: obs,
-          usuarioNome: nomeUsr
+          acao: "ATUALIZAR_QTD_FISICA_LOCACAO", id: id, qtdFisica: Number(novaQtd),
+          valorUnitario: Number(valUnit) || 0, valorTotal: Number(valTotal) || 0,
+          observacao: obs, usuarioNome: nomeUsr
         })
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === "sucesso") {
-          fecharModalLocacao();
-          buscarAtualizacoesSilenciosas();
-        } else {
-          alert("Erro ao atualizar locação.");
-        }
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Salvar Ajuste e Log';
-      })
-      .catch(err => {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Salvar Ajuste e Log';
+      }).then(res => res.json()).then(res => {
+        if (res.status === "sucesso") { fecharModalLocacao(); buscarAtualizacoesSilenciosas(); }
+        else alert("Erro ao atualizar locação.");
+        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Salvar Ajuste e Log';
+      }).catch(err => {
+        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Salvar Ajuste e Log';
       });
     }
 
@@ -2020,32 +1769,23 @@
         let badgeClass = "badge-pendente";
         if (st === "APROVADO") badgeClass = "badge-atendido";
         if (st === "RECUSADO") badgeClass = "badge-recusado";
-
         const linkPdf = c.pdfUrlCompra ? `<a href="${c.pdfUrlCompra}" target="_blank" class="btn-pdf"><i class="fa-solid fa-file-pdf"></i> Mapa PDF</a>` : '-';
 
         return `
           <tr>
-            <td class="td-center"><b>${c.protocolo || '-'}</b></td>
-            <td>${c.dataHora || '-'}</td>
-            <td><b>${c.osExterna || '-'}</b></td>
-            <td>${c.solicitante || '-'}</td>
-            <td>${c.produto || '-'}</td>
-            <td><b>${c.fornVencedor || '-'}</b></td>
+            <td class="td-center"><b>${c.protocolo || '-'}</b></td><td>${c.dataHora || '-'}</td><td><b>${c.osExterna || '-'}</b></td>
+            <td>${c.solicitante || '-'}</td><td>${c.produto || '-'}</td><td><b>${c.fornVencedor || '-'}</b></td>
             <td class="td-center" style="font-weight:bold; color:#137333;">R$ ${Number(c.menorValor || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
-            <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span></td>
-            <td class="td-center">${linkPdf}</td>
+            <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span></td><td class="td-center">${linkPdf}</td>
           </tr>
         `;
       }).join('');
     }
 
     function calcularMenorPrecoCotacao() {
-      const f1 = document.getElementById('compForn1')?.value.trim() || "Fornecedor 1";
-      const v1 = parseFloat(document.getElementById('compVal1')?.value) || 0;
-      const f2 = document.getElementById('compForn2')?.value.trim() || "Fornecedor 2";
-      const v2 = parseFloat(document.getElementById('compVal2')?.value) || 0;
-      const f3 = document.getElementById('compForn3')?.value.trim() || "Fornecedor 3";
-      const v3 = parseFloat(document.getElementById('compVal3')?.value) || 0;
+      const f1 = document.getElementById('compForn1')?.value.trim() || "Fornecedor 1"; const v1 = parseFloat(document.getElementById('compVal1')?.value) || 0;
+      const f2 = document.getElementById('compForn2')?.value.trim() || "Fornecedor 2"; const v2 = parseFloat(document.getElementById('compVal2')?.value) || 0;
+      const f3 = document.getElementById('compForn3')?.value.trim() || "Fornecedor 3"; const v3 = parseFloat(document.getElementById('compVal3')?.value) || 0;
 
       let opcoes = [];
       if (v1 > 0) opcoes.push({ nome: f1, valor: v1 });
@@ -2060,167 +1800,47 @@
         if (lblValor) lblValor.innerText = "R$ 0,00";
         return;
       }
-
       opcoes.sort((a, b) => a.valor - b.valor);
       const vencedor = opcoes[0];
-
       if (lblVencedor) lblVencedor.innerText = vencedor.nome;
       if (lblValor) lblValor.innerText = "R$ " + vencedor.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
     function salvarSolicitacaoCompra(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
+      if (e) { e.preventDefault(); e.stopPropagation(); }
       const osExterna = document.getElementById('compOsExterna').value.trim();
       const solicitante = document.getElementById('compSolicitante').value.trim();
       const produto = document.getElementById('compProduto').value.trim();
 
-      if (!osExterna || !solicitante || !produto) {
-        alert("Preencha os campos obrigatórios (Nº O.S. Externa, Solicitante e Produto).");
-        return false;
-      }
+      if (!osExterna || !solicitante || !produto) { alert("Preencha os campos obrigatórios (Nº O.S. Externa, Solicitante e Produto)."); return false; }
 
       const btn = document.getElementById('btnSalvarCompra');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> GERANDO COTAÇÃO...';
+      btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> GERANDO COTAÇÃO...';
 
       const payload = {
-        acao: "CRIAR_SOLICITACAO_COMPRA",
-        osExterna: osExterna,
-        solicitante: solicitante,
-        produto: produto,
+        acao: "CRIAR_SOLICITACAO_COMPRA", osExterna: osExterna, solicitante: solicitante, produto: produto,
         observacao: document.getElementById('compObservacao').value.trim(),
-        forn1: document.getElementById('compForn1').value.trim(),
-        val1: parseFloat(document.getElementById('compVal1').value) || 0,
-        forn2: document.getElementById('compForn2').value.trim(),
-        val2: parseFloat(document.getElementById('compVal2').value) || 0,
-        forn3: document.getElementById('compForn3').value.trim(),
-        val3: parseFloat(document.getElementById('compVal3').value) || 0,
-        prazo: document.getElementById('compPrazo').value.trim(),
-        condPagto: document.getElementById('compCondPagto').value.trim(),
+        forn1: document.getElementById('compForn1').value.trim(), val1: parseFloat(document.getElementById('compVal1').value) || 0,
+        forn2: document.getElementById('compForn2').value.trim(), val2: parseFloat(document.getElementById('compVal2').value) || 0,
+        forn3: document.getElementById('compForn3').value.trim(), val3: parseFloat(document.getElementById('compVal3').value) || 0,
+        prazo: document.getElementById('compPrazo').value.trim(), condPagto: document.getElementById('compCondPagto').value.trim(),
         frete: document.getElementById('compFrete').value.trim()
       };
 
-      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
-      .then(res => res.json())
-      .then(res => {
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(res => {
         if (res.status === "sucesso") {
-          document.getElementById('formCompras').reset();
-          calcularMenorPrecoCotacao();
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação';
-          buscarAtualizacoesSilenciosas();
-          alert(`Cotação ${res.protocolo} criada com sucesso!`);
+          document.getElementById('formCompras').reset(); calcularMenorPrecoCotacao();
+          btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação';
+          buscarAtualizacoesSilenciosas(); alert(`Cotação ${res.protocolo} criada com sucesso!`);
         } else {
           alert("Erro ao salvar cotação: " + (res.mensagem || "Erro desconhecido."));
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação';
+          btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação';
         }
-      })
-      .catch(err => {
+      }).catch(err => {
         alert("Falha de conexão ao salvar cotação.");
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação';
+        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Salvar Cotação';
       });
-
       return false;
-    }
-
-    function renderizarTabelaRequisicoes(lista) {
-      const tbody = document.getElementById('corpoRequisicoes');
-      if (!tbody) return;
-      if (!lista || lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição encontrada para o filtro selecionado.</td></tr>';
-        return;
-      }
-
-      lista.sort((a, b) => {
-        const stA = (a.status || "").toUpperCase();
-        const stB = (b.status || "").toUpperCase();
-        if (stA === "PENDENTE" && stB !== "PENDENTE") return -1;
-        if (stA !== "PENDENTE" && stB === "PENDENTE") return 1;
-        return 0;
-      });
-
-      tbody.innerHTML = lista.map(r => {
-        if (!r) return '';
-        let st = (r.status || "PENDENTE").toUpperCase();
-        const isPendente = st === "PENDENTE";
-        const isRecusado = st === "RECUSADO";
-
-        let badgeClass = "badge-pendente";
-        if (st === "ATENDIDO") badgeClass = "badge-atendido";
-        if (isRecusado) badgeClass = "badge-recusado";
-        
-        const linkPdfReq = r.pdfUrlReq ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${r.pdfUrlReq}', 'Visualizar Requisição: ${r.protocolo}')" title="Visualizar Requisição"><i class="fa-solid fa-eye"></i></button>` : '';
-        
-        let btnAcao = "";
-        if (isPendente) {
-          btnAcao = `<div class="btn-action-container">
-            ${linkPdfReq}
-            <button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}', '${r.operacao || 'LOCAÇÃO'}')"><i class="fa-solid fa-check"></i> Atender</button>
-            <button type="button" class="btn-vincular" onclick="abrirModalVincularTermo('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}')"><i class="fa-solid fa-link"></i> Vincular</button>
-            <button type="button" class="btn-negar" onclick="abrirModalRecusa('${r.protocolo}')"><i class="fa-solid fa-xmark"></i> Negar</button>
-          </div>`;
-        } else if (isRecusado) {
-          btnAcao = `<div class="btn-action-container">${linkPdfReq}<span style="color:#dc3545; font-weight:bold; font-size:11px;">Recusado</span></div>`;
-        } else {
-          let termoTexto = r.protocoloTermo ? `Termo: ${r.protocoloTermo}` : 'Termo Gerado';
-          btnAcao = `<div class="btn-action-container">${linkPdfReq}<span class="btn-termo-link">${termoTexto}</span></div>`;
-        }
-
-        return `
-          <tr>
-            <td class="td-center"><b>${r.protocolo || '-'}</b></td>
-            <td>${r.dataHora || '-'}</td>
-            <td>${r.cliente || '-'}</td>
-            <td><b>${r.equipamentoSolicitado || '-'}</b></td>
-            <td style="color:#555; font-style:italic;">${r.motivo || "-"}</td>
-            
-            <!-- NOVA COLUNA INSERIDA AQUI -->
-            <td class="td-center"><span style="font-size:10px; font-weight:bold; background:#eef2f9; color:#1a4d80; padding:4px 8px; border-radius:6px; border:1px solid #cbd5e1;">${r.tipoRequisicao || 'SUBSTITUIÇÃO'}</span></td>
-            
-            <td class="td-center"><b>${r.operacao || 'LOCAÇÃO'}</b></td>
-            <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span></td>
-            <td class="td-center">${btnAcao}</td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function filtrarRequisicoes() {
-      const requisicoes = bancoDados.requisicoes || [];
-      const statusFiltro = document.getElementById('filtroStatusReq')?.value || "TODOS";
-      const mesFiltro = document.getElementById('filtroMesReq')?.value || "";
-      const textoFiltro = (document.getElementById('filtroTextoReq')?.value || "").toLowerCase().trim();
-
-      let filtradas = requisicoes.filter(r => {
-        if (!r) return false;
-        const st = (r.status || "PENDENTE").toUpperCase();
-        if (statusFiltro !== "TODOS" && st !== statusFiltro) return false;
-
-        if (mesFiltro && r.dataHora) {
-          const partesData = String(r.dataHora).split(' ')[0].split('/');
-          if (partesData.length === 3) {
-            const anoMesReg = `${partesData[2]}-${partesData[1].padStart(2, '0')}`;
-            if (anoMesReg !== mesFiltro) return false;
-          }
-        }
-
-        if (textoFiltro) {
-          const matchProt = (r.protocolo || "").toLowerCase().includes(textoFiltro);
-          const matchCli = (r.cliente || "").toLowerCase().includes(textoFiltro);
-          const matchEq = (r.equipamentoSolicitado || "").toLowerCase().includes(textoFiltro);
-          const matchMotivo = (r.motivo || "").toLowerCase().includes(textoFiltro);
-          if (!matchProt && !matchCli && !matchEq && !matchMotivo) return false;
-        }
-
-        return true;
-      });
-
-      renderizarTabelaRequisicoes(filtradas);
     }
 
     function abrirModalVincularTermo(protReq, cliente) {
@@ -2247,41 +1867,23 @@
       if (!protTermo) { alert("Por favor, informe o protocolo do Termo."); return; }
 
       const btn = document.getElementById('btnConfirmarVinculo');
-      btn.disabled = true;
-      btn.innerText = "VINCULANDO...";
-
+      btn.disabled = true; btn.innerText = "VINCULANDO...";
       const protReqAlvo = protocoloReqEmVinculo;
 
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ acao: "VINCULAR_TERMO_REQUISICAO", protocoloReq: protReqAlvo, protocoloTermo: protTermo })
-      })
-      .then(res => res.json())
-      .then(res => {
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "VINCULAR_TERMO_REQUISICAO", protocoloReq: protReqAlvo, protocoloTermo: protTermo }) })
+      .then(res => res.json()).then(res => {
         if (res.status === "sucesso") {
           if (bancoDados && bancoDados.requisicoes) {
             const reqLocal = bancoDados.requisicoes.find(r => r && r.protocolo === protReqAlvo && (r.status || "").toUpperCase() === "PENDENTE") ||
                              bancoDados.requisicoes.find(r => r && r.protocolo === protReqAlvo);
-            if (reqLocal) {
-              reqLocal.status = "ATENDIDO";
-              reqLocal.protocoloTermo = protTermo;
-            }
+            if (reqLocal) { reqLocal.status = "ATENDIDO"; reqLocal.protocoloTermo = protTermo; }
           }
-          fecharModalVincularTermo();
-          filtrarRequisicoes();
-          atualizarDashboard();
-          atualizarNotificacoes();
-          buscarAtualizacoesSilenciosas();
-        } else {
-          alert("Erro ao vincular termo: " + (res.mensagem || "Requisição não encontrada na planilha."));
-        }
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-link"></i> Confirmar Vinculação';
-      })
-      .catch(err => {
+          fecharModalVincularTermo(); filtrarRequisicoes(); atualizarDashboard(); atualizarNotificacoes(); buscarAtualizacoesSilenciosas();
+        } else alert("Erro ao vincular termo: " + (res.mensagem || "Requisição não encontrada na planilha."));
+        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-link"></i> Confirmar Vinculação';
+      }).catch(err => {
         alert("Falha de conexão ao vincular termo.");
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-link"></i> Confirmar Vinculação';
+        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-link"></i> Confirmar Vinculação';
       });
     }
 
@@ -2290,9 +1892,7 @@
                      (bancoDados.requisicoes || []).find(r => r && r.protocolo === protReq);
 
       if (reqObj && (reqObj.status || "").toUpperCase() === "ATENDIDO") {
-        alert(`A requisição ${protReq} já se encontra ATENDIDA!`);
-        buscarAtualizacoesSilenciosas();
-        return;
+        alert(`A requisição ${protReq} já se encontra ATENDIDA!`); buscarAtualizacoesSilenciosas(); return;
       }
 
       document.getElementById('reqVinculadaProtocolo').value = protReq;
@@ -2363,12 +1963,9 @@
       const eq = bancoDados.equipamentos.find(i => `tag: ${i.tag} | ${i.nome} | série: ${i.serie}`.toLowerCase() === val || (i.tag || '').toLowerCase() === val);
       if (eq) {
         equipamentoSelecionado = eq;
-        document.getElementById('eqTag').value = eq.tag || "-";
-        document.getElementById('eqSerie').value = eq.serie || "-";
-        document.getElementById('eqPatrimonio').value = eq.patrimonio || "-";
-        document.getElementById('eqNome').value = eq.nome || "-";
-        document.getElementById('eqModelo').value = eq.modelo || "-";
-        document.getElementById('eqFabricante').value = eq.fabricante || "-";
+        document.getElementById('eqTag').value = eq.tag || "-"; document.getElementById('eqSerie').value = eq.serie || "-";
+        document.getElementById('eqPatrimonio').value = eq.patrimonio || "-"; document.getElementById('eqNome').value = eq.nome || "-";
+        document.getElementById('eqModelo').value = eq.modelo || "-"; document.getElementById('eqFabricante').value = eq.fabricante || "-";
 
         const tbodyAc = document.getElementById('corpoAcessorios');
         if (tbodyAc) {
@@ -2401,10 +1998,8 @@
       if (!val || !bancoDados.equipamentos) return;
       const eq = bancoDados.equipamentos.find(i => `tag: ${i.tag} | ${i.nome} | série: ${i.serie}`.toLowerCase() === val || (i.tag || '').toLowerCase() === val);
       if (eq) {
-        document.getElementById('osTag').value = eq.tag || "-";
-        document.getElementById('osSerie').value = eq.serie || "-";
-        document.getElementById('osPatrimonio').value = eq.patrimonio || "-";
-        document.getElementById('osNomeEquip').value = `${eq.nome || ''} ${eq.modelo ? '(' + eq.modelo + ')' : ''}`.trim() || "-";
+        document.getElementById('osTag').value = eq.tag || "-"; document.getElementById('osSerie').value = eq.serie || "-";
+        document.getElementById('osPatrimonio').value = eq.patrimonio || "-"; document.getElementById('osNomeEquip').value = `${eq.nome || ''} ${eq.modelo ? '(' + eq.modelo + ')' : ''}`.trim() || "-";
       }
     }
 
@@ -2432,10 +2027,7 @@
     function limparAssinatura() { ctx?.clearRect(0, 0, canvas.width, canvas.height); }
 
     function gerarTermo(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
+      if (e) { e.preventDefault(); e.stopPropagation(); }
       if (!equipamentoSelecionado) { alert("Selecione um equipamento válido."); return false; }
 
       const nomeTec = document.getElementById('selectTecnico').value;
@@ -2448,58 +2040,32 @@
         if (tds.length >= 3 && !tr.innerText.includes("NÃO POSSUI")) {
           const inputQtd = tr.querySelector('.qtd-acessorio');
           const qtdVal = inputQtd ? (parseInt(inputQtd.value) || 1) : 1;
-          acessoriosList.push({
-            item: idx + 1,
-            qtd: qtdVal,
-            descricao: tds[2].innerText.trim(),
-            conformidade: "CONFORME"
-          });
+          acessoriosList.push({ item: idx + 1, qtd: qtdVal, descricao: tds[2].innerText.trim(), conformidade: "CONFORME" });
         }
       });
 
       const payload = {
-        acao: "CRIAR_TERMO",
-        cliente: document.getElementById('inputCliente').value,
-        equipamento: equipamentoSelecionado,
-        tipoOperacao: document.querySelector('input[name="tipoOperacao"]:checked').value,
-        acessorios: acessoriosList,
-        tecnico: { nome: nomeTec },
-        assinaturaCliente: canvas ? canvas.toDataURL() : "",
-        protocoloReq: document.getElementById('reqVinculadaProtocolo').value
+        acao: "CRIAR_TERMO", cliente: document.getElementById('inputCliente').value, equipamento: equipamentoSelecionado,
+        tipoOperacao: document.querySelector('input[name="tipoOperacao"]:checked').value, acessorios: acessoriosList,
+        tecnico: { nome: nomeTec }, assinaturaCliente: canvas ? canvas.toDataURL() : "", protocoloReq: document.getElementById('reqVinculadaProtocolo').value
       };
 
       const btn = document.getElementById('btnEnviar');
       btn.disabled = true; btn.innerText = "GERANDO PDF NO SERVIDOR...";
 
-      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
-      .then(res => res.json())
-      .then(res => {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)';
-        
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(res => {
+        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF';
         if(res.status === "sucesso") {
-          desvincularRequisicao();
-          document.getElementById('termoForm').reset();
-          limparAssinatura();
-          equipamentoSelecionado = null;
+          desvincularRequisicao(); document.getElementById('termoForm').reset(); limparAssinatura(); equipamentoSelecionado = null;
           document.getElementById('corpoAcessorios').innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 24px;">Selecione um equipamento para visualizar os acessórios.</td></tr>';
-          
           buscarAtualizacoesSilenciosas();
-
-          if (res.pdfUrl && confirm(`Termo ${res.protocolo} gerado com sucesso!\n\nDeseja abrir o PDF gerado agora?`)) {
-            window.open(res.pdfUrl, '_blank');
-          }
+          if (res.pdfUrl && confirm(`Termo ${res.protocolo} gerado com sucesso!\n\nDeseja abrir o PDF gerado agora?`)) window.open(res.pdfUrl, '_blank');
           mudarAba('consulta');
-        } else {
-          alert("Erro ao gerar termo.");
-        }
-      })
-      .catch(err => {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF (Entrega + Higienização)';
+        } else alert("Erro ao gerar termo.");
+      }).catch(err => {
+        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Duplo PDF';
         alert("Falha de conexão ao gerar termo.");
       });
-
       return false;
     }
 
@@ -2520,7 +2086,6 @@
         if (!os) return false;
         const st = (os.status || "").toUpperCase();
         if (statusFiltro !== "TODOS" && st !== statusFiltro) return false;
-
         if (textoFiltro) {
           const matchProt = (os.protocoloOS || "").toLowerCase().includes(textoFiltro);
           const matchCli = (os.cliente || "").toLowerCase().includes(textoFiltro);
@@ -2528,7 +2093,6 @@
           const matchEq = (os.equipamento || "").toLowerCase().includes(textoFiltro);
           if (!matchProt && !matchCli && !matchTag && !matchEq) return false;
         }
-
         return true;
       });
 
@@ -2539,124 +2103,62 @@
 
       tbody.innerHTML = filtradas.map(os => `
         <tr>
-          <td class="td-center"><b>${os.protocoloOS || '-'}</b></td>
-          <td>${os.dataAbertura || '-'}</td>
-          <td>${os.cliente || '-'}</td>
-          <td class="td-center"><b>${os.tag || '-'}</b></td>
-          <td>${os.equipamento || '-'}</td>
-          <td class="td-center">${os.tipoManutencao || '-'}</td>
+          <td class="td-center"><b>${os.protocoloOS || '-'}</b></td><td>${os.dataAbertura || '-'}</td><td>${os.cliente || '-'}</td>
+          <td class="td-center"><b>${os.tag || '-'}</b></td><td>${os.equipamento || '-'}</td><td class="td-center">${os.tipoManutencao || '-'}</td>
           <td class="td-center"><b>${os.prioridade || '-'}</b></td>
           <td class="td-center"><span class="badge-status ${os.status === 'CONCLUÍDA' ? 'badge-atendido' : 'badge-pendente'}">${os.status || 'ABERTA'}</span></td>
-          <td class="td-center">
-            ${os.pdfUrlOS ? `<a href="${os.pdfUrlOS}" target="_blank" class="btn-pdf" style="padding:4px 8px; font-size:10px;"><i class="fa-solid fa-file-pdf"></i> PDF</a>` : '-'}
-          </td>
+          <td class="td-center">${os.pdfUrlOS ? `<a href="${os.pdfUrlOS}" target="_blank" class="btn-pdf" style="padding:4px 8px; font-size:10px;"><i class="fa-solid fa-file-pdf"></i> PDF</a>` : '-'}</td>
         </tr>
       `).join('');
     }
 
     function salvarNovaOS(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      const cliente = document.getElementById('osCliente').value.trim();
-      const tipo = document.getElementById('osTipo').value;
-      const prioridade = document.getElementById('osPrioridade').value;
-      const tag = document.getElementById('osTag').value.trim();
-      const equip = document.getElementById('osNomeEquip').value.trim();
-      const solicitante = document.getElementById('osSolicitante').value.trim();
-      const tecnico = document.getElementById('osTecnico').value.trim();
-      const defeito = document.getElementById('osDefeito').value.trim();
-      const diagnostico = document.getElementById('osDiagnostico').value.trim();
-      const servico = document.getElementById('osServico').value.trim();
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      const cliente = document.getElementById('osCliente').value.trim(); const tipo = document.getElementById('osTipo').value;
+      const prioridade = document.getElementById('osPrioridade').value; const tag = document.getElementById('osTag').value.trim();
+      const equip = document.getElementById('osNomeEquip').value.trim(); const solicitante = document.getElementById('osSolicitante').value.trim();
+      const tecnico = document.getElementById('osTecnico').value.trim(); const defeito = document.getElementById('osDefeito').value.trim();
+      const diagnostico = document.getElementById('osDiagnostico').value.trim(); const servico = document.getElementById('osServico').value.trim();
 
-      if (!cliente || !solicitante || !defeito) {
-        alert("Preencha os campos obrigatórios da O.S.");
-        return false;
-      }
+      if (!cliente || !solicitante || !defeito) { alert("Preencha os campos obrigatórios da O.S."); return false; }
 
       const btn = document.getElementById('btnSalvarOS');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> REGISTRANDO O.S...';
+      btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> REGISTRANDO O.S...';
 
-      const payload = {
-        acao: "CRIAR_OS",
-        cliente: cliente,
-        tipoManutencao: tipo,
-        prioridade: prioridade,
-        tag: tag,
-        equipamento: equip,
-        solicitante: solicitante,
-        tecnico: tecnico,
-        defeitoRelatado: defeito,
-        diagnosticoTecnico: diagnostico,
-        servicoRealizado: servico
-      };
+      const payload = { acao: "CRIAR_OS", cliente: cliente, tipoManutencao: tipo, prioridade: prioridade, tag: tag, equipamento: equip, solicitante: solicitante, tecnico: tecnico, defeitoRelatado: defeito, diagnosticoTecnico: diagnostico, servicoRealizado: servico };
 
-      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
-      .then(res => res.json())
-      .then(res => {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar O.S.';
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(res => {
+        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar O.S.';
         if (res.status === "sucesso") {
-          document.getElementById('formNovaOS').reset();
-          alert(`Ordem de Serviço ${res.protocoloOS} criada com sucesso!`);
-          buscarAtualizacoesSilenciosas();
-          mudarAba('os_gestao');
-        } else {
-          alert("Erro ao criar O.S.: " + (res.mensagem || "Erro desconhecido."));
-        }
-      })
-      .catch(err => {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar O.S.';
-        alert("Falha de conexão ao registrar O.S.");
+          document.getElementById('formNovaOS').reset(); alert(`Ordem de Serviço ${res.protocoloOS} criada com sucesso!`);
+          buscarAtualizacoesSilenciosas(); mudarAba('os_gestao');
+        } else alert("Erro ao criar O.S.: " + (res.mensagem || "Erro desconhecido."));
+      }).catch(err => {
+        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar O.S.'; alert("Falha de conexão ao registrar O.S.");
       });
-
       return false;
     }
 
     function renderizarTabelaTermos(lista) {
       const tbody = document.getElementById('corpoTermos');
       if (!tbody) return;
-
       if (!lista || lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhum termo emitido encontrado.</td></tr>';
-        return;
+        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhum termo emitido encontrado.</td></tr>'; return;
       }
-
       const filtroVal = (document.getElementById('filtroTermos')?.value || "").toLowerCase().trim();
       let dadosExibir = lista;
       
       if (filtroVal) {
-        dadosExibir = lista.filter(t => 
-          t && (
-            (t.protocolo || "").toLowerCase().includes(filtroVal) ||
-            (t.cliente || "").toLowerCase().includes(filtroVal) ||
-            (t.tag || "").toLowerCase().includes(filtroVal) ||
-            (t.equipamento || "").toLowerCase().includes(filtroVal) ||
-            (t.tecnico || "").toLowerCase().includes(filtroVal)
-          )
-        );
+        dadosExibir = lista.filter(t => t && ( (t.protocolo || "").toLowerCase().includes(filtroVal) || (t.cliente || "").toLowerCase().includes(filtroVal) || (t.tag || "").toLowerCase().includes(filtroVal) || (t.equipamento || "").toLowerCase().includes(filtroVal) || (t.tecnico || "").toLowerCase().includes(filtroVal) ));
       }
 
-      if (dadosExibir.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhum termo encontrado.</td></tr>';
-        return;
-      }
+      if (dadosExibir.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhum termo encontrado.</td></tr>'; return; }
 
       tbody.innerHTML = dadosExibir.map(t => `
         <tr>
-          <td class="td-center"><b>${t.protocolo || '-'}</b></td>
-          <td>${t.dataHora || '-'}</td>
-          <td>${t.cliente || '-'}</td>
-          <td class="td-center"><b>${t.tag || '-'}</b></td>
-          <td>${t.equipamento || '-'}</td>
-          <td class="td-center">${t.tipo || '-'}</td>
-          <td>${t.tecnico || '-'}</td>
-          <td class="td-center">
-            ${t.pdfUrl ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${t.pdfUrl}', 'Visualizar Termo: ${t.protocolo}')"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : '-'}
-          </td>
+          <td class="td-center"><b>${t.protocolo || '-'}</b></td><td>${t.dataHora || '-'}</td><td>${t.cliente || '-'}</td>
+          <td class="td-center"><b>${t.tag || '-'}</b></td><td>${t.equipamento || '-'}</td><td class="td-center">${t.tipo || '-'}</td><td>${t.tecnico || '-'}</td>
+          <td class="td-center">${t.pdfUrl ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${t.pdfUrl}', 'Visualizar Termo: ${t.protocolo}')"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : '-'}</td>
         </tr>
       `).join('');
     }
@@ -2665,23 +2167,12 @@
       const rels = bancoDados.relacoesAuxiliares || [];
       const descricoesUnicas = Array.from(new Set(rels.map(r => r ? r.descricao : '').filter(Boolean))).sort();
       const dlDesc = document.getElementById('listDescricoesPadrao');
-      if (dlDesc) {
-        dlDesc.innerHTML = descricoesUnicas.map(d => `<option value="${d}">`).join('');
-      }
+      if (dlDesc) dlDesc.innerHTML = descricoesUnicas.map(d => `<option value="${d}">`).join('');
 
       const tbody = document.getElementById('tabelaAuxiliaresList');
       if (tbody) {
-        if (rels.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="3" class="td-center" style="color:#888;">Nenhuma combinação registrada.</td></tr>';
-        } else {
-          tbody.innerHTML = rels.map(r => `
-            <tr>
-              <td><b>${r.descricao || '-'}</b></td>
-              <td>${r.modelo || "-"}</td>
-              <td>${r.fabricante || "-"}</td>
-            </tr>
-          `).join('');
-        }
+        if (rels.length === 0) tbody.innerHTML = '<tr><td colspan="3" class="td-center" style="color:#888;">Nenhuma combinação registrada.</td></tr>';
+        else tbody.innerHTML = rels.map(r => `<tr><td><b>${r.descricao || '-'}</b></td><td>${r.modelo || "-"}</td><td>${r.fabricante || "-"}</td></tr>`).join('');
       }
     }
 
@@ -2696,10 +2187,7 @@
         reqs = reqs.filter(r => {
           if (!r || !r.dataHora) return false;
           const partesData = String(r.dataHora).split(' ')[0].split('/');
-          if (partesData.length === 3) {
-            const anoMesReg = `${partesData[2]}-${partesData[1].padStart(2, '0')}`;
-            return anoMesReg === mesFiltro;
-          }
+          if (partesData.length === 3) return `${partesData[2]}-${partesData[1].padStart(2, '0')}` === mesFiltro;
           return false;
         });
       }
@@ -2707,20 +2195,14 @@
       if (document.getElementById('dashTotalReq')) document.getElementById('dashTotalReq').innerText = reqs.length;
 
       let pendentes = 0, atendidos = 0, recusados = 0;
-      let contagemClientes = {};
-      let contagemFamilias = {};
+      let contagemClientes = {}; let contagemFamilias = {};
 
       reqs.forEach(r => {
         let st = (r.status || "PENDENTE").toUpperCase();
-        if (st === "PENDENTE") pendentes++;
-        else if (st === "ATENDIDO") atendidos++;
-        else if (st === "RECUSADO") recusados++;
+        if (st === "PENDENTE") pendentes++; else if (st === "ATENDIDO") atendidos++; else if (st === "RECUSADO") recusados++;
 
-        let cli = r.cliente || "Não informado";
-        contagemClientes[cli] = (contagemClientes[cli] || 0) + 1;
-
-        let eq = r.equipamentoSolicitado || "Diversos";
-        contagemFamilias[eq] = (contagemFamilias[eq] || 0) + 1;
+        let cli = r.cliente || "Não informado"; contagemClientes[cli] = (contagemClientes[cli] || 0) + 1;
+        let eq = r.equipamentoSolicitado || "Diversos"; contagemFamilias[eq] = (contagemFamilias[eq] || 0) + 1;
       });
 
       if (document.getElementById('dashPendentes')) document.getElementById('dashPendentes').innerText = pendentes;
@@ -2730,23 +2212,12 @@
       const divCli = document.getElementById('chartClientes');
       if (divCli) {
         const topClientes = Object.entries(contagemClientes).sort((a, b) => b[1] - a[1]).slice(0, 5);
-        if (topClientes.length === 0) {
-          divCli.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>';
-        } else {
+        if (topClientes.length === 0) divCli.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>';
+        else {
           const maxVal = topClientes[0][1] || 1;
           divCli.innerHTML = topClientes.map(([nome, qtd]) => {
             const pct = Math.round((qtd / maxVal) * 100);
-            return `
-              <div style="margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 2px;">
-                  <span>${nome}</span>
-                  <span style="color: #1a4d80;">${qtd} reqs</span>
-                </div>
-                <div style="background: #e2e8f0; border-radius: 4px; height: 10px; overflow: hidden;">
-                  <div style="background: #1a4d80; width: ${pct}%; height: 100%; border-radius: 4px;"></div>
-                </div>
-              </div>
-            `;
+            return `<div style="margin-bottom: 10px;"><div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 2px;"><span>${nome}</span><span style="color: #1a4d80;">${qtd} reqs</span></div><div style="background: #e2e8f0; border-radius: 4px; height: 10px; overflow: hidden;"><div style="background: #1a4d80; width: ${pct}%; height: 100%; border-radius: 4px;"></div></div></div>`;
           }).join('');
         }
       }
@@ -2754,23 +2225,12 @@
       const divFam = document.getElementById('chartFamilias');
       if (divFam) {
         const topFamilias = Object.entries(contagemFamilias).sort((a, b) => b[1] - a[1]).slice(0, 5);
-        if (topFamilias.length === 0) {
-          divFam.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>';
-        } else {
+        if (topFamilias.length === 0) divFam.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>';
+        else {
           const maxVal = topFamilias[0][1] || 1;
           divFam.innerHTML = topFamilias.map(([nome, qtd]) => {
             const pct = Math.round((qtd / maxVal) * 100);
-            return `
-              <div style="margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 2px;">
-                  <span>${nome}</span>
-                  <span style="color: #2563eb;">${qtd} reqs</span>
-                </div>
-                <div style="background: #e2e8f0; border-radius: 4px; height: 10px; overflow: hidden;">
-                  <div style="background: #2563eb; width: ${pct}%; height: 100%; border-radius: 4px;"></div>
-                </div>
-              </div>
-            `;
+            return `<div style="margin-bottom: 10px;"><div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 2px;"><span>${nome}</span><span style="color: #2563eb;">${qtd} reqs</span></div><div style="background: #e2e8f0; border-radius: 4px; height: 10px; overflow: hidden;"><div style="background: #2563eb; width: ${pct}%; height: 100%; border-radius: 4px;"></div></div></div>`;
           }).join('');
         }
       }
@@ -2779,30 +2239,20 @@
     function atualizarNotificacoes() {
       if (!bancoDados || !bancoDados.requisicoes) return;
       const pendentes = bancoDados.requisicoes.filter(r => r && (r.status || '').toUpperCase() === "PENDENTE");
-      const badge = document.getElementById('notifBadge');
-      const textCount = document.getElementById('notifCountText');
-      const listContainer = document.getElementById('notifList');
+      const badge = document.getElementById('notifBadge'); const textCount = document.getElementById('notifCountText'); const listContainer = document.getElementById('notifList');
 
       if (!badge || !textCount || !listContainer) return;
 
       if (pendentes.length > 0) {
-        badge.innerText = pendentes.length;
-        badge.classList.add('active');
-        textCount.innerText = `${pendentes.length} pendente(s)`;
+        badge.innerText = pendentes.length; badge.classList.add('active'); textCount.innerText = `${pendentes.length} pendente(s)`;
         listContainer.innerHTML = pendentes.map(p => `
           <div class="notif-item" onclick="irParaRequisicaoEspecifica(event, '${p.protocolo}')">
-            <div class="notif-item-title">
-              <span>${p.protocolo || '-'}</span>
-              <span style="color:#e0a800;"><i class="fa-solid fa-clock"></i> Pendente</span>
-            </div>
-            <div class="notif-item-sub"><b>${p.cliente || '-'}</b></div>
-            <div class="notif-item-sub">${p.equipamentoSolicitado || '-'}</div>
+            <div class="notif-item-title"><span>${p.protocolo || '-'}</span><span style="color:#e0a800;"><i class="fa-solid fa-clock"></i> Pendente</span></div>
+            <div class="notif-item-sub"><b>${p.cliente || '-'}</b></div><div class="notif-item-sub">${p.equipamentoSolicitado || '-'}</div>
           </div>
         `).join('');
       } else {
-        badge.innerText = "0";
-        badge.classList.remove('active');
-        textCount.innerText = "0 pendentes";
+        badge.innerText = "0"; badge.classList.remove('active'); textCount.innerText = "0 pendentes";
         listContainer.innerHTML = '<div style="padding: 16px; text-align: center; color: #888; font-size: 12px;">Nenhuma pendência no momento.</div>';
       }
     }
@@ -2812,8 +2262,7 @@
       fecharTodosDropdowns();
       if (document.getElementById('filtroStatusReq')) document.getElementById('filtroStatusReq').value = "PENDENTE";
       if (document.getElementById('filtroTextoReq')) document.getElementById('filtroTextoReq').value = protocolo || "";
-      mudarAba('requisicoes');
-      filtrarRequisicoes();
+      mudarAba('requisicoes'); filtrarRequisicoes();
     }
   </script>
 </body>
