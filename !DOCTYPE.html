@@ -162,9 +162,7 @@
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* ===================================================================
-       TEMA VISUAL DMA SYS (Premium Completo) — Sombras, cantos e cores.
-       =================================================================== */
+    /* TEMA VISUAL PREMIUM */
     html { scrollbar-color:#b7c4da #eef2f8; }
     ::selection { background:#bfdbfe; color:#0b2545; }
     :focus-visible { outline:2px solid #60a5fa; outline-offset:2px; }
@@ -380,7 +378,6 @@
       </div>
     </div>
 
-    <!-- DATALISTS DINÂMICAS -->
     <datalist id="listDescricoesPadrao"></datalist>
     <datalist id="listModelosPadrao"></datalist>
     <datalist id="listFabricantesPadrao"></datalist>
@@ -626,7 +623,7 @@
               <input type="text" id="reqCliente" list="listClientes" placeholder="Selecione ou digite o cliente..." required>
             </div>
             
-            <!-- CAMPO TIPO DE REQUISIÇÃO (ADICIONADO) -->
+            <!-- CAMPO TIPO DE REQUISIÇÃO -->
             <div class="form-group" style="flex: 1;">
               <label>TIPO DE REQUISIÇÃO:</label>
               <select id="reqTipo" required>
@@ -702,7 +699,7 @@
                 <th style="width: 220px;">Cliente / Locatário</th>
                 <th style="width: 200px;">Equipamento Solicitado</th>
                 <th>Motivo / Obs.</th>
-                <th class="td-center" style="width: 110px;">Tipo Req.</th> <!-- COLUNA ADICIONADA -->
+                <th class="td-center" style="width: 110px;">Tipo Req.</th>
                 <th class="td-center" style="width: 80px;">Operação</th>
                 <th class="td-center" style="width: 80px;">Status</th>
                 <th class="td-center" style="width: 310px;">Ações / Qualidade</th>
@@ -1547,7 +1544,7 @@
 
     function preencherSelectTecnicos() {
       const selTec = document.getElementById('selectTecnico');
-      const selTecLote = document.getElementById('selectTecnicoLote'); // Lote
+      const selTecLote = document.getElementById('selectTecnicoLote');
       
       const valAnterior = selTec ? selTec.value : "";
       const valAnteriorLote = selTecLote ? selTecLote.value : "";
@@ -2392,7 +2389,6 @@
       if (!cliente) { alert("Informe o Cliente."); return false; }
       if (!nomeTec) { alert("Selecione o Técnico."); return false; }
 
-      // Acessórios consolidados (já com as quantidades eventualmente ajustadas na tabela)
       let acessoriosList = [];
       document.querySelectorAll('#corpoAcessoriosLote tr').forEach((tr) => {
         const inputQtd = tr.querySelector('.qtd-acessorio-multiplo');
