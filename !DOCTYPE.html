@@ -150,12 +150,12 @@
     .chat-input-box { display: flex; padding: 8px; background: white; border-top: 1px solid #cbd5e1; gap: 6px; position: relative; align-items: center; }
     .chat-input-box input { flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; }
     .chat-input-box button { background: #1a4d80; color: white; border: none; padding: 0 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; height: 30px; }
+    
     .emoji-picker-dropdown { display: none; position: absolute; bottom: 45px; left: 8px; background: white; border: 1px solid #cbd5e1; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 8px; width: 210px; z-index: 9999; grid-template-columns: repeat(6, 1fr); gap: 4px; text-align: center; }
     .emoji-picker-dropdown.active { display: grid; }
     .emoji-item { font-size: 16px; cursor: pointer; padding: 4px; border-radius: 4px; transition: background 0.1s; }
     .emoji-item:hover { background: #f1f5f9; }
 
-    /* WIDGET WHATSAPP FLUTUANTE */
     .chat-widget-btn { position: fixed; bottom: 45px; right: 20px; background: #25d366; color: white; border: none; width: 48px; height: 48px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.25); z-index: 101; transition: transform 0.2s; }
     .chat-widget-btn:hover { transform: scale(1.08); }
     .chat-box-wa { display: none; position: fixed; bottom: 105px; right: 20px; width: 300px; background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 102; overflow: hidden; border: 1px solid #e2e8f0; }
@@ -631,23 +631,20 @@
         <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
         <form id="formReq" onsubmit="return salvarRequisicao(event)">
           
-          <!-- INÍCIO DA ATUALIZAÇÃO NO FORMULÁRIO -->
           <div class="form-row">
             <div class="form-group" style="flex: 2;">
               <label>Cliente / Locatário Solicitante:</label>
               <input type="text" id="reqCliente" list="listClientes" placeholder="Selecione ou digite o cliente..." required>
             </div>
-            
             <div class="form-group" style="flex: 1.5;">
               <label>Tipo de Requisição:</label>
               <select id="reqTipo" required style="cursor: pointer; padding: 8px; border-radius: 10px; border: 1px solid #d3dbe8; background: #fbfcfe; width: 100%;">
-                <option value="" disabled selected>Selecione...</option>
+                <option value="" disabled selected>Selecione o tipo...</option>
                 <option value="SUBSTITUIÇÃO">Substituição</option>
                 <option value="REPOSIÇÃO">Reposição</option>
                 <option value="NOVO ENVIO">Novo Envio</option>
               </select>
             </div>
-
             <div class="form-group" style="flex: 1.5;">
               <label>Operação:</label>
               <div class="radio-group">
@@ -657,7 +654,6 @@
               </div>
             </div>
           </div>
-          <!-- FIM DA ATUALIZAÇÃO -->
 
           <div class="form-row">
             <div class="form-group">
@@ -719,7 +715,6 @@
                 <th style="width: 220px;">Cliente / Locatário</th>
                 <th style="width: 200px;">Equipamento Solicitado</th>
                 <th>Motivo / Obs.</th>
-                <!-- NOVA COLUNA NA TABELA -->
                 <th class="td-center" style="width: 90px;">Tipo Req.</th>
                 <th class="td-center" style="width: 80px;">Operação</th>
                 <th class="td-center" style="width: 80px;">Status</th>
@@ -1430,14 +1425,13 @@
       if (e) { e.preventDefault(); e.stopPropagation(); }
       
       const cliente = document.getElementById('reqCliente').value.trim();
-      const tipoReq = document.getElementById('reqTipo').value; // CAMPO NOVO
+      const tipoReq = document.getElementById('reqTipo').value; // CAMPO NOVO LIDO AQUI
       const operacao = document.querySelector('input[name="reqOperacao"]:checked')?.value || "LOCAÇÃO";
       const eqAntigo = document.getElementById('reqEqAntigo').value.trim();
       const eqSolicitado = document.getElementById('reqEqSolicitado').value.trim();
       const motivo = document.getElementById('reqMotivo').value.trim();
       const solicitante = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario || "Solicitante") : "Solicitante";
 
-      // Validação atualizada com tipoReq
       if (!cliente || !tipoReq || !eqAntigo || !eqSolicitado) {
         alert("Preencha os campos obrigatórios (Cliente, Tipo, Equip. a Substituir e Equipamento Solicitado).");
         return false;
@@ -1450,7 +1444,7 @@
         acao: "CRIAR_REQUISICAO",
         cliente: cliente,
         operacao: operacao,
-        tipoRequisicao: tipoReq, // CAMPO NOVO
+        tipoRequisicao: tipoReq, // CAMPO NOVO ENVIADO
         equipamentoAntigo: eqAntigo,
         equipamentoSolicitado: eqSolicitado,
         motivo: motivo,
@@ -1469,7 +1463,7 @@
             dataHora: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
             cliente: cliente,
             operacao: operacao,
-            tipoRequisicao: tipoReq, // CAMPO NOVO
+            tipoRequisicao: tipoReq, // CAMPO NOVO ARMAZENADO NO CACHE
             equipamentoAntigo: eqAntigo,
             equipamentoSolicitado: eqSolicitado,
             motivo: motivo,
@@ -1573,7 +1567,6 @@
             <td><b>${r.equipamentoSolicitado || '-'}</b></td>
             <td style="color:#555; font-style:italic;">${r.motivo || "-"}</td>
             
-            <!-- NOVA COLUNA NA TABELA RENDENRIZADA -->
             <td class="td-center"><span style="font-size:10px; font-weight:bold; background:#eef2f9; color:#1a4d80; padding:4px 8px; border-radius:6px; border:1px solid #cbd5e1;">${r.tipoRequisicao || 'SUBSTITUIÇÃO'}</span></td>
             
             <td class="td-center"><b>${r.operacao || 'LOCAÇÃO'}</b></td>
