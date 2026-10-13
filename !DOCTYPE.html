@@ -2380,7 +2380,7 @@
 
     function gerarTermoLote(e) {
       if (e) { e.preventDefault(); e.stopPropagation(); }
-      
+
       if (carrinhoLote.length === 0) {
         alert("O carrinho está vazio! Adicione equipamentos antes de gerar o termo.");
         return false;
@@ -2388,12 +2388,70 @@
 
       const cliente = document.getElementById('inputClienteLote').value.trim();
       const nomeTec = document.getElementById('selectTecnicoLote').value;
-      
+
       if (!cliente) { alert("Informe o Cliente."); return false; }
       if (!nomeTec) { alert("Selecione o Técnico."); return false; }
 
-      alert(`SUCESSO NO CARRINHO!\n\nVocê agrupou ${carrinhoLote.length} equipamentos para o cliente ${cliente}.\n\nO próximo passo é atualizar o Backend (Code.gs) para gerar este PDF múltiplo!`);
-      
+      // Acessórios consolidados (já com as quantidades eventualmente ajustadas na tabela)
+      let acessoriosList = [];
+      document.querySelectorAll('#corpoAcessoriosLote tr').forEach((tr) => {
+        const inputQtd = tr.querySelector('.qtd-acessorio-multiplo');
+        if (!inputQtd) return;
+        const tds = tr.querySelectorAll('td');
+        const qtdVal = parseInt(inputQtd.value);
+        if (isNaN(qtdVal) || qtdVal <= 0) return;
+        acessoriosList.push({
+          item: acessoriosList.length + 1,
+          qtd: qtdVal,
+          descricao: tds[2].innerText.trim(),
+          conformidade: "CONFORME"
+        });
+      });
+
+      const payload = {
+        acao: "CRIAR_TERMO_LOTE",
+        cliente: cliente,
+        equipamentos: carrinhoLote,
+        tipoOperacao: document.querySelector('input[name="tipoOperacaoLote"]:checked').value,
+        acessorios: acessoriosList,
+        tecnico: { nome: nomeTec },
+        assinaturaCliente: canvasLote ? canvasLote.toDataURL() : "",
+        protocoloReq: document.getElementById('reqVinculadaProtocoloLote').value
+      };
+
+      const textoBtnLote = '<i class="fa-solid fa-file-pdf"></i> Gerar Termo Múltiplo (Lote) em PDF';
+      const btn = document.getElementById('btnEnviarLote');
+      btn.disabled = true; btn.innerText = "GERANDO PDF NO SERVIDOR...";
+
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
+      .then(res => res.json())
+      .then(res => {
+        btn.disabled = false;
+        btn.innerHTML = textoBtnLote;
+
+        if (res.status === "sucesso") {
+          desvincularRequisicaoLote();
+          document.getElementById('termoLoteForm').reset();
+          limparAssinaturaLote();
+          carrinhoLote = [];
+          atualizarInterfaceLote();
+
+          buscarAtualizacoesSilenciosas();
+
+          if (res.pdfUrl && confirm(`Termo ${res.protocolo} gerado com sucesso!\n\nDeseja abrir o PDF gerado agora?`)) {
+            window.open(res.pdfUrl, '_blank');
+          }
+          mudarAba('consulta');
+        } else {
+          alert("Erro ao gerar termo em lote: " + (res.mensagem || "Erro desconhecido."));
+        }
+      })
+      .catch(err => {
+        btn.disabled = false;
+        btn.innerHTML = textoBtnLote;
+        alert("Falha de conexão ao gerar termo em lote.");
+      });
+
       return false;
     }
 
