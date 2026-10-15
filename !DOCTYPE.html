@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    /* CORREÇÃO 1: Removido o display:flex e flex-direction:column que estava conflitando com o rodapé */
     body { background-color: #f0f2f5; color: #333; min-height: 100vh; padding: 16px; padding-bottom: 70px; overflow-x: hidden; }
     
     .header { background-color: #1a4d80; color: white; padding: 12px 24px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; box-shadow: 0 3px 6px rgba(0,0,0,0.12); position: relative; }
@@ -157,21 +156,15 @@
     .emoji-item:hover { background: #f1f5f9; }
 
     /* WIDGET WHATSAPP FLUTUANTE */
-    .chat-widget-btn { position: fixed; bottom: 45px; right: 20px; background: #25d366; color: white; border: none; width: 48px; height: 48px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.25); z-index: 101; transition: transform 0.2s; }
+    .chat-widget-btn { position: fixed; bottom: 48px; right: 20px; background: #25d366; color: white; border: none; width: 48px; height: 48px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.25); z-index: 101; transition: transform 0.2s; }
     .chat-widget-btn:hover { transform: scale(1.08); }
     .chat-box-wa { display: none; position: fixed; bottom: 105px; right: 20px; width: 300px; background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 102; overflow: hidden; border: 1px solid #e2e8f0; }
     .chat-box-wa.active { display: block; animation: fadeIn 0.2s ease-in-out; }
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* CORREÇÃO 2: z-index ajustado para 99999 */
-    /* --- RODAPÉ FIXO --- */
-    .system-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a4d80; color: #e2e8f0; font-size: 11px; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 99999; border-top: 2px solid #2563eb; }
-    .system-footer a { color: #60a5fa; text-decoration: none; font-weight: bold; }
-    
     /* ===================================================================
-       TEMA VISUAL DMA SYS (v4) — SOMENTE cores, sombras, degradês e cantos.
-       Não altera tamanhos, margens, fontes, posições, HTML, JS nem PDFs.
+       TEMA VISUAL DMA SYS (v4)
        =================================================================== */
     html { scrollbar-color:#b7c4da #eef2f8; }
     ::selection { background:#bfdbfe; color:#0b2545; }
@@ -264,8 +257,7 @@
     .chat-box-wa { border-radius:18px; box-shadow:0 22px 50px rgba(11,37,69,.3); }
     .chat-widget-btn { box-shadow:0 10px 24px rgba(37,211,102,.45); }
 
-    /* SEÇÃO B — itens que o seu arquivo usa mas NUNCA estilizou (hoje aparecem como botões crus do navegador).
-       Única parte do tema que altera tamanho, só nesses itens. Para manter exatamente como está hoje, apague SOMENTE esta seção B (até o comentário Login). */
+    /* Botões de Ação e Assinaturas */
     .btn-action-container { display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important; align-items:center !important; justify-content:center !important; gap:4px !important; width:100% !important; white-space:nowrap !important; }
     .btn-atender, .btn-negar, .btn-vincular { color:#fff; border:none; padding:4px 10px; border-radius:7px; font-size:11px; font-weight:bold; cursor:pointer; white-space:nowrap; height:26px; display:inline-flex; align-items:center; gap:4px; justify-content:center; transition:filter .15s,transform .15s; }
     .btn-atender { background:linear-gradient(135deg,#f59e0b,#d97706); box-shadow:0 3px 8px rgba(217,119,6,.32); }
@@ -285,14 +277,12 @@
     #loginOverlay input:focus { border-color:#2563eb !important; box-shadow:0 0 0 4px rgba(37,99,235,.18); outline:none; background:#fff; }
     #btnEntrarLogin { background:linear-gradient(135deg,#2563eb,#1a4d80) !important; border-radius:11px !important; box-shadow:0 10px 22px rgba(37,99,235,.4); transition:transform .15s,box-shadow .15s; }
     #btnEntrarLogin:hover { transform:translateY(-1px); box-shadow:0 14px 28px rgba(37,99,235,.5); }
-    #loginOverlay::after { content:"DMA SYS v2.0 | Sistema de Gestão Operacional"; position:absolute; left:0; right:0; bottom:0; padding:10px 20px; text-align:center; font-size:11px; color:#94a3b8; background:rgba(11,27,51,.85); border-top:2px solid #2563eb; pointer-events:none; }
 
-    /* --- RODAPÉ FIXO (reforçado: sempre visível, acima de tudo) --- */
-    .system-footer { position:fixed !important; left:0 !important; right:0 !important; bottom:0 !important; z-index:2147483000 !important; display:flex !important; visibility:visible !important; opacity:1 !important; transform:none !important; justify-content:space-between; align-items:center; background:linear-gradient(90deg,#0b1b33,#12305a 55%,#0b1b33); color:#cbd5e1; font-size:11px; padding:8px 20px; border-top:2px solid #2563eb; box-shadow:0 -6px 20px rgba(11,37,69,.25); }
-    .system-footer a { color:#7dd3fc; text-decoration:none; font-weight:bold; }
-    .system-footer a:hover { color:#fff; }
+    /* --- RODAPÉ FIXO GLOBAL --- */
+    .system-footer { position:fixed !important; left:0 !important; right:0 !important; bottom:0 !important; height:36px !important; z-index:2147483647 !important; display:flex !important; visibility:visible !important; opacity:1 !important; justify-content:space-between !important; align-items:center !important; background:linear-gradient(90deg,#0b1b33,#12305a 55%,#0b1b33) !important; color:#cbd5e1 !important; font-size:11px !important; padding:0 20px !important; border-top:2px solid #2563eb !important; box-shadow:0 -6px 20px rgba(11,37,69,.25) !important; }
+    .system-footer a { color:#7dd3fc !important; text-decoration:none !important; font-weight:bold !important; }
+    .system-footer a:hover { color:#ffffff !important; }
 
-    /* Evita o bug de iOS/Safari em que overflow-x:hidden no body esconde elementos fixos (rodapé). Visual idêntico. */
     @supports (overflow-x: clip) { body { overflow-x: clip !important; } }
   </style>
 </head>
@@ -1054,7 +1044,7 @@
     <div id="abaCadEquipamento" class="tab-content">
       <div class="card">
         <div class="card-title">Cadastrar Novo Equipamento (Aba EQUIP)</div>
-        <form id="formNovoEquip" onsubmit="salvarNovoEquipamento(event)">
+        <form id="formNovoEquip" onsubmit="return salvarNovoEquipamento(event)">
           <div class="form-row">
             <div class="form-group"><label>TAG do Equipamento:</label><input type="text" id="cadTag" placeholder="Ex: LMD-9999" required></div>
             <div class="form-group"><label>Nº de Série:</label><input type="text" id="cadSerie" placeholder="Ex: 849302" required></div>
@@ -1082,14 +1072,14 @@
     <div id="abaCadAuxiliares" class="tab-content">
       <div class="card">
         <div class="card-title">Gerenciar Nomenclaturas & Combinações Válidas</div>
-        <form onsubmit="salvarAuxiliarVinculado(event)" style="background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+        <form id="formCadAuxiliar" onsubmit="return salvarAuxiliarVinculado(event)" style="background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
           <div class="form-row">
             <div class="form-group" style="flex: 2;"><label>Descrição / Família:</label><input type="text" id="vinculoDescricao" list="listDescricoesPadrao" required></div>
             <div class="form-group" style="flex: 1;"><label>Modelo:</label><input type="text" id="vinculoModelo" required></div>
             <div class="form-group" style="flex: 1;"><label>Fabricante:</label><input type="text" id="vinculoFabricante" required></div>
           </div>
           <div style="text-align: right;">
-            <button type="submit" class="btn-submit"><i class="fa-solid fa-plus"></i> Cadastrar Vínculo</button>
+            <button type="submit" id="btnSalvarAuxiliar" class="btn-submit"><i class="fa-solid fa-plus"></i> Cadastrar Vínculo</button>
           </div>
         </form>
 
@@ -1101,13 +1091,6 @@
         </div>
       </div>
     </div>
-
-    <!-- CORREÇÃO 3: RODAPÉ MOVIDO PARA DENTRO DO APP CONTAINER -->
-    <!-- RODAPÉ DO SISTEMA -->
-    <footer class="system-footer">
-      <div><b>DMA SYS</b> v2.0 | Sistema de Gestão Operacional</div>
-      <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br">si@linemedhospitalar.com.br</a></div>
-    </footer>
 
   </div> <!-- FIM DO APP CONTAINER -->
 
@@ -1176,7 +1159,7 @@
       </div>
       <div style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px; font-size: 12px; color: #334155;">
         <b>Cliente:</b> <span id="lblClienteReqVinculo">-</span><br>
-        <span style="font-size:11px; color:#64748b;">Utilize este recurso para dar baixa in requisições cujo termo de entrega já foi emitido previamente.</span>
+        <span style="font-size:11px; color:#64748b;">Utilize este recurso para dar baixa em requisições cujo termo de entrega já foi emitido previamente.</span>
       </div>
       <div class="form-group" style="margin-bottom: 16px;">
         <label>Selecione ou Digite o Protocolo do Termo (Ex: PT0018):</label>
@@ -1221,6 +1204,12 @@
       <button type="button" onclick="enviarWhatsAppSuporte()" style="background:#25d366; color:white; border:none; padding:8px; width:100%; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:8px;">Iniciar Conversa no WhatsApp</button>
     </div>
   </div>
+
+  <!-- RODAPÉ FIXO GLOBAL (BLINDADO COM STYLE INLINE E FORA DO APP CONTAINER) -->
+  <footer id="barraRodapeFixa" class="system-footer" style="position: fixed; left: 0; right: 0; bottom: 0; height: 36px; background: linear-gradient(90deg, #0b1b33, #12305a 55%, #0b1b33); color: #cbd5e1; font-size: 11px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; z-index: 2147483647; border-top: 2px solid #2563eb; box-shadow: 0 -6px 20px rgba(11, 37, 69, 0.25);">
+    <div><b style="color: #ffffff;">DMA SYS</b> v2.0 | Sistema de Gestão Operacional</div>
+    <div>Suporte / TI: <a href="mailto:si@linemedhospitalar.com.br" style="color: #7dd3fc; text-decoration: none; font-weight: bold;">si@linemedhospitalar.com.br</a></div>
+  </footer>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
@@ -1350,7 +1339,7 @@
                 <span class="emoji-item" onclick="inserirEmoji('😂')">😂</span>
                 <span class="emoji-item" onclick="inserirEmoji('👍')">👍</span>
                 <span class="emoji-item" onclick="inserirEmoji('🚀')">🚀</span>
-                <span class="emoji-item" onclick="inserirEmoji('✅')">✅</span>
+                <span class="emoji-item" onclick="inserirEmoji('?')">✅</span>
                 <span class="emoji-item" onclick="inserirEmoji('⚠️')">⚠️</span>
                 <span class="emoji-item" onclick="inserirEmoji('🔧')">🔧</span>
                 <span class="emoji-item" onclick="inserirEmoji('💡')">💡</span>
@@ -2204,6 +2193,37 @@
       renderizarTabelaRequisicoes(filtradas);
     }
 
+    function abrirModalRecusa(protReq) {
+      const motivoRecusa = prompt(`Informe o motivo da recusa para a requisição ${protReq}:`);
+      if (motivoRecusa === null) return;
+      if (!motivoRecusa.trim()) {
+        alert("É necessário informar o motivo da recusa.");
+        return;
+      }
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ acao: "RECUSAR_REQUISICAO", protocoloReq: protReq, motivoRecusa: motivoRecusa.trim() })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === "sucesso") {
+          const reqLocal = (bancoDados.requisicoes || []).find(r => r && r.protocolo === protReq);
+          if (reqLocal) {
+            reqLocal.status = "RECUSADO";
+            reqLocal.motivo = (reqLocal.motivo ? reqLocal.motivo + " | " : "") + "MOTIVO RECUSA: " + motivoRecusa.trim();
+          }
+          filtrarRequisicoes();
+          atualizarNotificacoes();
+          atualizarDashboard();
+          buscarAtualizacoesSilenciosas();
+        } else {
+          alert("Erro ao recusar requisição.");
+        }
+      })
+      .catch(() => alert("Falha de conexão ao recusar requisição."));
+    }
+
     function abrirModalVincularTermo(protReq, cliente) {
       protocoloReqEmVinculo = protReq;
       if (document.getElementById('lblProtReqVinculo')) document.getElementById('lblProtReqVinculo').innerText = protReq;
@@ -2544,6 +2564,8 @@
       const tipo = document.getElementById('osTipo').value;
       const prioridade = document.getElementById('osPrioridade').value;
       const tag = document.getElementById('osTag').value.trim();
+      const serie = document.getElementById('osSerie').value.trim();
+      const patrimonio = document.getElementById('osPatrimonio').value.trim();
       const equip = document.getElementById('osNomeEquip').value.trim();
       const solicitante = document.getElementById('osSolicitante').value.trim();
       const tecnico = document.getElementById('osTecnico').value.trim();
@@ -2566,6 +2588,8 @@
         tipoManutencao: tipo,
         prioridade: prioridade,
         tag: tag,
+        serie: serie,
+        patrimonio: patrimonio,
         equipamento: equip,
         solicitante: solicitante,
         tecnico: tecnico,
@@ -2595,6 +2619,10 @@
       });
 
       return false;
+    }
+
+    function filtrarTabelaTermos() {
+      renderizarTabelaTermos(bancoDados.termosEmitidos || []);
     }
 
     function renderizarTabelaTermos(lista) {
@@ -2636,10 +2664,114 @@
           <td class="td-center">${t.tipo || '-'}</td>
           <td>${t.tecnico || '-'}</td>
           <td class="td-center">
-            ${t.pdfUrl ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${t.pdfUrl}', 'Visualizar Termo: ${t.protocolo}')"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : '-'}
+            ${t.pdfUrl ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${t.pdfUrl}', 'Visualizar Termo:${t.protocolo}')"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : '-'}
           </td>
         </tr>
       `).join('');
+    }
+
+    function salvarNovoEquipamento(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const tag = document.getElementById('cadTag').value.trim();
+      const serie = document.getElementById('cadSerie').value.trim();
+      const patrimonio = document.getElementById('cadPatrimonio').value.trim();
+      const nome = document.getElementById('cadNome').value.trim();
+      const modelo = document.getElementById('cadModelo').value.trim();
+      const fabricante = document.getElementById('cadFabricante').value.trim();
+      const acessorios = document.getElementById('cadAcessorios').value.trim();
+
+      const btn = document.getElementById('btnSalvarCadEquip');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SALVANDO...';
+      }
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          acao: "CRIAR_EQUIPAMENTO",
+          tag: tag,
+          serie: serie,
+          patrimonio: patrimonio,
+          nome: nome,
+          modelo: modelo,
+          fabricante: fabricante,
+          acessorios: acessorios
+        })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-server"></i> Salvar Equipamento';
+        }
+        if (res.status === "sucesso") {
+          document.getElementById('formNovoEquip').reset();
+          buscarAtualizacoesSilenciosas();
+          alert("Equipamento cadastrado com sucesso!");
+        } else {
+          alert("Erro ao cadastrar equipamento.");
+        }
+      })
+      .catch(() => {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-server"></i> Salvar Equipamento';
+        }
+        alert("Falha de conexão ao cadastrar equipamento.");
+      });
+      return false;
+    }
+
+    function salvarAuxiliarVinculado(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const descricao = document.getElementById('vinculoDescricao').value.trim();
+      const modelo = document.getElementById('vinculoModelo').value.trim();
+      const fabricante = document.getElementById('vinculoFabricante').value.trim();
+
+      const btn = document.getElementById('btnSalvarAuxiliar');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SALVANDO...';
+      }
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          acao: "CRIAR_AUXILIAR_VINCULADO",
+          descricao: descricao,
+          modelo: modelo,
+          fabricante: fabricante
+        })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-plus"></i> Cadastrar Vínculo';
+        }
+        if (res.status === "sucesso") {
+          document.getElementById('formCadAuxiliar').reset();
+          buscarAtualizacoesSilenciosas();
+          alert("Vínculo cadastrado com sucesso!");
+        } else {
+          alert("Erro ao cadastrar vínculo.");
+        }
+      })
+      .catch(() => {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-plus"></i> Cadastrar Vínculo';
+        }
+        alert("Falha de conexão ao cadastrar vínculo.");
+      });
+      return false;
     }
 
     function renderizarListasAuxiliares() {
