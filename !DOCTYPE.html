@@ -294,6 +294,17 @@
 
     /* Evita o bug de iOS/Safari em que overflow-x:hidden no body esconde elementos fixos (rodapé). Visual idêntico. */
     @supports (overflow-x: clip) { body { overflow-x: clip !important; } }
+
+    /* --- BOTÕES DE AÇÃO: paleta padronizada (verde = atender, índigo = vincular, vermelho = negar, neutro = cancelar) --- */
+    .btn-atender  { background:linear-gradient(135deg,#10b981,#047857); box-shadow:0 3px 8px rgba(4,120,87,.28); }
+    .btn-vincular { background:linear-gradient(135deg,#6366f1,#4338ca); box-shadow:0 3px 8px rgba(67,56,202,.28); }
+    .btn-negar    { background:linear-gradient(135deg,#f43f5e,#be123c); box-shadow:0 3px 8px rgba(190,18,60,.28); }
+    .btn-atender:active, .btn-negar:active, .btn-vincular:active, .btn-pdf:active { transform:translateY(0); filter:brightness(.95); }
+    .btn-atender:focus-visible, .btn-negar:focus-visible, .btn-vincular:focus-visible, .btn-pdf:focus-visible,
+    .btn-submit:focus-visible, .btn-secundario:focus-visible { outline:none; box-shadow:0 0 0 3px rgba(37,99,235,.35); }
+    .btn-atender:disabled, .btn-negar:disabled, .btn-vincular:disabled { background:#94a3b8; box-shadow:none; cursor:not-allowed; transform:none; filter:none; }
+    .btn-secundario { background:#fff; color:#475569; border:1px solid #cbd5e1; padding:8px 16px; border-radius:9px; font-size:12px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; gap:6px; justify-content:center; transition:background .15s,border-color .15s; }
+    .btn-secundario:hover { background:#f1f5f9; border-color:#94a3b8; color:#1e293b; }
   </style>
 </head>
 <body>
@@ -1122,7 +1133,7 @@
         <iframe id="iframeVisualizadorReq" src="" style="width: 100%; height: 100%; border: none;"></iframe>
       </div>
       <div style="margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px;">
-        <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalVisualizadorReq()">Fechar</button>
+        <button type="button" class="btn-secundario" onclick="fecharModalVisualizadorReq()">Fechar</button>
         <a id="btnAbrirNovaAbaPdfReq" href="#" target="_blank" class="btn-submit" style="padding: 8px 16px; text-decoration: none; font-size: 12px;"><i class="fa-solid fa-external-link-alt"></i> Abrir em Nova Guia / Imprimir</a>
       </div>
     </div>
@@ -1162,7 +1173,7 @@
       </div>
 
       <div style="display: flex; gap: 8px; justify-content: flex-end;">
-        <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalLocacao()">Cancelar</button>
+        <button type="button" class="btn-secundario" onclick="fecharModalLocacao()">Cancelar</button>
         <button type="button" id="btnSalvarLocModal" class="btn-submit" onclick="confirmarAjusteLocacao()"><i class="fa-solid fa-floppy-disk"></i> Salvar Ajuste e Log</button>
       </div>
     </div>
@@ -1184,8 +1195,29 @@
         <datalist id="listTermosExistentes"></datalist>
       </div>
       <div style="display: flex; gap: 8px; justify-content: flex-end;">
-        <button type="button" class="btn-atender" style="background:#6c757d;" onclick="fecharModalVincularTermo()">Cancelar</button>
+        <button type="button" class="btn-secundario" onclick="fecharModalVincularTermo()">Cancelar</button>
         <button type="button" id="btnConfirmarVinculo" class="btn-submit" onclick="confirmarVinculoTermo()"><i class="fa-solid fa-link"></i> Confirmar Vinculação</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalRecusaReq" class="modal-overlay">
+    <div class="modal-box" style="width: 480px;">
+      <div class="modal-title">
+        <span>Negar Requisição <span id="lblProtReqRecusa" style="color:#be123c;">-</span></span>
+        <span onclick="fecharModalRecusa()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div style="background: #fff1f2; padding: 10px; border-radius: 6px; border: 1px solid #fecdd3; margin-bottom: 12px; font-size: 12px; color: #334155;">
+        <b>Cliente:</b> <span id="lblClienteReqRecusa">-</span><br>
+        <span style="font-size:11px; color:#64748b;">A requisição ficará com status RECUSADO e não poderá mais ser atendida.</span>
+      </div>
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label>Motivo da recusa (obrigatório):</label>
+        <textarea id="inputMotivoRecusa" placeholder="Ex: Equipamento indisponível no estoque / solicitação duplicada..." style="height: 80px;"></textarea>
+      </div>
+      <div style="display: flex; gap: 8px; justify-content: flex-end;">
+        <button type="button" class="btn-secundario" onclick="fecharModalRecusa()">Cancelar</button>
+        <button type="button" id="btnConfirmarRecusa" class="btn-negar" style="height:auto; padding:8px 16px; font-size:12px;" onclick="confirmarRecusaRequisicao()"><i class="fa-solid fa-ban"></i> Confirmar Recusa</button>
       </div>
     </div>
   </div>
@@ -2221,6 +2253,64 @@
     function fecharModalVincularTermo() {
       protocoloReqEmVinculo = null;
       document.getElementById('modalVincularTermo').classList.remove('active');
+    }
+
+    // ===== NEGAR / RECUSAR REQUISIÇÃO =====
+    let protocoloReqEmRecusa = null;
+
+    function abrirModalRecusa(protReq) {
+      protocoloReqEmRecusa = protReq;
+      const reqObj = (bancoDados.requisicoes || []).find(r => r && r.protocolo === protReq);
+      document.getElementById('lblProtReqRecusa').innerText = protReq;
+      document.getElementById('lblClienteReqRecusa').innerText = (reqObj && reqObj.cliente) ? reqObj.cliente : '-';
+      document.getElementById('inputMotivoRecusa').value = "";
+      document.getElementById('modalRecusaReq').classList.add('active');
+      setTimeout(() => document.getElementById('inputMotivoRecusa').focus(), 50);
+    }
+
+    function fecharModalRecusa() {
+      protocoloReqEmRecusa = null;
+      document.getElementById('modalRecusaReq').classList.remove('active');
+    }
+
+    function confirmarRecusaRequisicao() {
+      const motivo = document.getElementById('inputMotivoRecusa').value.trim();
+      if (!protocoloReqEmRecusa) { alert("Nenhuma requisição selecionada."); return; }
+      if (motivo.length < 5) { alert("Descreva o motivo da recusa (mínimo de 5 caracteres)."); return; }
+
+      const protReqAlvo = protocoloReqEmRecusa;
+      const btn = document.getElementById('btnConfirmarRecusa');
+      const htmlOriginal = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerText = "REGISTRANDO...";
+
+      const usuario = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario || "") : "";
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ acao: "RECUSAR_REQUISICAO", protocoloReq: protReqAlvo, motivoRecusa: motivo, usuario: usuario })
+      })
+      .then(res => res.json())
+      .then(res => {
+        btn.disabled = false;
+        btn.innerHTML = htmlOriginal;
+        if (res.status === "sucesso") {
+          const reqLocal = (bancoDados.requisicoes || []).find(r => r && r.protocolo === protReqAlvo && (r.status || "").toUpperCase() === "PENDENTE");
+          if (reqLocal) reqLocal.status = "RECUSADO";
+          fecharModalRecusa();
+          filtrarRequisicoes();
+          atualizarDashboard();
+          atualizarNotificacoes();
+          buscarAtualizacoesSilenciosas();
+        } else {
+          alert("Não foi possível negar a requisição: " + (res.mensagem || "requisição não encontrada na planilha."));
+        }
+      })
+      .catch(() => {
+        btn.disabled = false;
+        btn.innerHTML = htmlOriginal;
+        alert("Falha de conexão ao negar a requisição.");
+      });
     }
 
     function confirmarVinculoTermo() {
