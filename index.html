@@ -1187,7 +1187,7 @@
       </div>
       <div style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px; font-size: 12px; color: #334155;">
         <b>Cliente:</b> <span id="lblClienteReqVinculo">-</span><br>
-        <span style="font-size:11px; color:#64748b;">Utilize este recurso para dar baixa in requisições cujo termo de entrega já foi emitido previamente.</span>
+        <span style="font-size:11px; color:#64748b;">Utilize este recurso para dar baixa em requisições cujo termo de entrega já foi emitido previamente.</span>
       </div>
       <div class="form-group" style="margin-bottom: 16px;">
         <label>Selecione ou Digite o Protocolo do Termo (Ex: PT0018):</label>
@@ -1752,6 +1752,60 @@
       }, 1500);
     };
 
+    // ===== FUNÇÕES AUXILIARES DA REQUISIÇÃO (duplicidade / padronização) =====
+
+    // Padroniza textos para comparação: sem acento, maiúsculo, sem espaços duplicados
+    function normalizarTextoReq(txt) {
+      return String(txt || "")
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .toUpperCase().replace(/\s+/g, " ").trim();
+    }
+
+    // Lê as opções de uma lista (datalist) já carregada na tela
+    function opcoesDatalistReq(id) {
+      const dl = document.getElementById(id);
+      return dl ? Array.from(dl.options).map(o => normalizarTextoReq(o.value)).filter(Boolean) : [];
+    }
+
+    // Cache do conjunto de TAGs cadastradas (recalcula só se a lista de equipamentos mudar)
+    let _setTagsReq = null, _qtdEqTagsReq = -1;
+    function conjuntoTagsReq() {
+      const eqs = bancoDados.equipamentos || [];
+      if (!_setTagsReq || _qtdEqTagsReq !== eqs.length) {
+        _setTagsReq = new Set(eqs.map(e => normalizarTextoReq(e && e.tag)).filter(Boolean));
+        _qtdEqTagsReq = eqs.length;
+      }
+      return _setTagsReq;
+    }
+
+    // Extrai a TAG de: "TAG: X | NOME | Série: Y", TAG pura, ou TAG cadastrada dentro de texto livre antigo
+    function extrairTagReq(txt) {
+      const m = String(txt || "").match(/TAG:\s*([^|]+)/i);
+      if (m) return normalizarTextoReq(m[1]);
+
+      const tags = conjuntoTagsReq();
+      const n = normalizarTextoReq(txt);
+      if (tags.has(n)) return n;
+
+      const partes = n.split(/[^A-Z0-9\-\/\.]+/)
+        .map(p => p.replace(/^[\-\/\.]+|[\-\/\.]+$/g, ""))
+        .filter(Boolean);
+      for (const p of partes) {
+        if (tags.has(p)) return p;
+      }
+      return "";
+    }
+
+    // Ao escolher o equipamento a substituir, sugere a mesma família (só se o campo estiver vazio)
+    function sugerirFamiliaReq() {
+      const campoSol = document.getElementById('reqEqSolicitado');
+      if (!campoSol || campoSol.value.trim()) return;
+      const tag = extrairTagReq(document.getElementById('reqEqAntigo').value);
+      if (!tag) return;
+      const eq = (bancoDados.equipamentos || []).find(e => e && normalizarTextoReq(e.tag) === tag);
+      if (eq && eq.nome) campoSol.value = eq.nome;
+    }
+
     function salvarRequisicao(e) {
       if (e) {
         e.preventDefault();
@@ -1768,6 +1822,41 @@
       if (!cliente || !eqAntigo || !eqSolicitado) {
         alert("Preencha os campos obrigatórios (Cliente, Equipamento a Substituir e Equipamento Solicitado).");
         return false;
+      }
+
+      // ===== VALIDAÇÕES COM AVISO (não bloqueiam, apenas perguntam) =====
+      const avisos = [];
+
+      const clientesValidos = opcoesDatalistReq('listClientes');
+      if (clientesValidos.length && !clientesValidos.includes(normalizarTextoReq(cliente))) {
+        avisos.push('• O cliente "' + cliente + '" não está na lista de clientes cadastrados (verifique a digitação).');
+      }
+
+      const familiasValidas = opcoesDatalistReq('listDescricoesPadrao');
+      if (familiasValidas.length && !familiasValidas.includes(normalizarTextoReq(eqSolicitado))) {
+        avisos.push('• O equipamento solicitado "' + eqSolicitado + '" não está nas nomenclaturas padrão (verifique a digitação).');
+      }
+
+      const cliNorm = normalizarTextoReq(cliente);
+      const eqNorm = normalizarTextoReq(eqSolicitado);
+      const tagNova = extrairTagReq(eqAntigo);
+      const reqsAbertas = (bancoDados.requisicoes || []).filter(r => {
+        if (!r || (r.status || "PENDENTE").toUpperCase() !== "PENDENTE") return false;
+        const mesmoClienteFamilia = normalizarTextoReq(r.cliente) === cliNorm && normalizarTextoReq(r.equipamentoSolicitado) === eqNorm;
+        const mesmaTag = tagNova && extrairTagReq(r.equipamentoAntigo) === tagNova;
+        return mesmoClienteFamilia || mesmaTag;
+      });
+
+      if (reqsAbertas.length > 0) {
+        const listaTxt = reqsAbertas
+          .map(r => "   " + r.protocolo + " — " + (r.dataHora || "sem data") + (r.solicitante ? " — " + r.solicitante : ""))
+          .join("\n");
+        avisos.push("• Já existe requisição ABERTA para o mesmo tipo de equipamento neste cliente ou para o mesmo equipamento (TAG):\n" + listaTxt);
+      }
+
+      if (avisos.length > 0) {
+        const continuar = confirm("Atenção, verifique antes de enviar:\n\n" + avisos.join("\n\n") + "\n\nDeseja continuar mesmo assim?");
+        if (!continuar) return false;
       }
 
       const btn = document.getElementById('btnSalvarReq');
@@ -2153,7 +2242,7 @@
         return;
       }
 
-            // Converte "dd/MM/yyyy HH:mm" em número para ordenar por data
+      // Converte "dd/MM/yyyy HH:mm" em número para ordenar por data
       const tempoReq = (r) => {
         const m = String(r.dataHora || "").match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);
         return m ? new Date(m[3], m[2] - 1, m[1], m[4], m[5]).getTime() : 0;
