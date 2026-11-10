@@ -305,6 +305,40 @@
     .btn-atender:disabled, .btn-negar:disabled, .btn-vincular:disabled { background:#94a3b8; box-shadow:none; cursor:not-allowed; transform:none; filter:none; }
     .btn-secundario { background:#fff; color:#475569; border:1px solid #cbd5e1; padding:8px 16px; border-radius:9px; font-size:12px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; gap:6px; justify-content:center; transition:background .15s,border-color .15s; }
     .btn-secundario:hover { background:#f1f5f9; border-color:#94a3b8; color:#1e293b; }
+
+    /* --- REQUISIÇÕES: barra de topo + indicadores --- */
+    .req-topo { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+    .req-topo-titulo { font-size:17px; font-weight:bold; color:#0b2545; display:flex; align-items:center; gap:8px; }
+    .req-topo-sub { font-size:12px; color:#64748b; margin-top:2px; }
+    .req-resumo { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:10px; }
+    .req-kpi { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:12px; border:1px solid #e2e8f0; background:#fff; cursor:pointer; transition:transform .15s, box-shadow .15s, border-color .15s; }
+    .req-kpi:hover { transform:translateY(-1px); box-shadow:0 6px 14px rgba(15,23,42,.08); }
+    .req-kpi-icone { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+    .req-kpi-num { font-size:22px; font-weight:bold; line-height:1; color:#0f172a; }
+    .req-kpi-lbl { font-size:11px; font-weight:bold; color:#64748b; text-transform:uppercase; letter-spacing:.4px; margin-top:3px; }
+    .kpi-pendente .req-kpi-icone { background:#fef3c7; color:#b45309; }
+    .kpi-atendido .req-kpi-icone { background:#d1fae5; color:#047857; }
+    .kpi-recusado .req-kpi-icone { background:#ffe4e6; color:#be123c; }
+    .kpi-total .req-kpi-icone { background:#e0e7ff; color:#4338ca; }
+    .req-kpi.ativo.kpi-pendente { border-color:#f59e0b; box-shadow:0 0 0 2px rgba(245,158,11,.25); }
+    .req-kpi.ativo.kpi-atendido { border-color:#10b981; box-shadow:0 0 0 2px rgba(16,185,129,.25); }
+    .req-kpi.ativo.kpi-recusado { border-color:#f43f5e; box-shadow:0 0 0 2px rgba(244,63,94,.25); }
+    .req-kpi.ativo.kpi-total { border-color:#6366f1; box-shadow:0 0 0 2px rgba(99,102,241,.25); }
+    .req-resumo-nota { font-size:11px; color:#94a3b8; margin:8px 0 12px 0; }
+
+    /* --- TIPO DE SOLICITAÇÃO --- */
+    .req-tipo-grupo { display:flex; gap:8px; flex-wrap:wrap; }
+    .req-tipo-opcao { position:relative; }
+    .req-tipo-opcao input { position:absolute; opacity:0; pointer-events:none; }
+    .req-tipo-opcao span { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:9px; border:1.5px solid #cbd5e1; background:#fff; font-size:12px; font-weight:bold; color:#475569; cursor:pointer; transition:all .15s; text-transform:none; }
+    .req-tipo-opcao span:hover { border-color:#94a3b8; }
+    .req-tipo-opcao input:checked + span { color:#fff; border-color:transparent; box-shadow:0 3px 8px rgba(15,23,42,.18); }
+    .req-tipo-opcao input:focus-visible + span { box-shadow:0 0 0 3px rgba(37,99,235,.35); }
+    .req-tipo-dica { font-size:11px; color:#64748b; margin-top:6px; }
+    .selo-tipo-req { display:inline-block; margin-top:4px; padding:2px 7px; border-radius:6px; font-size:9.5px; font-weight:bold; letter-spacing:.3px; white-space:nowrap; }
+    .req-enviado { display:block; margin-top:3px; font-size:10.5px; font-weight:normal; color:#047857; }
+    .btn-etiqueta { background:linear-gradient(135deg,#475569,#1e293b); color:#fff; border:none; border-radius:9px; padding:0 10px; height:30px; font-size:11px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; gap:5px; box-shadow:0 3px 8px rgba(30,41,59,.25); transition:transform .15s; }
+    .btn-etiqueta:hover { transform:translateY(-1px); }
   </style>
 </head>
 <body>
@@ -736,51 +770,33 @@
     <!-- MÓDULO QUALIDADE / REQUISIÇÕES -->
     <div id="abaRequisicoes" class="tab-content">
       <div class="card">
-        <div class="card-title">Nova Requisição de Equipamento (Administrativo)</div>
-        <form id="formReq" onsubmit="return salvarRequisicao(event)">
-          <div class="form-row">
-            <div class="form-group" style="flex: 2;">
-              <label>Cliente / Locatário Solicitante:</label>
-              <input type="text" id="reqCliente" list="listClientes" placeholder="Selecione ou digite o cliente..." required>
-            </div>
-            <div class="form-group" style="flex: 1;">
-              <label>Operação:</label>
-              <div class="radio-group">
-                <label><input type="radio" name="reqOperacao" value="LOCAÇÃO" checked> Locação</label>
-                <label><input type="radio" name="reqOperacao" value="EMPRÉSTIMO"> Empréstimo</label>
-                <label><input type="radio" name="reqOperacao" value="VENDA"> Venda</label>
-              </div>
-            </div>
+        <div class="req-topo">
+          <div>
+            <div class="req-topo-titulo"><i class="fa-solid fa-clipboard-list"></i> Requisições de Equipamento</div>
+            <div class="req-topo-sub">Solicitações administrativas de troca, locação, empréstimo e venda</div>
           </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Equipamento a Substituir (TAG / Nome atual no cliente):</label>
-              <input type="text" id="reqEqAntigo" list="listEquipamentos" placeholder="Digite a TAG, série ou nome (ou texto livre)..." oninput="sugerirFamiliaReq()" required>
-            </div>
-            <div class="form-group">
-              <label>Equipamento Solicitado para a Qualidade enviar:</label>
-              <input type="text" id="reqEqSolicitado" list="listDescricoesPadrao" placeholder="Ex: MONITOR MULTIPARAMÉTRICO" required>
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>Motivo / Observações da Troca:</label>
-            <input type="text" id="reqMotivo" placeholder="Ex: Falha na bateria interna, solicitar troca urgente.">
-          </div>
-
-          <div style="text-align: right;">
-            <button type="submit" id="btnSalvarReq" class="btn-submit">
-              <i class="fa-solid fa-paper-plane"></i> Enviar Requisição e Gerar PDF
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="card">
-        <div class="card-title">
-          <span>Acompanhamento de Solicitações</span>
+          <button type="button" class="btn-submit" onclick="abrirModalNovaReq()"><i class="fa-solid fa-plus"></i> Nova Requisição</button>
         </div>
+
+        <div class="req-resumo">
+          <div class="req-kpi kpi-pendente" data-status="PENDENTE" onclick="filtrarReqPorKpi('PENDENTE')">
+            <div class="req-kpi-icone"><i class="fa-solid fa-hourglass-half"></i></div>
+            <div><div class="req-kpi-num" id="kpiReqPendente">0</div><div class="req-kpi-lbl">Pendentes</div></div>
+          </div>
+          <div class="req-kpi kpi-atendido" data-status="ATENDIDO" onclick="filtrarReqPorKpi('ATENDIDO')">
+            <div class="req-kpi-icone"><i class="fa-solid fa-circle-check"></i></div>
+            <div><div class="req-kpi-num" id="kpiReqAtendido">0</div><div class="req-kpi-lbl">Atendidas</div></div>
+          </div>
+          <div class="req-kpi kpi-recusado" data-status="RECUSADO" onclick="filtrarReqPorKpi('RECUSADO')">
+            <div class="req-kpi-icone"><i class="fa-solid fa-ban"></i></div>
+            <div><div class="req-kpi-num" id="kpiReqRecusado">0</div><div class="req-kpi-lbl">Negadas</div></div>
+          </div>
+          <div class="req-kpi kpi-total" data-status="TODOS" onclick="filtrarReqPorKpi('TODOS')">
+            <div class="req-kpi-icone"><i class="fa-solid fa-layer-group"></i></div>
+            <div><div class="req-kpi-num" id="kpiReqTotal">0</div><div class="req-kpi-lbl">Total</div></div>
+          </div>
+        </div>
+        <div class="req-resumo-nota" id="notaResumoReq">Totais considerando todo o período.</div>
 
         <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
           <div class="form-group" style="flex: 1;">
@@ -799,7 +815,7 @@
           </div>
 
           <div class="form-group" style="flex: 2;">
-            <label>Buscar na Tabela (Cliente, Req # ou Equipamento):</label>
+            <label>Buscar na Tabela (Cliente, Req #, Equipamento ou Tipo):</label>
             <input type="text" id="filtroTextoReq" oninput="filtrarRequisicoesDebounced()" placeholder="Digite para buscar...">
           </div>
         </div>
@@ -808,7 +824,7 @@
           <table>
             <thead>
               <tr>
-                <th class="td-center" style="width: 70px;">Req #</th>
+                <th class="td-center" style="width: 95px;">Req # / Tipo</th>
                 <th style="width: 110px;">Data / Hora</th>
                 <th style="width: 220px;">Cliente / Locatário</th>
                 <th style="width: 200px;">Equipamento Solicitado</th>
@@ -1198,6 +1214,60 @@
         <button type="button" class="btn-secundario" onclick="fecharModalVincularTermo()">Cancelar</button>
         <button type="button" id="btnConfirmarVinculo" class="btn-submit" onclick="confirmarVinculoTermo()"><i class="fa-solid fa-link"></i> Confirmar Vinculação</button>
       </div>
+    </div>
+  </div>
+
+  <div id="modalNovaReq" class="modal-overlay">
+    <div class="modal-box" style="width: 760px;">
+      <div class="modal-title">
+        <span><i class="fa-solid fa-file-circle-plus"></i> Nova Requisição de Equipamento</span>
+        <span onclick="fecharModalNovaReq()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+        <form id="formReq" onsubmit="return salvarRequisicao(event)">
+          <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+              <label>Cliente / Locatário Solicitante:</label>
+              <input type="text" id="reqCliente" list="listClientes" placeholder="Selecione ou digite o cliente..." required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Operação:</label>
+              <div class="radio-group">
+                <label><input type="radio" name="reqOperacao" value="LOCAÇÃO" checked> Locação</label>
+                <label><input type="radio" name="reqOperacao" value="EMPRÉSTIMO"> Empréstimo</label>
+                <label><input type="radio" name="reqOperacao" value="VENDA"> Venda</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Tipo de Solicitação:</label>
+            <div class="req-tipo-grupo" id="grpTipoReq"></div>
+            <div id="dicaTipoReq" class="req-tipo-dica">Selecione o tipo para o técnico saber se há equipamento a retirar no cliente.</div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Equipamento a Substituir (TAG / Nome atual no cliente): <span id="lblOpcEqAntigo" style="color:#94a3b8; font-weight:normal; text-transform:none;"></span></label>
+              <input type="text" id="reqEqAntigo" list="listEquipamentos" placeholder="Digite a TAG, série ou nome (ou texto livre)..." oninput="sugerirFamiliaReq()" required>
+            </div>
+            <div class="form-group">
+              <label>Equipamento Solicitado para a Qualidade enviar:</label>
+              <input type="text" id="reqEqSolicitado" list="listDescricoesPadrao" placeholder="Ex: MONITOR MULTIPARAMÉTRICO" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label>Motivo / Observações da Troca:</label>
+            <input type="text" id="reqMotivo" placeholder="Ex: Falha na bateria interna, solicitar troca urgente.">
+          </div>
+
+          <div style="display:flex; gap:8px; justify-content:flex-end;">
+            <button type="button" class="btn-secundario" onclick="fecharModalNovaReq()">Cancelar</button>
+            <button type="submit" id="btnSalvarReq" class="btn-submit">
+              <i class="fa-solid fa-paper-plane"></i> Enviar Requisição e Gerar PDF
+            </button>
+          </div>
+        </form>
     </div>
   </div>
 
@@ -1752,6 +1822,147 @@
       }, 1500);
     };
 
+    // ===== TIPOS DE SOLICITAÇÃO (para incluir um tipo novo, basta acrescentar uma linha aqui
+    //       e incluir o mesmo nome na função tipoSolicitacaoValido_ do Apps Script) =====
+    var TIPOS_SOLICITACAO_REQ = {
+      "SUBSTITUIÇÃO": { cor: "#be123c", fundo: "#ffe4e6", retira: true,  instrucao: "ENTREGAR E RETIRAR", icone: "fa-right-left" },
+      "REPOSIÇÃO":    { cor: "#c2410c", fundo: "#ffedd5", retira: false, instrucao: "SOMENTE ENTREGAR",   icone: "fa-box" },
+      "NOVA LOCAÇÃO": { cor: "#047857", fundo: "#d1fae5", retira: false, instrucao: "SOMENTE ENTREGAR",   icone: "fa-circle-plus" }
+    };
+
+    // Localiza a configuração do tipo ignorando acento/maiúsculas (dados antigos ou digitados)
+    function cfgTipoReq(tipo) {
+      const alvo = normalizarTextoReq(tipo);
+      if (!alvo) return null;
+      const chave = Object.keys(TIPOS_SOLICITACAO_REQ).find(k => normalizarTextoReq(k) === alvo);
+      return chave ? Object.assign({ nome: chave }, TIPOS_SOLICITACAO_REQ[chave]) : null;
+    }
+
+    function escReq(v) {
+      return String(v === null || v === undefined ? "" : v)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    }
+
+    // Monta os botões de tipo no modal (a partir da configuração acima)
+    function montarOpcoesTipoReq() {
+      const grp = document.getElementById('grpTipoReq');
+      if (!grp || grp.childElementCount) return;
+      grp.innerHTML = Object.keys(TIPOS_SOLICITACAO_REQ).map(nome => {
+        const c = TIPOS_SOLICITACAO_REQ[nome];
+        return `<label class="req-tipo-opcao" data-cor="${c.cor}">
+          <input type="radio" name="reqTipo" value="${nome}" required onchange="atualizarCamposTipoReq()">
+          <span><i class="fa-solid ${c.icone}"></i> ${nome}</span>
+        </label>`;
+      }).join('');
+    }
+
+    // Ajusta obrigatoriedade do "Equipamento a Substituir" e o destaque conforme o tipo escolhido
+    function atualizarCamposTipoReq() {
+      const tipo = document.querySelector('input[name="reqTipo"]:checked')?.value || "";
+      const cfg = cfgTipoReq(tipo);
+      const campo = document.getElementById('reqEqAntigo');
+      const lbl = document.getElementById('lblOpcEqAntigo');
+      const dica = document.getElementById('dicaTipoReq');
+
+      document.querySelectorAll('.req-tipo-opcao').forEach(op => {
+        const sp = op.querySelector('span');
+        const marcado = op.querySelector('input').checked;
+        sp.style.background = marcado ? op.dataset.cor : "";
+      });
+
+      const exige = !cfg || cfg.retira;   // sem tipo escolhido: mantém obrigatório
+      if (campo) campo.required = exige;
+      if (lbl) lbl.innerText = exige ? "" : "(opcional)";
+      if (dica) {
+        dica.innerHTML = !cfg
+          ? "Selecione o tipo para o técnico saber se há equipamento a retirar no cliente."
+          : (cfg.retira
+              ? '<b style="color:' + cfg.cor + ';">' + cfg.instrucao + ':</b> informe abaixo o equipamento que o técnico vai retirar.'
+              : '<b style="color:' + cfg.cor + ';">' + cfg.instrucao + ':</b> não há equipamento para retirar no cliente.');
+      }
+    }
+
+    // Termo vinculado à requisição (para mostrar o equipamento enviado)
+    function buscarTermoDaReq(r) {
+      const prot = normalizarTextoReq(r && r.protocoloTermo);
+      if (!prot) return null;
+      return (bancoDados.termosEmitidos || []).find(t => t && normalizarTextoReq(t.protocolo) === prot) || null;
+    }
+
+    // ===== ETIQUETA 10 x 5 cm =====
+    var listaReqRenderizada = [];
+
+    // "TAG: LMD-3804 | MONITOR X | Série: 123"  ->  "LMD-3804 · MONITOR X"
+    function formatarEquipEtq(txt) {
+      const t = String(txt || "").trim();
+      if (!/TAG:/i.test(t)) return t;
+      return t.split("|").map(p => p.trim())
+        .filter(p => p && !/^S[ÉE]RIE:/i.test(p))
+        .map(p => p.replace(/^TAG:\s*/i, ""))
+        .join(" · ");
+    }
+
+    function imprimirEtiquetaReq(idx) {
+      const r = listaReqRenderizada[idx];
+      if (!r) { alert("Requisição não encontrada. Atualize a tela e tente novamente."); return; }
+
+      const cfg = cfgTipoReq(r.tipoSolicitacao);
+      const cor = cfg ? cfg.cor : "#475569";
+      const termo = buscarTermoDaReq(r);
+
+      const entregar = termo
+        ? [termo.tag, termo.equipamento].filter(Boolean).join(" · ")
+        : (r.equipamentoSolicitado || "-") + " (a definir pela Qualidade)";
+
+      let linhaRetirar;
+      if (!cfg) {
+        linhaRetirar = '<div class="lin destaque" style="color:#475569;">TIPO NÃO INFORMADO — CONFIRMAR COM O ADMINISTRATIVO</div>';
+      } else if (cfg.retira) {
+        linhaRetirar = '<div class="lin cli"><span class="rot">RETIRAR:</span><b>' + escReq(formatarEquipEtq(r.equipamentoAntigo) || "VERIFICAR NO CLIENTE") + '</b></div>';
+      } else {
+        linhaRetirar = '<div class="lin destaque" style="color:' + cor + ';">NÃO HÁ EQUIPAMENTO PARA RETIRAR</div>';
+      }
+
+      const dataEtq = String(r.dataHora || "").split(" ")[0] || new Date().toLocaleDateString('pt-BR');
+
+      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Etiqueta ${escReq(r.protocolo)}</title><style>
+        @page { size: A4 portrait; margin: 10mm; }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { margin: 0; font-family: Arial, Helvetica, sans-serif; color: #0f172a; }
+        .etq { width: 100mm; height: 50mm; border: 0.3mm dashed #94a3b8; padding: 2.5mm; display: flex; flex-direction: column; overflow: hidden; }
+        .faixa { background: ${cor}; color: #fff; border-radius: 1.5mm; padding: 1.4mm 2.5mm; display: flex; justify-content: space-between; align-items: center; }
+        .tipo { font-size: 16pt; font-weight: 900; letter-spacing: 0.3mm; }
+        .req { font-size: 10.5pt; font-weight: bold; background: #fff; color: ${cor}; border-radius: 1mm; padding: 0.4mm 1.8mm; }
+        .instr { margin: 1.4mm 0; border: 0.6mm solid ${cor}; color: ${cor}; border-radius: 1.2mm; text-align: center; font-size: 12.5pt; font-weight: 900; padding: 0.6mm; }
+        .lin { font-size: 8.5pt; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cli { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .rot { display: inline-block; width: 17mm; font-weight: bold; color: #475569; font-size: 7.5pt; }
+        .destaque { font-weight: 900; font-size: 9pt; }
+        .rodape { margin-top: auto; display: flex; justify-content: space-between; font-size: 6.5pt; color: #64748b; font-weight: bold; }
+      </style></head><body>
+        <div class="etq">
+          <div class="faixa"><span class="tipo">${escReq(cfg ? cfg.nome : "TIPO NÃO INFORMADO")}</span><span class="req">${escReq(r.protocolo || "-")}</span></div>
+          <div class="instr">${escReq(cfg ? cfg.instrucao : "CONFIRMAR ANTES DA ENTREGA")}</div>
+          <div class="lin cli"><span class="rot">CLIENTE:</span><b>${escReq(r.cliente || "-")}</b></div>
+          <div class="lin cli"><span class="rot">ENTREGAR:</span><b>${escReq(entregar)}</b></div>
+          ${linhaRetirar}
+          <div class="rodape"><span>${escReq(r.operacao || "LOCAÇÃO")} · ${escReq(dataEtq)}</span><span>LINEMED · DMA SYS</span></div>
+        </div>
+      </body></html>`;
+
+      // Impressão por iframe oculto (não é bloqueada como pop-up)
+      const ifr = document.createElement('iframe');
+      ifr.style.cssText = "position:fixed; right:0; bottom:0; width:0; height:0; border:0;";
+      document.body.appendChild(ifr);
+      const doc = ifr.contentWindow.document;
+      doc.open(); doc.write(html); doc.close();
+      setTimeout(() => {
+        try { ifr.contentWindow.focus(); ifr.contentWindow.print(); }
+        catch (e) { alert("Não foi possível abrir a impressão da etiqueta."); }
+        setTimeout(() => ifr.remove(), 3000);
+      }, 300);
+    }
+
     // ===== FUNÇÕES AUXILIARES DA REQUISIÇÃO (duplicidade / padronização) =====
 
     // Padroniza textos para comparação: sem acento, maiúsculo, sem espaços duplicados
@@ -1768,7 +1979,7 @@
     }
 
     // Cache do conjunto de TAGs cadastradas (recalcula só se a lista de equipamentos mudar)
-    let _setTagsReq = null, _qtdEqTagsReq = -1;
+    var _setTagsReq = null, _qtdEqTagsReq = -1;
     function conjuntoTagsReq() {
       const eqs = bancoDados.equipamentos || [];
       if (!_setTagsReq || _qtdEqTagsReq !== eqs.length) {
@@ -1817,10 +2028,18 @@
       const eqAntigo = document.getElementById('reqEqAntigo').value.trim();
       const eqSolicitado = document.getElementById('reqEqSolicitado').value.trim();
       const motivo = document.getElementById('reqMotivo').value.trim();
+      const tipoSolicitacao = document.querySelector('input[name="reqTipo"]:checked')?.value || "";
+      const cfgTipo = cfgTipoReq(tipoSolicitacao);
       const solicitante = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario || "Solicitante") : "Solicitante";
 
-      if (!cliente || !eqAntigo || !eqSolicitado) {
-        alert("Preencha os campos obrigatórios (Cliente, Equipamento a Substituir e Equipamento Solicitado).");
+      if (!cfgTipo) {
+        alert("Selecione o Tipo de Solicitação (Substituição, Reposição ou Nova Locação).");
+        return false;
+      }
+      if (!cliente || !eqSolicitado || (cfgTipo.retira && !eqAntigo)) {
+        alert(cfgTipo.retira
+          ? "Preencha os campos obrigatórios (Cliente, Equipamento a Substituir e Equipamento Solicitado)."
+          : "Preencha os campos obrigatórios (Cliente e Equipamento Solicitado).");
         return false;
       }
 
@@ -1872,7 +2091,8 @@
         equipamentoAntigo: eqAntigo,
         equipamentoSolicitado: eqSolicitado,
         motivo: motivo,
-        solicitante: solicitante
+        solicitante: solicitante,
+        tipoSolicitacao: cfgTipo.nome
       };
 
       fetch(API_URL, {
@@ -1887,6 +2107,8 @@
         }
         if (res.status === "sucesso") {
           document.getElementById('formReq').reset();
+          atualizarCamposTipoReq();
+          fecharModalNovaReq();
           
           const novaReq = {
             protocolo: res.protocoloReq || res.protocolo,
@@ -1899,7 +2121,8 @@
             solicitante: solicitante,
             status: "PENDENTE",
             protocoloTermo: "",
-            pdfUrlReq: res.pdfUrlReq || res.pdfUrl || ""
+            pdfUrlReq: res.pdfUrlReq || res.pdfUrl || "",
+            tipoSolicitacao: cfgTipo.nome
           };
 
           if (!bancoDados.requisicoes) bancoDados.requisicoes = [];
@@ -2259,8 +2482,19 @@
         return difData !== 0 ? difData : numReq(b) - numReq(a);
       });
 
-      tbody.innerHTML = lista.map(r => {
+      listaReqRenderizada = lista;
+
+      tbody.innerHTML = lista.map((r, idxReq) => {
         if (!r) return '';
+        const cfgT = cfgTipoReq(r.tipoSolicitacao);
+        const seloTipo = cfgT
+          ? `<br><span class="selo-tipo-req" style="background:${cfgT.fundo}; color:${cfgT.cor};">${cfgT.nome}</span>`
+          : '';
+        const termoReq = buscarTermoDaReq(r);
+        const enviadoTxt = termoReq
+          ? `<span class="req-enviado"><i class="fa-solid fa-truck"></i> Enviado: ${escReq([termoReq.tag, termoReq.equipamento].filter(Boolean).join(" · "))}</span>`
+          : '';
+        const btnEtiqueta = `<button type="button" class="btn-etiqueta" onclick="imprimirEtiquetaReq(${idxReq})" title="Imprimir etiqueta 10x5 cm"><i class="fa-solid fa-tag"></i> Etiqueta</button>`;
         let st = (r.status || "PENDENTE").toUpperCase();
         const isPendente = st === "PENDENTE";
         const isRecusado = st === "RECUSADO";
@@ -2275,6 +2509,7 @@
         if (isPendente) {
           btnAcao = `<div class="btn-action-container">
             ${linkPdfReq}
+            ${btnEtiqueta}
             <button type="button" class="btn-atender" onclick="atenderRequisicao('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}', '${r.operacao || 'LOCAÇÃO'}')"><i class="fa-solid fa-check"></i> Atender</button>
             <button type="button" class="btn-vincular" onclick="abrirModalVincularTermo('${r.protocolo}', '${(r.cliente || '').replace(/'/g, "\\'")}')"><i class="fa-solid fa-link"></i> Vincular</button>
             <button type="button" class="btn-negar" onclick="abrirModalRecusa('${r.protocolo}')"><i class="fa-solid fa-xmark"></i> Negar</button>
@@ -2283,15 +2518,15 @@
           btnAcao = `<div class="btn-action-container">${linkPdfReq}<span style="color:#dc3545; font-weight:bold; font-size:11px;">Recusado</span></div>`;
         } else {
           let termoTexto = r.protocoloTermo ? `Termo: ${r.protocoloTermo}` : 'Termo Gerado';
-          btnAcao = `<div class="btn-action-container">${linkPdfReq}<span class="btn-termo-link">${termoTexto}</span></div>`;
+          btnAcao = `<div class="btn-action-container">${linkPdfReq}${btnEtiqueta}<span class="btn-termo-link">${termoTexto}</span></div>`;
         }
 
         return `
           <tr>
-            <td class="td-center"><b>${r.protocolo || '-'}</b></td>
+            <td class="td-center"><b>${r.protocolo || '-'}</b>${seloTipo}</td>
             <td>${r.dataHora || '-'}</td>
             <td>${r.cliente || '-'}</td>
-            <td><b>${r.equipamentoSolicitado || '-'}</b></td>
+            <td><b>${r.equipamentoSolicitado || '-'}</b>${enviadoTxt}</td>
             <td style="color:#555; font-style:italic;">${r.motivo || "-"}</td>
             <td class="td-center"><b>${r.operacao || 'LOCAÇÃO'}</b></td>
             <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span></td>
@@ -2307,10 +2542,9 @@
       const mesFiltro = document.getElementById('filtroMesReq')?.value || "";
       const textoFiltro = (document.getElementById('filtroTextoReq')?.value || "").toLowerCase().trim();
 
-      let filtradas = requisicoes.filter(r => {
+      // 1º aplica mês e busca (base dos indicadores); depois o status
+      let baseFiltro = requisicoes.filter(r => {
         if (!r) return false;
-        const st = (r.status || "PENDENTE").toUpperCase();
-        if (statusFiltro !== "TODOS" && st !== statusFiltro) return false;
 
         if (mesFiltro && r.dataHora) {
           const partesData = String(r.dataHora).split(' ')[0].split('/');
@@ -2325,13 +2559,60 @@
           const matchCli = (r.cliente || "").toLowerCase().includes(textoFiltro);
           const matchEq = (r.equipamentoSolicitado || "").toLowerCase().includes(textoFiltro);
           const matchMotivo = (r.motivo || "").toLowerCase().includes(textoFiltro);
-          if (!matchProt && !matchCli && !matchEq && !matchMotivo) return false;
+          const matchTipo = (r.tipoSolicitacao || "").toLowerCase().includes(textoFiltro);
+          if (!matchProt && !matchCli && !matchEq && !matchMotivo && !matchTipo) return false;
         }
 
         return true;
       });
 
+      atualizarResumoReq(baseFiltro, statusFiltro, mesFiltro, textoFiltro);
+
+      let filtradas = baseFiltro.filter(r => statusFiltro === "TODOS" || (r.status || "PENDENTE").toUpperCase() === statusFiltro);
+
       renderizarTabelaRequisicoes(filtradas);
+    }
+
+    // ===== INDICADORES DA TELA DE REQUISIÇÕES =====
+    function atualizarResumoReq(lista, statusFiltro, mesFiltro, textoFiltro) {
+      const cont = { PENDENTE: 0, ATENDIDO: 0, RECUSADO: 0 };
+      (lista || []).forEach(r => {
+        const st = (r.status || "PENDENTE").toUpperCase();
+        if (cont[st] !== undefined) cont[st]++;
+      });
+      const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
+      setTxt('kpiReqPendente', cont.PENDENTE);
+      setTxt('kpiReqAtendido', cont.ATENDIDO);
+      setTxt('kpiReqRecusado', cont.RECUSADO);
+      setTxt('kpiReqTotal', (lista || []).length);
+
+      document.querySelectorAll('.req-kpi').forEach(el => el.classList.toggle('ativo', el.dataset.status === (statusFiltro || "TODOS")));
+
+      const nota = document.getElementById('notaResumoReq');
+      if (nota) {
+        let txt = "Totais considerando todo o período";
+        if (mesFiltro) { const [a, m] = mesFiltro.split('-'); txt = "Totais do mês " + m + "/" + a; }
+        if (textoFiltro) txt += ' e da busca "' + textoFiltro + '"';
+        nota.innerText = txt + ". Clique em um indicador para filtrar a tabela.";
+      }
+    }
+
+    function filtrarReqPorKpi(status) {
+      const sel = document.getElementById('filtroStatusReq');
+      if (sel) sel.value = status;
+      filtrarRequisicoes();
+    }
+
+    // ===== MODAL NOVA REQUISIÇÃO =====
+    function abrirModalNovaReq() {
+      montarOpcoesTipoReq();
+      atualizarCamposTipoReq();
+      document.getElementById('modalNovaReq').classList.add('active');
+      setTimeout(() => { const c = document.getElementById('reqCliente'); if (c) c.focus(); }, 50);
+    }
+
+    function fecharModalNovaReq() {
+      document.getElementById('modalNovaReq').classList.remove('active');
     }
 
     function abrirModalVincularTermo(protReq, cliente) {
