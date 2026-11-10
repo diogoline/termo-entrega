@@ -1273,6 +1273,22 @@
     </div>
   </div>
 
+  <div id="modalTermoGerado" class="modal-overlay">
+    <div class="modal-box" style="width: 470px;">
+      <div class="modal-title">
+        <span><i class="fa-solid fa-circle-check" style="color:#047857;"></i> Termo <span id="lblProtTermoGerado">-</span> gerado</span>
+        <span onclick="fecharModalTermoGerado()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div id="infoTermoGerado" style="font-size:12px; color:#334155; margin-bottom:12px;"></div>
+      <div id="avisoVinculoTermo" style="display:none; background:#fff7ed; border:1px solid #fdba74; color:#9a3412; border-radius:8px; padding:9px 10px; font-size:12px; margin-bottom:12px;"></div>
+      <div style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+        <button type="button" class="btn-secundario" onclick="fecharModalTermoGerado()">Fechar</button>
+        <button type="button" id="btnAbrirPdfTermoGerado" class="btn-pdf" style="height:auto; padding:8px 14px; font-size:12px;"><i class="fa-solid fa-file-pdf"></i> Abrir PDF do Termo</button>
+        <button type="button" id="btnEtiquetaTermoGerado" class="btn-etiqueta" style="height:auto; padding:8px 14px; font-size:12px;"><i class="fa-solid fa-tag"></i> Imprimir Etiqueta</button>
+      </div>
+    </div>
+  </div>
+
   <div id="modalRecusaReq" class="modal-overlay">
     <div class="modal-box" style="width: 480px;">
       <div class="modal-title">
@@ -1891,6 +1907,41 @@
       return (bancoDados.termosEmitidos || []).find(t => t && normalizarTextoReq(t.protocolo) === prot) || null;
     }
 
+    // ===== MODAL APÓS GERAR O TERMO (abrir PDF / imprimir etiqueta) =====
+    function abrirModalTermoGerado(info) {
+      document.getElementById('lblProtTermoGerado').innerText = info.protocolo || "-";
+
+      const reqObj = info.reqObj || null;
+      document.getElementById('infoTermoGerado').innerHTML = reqObj
+        ? 'Vinculado à requisição <b>' + escReq(reqObj.protocolo) + '</b>' +
+          (reqObj.tipoSolicitacao ? ' · <b>' + escReq(reqObj.tipoSolicitacao) + '</b>' : '') +
+          '<br>Equipamento: <b>' + escReq([info.tag, info.nome].filter(Boolean).join(" · ") || "-") + '</b>'
+        : 'Termo emitido sem requisição vinculada.';
+
+      const aviso = document.getElementById('avisoVinculoTermo');
+      if (info.avisoVinculo) {
+        aviso.style.display = "block";
+        aviso.innerHTML = '<b>Atenção:</b> o termo foi gerado, mas <b>não foi vinculado à requisição</b>. ' + escReq(info.avisoVinculo);
+      } else {
+        aviso.style.display = "none";
+        aviso.innerHTML = "";
+      }
+
+      const btnPdf = document.getElementById('btnAbrirPdfTermoGerado');
+      btnPdf.style.display = info.pdfUrl ? "" : "none";
+      btnPdf.onclick = () => window.open(info.pdfUrl, '_blank');
+
+      const btnEtq = document.getElementById('btnEtiquetaTermoGerado');
+      btnEtq.style.display = reqObj ? "" : "none";
+      btnEtq.onclick = () => imprimirEtiquetaReqObj(reqObj);
+
+      document.getElementById('modalTermoGerado').classList.add('active');
+    }
+
+    function fecharModalTermoGerado() {
+      document.getElementById('modalTermoGerado').classList.remove('active');
+    }
+
     // ===== ETIQUETA 10 x 5 cm =====
     var listaReqRenderizada = [];
 
@@ -1905,7 +1956,10 @@
     }
 
     function imprimirEtiquetaReq(idx) {
-      const r = listaReqRenderizada[idx];
+      imprimirEtiquetaReqObj(listaReqRenderizada[idx]);
+    }
+
+    function imprimirEtiquetaReqObj(r) {
       if (!r) { alert("Requisição não encontrada. Atualize a tela e tente novamente."); return; }
 
       const cfg = cfgTipoReq(r.tipoSolicitacao);
@@ -2922,6 +2976,11 @@
         protocoloReq: document.getElementById('reqVinculadaProtocolo').value
       };
 
+      // Guardados antes de limpar o formulário (usados no modal pós-termo / etiqueta)
+      const protReqDoTermo = (payload.protocoloReq || "").trim();
+      const equipDoTermo = { tag: equipamentoSelecionado.tag || "", nome: equipamentoSelecionado.nome || "" };
+      const clienteDoTermo = payload.cliente || "";
+
       const btn = document.getElementById('btnEnviar');
       btn.disabled = true; btn.innerText = "GERANDO PDF NO SERVIDOR...";
 
@@ -2938,12 +2997,39 @@
           equipamentoSelecionado = null;
           document.getElementById('corpoAcessorios').innerHTML = '<tr><td colspan="4" class="td-center" style="color: #888; padding: 24px;">Selecione um equipamento para visualizar os acessórios.</td></tr>';
           
-          buscarAtualizacoesSilenciosas();
+          // Vínculo com a REQ: usa a resposta do servidor (se for a versão antiga, considera o que foi enviado)
+          const vinculoOk = (res.vinculoOk !== undefined) ? res.vinculoOk : !!protReqDoTermo;
+          let reqObj = null;
 
-          if (res.pdfUrl && confirm(`Termo ${res.protocolo} gerado com sucesso!\n\nDeseja abrir o PDF gerado agora?`)) {
-            window.open(res.pdfUrl, '_blank');
+          if (protReqDoTermo && vinculoOk) {
+            const alvo = normalizarTextoReq(protReqDoTermo);
+            reqObj = (bancoDados.requisicoes || []).find(r => r && normalizarTextoReq(r.protocolo) === alvo && (r.status || "PENDENTE").toUpperCase() === "PENDENTE")
+                  || (bancoDados.requisicoes || []).find(r => r && normalizarTextoReq(r.protocolo) === alvo) || null;
+            if (reqObj) {
+              reqObj.status = "ATENDIDO";
+              reqObj.protocoloTermo = res.protocolo;
+            }
+            // Registra o termo localmente para a etiqueta já sair com a TAG (sem esperar a atualização)
+            if (!bancoDados.termosEmitidos) bancoDados.termosEmitidos = [];
+            if (!bancoDados.termosEmitidos.some(t => t && t.protocolo === res.protocolo)) {
+              bancoDados.termosEmitidos.unshift({ protocolo: res.protocolo, cliente: clienteDoTermo, tag: equipDoTermo.tag, equipamento: equipDoTermo.nome, pdfUrl: res.pdfUrl || "" });
+            }
+            filtrarRequisicoes();
+            atualizarDashboard();
+            atualizarNotificacoes();
           }
+
+          buscarAtualizacoesSilenciosas();
           mudarAba('consulta');
+
+          abrirModalTermoGerado({
+            protocolo: res.protocolo,
+            pdfUrl: res.pdfUrl,
+            tag: equipDoTermo.tag,
+            nome: equipDoTermo.nome,
+            reqObj: reqObj,
+            avisoVinculo: (protReqDoTermo && !vinculoOk) ? (res.avisoVinculo || "Verifique a requisição " + protReqDoTermo + ".") : ""
+          });
         } else {
           alert("Erro ao gerar termo.");
         }
