@@ -3067,6 +3067,31 @@
       const protTermo = document.getElementById('inputProtocoloTermoVinculo').value.trim().toUpperCase();
       if (!protTermo) { alert("Por favor, informe o protocolo do Termo."); return; }
 
+      // ===== TRAVAS DO VÍNCULO (conferência na tela; o servidor confere de novo) =====
+      const alvoTermo = normalizarTextoReq(protTermo);
+      const termoObj = (bancoDados.termosEmitidos || []).find(t => t && normalizarTextoReq(t.protocolo) === alvoTermo);
+      const reqObjV = (bancoDados.requisicoes || []).find(r => r && r.protocolo === protocoloReqEmVinculo && (r.status || "PENDENTE").toUpperCase() === "PENDENTE")
+                   || (bancoDados.requisicoes || []).find(r => r && r.protocolo === protocoloReqEmVinculo);
+
+      if (termoObj && termoCancelado(termoObj)) {
+        alert("O termo " + protTermo + " está CANCELADO e não pode ser vinculado.");
+        return;
+      }
+      const outraReqV = (bancoDados.requisicoes || []).find(r => r && normalizarTextoReq(r.protocoloTermo) === alvoTermo && r.protocolo !== protocoloReqEmVinculo);
+      if (outraReqV) {
+        alert("O termo " + protTermo + " já está vinculado à requisição " + outraReqV.protocolo + ".\n\nUm termo só pode atender uma requisição. Confira o número digitado.");
+        return;
+      }
+      if (termoObj && reqObjV && normalizarTextoReq(termoObj.cliente) !== normalizarTextoReq(reqObjV.cliente)) {
+        const seguir = confirm(
+          "ATENÇÃO: cliente diferente!\n\n" +
+          "Termo " + protTermo + ": " + (termoObj.cliente || "-") + "\n" +
+          "Requisição " + reqObjV.protocolo + ": " + (reqObjV.cliente || "-") + "\n\n" +
+          "Deseja vincular mesmo assim?"
+        );
+        if (!seguir) return;
+      }
+
       const btn = document.getElementById('btnConfirmarVinculo');
       btn.disabled = true;
       btn.innerText = "VINCULANDO...";
