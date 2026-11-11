@@ -976,9 +976,19 @@
     <div id="abaConsulta" class="tab-content">
       <div class="card">
         <div class="card-title">Histórico e Consulta de Termos Gerados</div>
-        <div class="form-group" style="margin-bottom: 16px;">
-          <label>Filtrar por Protocolo, Cliente, TAG ou Técnico:</label>
-          <input type="text" id="filtroTermos" oninput="filtrarTabelaTermosDebounced()" placeholder="Digite aqui para buscar...">
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom: 16px;">
+          <div class="form-group" style="flex: 0 0 220px; margin-bottom:0;">
+            <label>Situação do Termo:</label>
+            <select id="filtroSituacaoTermos" onchange="renderizarTabelaTermos(bancoDados.termosEmitidos || [])">
+              <option value="ATIVO">Ativos</option>
+              <option value="CANCELADO">Cancelados</option>
+              <option value="TODOS">Todos</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1; min-width: 240px; margin-bottom:0;">
+            <label>Filtrar por Protocolo, Cliente, TAG ou Técnico:</label>
+            <input type="text" id="filtroTermos" oninput="filtrarTabelaTermosDebounced()" placeholder="Digite aqui para buscar...">
+          </div>
         </div>
         <div class="table-container">
           <table style="table-layout: auto;">
@@ -3471,10 +3481,24 @@
       }
 
       const filtroVal = (document.getElementById('filtroTermos')?.value || "").toLowerCase().trim();
-      let dadosExibir = lista;
+      const situacao = document.getElementById('filtroSituacaoTermos')?.value || "ATIVO";
+
+      // Contagem por situação nas opções do filtro
+      const totCanc = lista.filter(t => termoCancelado(t)).length;
+      const selSit = document.getElementById('filtroSituacaoTermos');
+      if (selSit) {
+        selSit.options[0].text = "Ativos (" + (lista.length - totCanc) + ")";
+        selSit.options[1].text = "Cancelados (" + totCanc + ")";
+        selSit.options[2].text = "Todos (" + lista.length + ")";
+      }
+
+      let dadosExibir = lista.filter(t => t && (
+        situacao === "TODOS" ||
+        (situacao === "CANCELADO" ? termoCancelado(t) : !termoCancelado(t))
+      ));
       
       if (filtroVal) {
-        dadosExibir = lista.filter(t => 
+        dadosExibir = dadosExibir.filter(t => 
           t && (
             (t.protocolo || "").toLowerCase().includes(filtroVal) ||
             (t.cliente || "").toLowerCase().includes(filtroVal) ||
@@ -3489,6 +3513,10 @@
         tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhum termo encontrado.</td></tr>';
         return;
       }
+
+      // Mais recente primeiro (data/hora; empate pelo número do protocolo)
+      const numTermo = (t) => parseInt(String(t.protocolo || "").replace(/\D/g, ""), 10) || 0;
+      dadosExibir = dadosExibir.slice().sort((a, b) => (tempoDataBR(b.dataHora) - tempoDataBR(a.dataHora)) || (numTermo(b) - numTermo(a)));
 
       tbody.innerHTML = dadosExibir.map(t => {
         const cancelado = termoCancelado(t);
