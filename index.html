@@ -340,6 +340,14 @@
     .btn-etiqueta { background:linear-gradient(135deg,#475569,#1e293b); color:#fff; border:none; border-radius:7px; padding:0 9px; height:26px; font-size:11px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; gap:5px; box-shadow:0 3px 8px rgba(30,41,59,.25); transition:transform .15s; }
     .btn-etiqueta:hover { transform:translateY(-1px); }
     .req-motivo { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; white-space:normal; line-height:1.35; }
+    .selo-dias { display:block; width:max-content; margin:4px auto 0; padding:1px 7px; border-radius:6px; font-size:9.5px; font-weight:bold; white-space:nowrap; }
+    .dias-ok { background:#ecfdf5; color:#047857; }
+    .dias-atencao { background:#fffbeb; color:#b45309; }
+    .dias-atraso { background:#ffe4e6; color:#be123c; }
+    .dias-neutro { background:#f1f5f9; color:#475569; }
+    .req-kpi-sub { font-size:10.5px; font-weight:bold; color:#94a3b8; margin-top:2px; }
+    .kpi-tma { cursor:default; }
+    .kpi-tma .req-kpi-icone { background:#ccfbf1; color:#0f766e; }
     .req-lote-barra { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:8px 10px; margin-bottom:10px; }
     .req-lote-info { font-size:12px; color:#475569; }
     .btn-etiqueta:disabled { background:#cbd5e1; box-shadow:none; cursor:not-allowed; transform:none; }
@@ -787,7 +795,7 @@
         <div class="req-resumo">
           <div class="req-kpi kpi-pendente" data-status="PENDENTE" onclick="filtrarReqPorKpi('PENDENTE')">
             <div class="req-kpi-icone"><i class="fa-solid fa-hourglass-half"></i></div>
-            <div><div class="req-kpi-num" id="kpiReqPendente">0</div><div class="req-kpi-lbl">Pendentes</div></div>
+            <div><div class="req-kpi-num" id="kpiReqPendente">0</div><div class="req-kpi-lbl">Pendentes</div><div class="req-kpi-sub" id="kpiReqAtrasadas"></div></div>
           </div>
           <div class="req-kpi kpi-atendido" data-status="ATENDIDO" onclick="filtrarReqPorKpi('ATENDIDO')">
             <div class="req-kpi-icone"><i class="fa-solid fa-circle-check"></i></div>
@@ -800,6 +808,10 @@
           <div class="req-kpi kpi-total" data-status="TODOS" onclick="filtrarReqPorKpi('TODOS')">
             <div class="req-kpi-icone"><i class="fa-solid fa-layer-group"></i></div>
             <div><div class="req-kpi-num" id="kpiReqTotal">0</div><div class="req-kpi-lbl">Total</div></div>
+          </div>
+          <div class="req-kpi kpi-tma" title="Tempo médio entre a abertura da requisição e a geração do termo (atendidas do período)">
+            <div class="req-kpi-icone"><i class="fa-solid fa-stopwatch"></i></div>
+            <div><div class="req-kpi-num" id="kpiReqTma">-</div><div class="req-kpi-lbl">Tempo médio de atendimento</div><div class="req-kpi-sub" id="kpiReqTmaBase"></div></div>
           </div>
         </div>
         <div class="req-resumo-nota" id="notaResumoReq">Totais considerando todo o período.</div>
@@ -1920,6 +1932,53 @@
       return (bancoDados.termosEmitidos || []).find(t => t && normalizarTextoReq(t.protocolo) === prot) || null;
     }
 
+    // ===== TEMPO DAS REQUISIÇÕES (dias em aberto / tempo de atendimento) =====
+    // Faixas de alerta das pendentes, em dias corridos (ajuste aqui se precisar)
+    var PRAZO_REQ = { ok: 2, atencao: 5 };
+
+    // "dd/MM/yyyy HH:mm" -> milissegundos (0 se inválido)
+    function tempoDataBR(s) {
+      const m = String(s || "").match(/(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
+      return m ? new Date(m[3], m[2] - 1, m[1], m[4] || 0, m[5] || 0).getTime() : 0;
+    }
+
+    function formatarDuracaoReq(ms) {
+      if (!(ms >= 0)) return "-";
+      const horas = Math.floor(ms / 3600000);
+      if (horas < 1) return "< 1h";
+      if (horas < 24) return horas + "h";
+      const d = Math.floor(horas / 24), hr = horas % 24;
+      return d + "d" + (hr ? " " + hr + "h" : "");
+    }
+
+    function diasEmAbertoReq(r) {
+      const t = tempoDataBR(r && r.dataHora);
+      return t ? Math.floor((Date.now() - t) / 86400000) : null;
+    }
+
+    // Tempo entre abertura da REQ e geração do termo (null se não houver dados confiáveis)
+    function tempoAtendimentoReq(r) {
+      const termo = buscarTermoDaReq(r);
+      const ini = tempoDataBR(r && r.dataHora), fim = tempoDataBR(termo && termo.dataHora);
+      if (!ini || !fim || fim < ini) return null;   // termo anterior à REQ (vínculo manual) não entra na conta
+      return fim - ini;
+    }
+
+    function seloTempoReq(r, st) {
+      if (st === "PENDENTE") {
+        const dias = diasEmAbertoReq(r);
+        if (dias === null) return "";
+        const faixa = dias <= PRAZO_REQ.ok ? "dias-ok" : (dias <= PRAZO_REQ.atencao ? "dias-atencao" : "dias-atraso");
+        const txt = dias === 0 ? "aberta hoje" : "há " + dias + (dias === 1 ? " dia" : " dias");
+        return `<span class="selo-dias ${faixa}" title="Dias corridos desde a abertura">${txt}</span>`;
+      }
+      if (st === "ATENDIDO") {
+        const ms = tempoAtendimentoReq(r);
+        return ms === null ? "" : `<span class="selo-dias dias-neutro" title="Tempo entre a abertura e o termo">em ${formatarDuracaoReq(ms)}</span>`;
+      }
+      return "";
+    }
+
     // ===== MODAL APÓS GERAR O TERMO (abrir PDF / imprimir etiqueta) =====
     function abrirModalTermoGerado(info) {
       document.getElementById('lblProtTermoGerado').innerText = info.protocolo || "-";
@@ -2697,7 +2756,7 @@
             <td><b>${r.equipamentoSolicitado || '-'}</b>${enviadoTxt}</td>
             <td style="color:#555; font-style:italic;" title="${escReq(r.motivo || "")}"><div class="req-motivo">${r.motivo || "-"}</div></td>
             <td class="td-center"><b>${r.operacao || 'LOCAÇÃO'}</b></td>
-            <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span></td>
+            <td class="td-center"><span class="badge-status ${badgeClass}">${st}</span>${seloTempoReq(r, st)}</td>
             <td class="td-center">${btnAcao}</td>
           </tr>
         `;
@@ -2756,6 +2815,16 @@
       setTxt('kpiReqAtendido', cont.ATENDIDO);
       setTxt('kpiReqRecusado', cont.RECUSADO);
       setTxt('kpiReqTotal', (lista || []).length);
+
+      // Pendentes acima do prazo de atenção
+      const atrasadas = (lista || []).filter(r => (r.status || "PENDENTE").toUpperCase() === "PENDENTE" && (diasEmAbertoReq(r) || 0) > PRAZO_REQ.atencao).length;
+      const elAtr = document.getElementById('kpiReqAtrasadas');
+      if (elAtr) elAtr.innerHTML = atrasadas ? '<span style="color:#be123c;">' + atrasadas + ' há mais de ' + PRAZO_REQ.atencao + ' dias</span>' : '';
+
+      // Tempo médio de atendimento das atendidas do período
+      const tempos = (lista || []).filter(r => (r.status || "").toUpperCase() === "ATENDIDO").map(tempoAtendimentoReq).filter(v => v !== null);
+      setTxt('kpiReqTma', tempos.length ? formatarDuracaoReq(tempos.reduce((a, b) => a + b, 0) / tempos.length) : "-");
+      setTxt('kpiReqTmaBase', tempos.length ? "base: " + tempos.length + " atendida" + (tempos.length > 1 ? "s" : "") : "sem atendidas no período");
 
       document.querySelectorAll('.req-kpi').forEach(el => el.classList.toggle('ativo', el.dataset.status === (statusFiltro || "TODOS")));
 
