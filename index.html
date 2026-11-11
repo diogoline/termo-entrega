@@ -876,6 +876,11 @@
         <button type="button" onclick="desvincularRequisicao()" style="background: transparent; border: none; color: #dc3545; font-weight: bold; cursor: pointer; font-size: 11px;"><i class="fa-solid fa-xmark"></i> Cancelar Vínculo</button>
       </div>
 
+      <div id="bannerReemissaoTermo" style="display: none; background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; font-size: 12px; align-items: center; justify-content: space-between;">
+        <span><i class="fa-solid fa-rotate"></i> Reemissão: este termo substituirá o termo cancelado <span id="lblTermoSubstituido">-</span></span>
+        <button type="button" onclick="limparReemissaoTermo()" style="background: transparent; border: none; color: #4338ca; font-weight: bold; cursor: pointer; font-size: 11px;"><i class="fa-solid fa-xmark"></i> Não vincular à reemissão</button>
+      </div>
+
       <form id="termoForm" class="main-grid" onsubmit="gerarTermo(event)">
         <input type="hidden" id="reqVinculadaProtocolo" value="">
 
@@ -1310,6 +1315,29 @@
         <button type="button" class="btn-secundario" onclick="fecharModalTermoGerado()">Fechar</button>
         <button type="button" id="btnAbrirPdfTermoGerado" class="btn-pdf" style="height:auto; padding:8px 14px; font-size:12px;"><i class="fa-solid fa-file-pdf"></i> Abrir PDF do Termo</button>
         <button type="button" id="btnEtiquetaTermoGerado" class="btn-etiqueta" style="height:auto; padding:8px 14px; font-size:12px;"><i class="fa-solid fa-tag"></i> Imprimir Etiqueta</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalCancelarTermo" class="modal-overlay">
+    <div class="modal-box" style="width: 520px;">
+      <div class="modal-title">
+        <span>Cancelar Termo <span id="lblProtTermoCancelar" style="color:#be123c;">-</span></span>
+        <span onclick="fecharModalCancelarTermo()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div id="infoTermoCancelar" style="background:#fff1f2; border:1px solid #fecdd3; border-radius:8px; padding:10px; font-size:12px; color:#334155; margin-bottom:12px;"></div>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label>Motivo do cancelamento (obrigatório):</label>
+        <textarea id="inputMotivoCancelTermo" placeholder="Ex: TAG errada no termo / cliente incorreto / acessórios faltando..." style="height: 70px;"></textarea>
+      </div>
+      <label style="display:flex; align-items:center; gap:8px; font-size:12px; font-weight:bold; color:#334155; margin-bottom:14px; text-transform:none; cursor:pointer;">
+        <input type="checkbox" id="chkReemitirTermo" checked style="width:16px; height:16px; accent-color:#2563eb;">
+        Reemitir agora (abrir a emissão com o mesmo cliente e requisição)
+      </label>
+      <div style="font-size:11px; color:#64748b; margin-bottom:14px;">O PDF atual é mantido como histórico e marcado como CANCELADO. A ação não pode ser desfeita.</div>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button type="button" class="btn-secundario" onclick="fecharModalCancelarTermo()">Voltar</button>
+        <button type="button" id="btnConfirmarCancelTermo" class="btn-negar" style="height:auto; padding:8px 16px; font-size:12px;" onclick="confirmarCancelamentoTermo()"><i class="fa-solid fa-rotate-left"></i> Confirmar Cancelamento</button>
       </div>
     </div>
   </div>
@@ -1929,7 +1957,7 @@
     function buscarTermoDaReq(r) {
       const prot = normalizarTextoReq(r && r.protocoloTermo);
       if (!prot) return null;
-      return (bancoDados.termosEmitidos || []).find(t => t && normalizarTextoReq(t.protocolo) === prot) || null;
+      return (bancoDados.termosEmitidos || []).find(t => t && normalizarTextoReq(t.protocolo) === prot && !termoCancelado(t)) || null;
     }
 
     // ===== TEMPO DAS REQUISIÇÕES (dias em aberto / tempo de atendimento) =====
@@ -1977,6 +2005,99 @@
         return ms === null ? "" : `<span class="selo-dias dias-neutro" title="Tempo entre a abertura e o termo">em ${formatarDuracaoReq(ms)}</span>`;
       }
       return "";
+    }
+
+    // ===== CANCELAR / REEMITIR TERMO =====
+    var termoEmCancelamento = null;
+    var termoEmSubstituicao = "";
+
+    function termoCancelado(t) { return t && (t.statusTermo || "").toUpperCase() === "CANCELADO"; }
+
+    function reqsDoTermo(protTermo) {
+      const alvo = normalizarTextoReq(protTermo);
+      return (bancoDados.requisicoes || []).filter(r => r && normalizarTextoReq(r.protocoloTermo) === alvo);
+    }
+
+    function abrirModalCancelarTermo(protTermo) {
+      const t = (bancoDados.termosEmitidos || []).find(x => x && x.protocolo === protTermo);
+      if (!t) { alert("Termo não encontrado. Atualize a tela."); return; }
+      termoEmCancelamento = t;
+      const reqs = reqsDoTermo(protTermo);
+      document.getElementById('lblProtTermoCancelar').innerText = protTermo;
+      document.getElementById('infoTermoCancelar').innerHTML =
+        '<b>Cliente:</b> ' + escReq(t.cliente || '-') + '<br>' +
+        '<b>Equipamento:</b> ' + escReq([t.tag, t.equipamento].filter(Boolean).join(' · ') || '-') + '<br>' +
+        (reqs.length
+          ? '<b>Requisição vinculada:</b> ' + escReq(reqs.map(r => r.protocolo).join(', ')) + ' — voltará para <b>PENDENTE</b>.'
+          : '<span style="color:#64748b;">Sem requisição vinculada.</span>');
+      document.getElementById('inputMotivoCancelTermo').value = "";
+      document.getElementById('chkReemitirTermo').checked = true;
+      document.getElementById('modalCancelarTermo').classList.add('active');
+      setTimeout(() => document.getElementById('inputMotivoCancelTermo').focus(), 50);
+    }
+
+    function fecharModalCancelarTermo() {
+      termoEmCancelamento = null;
+      document.getElementById('modalCancelarTermo').classList.remove('active');
+    }
+
+    function definirReemissaoTermo(protTermo) {
+      termoEmSubstituicao = protTermo || "";
+      const banner = document.getElementById('bannerReemissaoTermo');
+      const lbl = document.getElementById('lblTermoSubstituido');
+      if (lbl) lbl.innerText = termoEmSubstituicao || "-";
+      if (banner) banner.style.display = termoEmSubstituicao ? "flex" : "none";
+    }
+
+    function limparReemissaoTermo() { definirReemissaoTermo(""); }
+
+    function confirmarCancelamentoTermo() {
+      const t = termoEmCancelamento;
+      if (!t) return;
+      const motivo = document.getElementById('inputMotivoCancelTermo').value.trim();
+      if (motivo.length < 5) { alert("Descreva o motivo do cancelamento (mínimo de 5 caracteres)."); return; }
+      const reemitir = document.getElementById('chkReemitirTermo').checked;
+      if (!confirm("Confirma o CANCELAMENTO do termo " + t.protocolo + "?")) return;
+
+      const btn = document.getElementById('btnConfirmarCancelTermo');
+      const htmlOriginal = btn.innerHTML;
+      btn.disabled = true; btn.innerText = "CANCELANDO...";
+      const usuario = usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario || "") : "";
+
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "CANCELAR_TERMO", protocolo: t.protocolo, motivo: motivo, usuario: usuario }) })
+      .then(res => res.json())
+      .then(res => {
+        btn.disabled = false; btn.innerHTML = htmlOriginal;
+        if (res.status !== "sucesso") { alert("Não foi possível cancelar: " + (res.mensagem || "erro desconhecido.")); return; }
+
+        // Atualiza a tela sem esperar a sincronização
+        const reqs = reqsDoTermo(t.protocolo);
+        t.statusTermo = "CANCELADO";
+        t.cancelamento = "MOTIVO: " + motivo;
+        reqs.forEach(r => { r.status = "PENDENTE"; r.protocoloTermo = ""; });
+
+        fecharModalCancelarTermo();
+        try { renderizarTabelaTermos(bancoDados.termosEmitidos || []); } catch (e) {}
+        filtrarRequisicoes();
+        atualizarDashboard();
+        atualizarNotificacoes();
+        buscarAtualizacoesSilenciosas();
+
+        if (reemitir) {
+          const req = reqs[0];
+          if (req) {
+            atenderRequisicao(req.protocolo, req.cliente || t.cliente || "", req.operacao || t.tipo || "LOCAÇÃO");
+          } else {
+            desvincularRequisicao();
+            document.getElementById('inputCliente').value = t.cliente || "";
+            mudarAba('emissao');
+          }
+          definirReemissaoTermo(t.protocolo);
+        } else {
+          alert("Termo " + t.protocolo + " cancelado." + (reqs.length ? "\nA requisição " + reqs.map(r => r.protocolo).join(", ") + " voltou para PENDENTE." : ""));
+        }
+      })
+      .catch(() => { btn.disabled = false; btn.innerHTML = htmlOriginal; alert("Falha de conexão ao cancelar o termo."); });
     }
 
     // ===== MODAL APÓS GERAR O TERMO (abrir PDF / imprimir etiqueta) =====
@@ -2136,7 +2257,7 @@
     function selecionarTermosHojeReq() {
       const hoje = new Date().toLocaleDateString('pt-BR');   // dd/mm/aaaa
       const termosHoje = new Set((bancoDados.termosEmitidos || [])
-        .filter(t => t && String(t.dataHora || "").startsWith(hoje))
+        .filter(t => t && !termoCancelado(t) && String(t.dataHora || "").startsWith(hoje))
         .map(t => normalizarTextoReq(t.protocolo)));
 
       const reqsHoje = (bancoDados.requisicoes || []).filter(r =>
@@ -2863,7 +2984,7 @@
 
       const listDL = document.getElementById('listTermosExistentes');
       if (listDL && bancoDados.termosEmitidos) {
-        const termosDoCliente = bancoDados.termosEmitidos.filter(t => t && (t.cliente || "").toLowerCase().includes((cliente || "").toLowerCase()));
+        const termosDoCliente = bancoDados.termosEmitidos.filter(t => t && !termoCancelado(t) && (t.cliente || "").toLowerCase().includes((cliente || "").toLowerCase()));
         listDL.innerHTML = termosDoCliente.map(t => `<option value="${t.protocolo}">Termo ${t.protocolo} | ${t.equipamento || '-'} (${t.dataHora || '-'})</option>`).join('');
       }
       document.getElementById('modalVincularTermo').classList.add('active');
@@ -3155,7 +3276,8 @@
         acessorios: acessoriosList,
         tecnico: { nome: nomeTec },
         assinaturaCliente: canvas ? canvas.toDataURL() : "",
-        protocoloReq: document.getElementById('reqVinculadaProtocolo').value
+        protocoloReq: document.getElementById('reqVinculadaProtocolo').value,
+        termoSubstituido: termoEmSubstituicao || ""
       };
 
       // Guardados antes de limpar o formulário (usados no modal pós-termo / etiqueta)
@@ -3174,6 +3296,7 @@
         
         if(res.status === "sucesso") {
           desvincularRequisicao();
+          limparReemissaoTermo();
           document.getElementById('termoForm').reset();
           limparAssinatura();
           equipamentoSelecionado = null;
@@ -3194,7 +3317,7 @@
             // Registra o termo localmente para a etiqueta já sair com a TAG (sem esperar a atualização)
             if (!bancoDados.termosEmitidos) bancoDados.termosEmitidos = [];
             if (!bancoDados.termosEmitidos.some(t => t && t.protocolo === res.protocolo)) {
-              bancoDados.termosEmitidos.unshift({ protocolo: res.protocolo, dataHora: new Date().toLocaleDateString('pt-BR') + " " + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), cliente: clienteDoTermo, tag: equipDoTermo.tag, equipamento: equipDoTermo.nome, pdfUrl: res.pdfUrl || "" });
+              bancoDados.termosEmitidos.unshift({ protocolo: res.protocolo, dataHora: new Date().toLocaleDateString('pt-BR') + " " + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), cliente: clienteDoTermo, tag: equipDoTermo.tag, equipamento: equipDoTermo.nome, pdfUrl: res.pdfUrl || "", statusTermo: "ATIVO", substituicao: payload.termoSubstituido ? "SUBSTITUI: " + payload.termoSubstituido : "" });
             }
             filtrarRequisicoes();
             atualizarDashboard();
@@ -3367,20 +3490,32 @@
         return;
       }
 
-      tbody.innerHTML = dadosExibir.map(t => `
-        <tr>
-          <td class="td-center"><b>${t.protocolo || '-'}</b></td>
+      tbody.innerHTML = dadosExibir.map(t => {
+        const cancelado = termoCancelado(t);
+        const seloSit = cancelado
+          ? `<br><span class="selo-tipo-req" style="background:#ffe4e6; color:#be123c;" title="${escReq(t.cancelamento || '')}">CANCELADO</span>`
+          : '';
+        const infoSubst = t.substituicao ? `<span class="req-enviado" style="color:#4338ca;">${escReq(t.substituicao)}</span>` : '';
+        const infoCanc = cancelado && t.cancelamento ? `<span class="req-enviado" style="color:#be123c;">${escReq(t.cancelamento)}</span>` : '';
+        const btnCancelar = cancelado ? '' :
+          `<button type="button" class="btn-negar" style="height:30px; padding:0 10px; font-size:11px;" onclick="abrirModalCancelarTermo('${escReq(t.protocolo)}')" title="Cancelar termo e reemitir"><i class="fa-solid fa-rotate-left"></i> Cancelar</button>`;
+        return `
+        <tr${cancelado ? ' style="opacity:.6;"' : ''}>
+          <td class="td-center"><b${cancelado ? ' style="text-decoration:line-through;"' : ''}>${t.protocolo || '-'}</b>${seloSit}</td>
           <td>${t.dataHora || '-'}</td>
           <td>${t.cliente || '-'}</td>
           <td class="td-center"><b>${t.tag || '-'}</b></td>
-          <td>${t.equipamento || '-'}</td>
+          <td>${t.equipamento || '-'}${infoSubst}${infoCanc}</td>
           <td class="td-center">${t.tipo || '-'}</td>
           <td>${t.tecnico || '-'}</td>
           <td class="td-center">
-            ${t.pdfUrl ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${t.pdfUrl}', 'Visualizar Termo: ${t.protocolo}')"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : '-'}
+            <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+              ${t.pdfUrl ? `<button type="button" class="btn-pdf" onclick="abrirModalVisualizadorReq('${t.pdfUrl}', 'Visualizar Termo: ${t.protocolo}')"><i class="fa-solid fa-file-pdf"></i> PDF</button>` : '-'}
+              ${btnCancelar}
+            </div>
           </td>
-        </tr>
-      `).join('');
+        </tr>`;
+      }).join('');
     }
 
     function renderizarListasAuxiliares() {
