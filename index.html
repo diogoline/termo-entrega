@@ -340,6 +340,10 @@
     .btn-etiqueta { background:linear-gradient(135deg,#475569,#1e293b); color:#fff; border:none; border-radius:7px; padding:0 9px; height:26px; font-size:11px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; gap:5px; box-shadow:0 3px 8px rgba(30,41,59,.25); transition:transform .15s; }
     .btn-etiqueta:hover { transform:translateY(-1px); }
     .req-motivo { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; white-space:normal; line-height:1.35; }
+    .req-lote-barra { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:8px 10px; margin-bottom:10px; }
+    .req-lote-info { font-size:12px; color:#475569; }
+    .btn-etiqueta:disabled { background:#cbd5e1; box-shadow:none; cursor:not-allowed; transform:none; }
+    #chkTodasReq, .chk-req { width:16px; height:16px; cursor:pointer; accent-color:#2563eb; }
     #corpoRequisicoes .btn-action-container { justify-content:flex-start !important; padding-left:4px; }
   </style>
 </head>
@@ -822,13 +826,22 @@
           </div>
         </div>
         
+        <div class="req-lote-barra">
+          <button type="button" class="btn-secundario" onclick="selecionarTermosHojeReq()" title="Seleciona as requisições cujo termo foi gerado hoje"><i class="fa-solid fa-calendar-day"></i> Termos de hoje</button>
+          <span id="lblLoteReq" class="req-lote-info">Marque as requisições ou use "Termos de hoje"</span>
+          <span style="flex:1;"></span>
+          <button type="button" id="btnLimparLoteReq" class="btn-secundario" style="display:none;" onclick="limparSelecaoReq()">Limpar seleção</button>
+          <button type="button" id="btnImprimirLoteReq" class="btn-etiqueta" style="height:34px; padding:0 14px; font-size:12px;" disabled onclick="imprimirSelecionadasReq()"><i class="fa-solid fa-tags"></i> Imprimir etiquetas</button>
+        </div>
+
         <div class="table-container">
           <table>
             <thead>
               <tr>
+                <th class="td-center" style="width: 34px;"><input type="checkbox" id="chkTodasReq" title="Selecionar todas as visíveis" onchange="marcarTodasVisiveisReq(this.checked)"></th>
                 <th class="td-center" style="width: 95px;">Req # / Tipo</th>
                 <th style="width: 110px;">Data / Hora</th>
-                <th style="width: 200px;">Cliente / Locatário</th>
+                <th style="width: 185px;">Cliente / Locatário</th>
                 <th style="width: 210px;">Equipamento Solicitado</th>
                 <th style="min-width: 140px;">Motivo / Obs.</th>
                 <th class="td-center" style="width: 85px;">Operação</th>
@@ -837,7 +850,7 @@
               </tr>
             </thead>
             <tbody id="corpoRequisicoes">
-              <tr><td colspan="8" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td></tr>
+              <tr><td colspan="9" class="td-center" style="color: #888; padding: 24px;">Carregando requisições...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1961,7 +1974,11 @@
 
     function imprimirEtiquetaReqObj(r) {
       if (!r) { alert("Requisição não encontrada. Atualize a tela e tente novamente."); return; }
+      imprimirEtiquetasReq([r]);
+    }
 
+    // Monta o HTML de UMA etiqueta (9,5 x 5 cm). A cor vem do tipo de cada requisição.
+    function montarHtmlEtiquetaReq(r) {
       const cfg = cfgTipoReq(r.tipoSolicitacao);
       const cor = cfg ? cfg.cor : "#475569";
       const termo = buscarTermoDaReq(r);
@@ -1981,30 +1998,44 @@
 
       const dataEtq = String(r.dataHora || "").split(" ")[0] || new Date().toLocaleDateString('pt-BR');
 
-      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Etiqueta ${escReq(r.protocolo)}</title><style>
-        @page { size: A4 portrait; margin: 10mm; }
-        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        body { margin: 0; font-family: Arial, Helvetica, sans-serif; color: #0f172a; }
-        .etq { width: 100mm; height: 50mm; border: 0.3mm dashed #94a3b8; padding: 2.5mm; display: flex; flex-direction: column; overflow: hidden; }
-        .faixa { background: ${cor}; color: #fff; border-radius: 1.5mm; padding: 1.4mm 2.5mm; display: flex; justify-content: space-between; align-items: center; }
-        .tipo { font-size: 16pt; font-weight: 900; letter-spacing: 0.3mm; }
-        .req { font-size: 10.5pt; font-weight: bold; background: #fff; color: ${cor}; border-radius: 1mm; padding: 0.4mm 1.8mm; }
-        .instr { margin: 1.4mm 0; border: 0.6mm solid ${cor}; color: ${cor}; border-radius: 1.2mm; text-align: center; font-size: 12.5pt; font-weight: 900; padding: 0.6mm; }
-        .lin { font-size: 8.5pt; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .cli { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-        .rot { display: inline-block; width: 17mm; font-weight: bold; color: #475569; font-size: 7.5pt; }
-        .destaque { font-weight: 900; font-size: 9pt; }
-        .rodape { margin-top: auto; display: flex; justify-content: space-between; font-size: 6.5pt; color: #64748b; font-weight: bold; }
-      </style></head><body>
-        <div class="etq">
+      return `<div class="etq" style="--cor:${cor};">
           <div class="faixa"><span class="tipo">${escReq(cfg ? cfg.nome : "TIPO NÃO INFORMADO")}</span><span class="req">${escReq(r.protocolo || "-")}</span></div>
           <div class="instr">${escReq(cfg ? cfg.instrucao : "CONFIRMAR ANTES DA ENTREGA")}</div>
           <div class="lin cli"><span class="rot">CLIENTE:</span><b>${escReq(r.cliente || "-")}</b></div>
           <div class="lin cli"><span class="rot">ENTREGAR:</span><b>${escReq(entregar)}</b></div>
           ${linhaRetirar}
           <div class="rodape"><span>${escReq(r.operacao || "LOCAÇÃO")} · ${escReq(dataEtq)}</span><span>LINEMED · DMA SYS</span></div>
-        </div>
-      </body></html>`;
+        </div>`;
+    }
+
+    // Imprime 1 ou várias etiquetas: folha A4 com 10 etiquetas (2 colunas x 5 linhas)
+    function imprimirEtiquetasReq(lista) {
+      const itens = (lista || []).filter(Boolean);
+      if (!itens.length) { alert("Nenhuma etiqueta para imprimir."); return; }
+
+      const POR_FOLHA = 10;
+      let folhas = "";
+      for (let i = 0; i < itens.length; i += POR_FOLHA) {
+        folhas += '<div class="folha">' + itens.slice(i, i + POR_FOLHA).map(montarHtmlEtiquetaReq).join('') + '</div>';
+      }
+
+      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Etiquetas (${itens.length})</title><style>
+        @page { size: A4 portrait; margin: 10mm; }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { margin: 0; font-family: Arial, Helvetica, sans-serif; color: #0f172a; }
+        .folha { display: grid; grid-template-columns: 95mm 95mm; grid-auto-rows: 50mm; width: 190mm; break-after: page; page-break-after: always; }
+        .folha:last-child { break-after: auto; page-break-after: auto; }
+        .etq { width: 95mm; height: 50mm; border: 0.3mm dashed #94a3b8; padding: 2.3mm; display: flex; flex-direction: column; overflow: hidden; }
+        .faixa { background: var(--cor); color: #fff; border-radius: 1.5mm; padding: 1.2mm 2.3mm; display: flex; justify-content: space-between; align-items: center; }
+        .tipo { font-size: 15pt; font-weight: 900; letter-spacing: 0.2mm; }
+        .req { font-size: 10pt; font-weight: bold; background: #fff; color: var(--cor); border-radius: 1mm; padding: 0.4mm 1.6mm; }
+        .instr { margin: 1.2mm 0; border: 0.6mm solid var(--cor); color: var(--cor); border-radius: 1.2mm; text-align: center; font-size: 12pt; font-weight: 900; padding: 0.5mm; }
+        .lin { font-size: 8.2pt; line-height: 1.28; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cli { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .rot { display: inline-block; width: 16mm; font-weight: bold; color: #475569; font-size: 7.2pt; }
+        .destaque { font-weight: 900; font-size: 8.8pt; }
+        .rodape { margin-top: auto; display: flex; justify-content: space-between; font-size: 6.3pt; color: #64748b; font-weight: bold; }
+      </style></head><body>${folhas}</body></html>`;
 
       // Impressão por iframe oculto (não é bloqueada como pop-up)
       const ifr = document.createElement('iframe');
@@ -2014,9 +2045,87 @@
       doc.open(); doc.write(html); doc.close();
       setTimeout(() => {
         try { ifr.contentWindow.focus(); ifr.contentWindow.print(); }
-        catch (e) { alert("Não foi possível abrir a impressão da etiqueta."); }
-        setTimeout(() => ifr.remove(), 3000);
-      }, 300);
+        catch (e) { alert("Não foi possível abrir a impressão das etiquetas."); }
+        setTimeout(() => ifr.remove(), 5000);
+      }, 400);
+    }
+
+    // ===== SELEÇÃO DE REQUISIÇÕES PARA ETIQUETAS EM LOTE =====
+    var selecaoEtqReq = new Set();
+
+    // Chave estável (protocolo + data/hora) para manter a seleção ao filtrar/atualizar a tela
+    function chaveReq(r) { return (r && r.protocolo || "") + "|" + (r && r.dataHora || ""); }
+
+    function reqElegivelEtiqueta(r) { return r && (r.status || "PENDENTE").toUpperCase() !== "RECUSADO"; }
+
+    function alternarSelecaoReq(idx, marcado) {
+      const r = listaReqRenderizada[idx];
+      if (!reqElegivelEtiqueta(r)) return;
+      if (marcado) selecaoEtqReq.add(chaveReq(r)); else selecaoEtqReq.delete(chaveReq(r));
+      atualizarBarraLoteReq();
+    }
+
+    function marcarTodasVisiveisReq(marcado) {
+      (listaReqRenderizada || []).forEach(r => {
+        if (!reqElegivelEtiqueta(r)) return;
+        if (marcado) selecaoEtqReq.add(chaveReq(r)); else selecaoEtqReq.delete(chaveReq(r));
+      });
+      document.querySelectorAll('#corpoRequisicoes .chk-req').forEach(cb => { cb.checked = marcado; });
+      atualizarBarraLoteReq();
+    }
+
+    function selecionarTermosHojeReq() {
+      const hoje = new Date().toLocaleDateString('pt-BR');   // dd/mm/aaaa
+      const termosHoje = new Set((bancoDados.termosEmitidos || [])
+        .filter(t => t && String(t.dataHora || "").startsWith(hoje))
+        .map(t => normalizarTextoReq(t.protocolo)));
+
+      const reqsHoje = (bancoDados.requisicoes || []).filter(r =>
+        reqElegivelEtiqueta(r) && r.protocoloTermo && termosHoje.has(normalizarTextoReq(r.protocoloTermo)));
+
+      if (!reqsHoje.length) {
+        alert("Nenhum termo gerado hoje (" + hoje + ") está vinculado a uma requisição.");
+        return;
+      }
+      reqsHoje.forEach(r => selecaoEtqReq.add(chaveReq(r)));
+      filtrarRequisicoes();
+      alert(reqsHoje.length + " requisição(ões) com termo de hoje foram selecionadas.");
+    }
+
+    function limparSelecaoReq() {
+      selecaoEtqReq.clear();
+      filtrarRequisicoes();
+    }
+
+    function imprimirSelecionadasReq() {
+      const lista = (bancoDados.requisicoes || []).filter(r => reqElegivelEtiqueta(r) && selecaoEtqReq.has(chaveReq(r)));
+      if (!lista.length) { alert("Selecione ao menos uma requisição."); return; }
+      // Agrupa por cliente para facilitar a separação na expedição
+      lista.sort((a, b) => (a.cliente || "").localeCompare(b.cliente || "", 'pt-BR') || (a.protocolo || "").localeCompare(b.protocolo || ""));
+      imprimirEtiquetasReq(lista);
+    }
+
+    function atualizarBarraLoteReq() {
+      const n = selecaoEtqReq.size;
+      const lbl = document.getElementById('lblLoteReq');
+      const btn = document.getElementById('btnImprimirLoteReq');
+      const btnLimpar = document.getElementById('btnLimparLoteReq');
+      if (lbl) {
+        const folhas = Math.ceil(n / 10);
+        lbl.innerHTML = n
+          ? '<b>' + n + '</b> selecionada' + (n > 1 ? 's' : '') + ' · ' + folhas + ' folha' + (folhas > 1 ? 's' : '') + ' A4'
+          : 'Marque as requisições ou use "Termos de hoje"';
+      }
+      if (btn) btn.disabled = !n;
+      if (btnLimpar) btnLimpar.style.display = n ? "" : "none";
+
+      const chkTodas = document.getElementById('chkTodasReq');
+      if (chkTodas) {
+        const visiveis = (listaReqRenderizada || []).filter(reqElegivelEtiqueta);
+        const marcadas = visiveis.filter(r => selecaoEtqReq.has(chaveReq(r))).length;
+        chkTodas.checked = visiveis.length > 0 && marcadas === visiveis.length;
+        chkTodas.indeterminate = marcadas > 0 && marcadas < visiveis.length;
+      }
     }
 
     // ===== FUNÇÕES AUXILIARES DA REQUISIÇÃO (duplicidade / padronização) =====
@@ -2517,7 +2626,7 @@
       const tbody = document.getElementById('corpoRequisicoes');
       if (!tbody) return;
       if (!lista || lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição encontrada para o filtro selecionado.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color: #888; padding: 20px;">Nenhuma requisição encontrada para o filtro selecionado.</td></tr>';
         return;
       }
 
@@ -2579,6 +2688,9 @@
 
         return `
           <tr>
+            <td class="td-center">${reqElegivelEtiqueta(r)
+              ? `<input type="checkbox" class="chk-req" ${selecaoEtqReq.has(chaveReq(r)) ? 'checked' : ''} onchange="alternarSelecaoReq(${idxReq}, this.checked)" title="Selecionar para etiqueta em lote">`
+              : ''}</td>
             <td class="td-center"><b>${r.protocolo || '-'}</b>${seloTipo}</td>
             <td>${r.dataHora || '-'}</td>
             <td>${r.cliente || '-'}</td>
@@ -2629,6 +2741,7 @@
       let filtradas = baseFiltro.filter(r => statusFiltro === "TODOS" || (r.status || "PENDENTE").toUpperCase() === statusFiltro);
 
       renderizarTabelaRequisicoes(filtradas);
+      atualizarBarraLoteReq();
     }
 
     // ===== INDICADORES DA TELA DE REQUISIÇÕES =====
@@ -3012,7 +3125,7 @@
             // Registra o termo localmente para a etiqueta já sair com a TAG (sem esperar a atualização)
             if (!bancoDados.termosEmitidos) bancoDados.termosEmitidos = [];
             if (!bancoDados.termosEmitidos.some(t => t && t.protocolo === res.protocolo)) {
-              bancoDados.termosEmitidos.unshift({ protocolo: res.protocolo, cliente: clienteDoTermo, tag: equipDoTermo.tag, equipamento: equipDoTermo.nome, pdfUrl: res.pdfUrl || "" });
+              bancoDados.termosEmitidos.unshift({ protocolo: res.protocolo, dataHora: new Date().toLocaleDateString('pt-BR') + " " + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }), cliente: clienteDoTermo, tag: equipDoTermo.tag, equipamento: equipDoTermo.nome, pdfUrl: res.pdfUrl || "" });
             }
             filtrarRequisicoes();
             atualizarDashboard();
