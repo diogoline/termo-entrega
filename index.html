@@ -348,6 +348,8 @@
     .req-kpi-sub { font-size:10.5px; font-weight:bold; color:#94a3b8; margin-top:2px; }
     .kpi-tma { cursor:default; }
     .kpi-tma .req-kpi-icone { background:#ccfbf1; color:#0f766e; }
+    .linha-negada td { opacity:.55; }
+    .linha-negada:hover td { opacity:.9; }
     .req-lote-barra { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:8px 10px; margin-bottom:10px; }
     .req-lote-info { font-size:12px; color:#475569; }
     .btn-etiqueta:disabled { background:#cbd5e1; box-shadow:none; cursor:not-allowed; transform:none; }
@@ -820,10 +822,11 @@
           <div class="form-group" style="flex: 1;">
             <label>Filtrar por Status:</label>
             <select id="filtroStatusReq" onchange="filtrarRequisicoes()">
-              <option value="TODOS">Todos os Status</option>
+              <option value="ATIVAS" selected>Pendentes e Atendidas</option>
               <option value="PENDENTE">Apenas Pendentes</option>
-              <option value="ATENDIDO">Apenas Atendidos</option>
-              <option value="RECUSADO">Apenas Recusados</option>
+              <option value="ATENDIDO">Apenas Atendidas</option>
+              <option value="RECUSADO">Apenas Negadas</option>
+              <option value="TODOS">Todas (inclui negadas)</option>
             </select>
           </div>
 
@@ -2877,7 +2880,7 @@
         }
 
         return `
-          <tr>
+          <tr${isRecusado ? ' class="linha-negada"' : ''}>
             <td class="td-center">${reqElegivelEtiqueta(r)
               ? `<input type="checkbox" class="chk-req" ${selecaoEtqReq.has(chaveReq(r)) ? 'checked' : ''} onchange="alternarSelecaoReq(${idxReq}, this.checked)" title="Selecionar para etiqueta em lote">`
               : ''}</td>
@@ -2896,7 +2899,7 @@
 
     function filtrarRequisicoes() {
       const requisicoes = bancoDados.requisicoes || [];
-      const statusFiltro = document.getElementById('filtroStatusReq')?.value || "TODOS";
+      const statusFiltro = document.getElementById('filtroStatusReq')?.value || "ATIVAS";
       const mesFiltro = document.getElementById('filtroMesReq')?.value || "";
       const textoFiltro = (document.getElementById('filtroTextoReq')?.value || "").toLowerCase().trim();
 
@@ -2928,7 +2931,13 @@
 
       atualizarResumoReq(baseFiltro, statusFiltro, mesFiltro, textoFiltro);
 
-      let filtradas = baseFiltro.filter(r => statusFiltro === "TODOS" || (r.status || "PENDENTE").toUpperCase() === statusFiltro);
+      // ATIVAS (padrão): esconde as negadas, que ficam acessíveis pelo indicador "Negadas" ou pelo filtro
+      let filtradas = baseFiltro.filter(r => {
+        const stF = (r.status || "PENDENTE").toUpperCase();
+        if (statusFiltro === "TODOS") return true;
+        if (statusFiltro === "ATIVAS") return stF !== "RECUSADO";
+        return stF === statusFiltro;
+      });
 
       renderizarTabelaRequisicoes(filtradas);
       atualizarBarraLoteReq();
