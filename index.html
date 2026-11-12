@@ -4069,7 +4069,11 @@
     var statusCmpAlvo = null;                   // { codigo, novo }
     var MAX_FOTOS_CMP = 3;
     // Categorias sugeridas (é possível digitar outra no cadastro)
-    var CATEGORIAS_CMP = ["MÉDICA", "ODONTOLOGIA", "LABORATÓRIO", "ELETRÔNICA", "FERRAMENTAS", "INFRAESTRUTURA", "DIVERSOS"];
+    var CATEGORIAS_CMP = [
+      "MÉDICA", "ODONTOLOGIA", "OFTALMOLOGIA", "LABORATÓRIO", "FISIOTERAPIA", "RADIOLOGIA / IMAGEM",
+      "ESTERILIZAÇÃO", "HOSPITALAR", "VETERINÁRIA", "REFRIGERAÇÃO", "ELETRÔNICA", "ELÉTRICA",
+      "HIDRÁULICA / PNEUMÁTICA", "MECÂNICA", "INFORMÁTICA", "FERRAMENTAS", "INFRAESTRUTURA", "DIVERSOS"
+    ];
     var PRIO_CMP = { "ALTA": { cor: "#e11d48", fundo: "#ffe4e6", ordem: 3 }, "MÉDIA": { cor: "#b45309", fundo: "#fef3c7", ordem: 2 }, "BAIXA": { cor: "#475569", fundo: "#f1f5f9", ordem: 1 } };
     function prioCmp(i) { return PRIO_CMP[i && i.prioridade] ? i.prioridade : (i && i.urgente ? "ALTA" : "MÉDIA"); }
 
