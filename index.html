@@ -411,6 +411,29 @@
     .dsh-li-sub { color:var(--txt2); font-size:10.5px; }
     .dsh-pilula { flex-shrink:0; font-size:10.5px; font-weight:bold; padding:2px 8px; border-radius:20px; color:#fff; }
     .dsh-rodape { font-size:10.5px; color:var(--txt2); text-align:right; margin-top:4px; }
+    /* ================= MÓDULO DE COMPRAS ================= */
+    .cmp-subabas { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+    .cmp-subaba { background:#fff; border:1px solid #cbd5e1; color:#475569; border-radius:10px; padding:9px 16px; font-size:13px; font-weight:bold; cursor:pointer; display:inline-flex; gap:8px; align-items:center; }
+    .cmp-subaba.ativa { background:#1e3a8a; border-color:#1e3a8a; color:#fff; box-shadow:0 3px 8px rgba(30,58,138,.25); }
+    .cmp-thumb { width:52px; height:52px; border-radius:8px; object-fit:cover; border:1px solid #e2e8f0; background:#f8fafc; display:block; margin:auto; cursor:zoom-in; }
+    .cmp-thumb-vazio { width:52px; height:52px; border-radius:8px; border:1px dashed #cbd5e1; display:flex; align-items:center; justify-content:center; color:#94a3b8; margin:auto; font-size:16px; }
+    .cmp-urg { display:inline-block; margin-left:6px; background:#ffe4e6; color:#be123c; font-size:9.5px; font-weight:bold; padding:2px 7px; border-radius:6px; vertical-align:1px; }
+    .cmp-st { display:inline-block; padding:3px 9px; border-radius:20px; font-size:10px; font-weight:bold; border:1px solid; }
+    .cmp-st-PENDENTE { color:#b45309; background:#fffbeb; border-color:#fcd34d; }
+    .cmp-st-COMPRADO { color:#1d4ed8; background:#eff6ff; border-color:#93c5fd; }
+    .cmp-st-ENTREGUE { color:#047857; background:#ecfdf5; border-color:#6ee7b7; }
+    .cmp-st-CANCELADO { color:#64748b; background:#f1f5f9; border-color:#cbd5e1; }
+    .cmp-acoes { display:flex; gap:5px; justify-content:center; flex-wrap:wrap; }
+    .cmp-acoes button { height:26px; padding:0 9px; font-size:10.5px; border-radius:7px; border:none; color:#fff; font-weight:bold; cursor:pointer; display:inline-flex; gap:4px; align-items:center; }
+    .cmp-b-edit { background:#475569; } .cmp-b-comp { background:#2563eb; } .cmp-b-ent { background:#059669; } .cmp-b-canc { background:#e11d48; } .cmp-b-reab { background:#94a3b8; }
+    .cmp-urgente { display:inline-flex; gap:8px; align-items:center; font-size:13px; font-weight:bold; color:#be123c; background:#fff1f2; border:1px solid #fecdd3; border-radius:9px; padding:8px 12px; margin-bottom:12px; cursor:pointer; text-transform:none; }
+    .cmp-urgente input { width:16px; height:16px; accent-color:#e11d48; }
+    .cmp-fotos { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+    .cmp-foto-item { position:relative; width:86px; height:86px; }
+    .cmp-foto-item img { width:86px; height:86px; object-fit:cover; border-radius:9px; border:1px solid #e2e8f0; }
+    .cmp-foto-item button { position:absolute; top:-6px; right:-6px; width:22px; height:22px; border-radius:50%; border:none; background:#e11d48; color:#fff; cursor:pointer; font-size:11px; }
+    .linha-cmp-inativa td { opacity:.55; }
+    .btn-secundario:disabled { opacity:.5; cursor:not-allowed; }
     .req-lote-barra { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:8px 10px; margin-bottom:10px; }
     .req-lote-info { font-size:12px; color:#475569; }
     .btn-etiqueta:disabled { background:#cbd5e1; box-shadow:none; cursor:not-allowed; transform:none; }
@@ -679,6 +702,86 @@
 
     <!-- MÓDULO COMPRAS -->
     <div id="abaCompras" class="tab-content">
+      <div class="cmp-subabas">
+        <button type="button" class="cmp-subaba ativa" id="btnSubLista" onclick="trocarSubabaCompras('lista')"><i class="fa-solid fa-list-check"></i> Lista de Compras</button>
+        <button type="button" class="cmp-subaba" id="btnSubMapa" onclick="trocarSubabaCompras('mapa')"><i class="fa-solid fa-scale-balanced"></i> Mapa de Cotação</button>
+      </div>
+
+      <!-- ===== LISTA DE COMPRAS ===== -->
+      <div id="cmpPainelLista">
+        <div class="card">
+          <div class="req-topo">
+            <div>
+              <div class="req-topo-titulo"><i class="fa-solid fa-cart-shopping"></i> Lista de Compras</div>
+              <div class="req-topo-sub">Peças e materiais pedidos pela equipe, com fotos para a compra</div>
+            </div>
+            <button type="button" class="btn-submit" onclick="abrirModalItemCompra()"><i class="fa-solid fa-plus"></i> Novo Item</button>
+          </div>
+
+          <div class="req-resumo">
+            <div class="req-kpi kpi-pendente" onclick="filtrarComprasPorKpi('PENDENTE')"><div class="req-kpi-icone"><i class="fa-solid fa-hourglass-half"></i></div><div><div class="req-kpi-num" id="kpiCmpPend">0</div><div class="req-kpi-lbl">Pendentes</div></div></div>
+            <div class="req-kpi kpi-recusado" onclick="filtrarComprasPorKpi('URGENTES')"><div class="req-kpi-icone"><i class="fa-solid fa-triangle-exclamation"></i></div><div><div class="req-kpi-num" id="kpiCmpUrg">0</div><div class="req-kpi-lbl">Urgentes pendentes</div></div></div>
+            <div class="req-kpi kpi-total" onclick="filtrarComprasPorKpi('COMPRADO')"><div class="req-kpi-icone"><i class="fa-solid fa-bag-shopping"></i></div><div><div class="req-kpi-num" id="kpiCmpComp">0</div><div class="req-kpi-lbl">Comprados (a receber)</div></div></div>
+            <div class="req-kpi kpi-atendido" onclick="filtrarComprasPorKpi('ENTREGUE')"><div class="req-kpi-icone"><i class="fa-solid fa-box-open"></i></div><div><div class="req-kpi-num" id="kpiCmpEnt">0</div><div class="req-kpi-lbl">Entregues no mês</div></div></div>
+          </div>
+
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin:14px 0 10px;">
+            <div class="form-group" style="flex:0 0 200px; margin-bottom:0;">
+              <label>Situação:</label>
+              <select id="filtroStatusCmp" onchange="renderizarListaCompras()">
+                <option value="ABERTOS" selected>Pendentes e Comprados</option>
+                <option value="PENDENTE">Pendentes</option>
+                <option value="URGENTES">Urgentes pendentes</option>
+                <option value="COMPRADO">Comprados (a receber)</option>
+                <option value="ENTREGUE">Entregues</option>
+                <option value="CANCELADO">Cancelados</option>
+                <option value="TODOS">Todos</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex:0 0 170px; margin-bottom:0;">
+              <label>Categoria:</label>
+              <select id="filtroCategoriaCmp" onchange="renderizarListaCompras()"><option value="">Todas</option></select>
+            </div>
+            <div class="form-group" style="flex:1; min-width:220px; margin-bottom:0;">
+              <label>Buscar (código, item, solicitante, cliente, OS):</label>
+              <input type="text" id="filtroTextoCmp" oninput="renderizarListaCompras()" placeholder="Digite para buscar...">
+            </div>
+          </div>
+
+          <div class="req-lote-barra">
+            <span id="lblLoteCmp" class="req-lote-info">Marque os itens para imprimir, ou imprima todos os pendentes</span>
+            <span style="flex:1;"></span>
+            <button type="button" id="btnLimparLoteCmp" class="btn-secundario" style="display:none;" onclick="limparSelecaoCompras()">Limpar seleção</button>
+            <button type="button" class="btn-etiqueta" style="height:34px; padding:0 14px; font-size:12px;" onclick="imprimirListaCompras()"><i class="fa-solid fa-print"></i> <span id="lblBtnImprimirCmp">Imprimir pendentes</span></button>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th class="td-center" style="width:34px;"><input type="checkbox" id="chkTodasCmp" title="Selecionar todos os visíveis" onchange="marcarTodasCompras(this.checked)"></th>
+                  <th class="td-center" style="width:70px;">Foto</th>
+                  <th class="td-center" style="width:80px;">Código</th>
+                  <th>Item</th>
+                  <th class="td-center" style="width:60px;">Qtd</th>
+                  <th style="width:120px;">Solicitante</th>
+                  <th style="width:150px;">Cliente</th>
+                  <th class="td-center" style="width:85px;">Ref.</th>
+                  <th class="td-center" style="width:95px;">Data</th>
+                  <th class="td-center" style="width:110px;">Situação</th>
+                  <th class="td-center" style="width:190px;">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="corpoListaCompras">
+                <tr><td colspan="11" class="td-center" style="color:#888; padding:20px;">Carregando itens...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== MAPA DE COTAÇÃO (versão atual, será substituída na próxima etapa) ===== -->
+      <div id="cmpPainelMapa" style="display:none;">
       <div class="card">
         <div class="card-title">
           <span><i class="fa-solid fa-cart-plus"></i> Nova Solicitação & Mapa de Cotação de Compras</span>
@@ -787,6 +890,7 @@
           </table>
         </div>
       </div>
+    </div>
     </div>
 
     <!-- MÓDULO DASHBOARD -->
@@ -1434,6 +1538,101 @@
     </div>
   </div>
 
+  <div id="modalItemCompra" class="modal-overlay">
+    <div class="modal-box" style="width: 720px;">
+      <div class="modal-title">
+        <span id="tituloModalItemCompra">Novo Item da Lista de Compras</span>
+        <span onclick="fecharModalItemCompra()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:3;">
+          <label>Item / descrição:</label>
+          <input type="text" id="cmpItem" placeholder="Ex: ROLAMENTO 6005-2RS (VEDAÇÃO DOS DOIS LADOS)">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>Quantidade:</label>
+          <input type="text" id="cmpQtd" placeholder="Ex: 2">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1;">
+          <label>Solicitante:</label>
+          <input type="text" id="cmpSolicitante" list="listSolicitantesCmp" placeholder="Quem pediu">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>Categoria:</label>
+          <input type="text" id="cmpCategoria" list="listCategoriasCmp" placeholder="DIVERSOS">
+        </div>
+        <div class="form-group" style="flex:1.4;">
+          <label>Cliente:</label>
+          <input type="text" id="cmpCliente" list="listClientesCmp" placeholder="Ex: LINEMED">
+        </div>
+      </div>
+      <div class="form-row" style="align-items:flex-end;">
+        <div class="form-group" style="flex:1.6;">
+          <label>Referência para a compra:</label>
+          <div class="req-tipo-grupo" id="grpRefCmp">
+            <label class="req-tipo-opcao" data-cor="#2563eb"><input type="radio" name="cmpRef" value="FOTO" onchange="pintarOpcoesCmp()"><span><i class="fa-solid fa-camera"></i> Foto</span></label>
+            <label class="req-tipo-opcao" data-cor="#7c3aed"><input type="radio" name="cmpRef" value="AMOSTRA" onchange="pintarOpcoesCmp()"><span><i class="fa-solid fa-paperclip"></i> Amostra</span></label>
+            <label class="req-tipo-opcao" data-cor="#0f766e"><input type="radio" name="cmpRef" value="A/F" onchange="pintarOpcoesCmp()"><span><i class="fa-solid fa-layer-group"></i> Amostra + Foto</span></label>
+            <label class="req-tipo-opcao" data-cor="#64748b"><input type="radio" name="cmpRef" value="" onchange="pintarOpcoesCmp()"><span>Nenhuma</span></label>
+          </div>
+        </div>
+        <div class="form-group" style="flex:0.7;">
+          <label>Nº da OS (opcional):</label>
+          <input type="text" id="cmpOs" placeholder="Ex: 202614537">
+        </div>
+      </div>
+      <label class="cmp-urgente">
+        <input type="checkbox" id="cmpUrgente"> <i class="fa-solid fa-triangle-exclamation"></i> URGENTE
+      </label>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label>Fotos (até 3):</label>
+        <div class="cmp-fotos" id="cmpFotosPrevia"></div>
+        <input type="file" id="cmpInputFotos" accept="image/*" multiple style="display:none;" onchange="adicionarFotosCompra(this.files)">
+        <button type="button" class="btn-secundario" id="btnAddFotoCmp" onclick="document.getElementById('cmpInputFotos').click()"><i class="fa-solid fa-camera"></i> Adicionar foto</button>
+        <span style="font-size:11px; color:#64748b; margin-left:6px;">No celular, abre a câmera. As fotos são reduzidas automaticamente.</span>
+      </div>
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Observação (opcional):</label>
+        <input type="text" id="cmpObs" placeholder="Ex: marca preferida, onde costuma ter, medida...">
+      </div>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button type="button" class="btn-secundario" onclick="fecharModalItemCompra()">Cancelar</button>
+        <button type="button" id="btnSalvarItemCmp" class="btn-submit" onclick="salvarItemCompra()"><i class="fa-solid fa-floppy-disk"></i> Salvar Item</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalStatusCompra" class="modal-overlay">
+    <div class="modal-box" style="width: 460px;">
+      <div class="modal-title">
+        <span id="tituloStatusCompra">-</span>
+        <span onclick="fecharModalStatusCompra()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div id="infoStatusCompra" style="font-size:12px; color:#334155; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; margin-bottom:12px;"></div>
+      <div id="camposCompradoCmp">
+        <div class="form-row">
+          <div class="form-group"><label>Valor pago total (R$, opcional):</label><input type="number" id="cmpValorPago" step="0.01" min="0" placeholder="0,00"></div>
+          <div class="form-group"><label>Loja / fornecedor (opcional):</label><input type="text" id="cmpFornecedor" list="listFornecedoresCmp" placeholder="Onde foi comprado"></div>
+        </div>
+      </div>
+      <div class="form-group" id="campoMotivoCmp" style="margin-bottom:12px;">
+        <label>Motivo do cancelamento (obrigatório):</label>
+        <input type="text" id="cmpMotivo" placeholder="Ex: pedido em duplicidade / não é mais necessário">
+      </div>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button type="button" class="btn-secundario" onclick="fecharModalStatusCompra()">Voltar</button>
+        <button type="button" id="btnConfirmarStatusCmp" class="btn-submit" onclick="confirmarStatusCompra()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <datalist id="listSolicitantesCmp"></datalist>
+  <datalist id="listCategoriasCmp"></datalist>
+  <datalist id="listClientesCmp"></datalist>
+  <datalist id="listFornecedoresCmp"></datalist>
+
   <div id="modalRecusaReq" class="modal-overlay">
     <div class="modal-box" style="width: 480px;">
       <div class="modal-title">
@@ -1612,7 +1811,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
     const NUMERO_WHATSAPP_SUPORTE = "5511970116092";
 
-    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], relacoesAuxiliares: [], locacoes: [], compras: [] };
+    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], relacoesAuxiliares: [], locacoes: [], compras: [], itensCompra: [] };
     let equipamentoSelecionado = null;
     let protocoloReqEmVinculo = null;
     let usuarioLogado = null;
@@ -2069,6 +2268,7 @@
         try { renderizarTabelaOS(); } catch(e) {}
         try { renderizarTabelaLocacao(); } catch(e) {}
         try { renderizarTabelaCompras(); } catch(e) {}
+        try { renderizarListaCompras(); } catch(e) {}
         try { atualizarDashboard(); } catch(e) {}
         try { atualizarNotificacoes(); } catch(e) {}
         try { renderizarUsuariosOnline(); } catch(e) {}
@@ -3428,7 +3628,7 @@
 
       if (nomeAba === 'inicio') { document.getElementById('btnNavInicio').classList.add('active'); document.getElementById('abaInicio').classList.add('active'); }
       else if (nomeAba === 'locacao') { document.getElementById('btnNavLocacao').classList.add('active'); document.getElementById('abaLocacao').classList.add('active'); renderizarTabelaLocacao(); }
-      else if (nomeAba === 'compras') { document.getElementById('btnNavCompras').classList.add('active'); document.getElementById('abaCompras').classList.add('active'); renderizarTabelaCompras(); }
+      else if (nomeAba === 'compras') { document.getElementById('btnNavCompras').classList.add('active'); document.getElementById('abaCompras').classList.add('active'); try { renderizarTabelaCompras(); } catch(e) {} renderizarListaCompras(); }
       else if (nomeAba === 'dashboard') { document.getElementById('btnNavDashboard').classList.add('active'); document.getElementById('abaDashboard').classList.add('active'); atualizarDashboard(); }
       else if (nomeAba === 'requisicoes') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaRequisicoes').classList.add('active'); }
       else if (nomeAba === 'emissao') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaEmissao').classList.add('active'); }
@@ -3854,6 +4054,433 @@
           `).join('');
         }
       }
+    }
+
+    // ===================== MÓDULO DE COMPRAS: LISTA DE COMPRAS =====================
+    var selecaoCompras = new Set();
+    var listaCmpRenderizada = [];
+    var itemCmpEditando = null;                 // código do item em edição (null = novo)
+    var fotosCmpManter = [], fotosCmpNovas = []; // IDs já salvos / dataURLs novas
+    var statusCmpAlvo = null;                   // { codigo, novo }
+    var MAX_FOTOS_CMP = 3;
+
+    function urlFotoCompra(id) { return "https://lh3.googleusercontent.com/d/" + encodeURIComponent(id); }
+    function usuarioAtualCmp() { return usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario || "") : ""; }
+
+    function trocarSubabaCompras(qual) {
+      document.getElementById('cmpPainelLista').style.display = qual === 'lista' ? '' : 'none';
+      document.getElementById('cmpPainelMapa').style.display = qual === 'mapa' ? '' : 'none';
+      document.getElementById('btnSubLista').classList.toggle('ativa', qual === 'lista');
+      document.getElementById('btnSubMapa').classList.toggle('ativa', qual === 'mapa');
+    }
+
+    function preencherListasCompras() {
+      const itens = bancoDados.itensCompra || [];
+      const unicos = (arr) => [...new Set(arr.map(v => (v || "").toString().trim().toUpperCase()).filter(Boolean))].sort();
+      const set = (id, valores) => { const dl = document.getElementById(id); if (dl) dl.innerHTML = valores.map(v => `<option value="${escReq(v)}">`).join(''); };
+      set('listSolicitantesCmp', unicos([...(bancoDados.usuarios || []).map(u => u.nome), ...itens.map(i => i.solicitante)]));
+      const cats = unicos(["DIVERSOS", "ODONTO", ...itens.map(i => i.categoria)]);
+      set('listCategoriasCmp', cats);
+      set('listClientesCmp', unicos(["LINEMED", ...(bancoDados.clientes || []), ...itens.map(i => i.cliente)]));
+      set('listFornecedoresCmp', unicos(itens.map(i => i.fornecedor)));
+      const sel = document.getElementById('filtroCategoriaCmp');
+      if (sel) {
+        const atual = sel.value;
+        sel.innerHTML = '<option value="">Todas</option>' + cats.map(c => `<option value="${escReq(c)}">${escReq(c)}</option>`).join('');
+        sel.value = cats.includes(atual) ? atual : "";
+      }
+    }
+
+    function filtrarComprasPorKpi(valor) {
+      const sel = document.getElementById('filtroStatusCmp');
+      if (sel) sel.value = valor;
+      renderizarListaCompras();
+    }
+
+    // Urgentes pendentes primeiro; depois do mais novo para o mais antigo
+    function ordenarItensCompra(lista) {
+      const num = c => parseInt(String(c || "").replace(/\D/g, ""), 10) || 0;
+      return lista.slice().sort((a, b) => {
+        const ua = a.urgente && a.status === "PENDENTE" ? 1 : 0, ub = b.urgente && b.status === "PENDENTE" ? 1 : 0;
+        return (ub - ua) || (num(b.codigo) - num(a.codigo));
+      });
+    }
+
+    function renderizarListaCompras() {
+      const tbody = document.getElementById('corpoListaCompras');
+      if (!tbody) return;
+      preencherListasCompras();
+      const itens = bancoDados.itensCompra || [];
+
+      // Indicadores
+      const hoje = new Date();
+      const mesAtual = String(hoje.getMonth() + 1).padStart(2, "0") + "/" + hoje.getFullYear();
+      const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
+      setTxt('kpiCmpPend', itens.filter(i => i.status === "PENDENTE").length);
+      setTxt('kpiCmpUrg', itens.filter(i => i.status === "PENDENTE" && i.urgente).length);
+      setTxt('kpiCmpComp', itens.filter(i => i.status === "COMPRADO").length);
+      setTxt('kpiCmpEnt', itens.filter(i => i.status === "ENTREGUE" && /ENTREGUE/.test(i.historico || "") &&
+        (i.historico.split("\n").reverse().find(l => /ENTREGUE/.test(l)) || "").indexOf(mesAtual) !== -1).length);
+
+      // Filtros
+      const st = document.getElementById('filtroStatusCmp')?.value || "ABERTOS";
+      const cat = document.getElementById('filtroCategoriaCmp')?.value || "";
+      const txt = normalizarTextoReq(document.getElementById('filtroTextoCmp')?.value || "");
+      let lista = itens.filter(i => {
+        if (st === "ABERTOS" && !(i.status === "PENDENTE" || i.status === "COMPRADO")) return false;
+        if (st === "URGENTES" && !(i.status === "PENDENTE" && i.urgente)) return false;
+        if (["PENDENTE", "COMPRADO", "ENTREGUE", "CANCELADO"].includes(st) && i.status !== st) return false;
+        if (cat && (i.categoria || "").toUpperCase() !== cat) return false;
+        if (txt && !normalizarTextoReq([i.codigo, i.item, i.solicitante, i.cliente, i.os, i.obs].join(" ")).includes(txt)) return false;
+        return true;
+      });
+      lista = ordenarItensCompra(lista);
+      listaCmpRenderizada = lista;
+
+      if (!lista.length) {
+        tbody.innerHTML = '<tr><td colspan="11" class="td-center" style="color:#888; padding:20px;">Nenhum item encontrado para o filtro selecionado.</td></tr>';
+      } else {
+        tbody.innerHTML = lista.map((i, idx) => {
+          const foto = i.fotos && i.fotos[0]
+            ? `<img class="cmp-thumb" src="${urlFotoCompra(i.fotos[0])}" alt="Foto" loading="lazy" onclick="window.open('${urlFotoCompra(i.fotos[0])}', '_blank')" title="${i.fotos.length} foto(s) - clique para ampliar">`
+            : `<div class="cmp-thumb-vazio"><i class="fa-solid fa-image"></i></div>`;
+          const ref = i.referencia === "A/F" ? "AMOSTRA + FOTO" : (i.referencia || "-");
+          const dias = diasEmAbertoReq(i);
+          const selo = i.status === "PENDENTE" ? seloTempoReq({ dataHora: i.dataHora }, "PENDENTE") : "";
+          let acoes = "";
+          if (i.status === "PENDENTE") acoes = `
+              <button type="button" class="cmp-b-edit" onclick="abrirModalItemCompra('${escReq(i.codigo)}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
+              <button type="button" class="cmp-b-comp" onclick="abrirModalStatusCompra('${escReq(i.codigo)}','COMPRADO')"><i class="fa-solid fa-bag-shopping"></i> Comprado</button>
+              <button type="button" class="cmp-b-canc" onclick="abrirModalStatusCompra('${escReq(i.codigo)}','CANCELADO')" title="Cancelar"><i class="fa-solid fa-xmark"></i></button>`;
+          else if (i.status === "COMPRADO") acoes = `
+              <button type="button" class="cmp-b-edit" onclick="abrirModalItemCompra('${escReq(i.codigo)}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
+              <button type="button" class="cmp-b-ent" onclick="abrirModalStatusCompra('${escReq(i.codigo)}','ENTREGUE')"><i class="fa-solid fa-box-open"></i> Entregue</button>
+              <button type="button" class="cmp-b-reab" onclick="abrirModalStatusCompra('${escReq(i.codigo)}','PENDENTE')" title="Voltar para pendente"><i class="fa-solid fa-rotate-left"></i></button>`;
+          else if (i.status === "CANCELADO") acoes = `
+              <button type="button" class="cmp-b-reab" onclick="abrirModalStatusCompra('${escReq(i.codigo)}','PENDENTE')"><i class="fa-solid fa-rotate-left"></i> Reabrir</button>`;
+          const compraInfo = i.status !== "PENDENTE" && (i.valorPago !== "" || i.fornecedor)
+            ? `<span class="req-enviado" style="color:#1d4ed8;">${i.valorPago !== "" ? "R$ " + Number(i.valorPago).toFixed(2).replace(".", ",") : ""}${i.valorPago !== "" && i.fornecedor ? " · " : ""}${escReq(i.fornecedor || "")}</span>` : "";
+          return `
+          <tr${(i.status === "CANCELADO" || i.status === "ENTREGUE") ? ' class="linha-cmp-inativa"' : ''} title="${escReq(i.historico || '')}">
+            <td class="td-center">${i.status === "CANCELADO" ? "" : `<input type="checkbox" class="chk-req" ${selecaoCompras.has(i.codigo) ? "checked" : ""} onchange="alternarSelecaoCompra('${escReq(i.codigo)}', this.checked)">`}</td>
+            <td class="td-center">${foto}</td>
+            <td class="td-center"><b>${escReq(i.codigo)}</b></td>
+            <td><b>${escReq(i.item)}</b>${i.urgente ? '<span class="cmp-urg">URGENTE</span>' : ''}
+              ${i.os ? `<span class="req-enviado" style="color:#475569;">OS ${escReq(i.os)}</span>` : ''}
+              ${i.obs ? `<span class="req-enviado" style="color:#64748b;">${escReq(i.obs)}</span>` : ''}${compraInfo}</td>
+            <td class="td-center"><b>${escReq(i.qtd)}</b></td>
+            <td>${escReq(i.solicitante || "-")}</td>
+            <td>${escReq(i.cliente || "-")}</td>
+            <td class="td-center" style="font-size:11px;">${escReq(ref)}</td>
+            <td class="td-center">${escReq(String(i.dataHora || "").split(" ")[0] || "-")}</td>
+            <td class="td-center"><span class="cmp-st cmp-st-${i.status}">${i.status}</span>${selo}</td>
+            <td class="td-center"><div class="cmp-acoes">${acoes}</div></td>
+          </tr>`;
+        }).join('');
+      }
+      atualizarBarraCompras();
+    }
+
+    // ----- Seleção para impressão -----
+    function alternarSelecaoCompra(codigo, marcado) {
+      if (marcado) selecaoCompras.add(codigo); else selecaoCompras.delete(codigo);
+      atualizarBarraCompras();
+    }
+    function marcarTodasCompras(marcado) {
+      listaCmpRenderizada.filter(i => i.status !== "CANCELADO").forEach(i => { if (marcado) selecaoCompras.add(i.codigo); else selecaoCompras.delete(i.codigo); });
+      renderizarListaCompras();
+    }
+    function limparSelecaoCompras() { selecaoCompras.clear(); renderizarListaCompras(); }
+    function atualizarBarraCompras() {
+      const n = selecaoCompras.size;
+      const pend = (bancoDados.itensCompra || []).filter(i => i.status === "PENDENTE").length;
+      const lbl = document.getElementById('lblLoteCmp');
+      if (lbl) lbl.innerHTML = n ? `<b>${n}</b> item(ns) selecionado(s) para imprimir` : `Nenhum item marcado: a impressão leva os <b>${pend}</b> pendentes`;
+      const btn = document.getElementById('lblBtnImprimirCmp');
+      if (btn) btn.innerText = n ? `Imprimir selecionados (${n})` : `Imprimir pendentes (${pend})`;
+      const lim = document.getElementById('btnLimparLoteCmp');
+      if (lim) lim.style.display = n ? "" : "none";
+      const chk = document.getElementById('chkTodasCmp');
+      if (chk) {
+        const vis = listaCmpRenderizada.filter(i => i.status !== "CANCELADO");
+        const marc = vis.filter(i => selecaoCompras.has(i.codigo)).length;
+        chk.checked = vis.length > 0 && marc === vis.length;
+        chk.indeterminate = marc > 0 && marc < vis.length;
+      }
+    }
+
+    // ----- Fotos: redução no navegador antes de enviar -----
+    function comprimirImagemCompra(arquivo, maxLado, qualidade) {
+      return new Promise((resolve, reject) => {
+        const leitor = new FileReader();
+        leitor.onerror = () => reject(new Error("Falha ao ler a imagem."));
+        leitor.onload = () => {
+          const img = new Image();
+          img.onerror = () => reject(new Error("Arquivo não é uma imagem válida."));
+          img.onload = () => {
+            const escala = Math.min(1, (maxLado || 1280) / Math.max(img.width, img.height));
+            const c = document.createElement('canvas');
+            c.width = Math.round(img.width * escala); c.height = Math.round(img.height * escala);
+            const ctx = c.getContext('2d');
+            ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, c.width, c.height);
+            ctx.drawImage(img, 0, 0, c.width, c.height);
+            resolve(c.toDataURL('image/jpeg', qualidade || 0.78));
+          };
+          img.src = leitor.result;
+        };
+        leitor.readAsDataURL(arquivo);
+      });
+    }
+
+    async function adicionarFotosCompra(arquivos) {
+      const lista = Array.from(arquivos || []);
+      for (const arq of lista) {
+        if (fotosCmpManter.length + fotosCmpNovas.length >= MAX_FOTOS_CMP) { alert("Limite de " + MAX_FOTOS_CMP + " fotos por item."); break; }
+        try { fotosCmpNovas.push(await comprimirImagemCompra(arq, 1280, 0.78)); }
+        catch (e) { alert(e.message); }
+      }
+      document.getElementById('cmpInputFotos').value = "";
+      desenharFotosCompra();
+    }
+
+    function removerFotoCompra(tipo, idx) {
+      if (tipo === 'manter') fotosCmpManter.splice(idx, 1); else fotosCmpNovas.splice(idx, 1);
+      desenharFotosCompra();
+    }
+
+    function desenharFotosCompra() {
+      const box = document.getElementById('cmpFotosPrevia');
+      const html = fotosCmpManter.map((id, i) => `<div class="cmp-foto-item"><img src="${urlFotoCompra(id)}" alt="Foto"><button type="button" onclick="removerFotoCompra('manter', ${i})" title="Remover">✕</button></div>`)
+        .concat(fotosCmpNovas.map((d, i) => `<div class="cmp-foto-item"><img src="${d}" alt="Foto nova"><button type="button" onclick="removerFotoCompra('nova', ${i})" title="Remover">✕</button></div>`));
+      box.innerHTML = html.join('');
+      document.getElementById('btnAddFotoCmp').disabled = fotosCmpManter.length + fotosCmpNovas.length >= MAX_FOTOS_CMP;
+    }
+
+    function pintarOpcoesCmp() {
+      document.querySelectorAll('#grpRefCmp .req-tipo-opcao').forEach(op => {
+        op.querySelector('span').style.background = op.querySelector('input').checked ? op.dataset.cor : "";
+      });
+    }
+
+    // ----- Cadastro / edição -----
+    function abrirModalItemCompra(codigo) {
+      const i = codigo ? (bancoDados.itensCompra || []).find(x => x.codigo === codigo) : null;
+      itemCmpEditando = i ? i.codigo : null;
+      document.getElementById('tituloModalItemCompra').innerText = i ? "Editar item " + i.codigo : "Novo Item da Lista de Compras";
+      document.getElementById('cmpItem').value = i ? i.item : "";
+      document.getElementById('cmpQtd').value = i ? i.qtd : "";
+      document.getElementById('cmpSolicitante').value = i ? i.solicitante : "";
+      document.getElementById('cmpCategoria').value = i ? i.categoria : "DIVERSOS";
+      document.getElementById('cmpCliente').value = i ? i.cliente : "";
+      document.getElementById('cmpOs').value = i ? i.os : "";
+      document.getElementById('cmpObs').value = i ? i.obs : "";
+      document.getElementById('cmpUrgente').checked = i ? !!i.urgente : false;
+      const ref = i ? (i.referencia || "") : "FOTO";
+      document.querySelectorAll('input[name="cmpRef"]').forEach(r => { r.checked = r.value === ref; });
+      pintarOpcoesCmp();
+      fotosCmpManter = i ? (i.fotos || []).slice() : [];
+      fotosCmpNovas = [];
+      desenharFotosCompra();
+      document.getElementById('modalItemCompra').classList.add('active');
+      setTimeout(() => document.getElementById('cmpItem').focus(), 50);
+    }
+
+    function fecharModalItemCompra() {
+      document.getElementById('modalItemCompra').classList.remove('active');
+      itemCmpEditando = null; fotosCmpManter = []; fotosCmpNovas = [];
+    }
+
+    function salvarItemCompra() {
+      const item = document.getElementById('cmpItem').value.trim();
+      const qtd = document.getElementById('cmpQtd').value.trim();
+      if (!item) { alert("Informe a descrição do item."); return; }
+      if (!qtd) { alert("Informe a quantidade."); return; }
+      const ref = document.querySelector('input[name="cmpRef"]:checked')?.value || "";
+      if ((ref === "FOTO" || ref === "A/F") && !(fotosCmpManter.length + fotosCmpNovas.length)) {
+        if (!confirm("A referência é FOTO, mas nenhuma foto foi adicionada. Salvar mesmo assim?")) return;
+      }
+
+      const payload = {
+        acao: itemCmpEditando ? "ATUALIZAR_ITEM_COMPRA" : "CRIAR_ITEM_COMPRA",
+        codigo: itemCmpEditando || "",
+        item: item, qtd: qtd,
+        solicitante: document.getElementById('cmpSolicitante').value.trim(),
+        categoria: document.getElementById('cmpCategoria').value.trim(),
+        cliente: document.getElementById('cmpCliente').value.trim(),
+        referencia: ref,
+        urgente: document.getElementById('cmpUrgente').checked,
+        os: document.getElementById('cmpOs').value.trim(),
+        obs: document.getElementById('cmpObs').value.trim(),
+        usuario: usuarioAtualCmp()
+      };
+      if (itemCmpEditando) { payload.fotosManter = fotosCmpManter.slice(); payload.fotosNovas = fotosCmpNovas.slice(); }
+      else payload.fotos = fotosCmpNovas.slice();
+
+      const btn = document.getElementById('btnSalvarItemCmp');
+      const original = btn.innerHTML;
+      btn.disabled = true; btn.innerText = fotosCmpNovas.length ? "ENVIANDO FOTOS..." : "SALVANDO...";
+
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
+      .then(r => r.json())
+      .then(res => {
+        btn.disabled = false; btn.innerHTML = original;
+        if (res.status !== "sucesso") { alert("Não foi possível salvar: " + (res.mensagem || "erro desconhecido.")); return; }
+        if (!bancoDados.itensCompra) bancoDados.itensCompra = [];
+        const dadosItem = {
+          item: item.toUpperCase(), qtd: qtd, solicitante: payload.solicitante.toUpperCase(), categoria: (payload.categoria || "DIVERSOS").toUpperCase(),
+          cliente: payload.cliente.toUpperCase(), referencia: ref, urgente: payload.urgente, os: payload.os, obs: payload.obs, fotos: res.fotos || []
+        };
+        if (itemCmpEditando) {
+          const alvo = bancoDados.itensCompra.find(x => x.codigo === itemCmpEditando);
+          if (alvo) Object.assign(alvo, dadosItem);
+        } else {
+          bancoDados.itensCompra.push(Object.assign({ codigo: res.codigo, dataHora: res.dataHora, status: "PENDENTE", historico: "", valorPago: "", fornecedor: "" }, dadosItem));
+        }
+        if (res.aviso) alert(res.aviso);
+        fecharModalItemCompra();
+        renderizarListaCompras();
+        buscarAtualizacoesSilenciosas();
+      })
+      .catch(() => { btn.disabled = false; btn.innerHTML = original; alert("Falha de conexão ao salvar o item."); });
+    }
+
+    // ----- Mudança de situação -----
+    function abrirModalStatusCompra(codigo, novo) {
+      const i = (bancoDados.itensCompra || []).find(x => x.codigo === codigo);
+      if (!i) return;
+      statusCmpAlvo = { codigo: codigo, novo: novo };
+      const titulos = { COMPRADO: "Marcar como comprado", ENTREGUE: "Marcar como entregue", CANCELADO: "Cancelar item", PENDENTE: "Voltar para pendente" };
+      document.getElementById('tituloStatusCompra').innerText = titulos[novo] + " · " + codigo;
+      document.getElementById('infoStatusCompra').innerHTML = `<b>${escReq(i.item)}</b><br>Qtd: ${escReq(i.qtd)} · Solicitante: ${escReq(i.solicitante || '-')} · Cliente: ${escReq(i.cliente || '-')}`;
+      document.getElementById('camposCompradoCmp').style.display = novo === "COMPRADO" ? "" : "none";
+      document.getElementById('campoMotivoCmp').style.display = novo === "CANCELADO" ? "" : "none";
+      document.getElementById('cmpValorPago').value = "";
+      document.getElementById('cmpFornecedor').value = "";
+      document.getElementById('cmpMotivo').value = "";
+      document.getElementById('modalStatusCompra').classList.add('active');
+    }
+
+    function fecharModalStatusCompra() {
+      statusCmpAlvo = null;
+      document.getElementById('modalStatusCompra').classList.remove('active');
+    }
+
+    function confirmarStatusCompra() {
+      if (!statusCmpAlvo) return;
+      const { codigo, novo } = statusCmpAlvo;
+      const motivo = document.getElementById('cmpMotivo').value.trim();
+      if (novo === "CANCELADO" && motivo.length < 3) { alert("Informe o motivo do cancelamento."); return; }
+      const valor = document.getElementById('cmpValorPago').value;
+      const fornecedor = document.getElementById('cmpFornecedor').value.trim();
+
+      const btn = document.getElementById('btnConfirmarStatusCmp');
+      btn.disabled = true; btn.innerText = "SALVANDO...";
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "ALTERAR_STATUS_ITEM_COMPRA", codigo, novoStatus: novo, valor, fornecedor, motivo, usuario: usuarioAtualCmp() }) })
+      .then(r => r.json())
+      .then(res => {
+        btn.disabled = false; btn.innerText = "Confirmar";
+        if (res.status !== "sucesso") { alert("Não foi possível alterar: " + (res.mensagem || "erro desconhecido.")); return; }
+        const i = (bancoDados.itensCompra || []).find(x => x.codigo === codigo);
+        if (i) {
+          i.status = novo;
+          if (novo === "COMPRADO") { if (valor !== "") i.valorPago = Number(valor); if (fornecedor) i.fornecedor = fornecedor.toUpperCase(); }
+          const agora = new Date();
+          i.historico = (i.historico ? i.historico + "\n" : "") + agora.toLocaleDateString('pt-BR') + " " + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + " - " + novo;
+        }
+        if (novo === "CANCELADO") selecaoCompras.delete(codigo);
+        fecharModalStatusCompra();
+        renderizarListaCompras();
+        buscarAtualizacoesSilenciosas();
+      })
+      .catch(() => { btn.disabled = false; btn.innerText = "Confirmar"; alert("Falha de conexão."); });
+    }
+
+    // ----- Relatório impresso (foto + descrição em letra grande) -----
+    function imprimirListaCompras() {
+      let itens = (bancoDados.itensCompra || []).filter(i => selecaoCompras.size ? selecaoCompras.has(i.codigo) : i.status === "PENDENTE");
+      itens = itens.filter(i => i.status !== "CANCELADO");
+      if (!itens.length) { alert(selecaoCompras.size ? "Nenhum item selecionado." : "Não há itens pendentes para imprimir."); return; }
+      itens = ordenarItensCompra(itens);
+
+      const urg = itens.filter(i => i.urgente && i.status === "PENDENTE").length;
+      const hoje = new Date();
+      const dataTxt = hoje.toLocaleDateString('pt-BR');
+
+      const cartoes = itens.map(i => {
+        const fotos = (i.fotos || []).slice(0, 3);
+        let areaFoto;
+        if (fotos.length === 1) areaFoto = `<img class="f1" src="${urlFotoCompra(fotos[0])}">`;
+        else if (fotos.length > 1) areaFoto = `<img class="f1" src="${urlFotoCompra(fotos[0])}"><div class="fmini">${fotos.slice(1).map(f => `<img src="${urlFotoCompra(f)}">`).join('')}</div>`;
+        else if (i.referencia === "AMOSTRA" || i.referencia === "A/F") areaFoto = `<div class="semfoto">AMOSTRA<br>FÍSICA<br><small>(junto à lista)</small></div>`;
+        else areaFoto = `<div class="semfoto">SEM FOTO</div>`;
+        const ref = i.referencia === "A/F" ? "AMOSTRA + FOTO" : (i.referencia || "—");
+        return `
+          <div class="cartao${i.urgente && i.status === "PENDENTE" ? ' urgente' : ''}">
+            <div class="foto">${areaFoto}</div>
+            <div class="info">
+              <div class="linha1"><span class="cod">${escReq(i.codigo)}</span>${i.urgente && i.status === "PENDENTE" ? '<span class="urg">⚠ URGENTE</span>' : ''}${i.status === "COMPRADO" ? '<span class="jac">JÁ COMPRADO</span>' : ''}</div>
+              <div class="desc">${escReq(i.item)}</div>
+              <div class="qtd">QUANTIDADE: <b>${escReq(i.qtd)}</b><span class="ref">REF.: ${escReq(ref)}</span></div>
+              <div class="meta">Cliente: <b>${escReq(i.cliente || "—")}</b></div>
+              <div class="meta">Pedido por: <b>${escReq(i.solicitante || "—")}</b>${i.os ? ` · OS <b>${escReq(i.os)}</b>` : ""}</div>
+              ${i.obs ? `<div class="meta">Obs.: ${escReq(i.obs)}</div>` : ""}
+              <div class="anota"><span class="chk">☐ COMPRADO</span><span class="campo">Valor:<i></i></span><span class="campo">Loja:<i></i></span></div>
+            </div>
+          </div>`;
+      }).join('');
+
+      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Lista de Compras ${dataTxt}</title><style>
+        @page { size: A4 portrait; margin: 10mm; }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { margin: 0; font-family: Arial, Helvetica, sans-serif; color: #0f172a; }
+        .cab { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1mm solid #1e3a8a; padding-bottom: 2mm; margin-bottom: 3mm; }
+        .cab h1 { margin: 0; font-size: 24pt; color: #1e3a8a; }
+        .cab .resumo { font-size: 13pt; font-weight: bold; text-align: right; }
+        .cab .resumo .u { color: #be123c; }
+        .cartao { display: flex; gap: 4mm; border: 0.4mm solid #94a3b8; border-radius: 3mm; padding: 3mm; margin-bottom: 3.5mm; height: 81mm; break-inside: avoid; page-break-inside: avoid; }
+        .cartao.urgente { border: 0.9mm solid #e11d48; }
+        .foto { width: 78mm; flex-shrink: 0; display: flex; flex-direction: column; gap: 1.5mm; }
+        .foto .f1 { width: 78mm; flex: 1; min-height: 0; object-fit: contain; border-radius: 2mm; background: #f8fafc; }
+        .fmini { display: flex; gap: 1.5mm; height: 17mm; }
+        .fmini img { flex: 1; min-width: 0; height: 17mm; object-fit: cover; border-radius: 1.5mm; }
+        .semfoto { flex: 1; border: 0.5mm dashed #94a3b8; border-radius: 2mm; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-size: 16pt; font-weight: bold; color: #475569; line-height: 1.3; }
+        .semfoto small { font-size: 11pt; font-weight: normal; }
+        .info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+        .linha1 { display: flex; gap: 3mm; align-items: center; }
+        .cod { font-size: 16pt; font-weight: 900; color: #1e3a8a; }
+        .urg { font-size: 13pt; font-weight: 900; color: #fff; background: #e11d48; padding: 0.5mm 3mm; border-radius: 1.5mm; }
+        .jac { font-size: 11pt; font-weight: bold; color: #1d4ed8; border: 0.4mm solid #1d4ed8; padding: 0.3mm 2mm; border-radius: 1.5mm; }
+        .desc { font-size: 21pt; font-weight: 900; line-height: 1.15; margin: 1.5mm 0 2.5mm; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .qtd { font-size: 17pt; margin-bottom: 2mm; }
+        .qtd b { font-size: 23pt; }
+        .ref { font-size: 13pt; font-weight: bold; color: #475569; margin-left: 6mm; }
+        .meta { font-size: 12.5pt; color: #334155; margin-bottom: 1.2mm; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .anota { margin-top: auto; display: flex; gap: 5mm; align-items: flex-end; font-size: 13pt; font-weight: bold; color: #334155; }
+        .chk { font-size: 15pt; color: #0f172a; white-space: nowrap; }
+        .campo { flex: 1; display: flex; align-items: flex-end; gap: 2mm; white-space: nowrap; }
+        .campo i { flex: 1; border-bottom: 0.4mm solid #64748b; height: 5mm; }
+      </style></head><body>
+        <div class="cab"><h1>LISTA DE COMPRAS</h1><div class="resumo">${dataTxt} · ${itens.length} ite${itens.length > 1 ? 'ns' : 'm'}${urg ? ` · <span class="u">${urg} URGENTE${urg > 1 ? 'S' : ''}</span>` : ''}</div></div>
+        ${cartoes}
+      </body></html>`;
+
+      // Impressão por iframe oculto; espera as fotos carregarem (máx. 8 s)
+      const ifr = document.createElement('iframe');
+      ifr.style.cssText = "position:fixed; right:0; bottom:0; width:0; height:0; border:0;";
+      document.body.appendChild(ifr);
+      const doc = ifr.contentWindow.document;
+      doc.open(); doc.write(html); doc.close();
+      const imgs = Array.from(doc.images);
+      let pendentes = imgs.filter(im => !im.complete).length;
+      let impresso = false;
+      const imprimir = () => {
+        if (impresso) return; impresso = true;
+        try { ifr.contentWindow.focus(); ifr.contentWindow.print(); } catch (e) { alert("Não foi possível abrir a impressão."); }
+        setTimeout(() => ifr.remove(), 5000);
+      };
+      if (!pendentes) setTimeout(imprimir, 300);
+      imgs.forEach(im => { if (!im.complete) { im.onload = im.onerror = () => { if (--pendentes <= 0) setTimeout(imprimir, 200); }; } });
+      setTimeout(imprimir, 8000);
     }
 
     // ===== PAINEL DA QUALIDADE (DASHBOARD) =====
