@@ -2191,9 +2191,14 @@
 
       const dataEtq = String(r.dataHora || "").split(" ")[0] || new Date().toLocaleDateString('pt-BR');
 
-      return `<div class="etq" style="--cor:${cor};">
+      // Empréstimo: aviso de que o equipamento entregue volta para a Linemed
+      const ehEmprestimo = normalizarTextoReq(r.operacao).indexOf("EMPREST") !== -1;
+      const avisoEmp = ehEmprestimo ? '<div class="aviso-emp">⚠ EMPRÉSTIMO — RETORNA À LINEMED</div>' : '';
+
+      return `<div class="etq${ehEmprestimo ? ' compacta' : ''}" style="--cor:${cor};">
           <div class="faixa"><span class="tipo">${escReq(cfg ? cfg.nome : "TIPO NÃO INFORMADO")}</span><span class="req">${escReq(r.protocolo || "-")}</span></div>
           <div class="instr">${escReq(cfg ? cfg.instrucao : "CONFIRMAR ANTES DA ENTREGA")}</div>
+          ${avisoEmp}
           <div class="lin cli"><span class="rot">CLIENTE:</span><b>${escReq(r.cliente || "-")}</b></div>
           <div class="lin cli"><span class="rot">ENTREGAR:</span><b>${escReq(entregar)}</b></div>
           ${linhaRetirar}
@@ -2227,6 +2232,11 @@
         .cli { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
         .rot { display: inline-block; width: 16mm; font-weight: bold; color: #475569; font-size: 7.2pt; }
         .destaque { font-weight: 900; font-size: 8.8pt; }
+        .compacta .faixa { padding: 0.8mm 2.3mm; }
+        .compacta .tipo { font-size: 13.5pt; }
+        .compacta .instr { font-size: 10.5pt; padding: 0.2mm; margin: 0.9mm 0; }
+        .compacta .lin { line-height: 1.18; }
+        .aviso-emp { margin: -0.4mm 0 1mm; background: #1e293b; color: #fff; border-radius: 1mm; text-align: center; font-size: 8pt; font-weight: 900; padding: 0.4mm; letter-spacing: 0.2mm; }
         .rodape { margin-top: auto; display: flex; justify-content: space-between; font-size: 6.3pt; color: #64748b; font-weight: bold; }
       </style></head><body>${folhas}</body></html>`;
 
