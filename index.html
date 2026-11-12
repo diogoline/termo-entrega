@@ -251,6 +251,18 @@
     .modal-box { border-radius:18px; box-shadow:0 30px 70px rgba(11,37,69,.45); }
     .modal-overlay.active .modal-box { animation:fadeIn .22s ease-out; }
     .modal-title { color:#0b2545; border-bottom:2px solid transparent; border-image:linear-gradient(90deg,#2563eb,#06b6d4 60%,#22c55e) 1; }
+    .manual-sec { border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; background:#fff; }
+    .manual-sec summary { cursor:pointer; padding:10px 14px; font-weight:bold; color:#1a4d80; font-size:13px; display:flex; align-items:center; gap:8px; }
+    .manual-sec summary:hover { background:#f8fafc; border-radius:10px; }
+    .manual-sec[open] summary { border-bottom:1px solid #e2e8f0; border-radius:10px 10px 0 0; }
+    .manual-conteudo { padding:10px 16px 12px; }
+    .manual-conteudo ol, .manual-conteudo ul { padding-left:20px; margin:4px 0 8px; }
+    .manual-conteudo li { margin-bottom:4px; }
+    .manual-dica { background:#eff6ff; border-left:3px solid #2563eb; padding:8px 10px; border-radius:6px; font-size:12px; margin:8px 0; }
+    .manual-alerta { background:#fffbeb; border-left:3px solid #f59e0b; padding:8px 10px; border-radius:6px; font-size:12px; margin:8px 0; }
+    .manual-tabela { width:100%; border-collapse:collapse; font-size:12px; margin:6px 0 8px; }
+    .manual-tabela th { background:#f1f5f9; text-align:left; padding:6px 8px; border:1px solid #e2e8f0; }
+    .manual-tabela td { padding:6px 8px; border:1px solid #e2e8f0; }
     .modal-manual-card { border-radius:18px; } .modal-manual-header { background:linear-gradient(115deg,#0b2545,#1a4d80); }
 
     /* Chat */
@@ -1384,14 +1396,135 @@
         <button type="button" class="btn-fechar-manual" onclick="fecharModalManual()"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-manual-body">
-        <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-boxes-packing"></i> 1. Controle de Locação</h4>
-        <p style="margin-bottom:12px;">Consulte saldos contratados vs. entregues por cliente e unidade hospitalar. Ajuste saldos físicos, valores e adicione notas de log com data e hora diretamente pelo botão <b>"Ajustar"</b>.</p>
-        <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-cart-shopping"></i> 2. Módulo de Compras & Mapa Comparativo</h4>
-        <p style="margin-bottom:12px;">Cadastre cotações informando 3 fornecedores. O sistema destaca a menor proposta em verde e registra a cotação com cálculo automático.</p>
-        <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-shield-halved"></i> 3. Módulo Qualidade & Termos</h4>
-        <p style="margin-bottom:12px;">Acompanhe requisições internas, atenda com emissão do Termo Duplo de Entrega e Higienização ou vincule termos já emitidos pelo botão <b>"Vincular"</b>.</p>
-        <h4 style="color:#1a4d80; margin-bottom:8px; font-size:14px;"><i class="fa-solid fa-screwdriver-wrench"></i> 4. Manutenção e O.S.</h4>
-        <p>Acompanhe e abra ordens de serviço preventivas e corretivas com priorização por cores.</p>
+        <p style="margin-bottom:14px;">Clique em cada tópico para abrir. O <b>Módulo Qualidade</b> está detalhado passo a passo; os demais módulos têm um resumo no final.</p>
+
+        <h4 style="color:#1a4d80; margin:4px 0 10px; font-size:14px;"><i class="fa-solid fa-shield-halved"></i> Módulo Qualidade: Requisições e Termos</h4>
+
+        <details class="manual-sec" open>
+          <summary><i class="fa-solid fa-route"></i> Como funciona (visão geral)</summary>
+          <div class="manual-conteudo">
+            <ol>
+              <li><b>Administrativo</b> abre a requisição (REQ) informando o cliente, o tipo e o equipamento.</li>
+              <li><b>Qualidade</b> escolhe o equipamento, gera o <b>termo de entrega</b> e imprime a <b>etiqueta</b>.</li>
+              <li>O <b>técnico</b> entrega seguindo a etiqueta: só entregar, ou entregar e retirar.</li>
+            </ol>
+            <p>Situações da requisição: <b style="color:#b45309;">PENDENTE</b> (aguardando a Qualidade) → <b style="color:#047857;">ATENDIDA</b> (termo gerado) ou <b style="color:#be123c;">NEGADA</b> (com motivo).</p>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-file-circle-plus"></i> 1. Abrir uma requisição (Administrativo)</summary>
+          <div class="manual-conteudo">
+            <ol>
+              <li>Clique em <b>Nova Requisição</b>.</li>
+              <li><b>Cliente:</b> escolha da lista (evite digitar, para não haver nomes diferentes do mesmo cliente).</li>
+              <li><b>Operação:</b> Locação, Empréstimo ou Venda.</li>
+              <li><b>Tipo de Solicitação</b>, que diz ao técnico o que fazer no cliente:
+                <ul>
+                  <li><b style="color:#be123c;">Substituição</b>: entregar um equipamento <b>e retirar</b> outro.</li>
+                  <li><b style="color:#c2410c;">Reposição</b>: <b>somente entregar</b>.</li>
+                  <li><b style="color:#047857;">Nova Locação</b>: <b>somente entregar</b> (equipamento a mais).</li>
+                </ul>
+              </li>
+              <li><b>Equipamento a Substituir:</b> digite a TAG, a série ou o nome e escolha na lista. É obrigatório só em <b>Substituição</b>. Ao escolher, a família do equipamento solicitado é preenchida sozinha.</li>
+              <li><b>Equipamento Solicitado</b> e <b>Motivo</b>: confira e clique em <b>Enviar Requisição e Gerar PDF</b>.</li>
+            </ol>
+            <div class="manual-dica"><b>Empréstimo:</b> marque a Operação <b>Empréstimo</b> e escolha o tipo pelo que o técnico faz: retira o equipamento do cliente na mesma visita → <b>Substituição</b>; só deixa o emprestado → <b>Reposição</b>. A etiqueta avisa que o equipamento retorna à Linemed.</div>
+            <div class="manual-alerta"><b>Avisos ao enviar:</b> o sistema pergunta antes de continuar se já existe requisição aberta do mesmo cliente e equipamento (ou da mesma TAG), ou se o cliente ou o equipamento não estão nas listas. Confira para não duplicar.</div>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-gauge"></i> 2. Acompanhar as requisições</summary>
+          <div class="manual-conteudo">
+            <ul>
+              <li><b>Indicadores no topo:</b> Pendentes, Atendidas, Negadas, Total e Tempo médio de atendimento. <b>Clique em um indicador</b> para filtrar a lista.</li>
+              <li><b>Pendentes aparecem sempre</b>, de qualquer mês. O filtro de mês vale para atendidas e negadas.</li>
+              <li><b>Dias em aberto</b> abaixo do status: <span style="color:#047857; font-weight:bold;">verde</span> até 2 dias, <span style="color:#b45309; font-weight:bold;">amarelo</span> até 5, <span style="color:#be123c; font-weight:bold;">vermelho</span> acima de 5. Nas atendidas, aparece quanto tempo levou.</li>
+              <li><b>Negadas ficam ocultas</b> por padrão. Para vê-las, clique no indicador <b>Negadas</b> ou escolha no filtro de status.</li>
+              <li>Depois do termo, a linha mostra <b>"Enviado: TAG"</b> com o equipamento que foi de fato.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-check"></i> 3. Atender e gerar o termo (Qualidade)</summary>
+          <div class="manual-conteudo">
+            <ol>
+              <li>Na requisição pendente, clique em <b>Atender</b>. A tela de emissão abre já com o cliente e a REQ vinculada.</li>
+              <li>Pesquise o equipamento pela TAG, série ou patrimônio, confira os acessórios e colete as assinaturas.</li>
+              <li>Clique em <b>Gerar Termo</b>. Ao terminar, abre uma janela com <b>Abrir PDF do Termo</b> e <b>Imprimir Etiqueta</b>.</li>
+            </ol>
+            <div class="manual-dica">O PDF do termo mostra o número da <b style="color:#dc2626;">REQUISIÇÃO</b> em vermelho, ao lado do protocolo.</div>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-link"></i> 4. Vincular um termo já emitido</summary>
+          <div class="manual-conteudo">
+            <p>Use quando o termo foi gerado antes da requisição. Clique em <b>Vincular</b> e informe o número do termo (ex.: PT0072).</p>
+            <ul>
+              <li>Termo que <b>não existe</b>, <b>cancelado</b> ou <b>já vinculado</b> a outra requisição é bloqueado.</li>
+              <li>Termo de <b>outro cliente</b>: o sistema pergunta antes. Na dúvida, clique em <b>Cancelar</b> e confira o número.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-ban"></i> 5. Negar uma requisição</summary>
+          <div class="manual-conteudo">
+            <p>Clique em <b>Negar</b>, informe o motivo (obrigatório) e confirme. Só requisições pendentes podem ser negadas; o motivo e o usuário ficam registrados.</p>
+            <div class="manual-alerta"><b>Testes:</b> nunca apague linhas na planilha. Para testar, abra a requisição e depois <b>negue com o motivo "TESTE"</b>.</div>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-tags"></i> 6. Etiquetas (individual e em lote)</summary>
+          <div class="manual-conteudo">
+            <p><b>Uma etiqueta:</b> botão <i class="fa-solid fa-tag"></i> na linha da requisição, ou <b>Imprimir Etiqueta</b> logo após gerar o termo.</p>
+            <p><b>Várias de uma vez:</b></p>
+            <ol>
+              <li>Marque as caixinhas das requisições, ou a caixinha do cabeçalho para todas as visíveis, ou clique em <b>Termos de hoje</b>.</li>
+              <li>Clique em <b>Imprimir etiquetas</b>: saem <b>10 por folha A4</b>, agrupadas por cliente.</li>
+            </ol>
+            <div class="manual-alerta"><b>Na impressão:</b> papel A4, escala <b>100% (Padrão)</b>. Não marque "Ajustar à página". Recorte nas linhas tracejadas (9,5 × 5 cm).</div>
+            <p><b>Como ler a etiqueta:</b></p>
+            <table class="manual-tabela">
+              <tr><th>Faixa</th><th>Instrução</th><th>O técnico</th></tr>
+              <tr><td style="color:#be123c; font-weight:bold;">SUBSTITUIÇÃO</td><td>ENTREGAR E RETIRAR</td><td>Entrega o da linha ENTREGAR e traz o da linha RETIRAR</td></tr>
+              <tr><td style="color:#c2410c; font-weight:bold;">REPOSIÇÃO</td><td>SOMENTE ENTREGAR</td><td>Só entrega; não há nada para retirar</td></tr>
+              <tr><td style="color:#047857; font-weight:bold;">NOVA LOCAÇÃO</td><td>SOMENTE ENTREGAR</td><td>Só entrega; não há nada para retirar</td></tr>
+            </table>
+            <ul>
+              <li>Faixa preta <b>"EMPRÉSTIMO — RETORNA À LINEMED"</b>: o equipamento entregue volta depois.</li>
+              <li>"(a definir pela Qualidade)" no ENTREGAR: o termo ainda não foi gerado. Imprima a etiqueta <b>depois do termo</b>, para sair com a TAG.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-rotate-left"></i> 7. Cancelar e reemitir um termo</summary>
+          <div class="manual-conteudo">
+            <ol>
+              <li>Na <b>Consulta de Termos</b>, clique em <b>Cancelar</b> no termo errado.</li>
+              <li>Informe o motivo. Deixe marcado <b>"Reemitir agora"</b> para abrir a emissão já com o mesmo cliente e requisição.</li>
+              <li>Gere o termo correto. Os dois ficam ligados: o novo indica qual substitui.</li>
+            </ol>
+            <p>O termo cancelado <b>não é apagado</b>: fica riscado, com motivo e usuário, e o PDF é mantido com o nome iniciado por <b>CANCELADO_</b>. Use o filtro <b>Ativos / Cancelados / Todos</b> para consultar.</p>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-file-excel"></i> 8. Exportar para Excel</summary>
+          <div class="manual-conteudo">
+            <p>Filtre a lista como quiser (mês, status, cliente) e clique em <b>Exportar Excel</b>. O arquivo traz exatamente o que está na tela, com dias em aberto, tempo de atendimento e a TAG enviada.</p>
+          </div>
+        </details>
+
+        <h4 style="color:#1a4d80; margin:20px 0 8px; font-size:14px;"><i class="fa-solid fa-layer-group"></i> Outros módulos</h4>
+        <p style="margin-bottom:8px;"><b><i class="fa-solid fa-boxes-packing"></i> Controle de Locação:</b> consulte saldos contratados vs. entregues por cliente e unidade hospitalar. Ajuste saldos físicos, valores e adicione notas de log com data e hora pelo botão <b>"Ajustar"</b>.</p>
+        <p style="margin-bottom:8px;"><b><i class="fa-solid fa-cart-shopping"></i> Módulo de Compras & Mapa Comparativo:</b> cadastre cotações informando 3 fornecedores. O sistema destaca a menor proposta em verde e registra a cotação com cálculo automático.</p>
+        <p><b><i class="fa-solid fa-screwdriver-wrench"></i> Manutenção e O.S.:</b> acompanhe e abra ordens de serviço preventivas e corretivas com priorização por cores.</p>
       </div>
     </div>
   </div>
