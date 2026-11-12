@@ -362,6 +362,55 @@
     .kpi-tma .req-kpi-icone { background:#ccfbf1; color:#0f766e; }
     .linha-negada td { opacity:.55; }
     .linha-negada:hover td { opacity:.9; }
+    /* ================= PAINEL DA QUALIDADE (DASHBOARD) ================= */
+    .dsh { --bg:#0b1220; --card:#111a2e; --borda:#1f2b45; --txt:#e2e8f0; --txt2:#94a3b8; --grade:#1e293b; --trilho:#1a2540;
+           background:var(--bg); color:var(--txt); border-radius:16px; padding:18px; }
+    .dsh[data-tema="claro"] { --bg:#eef2f7; --card:#ffffff; --borda:#e2e8f0; --txt:#0f172a; --txt2:#64748b; --grade:#e2e8f0; --trilho:#eef2f7; }
+    .dsh:fullscreen { border-radius:0; overflow:auto; padding:24px; }
+    .dsh-topo { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+    .dsh-titulo { font-size:19px; font-weight:800; display:flex; gap:8px; align-items:center; }
+    .dsh-sub { font-size:12px; color:var(--txt2); margin-top:3px; }
+    .dsh-controles { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .dsh-controles input, .dsh-controles select { background:var(--card); color:var(--txt); border:1px solid var(--borda); border-radius:8px; padding:7px 10px; font-size:12px; height:34px; width:auto; color-scheme:dark; }
+    .dsh[data-tema="claro"] .dsh-controles input, .dsh[data-tema="claro"] .dsh-controles select { color-scheme:light; }
+    .dsh-btn { background:var(--card); color:var(--txt); border:1px solid var(--borda); border-radius:8px; padding:0 12px; height:34px; font-size:12px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+    .dsh-btn:hover { border-color:#3b82f6; }
+    .dsh-kpis { display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:12px; margin-bottom:14px; }
+    .dsh-kpi { background:var(--card); border:1px solid var(--borda); border-top:3px solid var(--c); border-radius:12px; padding:12px 14px; }
+    .dsh-kpi-lbl { font-size:10.5px; font-weight:bold; text-transform:uppercase; letter-spacing:.4px; color:var(--txt2); display:flex; gap:6px; align-items:center; }
+    .dsh-kpi-lbl i { color:var(--c); }
+    .dsh-kpi-num { font-size:26px; font-weight:800; margin-top:6px; line-height:1.1; }
+    .dsh-kpi-sub { font-size:11px; color:var(--txt2); margin-top:4px; min-height:15px; }
+    .dsh-up { color:#10b981; font-weight:bold; } .dsh-down { color:#f43f5e; font-weight:bold; } .dsh-neutro { color:var(--txt2); font-weight:bold; }
+    .dsh-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; margin-bottom:12px; }
+    .dsh-span2 { grid-column:span 2; }
+    @media (max-width: 1000px) { .dsh-grid { grid-template-columns:1fr; } .dsh-span2 { grid-column:auto; } }
+    .dsh-card { background:var(--card); border:1px solid var(--borda); border-radius:12px; padding:14px; min-width:0; }
+    .dsh-card-tit { font-size:12.5px; font-weight:800; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .dsh-card-tag { font-size:10px; font-weight:bold; color:var(--txt2); border:1px solid var(--borda); border-radius:20px; padding:1px 8px; }
+    .dsh-vazio { color:var(--txt2); font-size:12px; text-align:center; padding:24px 0; }
+    .dsh-barra { margin-bottom:10px; }
+    .dsh-barra-top { display:flex; justify-content:space-between; gap:8px; font-size:11.5px; margin-bottom:4px; }
+    .dsh-barra-top span:first-child { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .dsh-barra-top b { flex-shrink:0; }
+    .dsh-trilho { background:var(--trilho); border-radius:6px; height:9px; overflow:hidden; }
+    .dsh-preenche { height:100%; border-radius:6px; }
+    .dsh-svg { width:100%; height:auto; display:block; }
+    .dsh svg text { fill:var(--txt2); font-size:10.5px; font-family:inherit; }
+    .dsh-legenda { display:flex; gap:14px; flex-wrap:wrap; font-size:11px; color:var(--txt2); margin-top:6px; }
+    .dsh-legenda i { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:-1px; }
+    .dsh-rosca { display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center; }
+    .dsh-rosca-leg { flex:1; min-width:150px; font-size:11.5px; }
+    .dsh-rosca-leg div { display:flex; justify-content:space-between; gap:8px; padding:5px 0; border-bottom:1px solid var(--grade); }
+    .dsh-rosca-leg i { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px; }
+    .dsh-lista-item { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:7px 8px; border-radius:8px; border:1px solid var(--borda); margin-bottom:6px; font-size:11.5px; }
+    .dsh-lista-item.clicavel { cursor:pointer; }
+    .dsh-lista-item.clicavel:hover { border-color:#3b82f6; }
+    .dsh-lista-item .dsh-li-txt { min-width:0; }
+    .dsh-lista-item .dsh-li-txt div { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .dsh-li-sub { color:var(--txt2); font-size:10.5px; }
+    .dsh-pilula { flex-shrink:0; font-size:10.5px; font-weight:bold; padding:2px 8px; border-radius:20px; color:#fff; }
+    .dsh-rodape { font-size:10.5px; color:var(--txt2); text-align:right; margin-top:4px; }
     .req-lote-barra { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:8px 10px; margin-bottom:10px; }
     .req-lote-info { font-size:12px; color:#475569; }
     .btn-etiqueta:disabled { background:#cbd5e1; box-shadow:none; cursor:not-allowed; transform:none; }
@@ -742,56 +791,73 @@
 
     <!-- MÓDULO DASHBOARD -->
     <div id="abaDashboard" class="tab-content">
-      <div class="card" style="margin-bottom: 16px;">
-        <div class="card-title"><span>Filtro de Período das Métricas</span></div>
-        <div class="form-row" style="align-items: center; margin-bottom: 0;">
-          <div class="form-group" style="flex: 1;">
-            <label>Selecione o Mês / Ano:</label>
-            <input type="month" id="dashFiltroMes" onchange="atualizarDashboard()">
+      <div class="dsh" id="dshPainel" data-tema="escuro">
+        <div class="dsh-topo">
+          <div>
+            <div class="dsh-titulo"><i class="fa-solid fa-chart-line"></i> Painel da Qualidade</div>
+            <div class="dsh-sub" id="dshSub">Requisições, termos e entregas</div>
           </div>
-          <div class="form-group" style="flex: 1;">
-            <label>Modo de Período:</label>
-            <select id="dashModoPeriodo" onchange="atualizarDashboard()">
-              <option value="MES">Apenas o Mês Selecionado</option>
-              <option value="GERAL">Todo o Histórico (Geral)</option>
+          <div class="dsh-controles">
+            <input type="month" id="dashFiltroMes" onchange="atualizarDashboard()" title="Mês de referência">
+            <select id="dashModoPeriodo" onchange="atualizarDashboard()" title="Período">
+              <option value="MES">Mês selecionado</option>
+              <option value="GERAL">Todo o histórico</option>
             </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="dash-metrics">
-        <div class="metric-card">
-          <div class="metric-title">Total de Requisições</div>
-          <div class="metric-value" id="dashTotalReq">0</div>
-        </div>
-        <div class="metric-card yellow">
-          <div class="metric-title">Pendentes de Envio</div>
-          <div class="metric-value" id="dashPendentes">0</div>
-        </div>
-        <div class="metric-card green">
-          <div class="metric-title">Atendidas pela Qualidade</div>
-          <div class="metric-value" id="dashAtendidos">0</div>
-        </div>
-        <div class="metric-card red">
-          <div class="metric-title">Recusadas / Negadas</div>
-          <div class="metric-value" id="dashRecusados">0</div>
-        </div>
-      </div>
-
-      <div class="dash-charts-grid">
-        <div class="card">
-          <div class="card-title">Top Clientes em Demandas de Troca</div>
-          <div id="chartClientes" style="padding-top: 10px;">
-            <div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>
+            <button type="button" class="dsh-btn" onclick="alternarTemaDashboard()" title="Alternar tema claro/escuro"><i class="fa-solid fa-circle-half-stroke"></i> <span id="lblTemaDash">Tema claro</span></button>
+            <button type="button" class="dsh-btn" onclick="telaCheiaDashboard()" title="Tela cheia (modo TV)"><i class="fa-solid fa-expand"></i> Tela cheia</button>
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-title">Demandas por Família de Equipamentos</div>
-          <div id="chartFamilias" style="padding-top: 10px;">
-            <div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>
+        <div class="dsh-kpis">
+          <div class="dsh-kpi" style="--c:#3b82f6;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-clipboard-list"></i> Requisições</div><div class="dsh-kpi-num" id="dkReq">0</div><div class="dsh-kpi-sub" id="dkReqSub"></div></div>
+          <div class="dsh-kpi" style="--c:#f59e0b;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-hourglass-half"></i> Pendentes (todas)</div><div class="dsh-kpi-num" id="dkPend">0</div><div class="dsh-kpi-sub" id="dkPendSub"></div></div>
+          <div class="dsh-kpi" style="--c:#10b981;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-circle-check"></i> Taxa de atendimento</div><div class="dsh-kpi-num" id="dkTaxa">-</div><div class="dsh-kpi-sub" id="dkTaxaSub"></div></div>
+          <div class="dsh-kpi" style="--c:#06b6d4;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-stopwatch"></i> Tempo médio de atendimento</div><div class="dsh-kpi-num" id="dkTma">-</div><div class="dsh-kpi-sub" id="dkTmaSub"></div></div>
+          <div class="dsh-kpi" style="--c:#6366f1;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-file-signature"></i> Termos emitidos</div><div class="dsh-kpi-num" id="dkTermos">0</div><div class="dsh-kpi-sub" id="dkTermosSub"></div></div>
+          <div class="dsh-kpi" style="--c:#a855f7;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-truck"></i> Equipamentos entregues</div><div class="dsh-kpi-num" id="dkEquip">0</div><div class="dsh-kpi-sub" id="dkEquipSub">TAGs distintas nos termos</div></div>
+        </div>
+
+        <div class="dsh-grid dsh-grid-a">
+          <div class="dsh-card dsh-span2">
+            <div class="dsh-card-tit">Evolução mensal <span class="dsh-card-tag">12 meses</span></div>
+            <div id="dshEvolucao"></div>
+          </div>
+          <div class="dsh-card">
+            <div class="dsh-card-tit">Requisições por tipo</div>
+            <div id="dshTipos"></div>
           </div>
         </div>
+
+        <div class="dsh-grid">
+          <div class="dsh-card">
+            <div class="dsh-card-tit">Idade das pendentes <span class="dsh-card-tag">todas</span></div>
+            <div id="dshIdade"></div>
+          </div>
+          <div class="dsh-card">
+            <div class="dsh-card-tit">Top clientes</div>
+            <div id="dshClientes"></div>
+          </div>
+          <div class="dsh-card">
+            <div class="dsh-card-tit">Top famílias de equipamento</div>
+            <div id="dshFamilias"></div>
+          </div>
+        </div>
+
+        <div class="dsh-grid">
+          <div class="dsh-card">
+            <div class="dsh-card-tit">Famílias com mais substituições</div>
+            <div id="dshSubst"></div>
+          </div>
+          <div class="dsh-card">
+            <div class="dsh-card-tit">TAGs reincidentes <span class="dsh-card-tag">12 meses</span></div>
+            <div id="dshReincid"></div>
+          </div>
+          <div class="dsh-card">
+            <div class="dsh-card-tit">Alertas: pendentes mais antigas</div>
+            <div id="dshAlertas"></div>
+          </div>
+        </div>
+        <div class="dsh-rodape" id="dshRodape"></div>
       </div>
     </div>
 
@@ -3790,95 +3856,251 @@
       }
     }
 
+    // ===== PAINEL DA QUALIDADE (DASHBOARD) =====
+    var CORES_TIPO_DASH = { "SUBSTITUIÇÃO": "#f43f5e", "REPOSIÇÃO": "#f59e0b", "NOVA LOCAÇÃO": "#10b981", "SEM TIPO": "#64748b" };
+    var MESES_DASH = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+    var MESES_LONGOS_DASH = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+
+    function aplicarTemaDashboard(tema) {
+      const p = document.getElementById('dshPainel');
+      if (!p) return;
+      p.dataset.tema = tema;
+      const lbl = document.getElementById('lblTemaDash');
+      if (lbl) lbl.innerText = tema === "escuro" ? "Tema claro" : "Tema escuro";
+    }
+
+    function alternarTemaDashboard() {
+      const p = document.getElementById('dshPainel');
+      if (!p) return;
+      const novo = p.dataset.tema === "escuro" ? "claro" : "escuro";
+      aplicarTemaDashboard(novo);
+      try { localStorage.setItem('dmaTemaDashboard', novo); } catch (e) {}
+    }
+
+    function telaCheiaDashboard() {
+      const p = document.getElementById('dshPainel');
+      if (!p) return;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (p.requestFullscreen) p.requestFullscreen();
+    }
+
+    // Tema escolhido fica guardado neste navegador
+    (function () { try { const t = localStorage.getItem('dmaTemaDashboard'); if (t) aplicarTemaDashboard(t); } catch (e) {} })();
+
+    function mesKeyDash(dataHora) {
+      const m = String(dataHora || "").match(/(\d{2})\/(\d{2})\/(\d{4})/);
+      return m ? m[3] + "-" + m[2] : "";
+    }
+    function deslocarMesDash(key, delta) {
+      const [a, m] = key.split('-').map(Number);
+      const d = new Date(a, m - 1 + delta, 1);
+      return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    }
+    function nomeMesDash(key) { const [a, m] = key.split('-'); return MESES_DASH[Number(m) - 1] + "/" + a.slice(2); }
+    function nomeMesLongoDash(key) { const [a, m] = key.split('-'); return MESES_LONGOS_DASH[Number(m) - 1] + " de " + a; }
+
+    // Variação em relação ao mês anterior; sentido: 'maior' (subir é bom), 'menor' (cair é bom), 'neutro'
+    function variacaoDash(atual, anterior, sentido) {
+      if (!anterior || atual === null || atual === undefined) return '<span class="dsh-neutro">sem base no mês anterior</span>';
+      const pct = Math.round((atual - anterior) / anterior * 100);
+      if (pct === 0) return '<span class="dsh-neutro">igual ao mês anterior</span>';
+      const classe = sentido === "neutro" ? "dsh-neutro" : ((sentido === "menor" ? pct < 0 : pct > 0) ? "dsh-up" : "dsh-down");
+      return `<span class="${classe}">${pct > 0 ? '▲' : '▼'} ${Math.abs(pct)}%</span> vs mês anterior`;
+    }
+
+    function barrasDash(itens, cor, sufixo) {
+      if (!itens.length) return '<div class="dsh-vazio">Sem dados para o período.</div>';
+      const max = Math.max(1, ...itens.map(x => x[1]));
+      return itens.map(([nome, qtd, corItem]) => `
+        <div class="dsh-barra">
+          <div class="dsh-barra-top"><span title="${escReq(nome)}">${escReq(nome)}</span><b>${qtd}${sufixo || ""}</b></div>
+          <div class="dsh-trilho"><div class="dsh-preenche" style="width:${Math.max(2, qtd / max * 100)}%; background:${corItem || cor};"></div></div>
+        </div>`).join('');
+    }
+
+    function contarDash(lista, chaveFn, limite) {
+      const cont = {};
+      lista.forEach(x => { const k = chaveFn(x); if (k) cont[k] = (cont[k] || 0) + 1; });
+      return Object.entries(cont).sort((a, b) => b[1] - a[1]).slice(0, limite || 6);
+    }
+
+    function svgEvolucaoDash(meses, abertas, atendidas, tmaH) {
+      const W = 640, H = 230, ml = 34, mr = 44, mt = 16, mb = 34;
+      const iw = W - ml - mr, ih = H - mt - mb, slot = iw / meses.length, bw = Math.max(4, slot * 0.3);
+      const passoQ = Math.max(1, Math.ceil(Math.max(1, ...abertas, ...atendidas) / 4)), topoQ = passoQ * 4;
+      const validos = tmaH.filter(v => v !== null);
+      const passoT = Math.max(1, Math.ceil(Math.max(1, ...validos) / 4)), topoT = passoT * 4;
+      const yQ = v => mt + ih - (v / topoQ) * ih, yT = v => mt + ih - (v / topoT) * ih;
+
+      let s = `<svg class="dsh-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolução mensal das requisições">`;
+      for (let i = 0; i <= 4; i++) {
+        const y = mt + ih - i * ih / 4;
+        s += `<line x1="${ml}" x2="${W - mr}" y1="${y}" y2="${y}" stroke="var(--grade)" stroke-width="1"/>`;
+        s += `<text x="${ml - 6}" y="${y + 3.5}" text-anchor="end">${passoQ * i}</text>`;
+        s += `<text x="${W - mr + 6}" y="${y + 3.5}">${passoT * i}h</text>`;
+      }
+      meses.forEach((m, i) => {
+        const cx = ml + slot * i + slot / 2;
+        s += `<rect x="${cx - bw - 1}" y="${yQ(abertas[i])}" width="${bw}" height="${mt + ih - yQ(abertas[i])}" rx="2" fill="#3b82f6"><title>${nomeMesDash(m)}: ${abertas[i]} abertas</title></rect>`;
+        s += `<rect x="${cx + 1}" y="${yQ(atendidas[i])}" width="${bw}" height="${mt + ih - yQ(atendidas[i])}" rx="2" fill="#10b981"><title>${nomeMesDash(m)}: ${atendidas[i]} atendidas</title></rect>`;
+        s += `<text x="${cx}" y="${H - mb + 16}" text-anchor="middle">${nomeMesDash(m)}</text>`;
+      });
+      let d = "", caneta = false;
+      tmaH.forEach((v, i) => {
+        if (v === null) { caneta = false; return; }
+        d += (caneta ? "L" : "M") + (ml + slot * i + slot / 2).toFixed(1) + " " + yT(v).toFixed(1) + " ";
+        caneta = true;
+      });
+      if (d) s += `<path d="${d}" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linejoin="round"/>`;
+      tmaH.forEach((v, i) => {
+        if (v === null) return;
+        s += `<circle cx="${(ml + slot * i + slot / 2).toFixed(1)}" cy="${yT(v).toFixed(1)}" r="3.5" fill="#f59e0b" stroke="var(--card)" stroke-width="1.5"><title>${nomeMesDash(meses[i])}: ${formatarDuracaoReq(v * 3600000)} em média</title></circle>`;
+      });
+      s += `</svg>`;
+      s += `<div class="dsh-legenda"><span><i style="background:#3b82f6;"></i>Abertas</span><span><i style="background:#10b981;"></i>Atendidas</span><span><i style="background:#f59e0b;"></i>Tempo médio de atendimento (eixo direito, horas)</span></div>`;
+      return s;
+    }
+
+    function svgRoscaDash(itens, total) {
+      if (!total) return '<div class="dsh-vazio">Sem dados para o período.</div>';
+      const r = 52, c = 2 * Math.PI * r;
+      let acum = 0;
+      let s = `<div class="dsh-rosca"><svg viewBox="0 0 140 140" width="150" height="150" role="img" aria-label="Requisições por tipo">`;
+      s += `<circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--trilho)" stroke-width="18"/>`;
+      itens.forEach(([nome, q, cor]) => {
+        if (!q) return;
+        const len = q / total * c;
+        s += `<circle cx="70" cy="70" r="${r}" fill="none" stroke="${cor}" stroke-width="18" stroke-dasharray="${len.toFixed(2)} ${(c - len).toFixed(2)}" stroke-dashoffset="${(-acum).toFixed(2)}" transform="rotate(-90 70 70)"><title>${nome}: ${q}</title></circle>`;
+        acum += len;
+      });
+      s += `<text x="70" y="70" text-anchor="middle" style="font-size:24px; font-weight:800; fill:var(--txt);">${total}</text>`;
+      s += `<text x="70" y="88" text-anchor="middle" style="font-size:10px;">requisições</text></svg>`;
+      s += `<div class="dsh-rosca-leg">` + itens.map(([nome, q, cor]) =>
+        `<div><span><i style="background:${cor};"></i>${nome}</span><b>${q} · ${Math.round(q / total * 100)}%</b></div>`).join('') + `</div></div>`;
+      return s;
+    }
+
+    function abrirReqDoDashboard(prot) {
+      mudarAba('requisicoes');
+      const sel = document.getElementById('filtroStatusReq');
+      if (sel) sel.value = "ATIVAS";
+      const busca = document.getElementById('filtroTextoReq');
+      if (busca) busca.value = prot;
+      filtrarRequisicoes();
+    }
+
     function atualizarDashboard() {
       if (!bancoDados || !bancoDados.requisicoes) return;
-      const modo = document.getElementById('dashModoPeriodo')?.value || "MES";
-      const mesFiltro = document.getElementById('dashFiltroMes')?.value || "";
+      const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
+      const setHtml = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
 
-      let reqs = bancoDados.requisicoes || [];
+      const hoje = new Date();
+      const mesAtual = hoje.getFullYear() + "-" + String(hoje.getMonth() + 1).padStart(2, "0");
+      const elMes = document.getElementById('dashFiltroMes');
+      if (elMes && !elMes.value) elMes.value = mesAtual;
+      const ref = (elMes && elMes.value) || mesAtual;
+      const geral = (document.getElementById('dashModoPeriodo')?.value || "MES") === "GERAL";
 
-      if (modo === "MES" && mesFiltro) {
-        reqs = reqs.filter(r => {
-          if (!r || !r.dataHora) return false;
-          const partesData = String(r.dataHora).split(' ')[0].split('/');
-          if (partesData.length === 3) {
-            const anoMesReg = `${partesData[2]}-${partesData[1].padStart(2, '0')}`;
-            return anoMesReg === mesFiltro;
-          }
-          return false;
-        });
-      }
+      const reqsAll = (bancoDados.requisicoes || []).filter(Boolean);
+      const termosAll = (bancoDados.termosEmitidos || []).filter(Boolean);
+      const stDe = r => (r.status || "PENDENTE").toUpperCase();
+      const noPeriodo = dh => geral || mesKeyDash(dh) === ref;
+      const ant = deslocarMesDash(ref, -1);
 
-      if (document.getElementById('dashTotalReq')) document.getElementById('dashTotalReq').innerText = reqs.length;
+      const reqs = reqsAll.filter(r => noPeriodo(r.dataHora));
+      const reqsAnt = reqsAll.filter(r => mesKeyDash(r.dataHora) === ant);
 
-      let pendentes = 0, atendidos = 0, recusados = 0;
-      let contagemClientes = {};
-      let contagemFamilias = {};
+      setTxt('dshSub', "Requisições, termos e entregas · " + (geral ? "todo o histórico" : nomeMesLongoDash(ref)));
 
-      reqs.forEach(r => {
-        let st = (r.status || "PENDENTE").toUpperCase();
-        if (st === "PENDENTE") pendentes++;
-        else if (st === "ATENDIDO") atendidos++;
-        else if (st === "RECUSADO") recusados++;
+      // ---- Indicadores ----
+      setTxt('dkReq', reqs.length);
+      setHtml('dkReqSub', geral ? reqsAll.length + " no total" : variacaoDash(reqs.length, reqsAnt.length, "neutro"));
 
-        let cli = r.cliente || "Não informado";
-        contagemClientes[cli] = (contagemClientes[cli] || 0) + 1;
+      const pendAll = reqsAll.filter(r => stDe(r) === "PENDENTE");
+      const atrasadas = pendAll.filter(r => (diasEmAbertoReq(r) || 0) > PRAZO_REQ.atencao).length;
+      setTxt('dkPend', pendAll.length);
+      setHtml('dkPendSub', atrasadas ? `<span class="dsh-down">${atrasadas} há mais de ${PRAZO_REQ.atencao} dias</span>` : '<span class="dsh-up">nenhuma acima de ' + PRAZO_REQ.atencao + ' dias</span>');
 
-        let eq = r.equipamentoSolicitado || "Diversos";
-        contagemFamilias[eq] = (contagemFamilias[eq] || 0) + 1;
+      const taxaDe = lista => {
+        const base = lista.filter(r => stDe(r) !== "RECUSADO").length;
+        return base ? Math.round(lista.filter(r => stDe(r) === "ATENDIDO").length / base * 100) : null;
+      };
+      const taxa = taxaDe(reqs), taxaAnt = taxaDe(reqsAnt);
+      const atendidasPer = reqs.filter(r => stDe(r) === "ATENDIDO").length;
+      const basePer = reqs.filter(r => stDe(r) !== "RECUSADO").length;
+      setTxt('dkTaxa', taxa === null ? "-" : taxa + "%");
+      setHtml('dkTaxaSub', basePer ? `${atendidasPer} de ${basePer} (negadas fora da conta)` : "sem requisições no período");
+
+      const mediaTma = lista => {
+        const t = lista.filter(r => stDe(r) === "ATENDIDO").map(tempoAtendimentoReq).filter(v => v !== null);
+        return t.length ? t.reduce((a, b) => a + b, 0) / t.length : null;
+      };
+      const tma = mediaTma(reqs), tmaAnt = mediaTma(reqsAnt);
+      setTxt('dkTma', tma === null ? "-" : formatarDuracaoReq(tma));
+      setHtml('dkTmaSub', geral || tma === null ? "da abertura até o termo" : variacaoDash(tma, tmaAnt, "menor"));
+
+      const termosPer = termosAll.filter(t => noPeriodo(t.dataHora));
+      const termosAtivos = termosPer.filter(t => !termoCancelado(t));
+      const cancelados = termosPer.length - termosAtivos.length;
+      setTxt('dkTermos', termosAtivos.length);
+      setHtml('dkTermosSub', cancelados ? `<span class="dsh-down">${cancelados} cancelado${cancelados > 1 ? 's' : ''}</span>` : "nenhum cancelado");
+
+      setTxt('dkEquip', new Set(termosAtivos.map(t => normalizarTextoReq(t.tag)).filter(Boolean)).size);
+
+      // ---- Evolução de 12 meses (termina no mês de referência; no histórico, no mês atual) ----
+      const fim = geral ? mesAtual : ref;
+      const meses = Array.from({ length: 12 }, (_, i) => deslocarMesDash(fim, i - 11));
+      const abertas = meses.map(m => reqsAll.filter(r => mesKeyDash(r.dataHora) === m).length);
+      const atendidas = meses.map(m => reqsAll.filter(r => mesKeyDash(r.dataHora) === m && stDe(r) === "ATENDIDO").length);
+      const tmaMes = meses.map(m => { const v = mediaTma(reqsAll.filter(r => mesKeyDash(r.dataHora) === m)); return v === null ? null : v / 3600000; });
+      setHtml('dshEvolucao', svgEvolucaoDash(meses, abertas, atendidas, tmaMes));
+
+      // ---- Tipos ----
+      const contTipo = { "SUBSTITUIÇÃO": 0, "REPOSIÇÃO": 0, "NOVA LOCAÇÃO": 0, "SEM TIPO": 0 };
+      reqs.forEach(r => { const c = cfgTipoReq(r.tipoSolicitacao); contTipo[c ? c.nome : "SEM TIPO"]++; });
+      const itensTipo = Object.keys(contTipo).filter(k => k !== "SEM TIPO" || contTipo[k]).map(k => [k, contTipo[k], CORES_TIPO_DASH[k]]);
+      setHtml('dshTipos', svgRoscaDash(itensTipo, reqs.length));
+
+      // ---- Idade das pendentes ----
+      const faixas = [["Até 2 dias", 0, 2, "#10b981"], ["3 a 5 dias", 3, 5, "#f59e0b"], ["6 a 10 dias", 6, 10, "#fb923c"], ["Mais de 10 dias", 11, Infinity, "#f43f5e"]];
+      setHtml('dshIdade', pendAll.length
+        ? barrasDash(faixas.map(([nome, a, b, cor]) => [nome, pendAll.filter(r => { const d = diasEmAbertoReq(r) || 0; return d >= a && d <= b; }).length, cor]), "", "")
+        : '<div class="dsh-vazio">Nenhuma requisição pendente. 👏</div>');
+
+      // ---- Rankings ----
+      const familia = r => normalizarTextoReq(r.equipamentoSolicitado) || "";
+      setHtml('dshClientes', barrasDash(contarDash(reqs, r => (r.cliente || "").trim().toUpperCase(), 6), "#3b82f6", ""));
+      setHtml('dshFamilias', barrasDash(contarDash(reqs, familia, 6), "#6366f1", ""));
+      setHtml('dshSubst', barrasDash(contarDash(reqs.filter(r => stDe(r) !== "RECUSADO" && (cfgTipoReq(r.tipoSolicitacao) || {}).nome === "SUBSTITUIÇÃO"), familia, 6), "#f43f5e", ""));
+
+      // ---- TAGs reincidentes (12 meses) ----
+      const janela = new Set(meses);
+      const porTag = {};
+      reqsAll.filter(r => janela.has(mesKeyDash(r.dataHora)) && stDe(r) !== "RECUSADO").forEach(r => {
+        const tag = extrairTagReq(r.equipamentoAntigo);
+        if (!tag) return;
+        const g = porTag[tag] || (porTag[tag] = { qtd: 0, familia: "", clientes: new Set() });
+        g.qtd++; g.familia = r.equipamentoSolicitado || g.familia; g.clientes.add((r.cliente || "").trim());
       });
+      const reinc = Object.entries(porTag).filter(([, g]) => g.qtd >= 2).sort((a, b) => b[1].qtd - a[1].qtd).slice(0, 6);
+      setHtml('dshReincid', reinc.length ? reinc.map(([tag, g]) => `
+        <div class="dsh-lista-item" title="Clientes: ${escReq([...g.clientes].join(' / '))}">
+          <div class="dsh-li-txt"><div><b>${escReq(tag)}</b></div><div class="dsh-li-sub">${escReq(g.familia || '-')}</div></div>
+          <span class="dsh-pilula" style="background:#f43f5e;">${g.qtd}x</span>
+        </div>`).join('') : '<div class="dsh-vazio">Nenhuma TAG substituída mais de uma vez.</div>');
 
-      if (document.getElementById('dashPendentes')) document.getElementById('dashPendentes').innerText = pendentes;
-      if (document.getElementById('dashAtendidos')) document.getElementById('dashAtendidos').innerText = atendidos;
-      if (document.getElementById('dashRecusados')) document.getElementById('dashRecusados').innerText = recusados;
+      // ---- Alertas: pendentes mais antigas ----
+      const antigas = pendAll.slice().sort((a, b) => (diasEmAbertoReq(b) || 0) - (diasEmAbertoReq(a) || 0)).slice(0, 5);
+      setHtml('dshAlertas', antigas.length ? antigas.map(r => {
+        const d = diasEmAbertoReq(r) || 0;
+        const cor = d <= PRAZO_REQ.ok ? "#10b981" : (d <= PRAZO_REQ.atencao ? "#f59e0b" : "#f43f5e");
+        return `<div class="dsh-lista-item clicavel" onclick="abrirReqDoDashboard('${escReq(r.protocolo)}')" title="Abrir na tela de requisições">
+          <div class="dsh-li-txt"><div><b>${escReq(r.protocolo)}</b> · ${escReq(r.cliente || '-')}</div><div class="dsh-li-sub">${escReq(r.equipamentoSolicitado || '-')}</div></div>
+          <span class="dsh-pilula" style="background:${cor};">${d === 0 ? 'hoje' : d + (d === 1 ? ' dia' : ' dias')}</span>
+        </div>`;
+      }).join('') : '<div class="dsh-vazio">Nenhuma requisição pendente.</div>');
 
-      const divCli = document.getElementById('chartClientes');
-      if (divCli) {
-        const topClientes = Object.entries(contagemClientes).sort((a, b) => b[1] - a[1]).slice(0, 5);
-        if (topClientes.length === 0) {
-          divCli.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>';
-        } else {
-          const maxVal = topClientes[0][1] || 1;
-          divCli.innerHTML = topClientes.map(([nome, qtd]) => {
-            const pct = Math.round((qtd / maxVal) * 100);
-            return `
-              <div style="margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 2px;">
-                  <span>${nome}</span>
-                  <span style="color: #1a4d80;">${qtd} reqs</span>
-                </div>
-                <div style="background: #e2e8f0; border-radius: 4px; height: 10px; overflow: hidden;">
-                  <div style="background: #1a4d80; width: ${pct}%; height: 100%; border-radius: 4px;"></div>
-                </div>
-              </div>
-            `;
-          }).join('');
-        }
-      }
-
-      const divFam = document.getElementById('chartFamilias');
-      if (divFam) {
-        const topFamilias = Object.entries(contagemFamilias).sort((a, b) => b[1] - a[1]).slice(0, 5);
-        if (topFamilias.length === 0) {
-          divFam.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">Sem dados para o período.</div>';
-        } else {
-          const maxVal = topFamilias[0][1] || 1;
-          divFam.innerHTML = topFamilias.map(([nome, qtd]) => {
-            const pct = Math.round((qtd / maxVal) * 100);
-            return `
-              <div style="margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 2px;">
-                  <span>${nome}</span>
-                  <span style="color: #2563eb;">${qtd} reqs</span>
-                </div>
-                <div style="background: #e2e8f0; border-radius: 4px; height: 10px; overflow: hidden;">
-                  <div style="background: #2563eb; width: ${pct}%; height: 100%; border-radius: 4px;"></div>
-                </div>
-              </div>
-            `;
-          }).join('');
-        }
-      }
+      setTxt('dshRodape', "Atualizado às " + hoje.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + " · dados do Módulo Qualidade");
     }
 
     function atualizarNotificacoes() {
