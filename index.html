@@ -843,6 +843,7 @@
         
         <div class="req-lote-barra">
           <button type="button" class="btn-secundario" onclick="selecionarTermosHojeReq()" title="Seleciona as requisições cujo termo foi gerado hoje"><i class="fa-solid fa-calendar-day"></i> Termos de hoje</button>
+          <button type="button" class="btn-secundario" onclick="exportarRequisicoesExcel()" title="Exporta a grade como está filtrada (abre no Excel)"><i class="fa-solid fa-file-excel" style="color:#047857;"></i> Exportar Excel</button>
           <span id="lblLoteReq" class="req-lote-info">Marque as requisições ou use "Termos de hoje"</span>
           <span style="flex:1;"></span>
           <button type="button" id="btnLimparLoteReq" class="btn-secundario" style="display:none;" onclick="limparSelecaoReq()">Limpar seleção</button>
@@ -2111,6 +2112,48 @@
         }
       })
       .catch(() => { btn.disabled = false; btn.innerHTML = htmlOriginal; alert("Falha de conexão ao cancelar o termo."); });
+    }
+
+    // ===== EXPORTAR A GRADE DE REQUISIÇÕES (CSV que abre direto no Excel) =====
+    function exportarRequisicoesExcel() {
+      const lista = (listaReqRenderizada || []).filter(Boolean);
+      if (!lista.length) { alert("Não há requisições na grade para exportar. Ajuste os filtros."); return; }
+
+      // Campo no padrão CSV do Excel brasileiro (separador ";", aspas escapadas)
+      const campo = (v) => {
+        const t = String(v === null || v === undefined ? "" : v).replace(/\r?\n/g, " ").trim();
+        return /[;"]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+      };
+      const numBR = (n) => (n === null || n === undefined || isNaN(n)) ? "" : String(Math.round(n * 10) / 10).replace(".", ",");
+
+      const cab = ["REQ", "Data/Hora", "Tipo", "Cliente", "Operação", "Equipamento a Substituir", "Equipamento Solicitado",
+                   "Motivo / Obs.", "Solicitante", "Status", "Dias em aberto", "Tempo de atendimento (h)",
+                   "Termo", "TAG Enviada", "Equipamento Enviado", "Data do Termo"];
+
+      const linhas = lista.map(r => {
+        const st = (r.status || "PENDENTE").toUpperCase();
+        const termo = buscarTermoDaReq(r);
+        const msAtend = st === "ATENDIDO" ? tempoAtendimentoReq(r) : null;
+        return [
+          r.protocolo, r.dataHora, r.tipoSolicitacao || "", r.cliente, r.operacao,
+          r.equipamentoAntigo, r.equipamentoSolicitado, r.motivo, r.solicitante,
+          st === "RECUSADO" ? "NEGADO" : st,
+          st === "PENDENTE" ? diasEmAbertoReq(r) : "",
+          msAtend !== null ? numBR(msAtend / 3600000) : "",
+          r.protocoloTermo || "", termo ? termo.tag : "", termo ? termo.equipamento : "", termo ? termo.dataHora : ""
+        ].map(campo).join(";");
+      });
+
+      // BOM (\uFEFF) faz o Excel reconhecer os acentos
+      const csv = "\uFEFF" + cab.map(campo).join(";") + "\r\n" + linhas.join("\r\n");
+      const hoje = new Date();
+      const nomeArq = "Requisicoes_DMA_" + hoje.getFullYear() + "-" + String(hoje.getMonth() + 1).padStart(2, "0") + "-" + String(hoje.getDate()).padStart(2, "0") + ".csv";
+
+      const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+      const a = document.createElement("a");
+      a.href = url; a.download = nomeArq;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
     }
 
     // ===== MODAL APÓS GERAR O TERMO (abrir PDF / imprimir etiqueta) =====
