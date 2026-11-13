@@ -732,6 +732,9 @@
                 <option value="ABERTOS" selected>Pendentes e Comprados</option>
                 <option value="PENDENTE">Pendentes</option>
                 <option value="URGENTES">Prioridade alta (pendentes)</option>
+                <option value="SEM_VALIDACAO">Pendentes sem validação</option>
+                <option value="AGUARDANDO">Aguardando validação</option>
+                <option value="VALIDADOS">Validados (a comprar)</option>
                 <option value="COMPRADO">Comprados (a receber)</option>
                 <option value="ENTREGUE">Entregues</option>
                 <option value="CANCELADO">Cancelados</option>
@@ -749,6 +752,8 @@
           </div>
 
           <div class="req-lote-barra">
+            <button type="button" class="btn-secundario" onclick="abrirModalValidacaoZap()" title="Enviar link de validação ao gestor"><i class="fa-brands fa-whatsapp" style="color:#16a34a;"></i> Validar por WhatsApp</button>
+            <button type="button" class="btn-secundario" onclick="abrirModalValidacaoPapel()" title="Registrar validação feita no papel ou verbal"><i class="fa-solid fa-file-signature"></i> Registrar validação</button>
             <span id="lblLoteCmp" class="req-lote-info">Marque os itens para imprimir, ou imprima todos os pendentes</span>
             <span style="flex:1;"></span>
             <button type="button" id="btnLimparLoteCmp" class="btn-secundario" style="display:none;" onclick="limparSelecaoCompras()">Limpar seleção</button>
@@ -768,7 +773,7 @@
                   <th style="width:150px;">Cliente</th>
                   <th class="td-center" style="width:85px;">Ref.</th>
                   <th class="td-center" style="width:95px;">Data</th>
-                  <th class="td-center" style="width:110px;">Situação</th>
+                  <th class="td-center" style="width:130px;">Situação</th>
                   <th class="td-center" style="width:190px;">Ações</th>
                 </tr>
               </thead>
@@ -1637,6 +1642,67 @@
   <datalist id="listCategoriasCmp"></datalist>
   <datalist id="listClientesCmp"></datalist>
   <datalist id="listFornecedoresCmp"></datalist>
+
+  <div id="modalValidacaoZap" class="modal-overlay">
+    <div class="modal-box" style="width: 520px;">
+      <div class="modal-title">
+        <span><i class="fa-brands fa-whatsapp" style="color:#16a34a;"></i> Validação pelo WhatsApp</span>
+        <span onclick="fecharModalValidacaoZap()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div id="valZapPasso1">
+        <div id="valZapInfo" class="manual-dica" style="margin-top:0;"></div>
+        <div class="form-row">
+          <div class="form-group"><label>Quem vai validar:</label><input type="text" id="valZapAprovador" placeholder="Nome do gestor"></div>
+          <div class="form-group"><label>WhatsApp dele (opcional):</label><input type="text" id="valZapFone" placeholder="Ex: 11 99999-9999"></div>
+        </div>
+        <div style="font-size:11px; color:#64748b; margin-bottom:14px;">Com o número, a conversa abre direto com ele. O link é único, vale uma vez e expira em 7 dias.</div>
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+          <button type="button" class="btn-secundario" onclick="fecharModalValidacaoZap()">Cancelar</button>
+          <button type="button" id="btnGerarLinkVal" class="btn-submit" onclick="gerarLinkValidacao()"><i class="fa-solid fa-link"></i> Gerar link</button>
+        </div>
+      </div>
+      <div id="valZapPasso2" style="display:none;">
+        <div class="form-group"><label>Mensagem:</label><textarea id="valZapMensagem" style="height:110px;"></textarea></div>
+        <div style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+          <button type="button" class="btn-secundario" onclick="copiarMensagemValidacao()"><i class="fa-solid fa-copy"></i> Copiar</button>
+          <button type="button" class="btn-submit" style="background:linear-gradient(135deg,#22c55e,#15803d);" onclick="abrirWhatsAppValidacao()"><i class="fa-brands fa-whatsapp"></i> Abrir WhatsApp</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalValidacaoPapel" class="modal-overlay">
+    <div class="modal-box" style="width: 520px;">
+      <div class="modal-title">
+        <span><i class="fa-solid fa-file-signature"></i> Registrar validação (papel / verbal)</span>
+        <span onclick="fecharModalValidacaoPapel()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div id="valPapelInfo" class="manual-dica" style="margin-top:0;"></div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label>Decisão do gestor:</label>
+        <div class="req-tipo-grupo" id="grpDecisaoVal">
+          <label class="req-tipo-opcao" data-cor="#059669"><input type="radio" name="valDecisao" value="APROVADO" checked onchange="pintarOpcoesVal()"><span><i class="fa-solid fa-check"></i> Aprovado</span></label>
+          <label class="req-tipo-opcao" data-cor="#e11d48"><input type="radio" name="valDecisao" value="REPROVADO" onchange="pintarOpcoesVal()"><span><i class="fa-solid fa-xmark"></i> Não comprar</span></label>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Validado por:</label><input type="text" id="valPapelAprovador" placeholder="Nome do gestor"></div>
+        <div class="form-group">
+          <label>Como:</label>
+          <select id="valPapelVia"><option value="PAPEL">Assinou no papel</option><option value="VERBAL">Verbal / telefone</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label>Comentário (opcional):</label><input type="text" id="valPapelComentario" placeholder="Ex: comprar só a marca X"></div>
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Foto da folha assinada (opcional):</label>
+        <input type="file" id="valPapelFoto" accept="image/*">
+      </div>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button type="button" class="btn-secundario" onclick="fecharModalValidacaoPapel()">Cancelar</button>
+        <button type="button" id="btnRegistrarVal" class="btn-submit" onclick="registrarValidacaoPapel()"><i class="fa-solid fa-floppy-disk"></i> Registrar</button>
+      </div>
+    </div>
+  </div>
 
   <div id="modalRecusaReq" class="modal-overlay">
     <div class="modal-box" style="width: 480px;">
@@ -4144,6 +4210,9 @@
       let lista = itens.filter(i => {
         if (st === "ABERTOS" && !(i.status === "PENDENTE" || i.status === "COMPRADO")) return false;
         if (st === "URGENTES" && !(i.status === "PENDENTE" && prioCmp(i) === "ALTA")) return false;
+        if (st === "SEM_VALIDACAO" && !(i.status === "PENDENTE" && !i.validacao)) return false;
+        if (st === "AGUARDANDO" && !(i.status === "PENDENTE" && i.validacao === "AGUARDANDO")) return false;
+        if (st === "VALIDADOS" && !(i.status === "PENDENTE" && i.validacao === "APROVADO")) return false;
         if (["PENDENTE", "COMPRADO", "ENTREGUE", "CANCELADO"].includes(st) && i.status !== st) return false;
         if (cat && (i.categoria || "").toUpperCase() !== cat) return false;
         if (txt && !normalizarTextoReq([i.codigo, i.item, i.solicitante, i.cliente, i.os, i.obs].join(" ")).includes(txt)) return false;
@@ -4188,7 +4257,7 @@
             <td>${escReq(i.cliente || "-")}</td>
             <td class="td-center" style="font-size:11px;">${escReq(ref)}</td>
             <td class="td-center">${escReq(String(i.dataHora || "").split(" ")[0] || "-")}</td>
-            <td class="td-center"><span class="cmp-st cmp-st-${i.status}">${i.status}</span>${selo}</td>
+            <td class="td-center"><span class="cmp-st cmp-st-${i.status}">${i.status}</span>${seloValidacaoCmp(i)}${selo}</td>
             <td class="td-center"><div class="cmp-acoes">${acoes}</div></td>
           </tr>`;
         }).join('');
@@ -4354,7 +4423,7 @@
           const alvo = bancoDados.itensCompra.find(x => x.codigo === itemCmpEditando);
           if (alvo) Object.assign(alvo, dadosItem);
         } else {
-          bancoDados.itensCompra.push(Object.assign({ codigo: res.codigo, dataHora: res.dataHora, status: "PENDENTE", historico: "", valorPago: "", fornecedor: "" }, dadosItem));
+          bancoDados.itensCompra.push(Object.assign({ codigo: res.codigo, dataHora: res.dataHora, status: "PENDENTE", historico: "", valorPago: "", fornecedor: "", validacao: "", validacaoInfo: "" }, dadosItem));
         }
         if (res.aviso) alert(res.aviso);
         fecharModalItemCompra();
@@ -4368,6 +4437,8 @@
     function abrirModalStatusCompra(codigo, novo) {
       const i = (bancoDados.itensCompra || []).find(x => x.codigo === codigo);
       if (!i) return;
+      if (novo === "COMPRADO" && i.validacao !== "APROVADO" &&
+          !confirm("O item Nº " + codigo + " ainda não foi validado pelo gestor. Marcar como comprado mesmo assim?")) return;
       statusCmpAlvo = { codigo: codigo, novo: novo };
       const titulos = { COMPRADO: "Marcar como comprado", ENTREGUE: "Marcar como entregue", CANCELADO: "Cancelar item", PENDENTE: "Voltar para pendente" };
       document.getElementById('tituloStatusCompra').innerText = titulos[novo] + " · " + codigo;
@@ -4442,18 +4513,26 @@
                 <span class="cod">Nº ${escReq(i.codigo)}</span>
                 ${pendente ? `<span class="prio p-${p === "MÉDIA" ? "MEDIA" : p}">${p === "ALTA" ? "⚠ " : ""}PRIORIDADE ${p}</span>` : ""}
                 ${i.status === "COMPRADO" ? '<span class="jac">JÁ COMPRADO</span>' : ''}
+                ${pendente && i.validacao === "APROVADO" ? '<span class="val">✔ VALIDADO</span>' : ''}
                 <span class="qtd">QTD: <b>${escReq(i.qtd)}</b></span>
               </div>
               <div class="desc">${escReq(i.item)}</div>
               <div class="meta">Ref.: <b>${escReq(ref)}</b> · Cliente: <b>${escReq(i.cliente || "—")}</b> · Pedido por: <b>${escReq(i.solicitante || "—")}</b>${i.os ? ` · OS <b>${escReq(i.os)}</b>` : ""}</div>
               ${i.obs ? `<div class="meta">Obs.: ${escReq(i.obs)}</div>` : ""}
-              <div class="anota"><span class="chk">☐ COMPRADO</span><span class="campo">Valor:<i></i></span><span class="campo">Loja:<i></i></span></div>
+              ${pendente && i.validacao !== "APROVADO"
+                ? '<div class="anota"><span class="chk">☐ APROVADO</span><span class="chk">☐ NÃO COMPRAR</span><span class="campo">Obs.:<i></i></span></div>'
+                : '<div class="anota"><span class="chk">☐ COMPRADO</span><span class="campo">Valor:<i></i></span><span class="campo">Loja:<i></i></span></div>'}
             </div>
           </div>`;
       });
       // Agrupa em páginas de 5 itens (a quebra de página fica sempre no mesmo lugar)
       let cartoes = "";
-      for (let k = 0; k < cartoesHtml.length; k += 5) cartoes += '<div class="pagina">' + cartoesHtml.slice(k, k + 5).join('') + '</div>';
+      for (let k = 0; k < cartoesHtml.length; k += 5) {
+        const daPagina = itens.slice(k, k + 5);
+        const precisaAssinar = daPagina.some(i => i.status === "PENDENTE" && i.validacao !== "APROVADO");
+        cartoes += '<div class="pagina">' + cartoesHtml.slice(k, k + 5).join('') +
+          (precisaAssinar ? '<div class="assina"><span>Validado por:<i></i></span><span>Assinatura:<i></i></span><span class="dt">Data: ____/____/______</span></div>' : '') + '</div>';
+      }
 
       const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Lista de Compras ${dataTxt}</title><style>
         @page { size: A4 portrait; margin: 9mm 10mm; }
@@ -4465,9 +4544,14 @@
         .cab h1 { margin: 0; font-size: 20pt; color: #1e3a8a; }
         .cab .resumo { font-size: 12.5pt; font-weight: bold; }
         .cab .resumo .u { color: #be123c; }
-        .cartao { display: flex; gap: 3.5mm; border: 0.4mm solid #94a3b8; border-radius: 2.5mm; padding: 2.3mm; margin-bottom: 2.4mm; height: 50mm; break-inside: avoid; page-break-inside: avoid; }
+        .cartao { display: flex; gap: 3.5mm; border: 0.4mm solid #94a3b8; border-radius: 2.5mm; padding: 2.3mm; margin-bottom: 2.2mm; height: 48mm; break-inside: avoid; page-break-inside: avoid; }
+        .val { font-size: 10pt; font-weight: 900; color: #047857; border: 0.3mm solid #059669; padding: 0.2mm 1.8mm; border-radius: 1.2mm; }
+        .assina { display: flex; gap: 5mm; align-items: flex-end; font-size: 11.5pt; font-weight: bold; color: #334155; margin-top: 1mm; height: 9mm; }
+        .assina span { flex: 1; display: flex; align-items: flex-end; gap: 1.5mm; white-space: nowrap; }
+        .assina span i { flex: 1; border-bottom: 0.35mm solid #334155; height: 5mm; }
+        .assina .dt { flex: 0 0 auto; }
         .cartao.alta { border: 0.8mm solid #e11d48; }
-        .foto { position: relative; width: 45mm; height: 45mm; flex-shrink: 0; border: 0.3mm solid #e2e8f0; border-radius: 2mm; background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .foto { position: relative; width: 43mm; height: 43mm; flex-shrink: 0; border: 0.3mm solid #e2e8f0; border-radius: 2mm; background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .foto img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
         .mais { position: absolute; right: 1mm; bottom: 1mm; background: rgba(15,23,42,.75); color: #fff; font-size: 8.5pt; font-weight: bold; padding: 0.3mm 1.5mm; border-radius: 1mm; }
         .semfoto { text-align: center; font-size: 14pt; font-weight: bold; color: #475569; line-height: 1.25; }
@@ -4510,6 +4594,142 @@
       if (!pendentes) setTimeout(imprimir, 300);
       imgs.forEach(im => { if (!im.complete) { im.onload = im.onerror = () => { if (--pendentes <= 0) setTimeout(imprimir, 200); }; } });
       setTimeout(imprimir, 8000);
+    }
+
+    // ===================== VALIDAÇÃO DA LISTA PELO GESTOR =====================
+    var itensValidacaoAlvo = [];      // códigos que serão enviados / registrados
+    var linkValidacaoGerado = "";
+
+    // Itens alvo: os selecionados (pendentes) ou, sem seleção, todos os pendentes ainda não aprovados
+    function itensParaValidacao() {
+      const itens = (bancoDados.itensCompra || []).filter(i => i.status === "PENDENTE" && i.validacao !== "APROVADO");
+      return selecaoCompras.size ? itens.filter(i => selecaoCompras.has(i.codigo)) : itens;
+    }
+
+    function seloValidacaoCmp(i) {
+      if (i.validacao === "APROVADO") return `<span class="selo-dias" style="background:#ecfdf5; color:#047857;" title="${escReq(i.validacaoInfo || '')}">✔ validado</span>`;
+      if (i.validacao === "REPROVADO") return `<span class="selo-dias" style="background:#ffe4e6; color:#be123c;" title="${escReq(i.validacaoInfo || '')}">✖ reprovado</span>`;
+      if (i.validacao === "AGUARDANDO" && i.status === "PENDENTE") return `<span class="selo-dias" style="background:#f3e8ff; color:#7e22ce;" title="${escReq(i.validacaoInfo || '')}">aguardando validação</span>`;
+      return "";
+    }
+
+    function abrirModalValidacaoZap() {
+      const alvo = itensParaValidacao();
+      if (!alvo.length) { alert("Não há itens pendentes de validação" + (selecaoCompras.size ? " entre os selecionados." : ".")); return; }
+      itensValidacaoAlvo = alvo.map(i => i.codigo);
+      const altas = alvo.filter(i => prioCmp(i) === "ALTA").length;
+      document.getElementById('valZapInfo').innerHTML = `<b>${alvo.length}</b> item(ns) para validar${altas ? ` · <b style="color:#be123c;">${altas} de prioridade alta</b>` : ""}.`;
+      try {
+        document.getElementById('valZapAprovador').value = localStorage.getItem('dmaAprovadorCompras') || "";
+        document.getElementById('valZapFone').value = localStorage.getItem('dmaFoneAprovador') || "";
+      } catch (e) {}
+      document.getElementById('valZapPasso1').style.display = "";
+      document.getElementById('valZapPasso2').style.display = "none";
+      document.getElementById('modalValidacaoZap').classList.add('active');
+    }
+
+    function fecharModalValidacaoZap() { document.getElementById('modalValidacaoZap').classList.remove('active'); }
+
+    function gerarLinkValidacao() {
+      const aprovador = document.getElementById('valZapAprovador').value.trim();
+      const fone = document.getElementById('valZapFone').value.trim();
+      if (!aprovador) { alert("Informe quem vai validar."); return; }
+      try { localStorage.setItem('dmaAprovadorCompras', aprovador); localStorage.setItem('dmaFoneAprovador', fone); } catch (e) {}
+
+      const btn = document.getElementById('btnGerarLinkVal');
+      const original = btn.innerHTML;
+      btn.disabled = true; btn.innerText = "GERANDO...";
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "CRIAR_VALIDACAO_COMPRA", codigos: itensValidacaoAlvo, aprovador: aprovador, usuario: usuarioAtualCmp() }) })
+      .then(r => r.json())
+      .then(res => {
+        btn.disabled = false; btn.innerHTML = original;
+        if (res.status !== "sucesso") { alert("Não foi possível gerar o link: " + (res.mensagem || "erro desconhecido.")); return; }
+        (bancoDados.itensCompra || []).forEach(i => { if (res.itens.includes(i.codigo)) i.validacao = "AGUARDANDO"; });
+        renderizarListaCompras();
+
+        linkValidacaoGerado = location.origin + location.pathname.replace(/[^/]*$/, "") + "validar.html?t=" + res.token;
+        const itens = (bancoDados.itensCompra || []).filter(i => res.itens.includes(i.codigo));
+        const altas = itens.filter(i => prioCmp(i) === "ALTA").length;
+        const primeiroNome = aprovador.split(" ")[0];
+        const nomeFmt = primeiroNome.charAt(0).toUpperCase() + primeiroNome.slice(1).toLowerCase();
+        document.getElementById('valZapMensagem').value =
+          `${nomeFmt}, bom dia! Lista de compras para validação: ${itens.length} item(ns)${altas ? `, ${altas} de prioridade alta` : ""}.\n\n` +
+          `Toque no link para ver as fotos e aprovar:\n${linkValidacaoGerado}\n\n(Link válido até ${res.expiraEm})`;
+        document.getElementById('valZapPasso1').style.display = "none";
+        document.getElementById('valZapPasso2').style.display = "";
+      })
+      .catch(() => { btn.disabled = false; btn.innerHTML = original; alert("Falha de conexão ao gerar o link."); });
+    }
+
+    function abrirWhatsAppValidacao() {
+      const msg = document.getElementById('valZapMensagem').value;
+      let fone = (document.getElementById('valZapFone').value || "").replace(/\D/g, "");
+      if (fone && fone.length <= 11) fone = "55" + fone;
+      window.open("https://wa.me/" + fone + "?text=" + encodeURIComponent(msg), "_blank");
+    }
+
+    function copiarMensagemValidacao() {
+      const txt = document.getElementById('valZapMensagem').value;
+      (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject())
+        .then(() => alert("Mensagem copiada."))
+        .catch(() => { const t = document.getElementById('valZapMensagem'); t.select(); document.execCommand('copy'); alert("Mensagem copiada."); });
+    }
+
+    function pintarOpcoesVal() {
+      document.querySelectorAll('#grpDecisaoVal .req-tipo-opcao').forEach(op => {
+        op.querySelector('span').style.background = op.querySelector('input').checked ? op.dataset.cor : "";
+      });
+    }
+
+    function abrirModalValidacaoPapel() {
+      const alvo = itensParaValidacao();
+      if (!alvo.length) { alert("Não há itens pendentes de validação" + (selecaoCompras.size ? " entre os selecionados." : ".")); return; }
+      itensValidacaoAlvo = alvo.map(i => i.codigo);
+      document.getElementById('valPapelInfo').innerHTML = `A decisão será registrada em <b>${alvo.length}</b> item(ns): ` +
+        alvo.slice(0, 8).map(i => `Nº ${escReq(i.codigo)}`).join(", ") + (alvo.length > 8 ? "..." : "") +
+        `.<br><span style="font-size:11px;">Para decisões diferentes por item, marque as caixinhas e registre por grupo.</span>`;
+      document.querySelector('input[name="valDecisao"][value="APROVADO"]').checked = true;
+      pintarOpcoesVal();
+      try { document.getElementById('valPapelAprovador').value = localStorage.getItem('dmaAprovadorCompras') || ""; } catch (e) {}
+      document.getElementById('valPapelComentario').value = "";
+      document.getElementById('valPapelFoto').value = "";
+      document.getElementById('modalValidacaoPapel').classList.add('active');
+    }
+
+    function fecharModalValidacaoPapel() { document.getElementById('modalValidacaoPapel').classList.remove('active'); }
+
+    async function registrarValidacaoPapel() {
+      const aprovador = document.getElementById('valPapelAprovador').value.trim();
+      if (!aprovador) { alert("Informe quem validou."); return; }
+      const decisao = document.querySelector('input[name="valDecisao"]:checked').value;
+      if (decisao === "REPROVADO" && !confirm(itensValidacaoAlvo.length + " item(ns) serão marcados como NÃO COMPRAR (cancelados). Confirma?")) return;
+
+      const btn = document.getElementById('btnRegistrarVal');
+      const original = btn.innerHTML;
+      btn.disabled = true; btn.innerText = "REGISTRANDO...";
+      let foto = "";
+      const arq = document.getElementById('valPapelFoto').files[0];
+      if (arq) { try { foto = await comprimirImagemCompra(arq, 1800, 0.82); } catch (e) {} }
+
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "REGISTRAR_VALIDACAO_COMPRA", codigos: itensValidacaoAlvo, decisao: decisao,
+        aprovador: aprovador, via: document.getElementById('valPapelVia').value, comentario: document.getElementById('valPapelComentario').value.trim(),
+        foto: foto, usuario: usuarioAtualCmp() }) })
+      .then(r => r.json())
+      .then(res => {
+        btn.disabled = false; btn.innerHTML = original;
+        if (res.status !== "sucesso") { alert("Não foi possível registrar: " + (res.mensagem || "erro desconhecido.")); return; }
+        try { localStorage.setItem('dmaAprovadorCompras', aprovador); } catch (e) {}
+        (bancoDados.itensCompra || []).forEach(i => {
+          if (!res.itens.includes(i.codigo)) return;
+          i.validacao = decisao;
+          i.validacaoInfo = decisao + " por " + aprovador.toUpperCase();
+          if (decisao === "REPROVADO") { i.status = "CANCELADO"; selecaoCompras.delete(i.codigo); }
+        });
+        fecharModalValidacaoPapel();
+        renderizarListaCompras();
+        buscarAtualizacoesSilenciosas();
+      })
+      .catch(() => { btn.disabled = false; btn.innerHTML = original; alert("Falha de conexão."); });
     }
 
     // ===== PAINEL DA QUALIDADE (DASHBOARD) =====
