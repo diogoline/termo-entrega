@@ -453,6 +453,20 @@
     .cot-grid-orc { font-size:11.5px; line-height:1.5; }
     .cot-grid-orc .win { font-weight:bold; color:#047857; }
     .forn-incompleto { display:inline-block; font-size:9.5px; font-weight:bold; background:#fef3c7; color:#92400e; border-radius:6px; padding:1px 6px; margin-left:6px; }
+    /* --- HISTÓRICO DE PREÇOS --- */
+    .hist-grupo { border:1px solid #e2e8f0; border-radius:12px; padding:12px 14px; margin-bottom:12px; background:#fff; }
+    .hist-tit { font-size:14px; font-weight:800; color:#0f172a; margin-bottom:8px; }
+    .hist-resumo { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+    .hist-chip { background:#f8fafc; border:1px solid #e2e8f0; border-radius:9px; padding:7px 10px; font-size:11.5px; color:#334155; }
+    .hist-chip b { display:block; font-size:14px; color:#0f172a; }
+    .hist-chip.verde { background:#ecfdf5; border-color:#a7f3d0; }
+    .hist-tab { width:100%; border-collapse:collapse; font-size:12px; }
+    .hist-tab th { text-align:left; background:#f1f5f9; padding:6px 8px; font-size:10.5px; text-transform:uppercase; color:#475569; }
+    .hist-tab td { padding:6px 8px; border-top:1px solid #f1f5f9; }
+    .hist-tag { font-size:9.5px; font-weight:bold; padding:1px 6px; border-radius:6px; }
+    .t-comp { background:#dbeafe; color:#1d4ed8; } .t-cot { background:#f1f5f9; color:#475569; } .t-venc { background:#dcfce7; color:#166534; }
+    .hist-dica { margin-top:6px; font-size:11.5px; background:#eff6ff; border:1px solid #bfdbfe; color:#1e3a8a; border-radius:8px; padding:7px 10px; display:none; }
+    .cmp-acoes.nowrap { flex-wrap:nowrap; }
     .req-lote-barra { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:8px 10px; margin-bottom:10px; }
     .req-lote-info { font-size:12px; color:#475569; }
     .btn-etiqueta:disabled { background:#cbd5e1; box-shadow:none; cursor:not-allowed; transform:none; }
@@ -725,6 +739,7 @@
       <div class="cmp-subabas">
         <button type="button" class="cmp-subaba ativa" id="btnSubLista" onclick="trocarSubabaCompras('lista')"><i class="fa-solid fa-list-check"></i> Lista de Compras</button>
         <button type="button" class="cmp-subaba" id="btnSubMapa" onclick="trocarSubabaCompras('mapa')"><i class="fa-solid fa-scale-balanced"></i> Mapa de Cotação</button>
+        <button type="button" class="cmp-subaba" id="btnSubHist" onclick="trocarSubabaCompras('hist')"><i class="fa-solid fa-clock-rotate-left"></i> Histórico de Preços</button>
       </div>
 
       <!-- ===== LISTA DE COMPRAS ===== -->
@@ -794,7 +809,7 @@
                   <th class="td-center" style="width:85px;">Ref.</th>
                   <th class="td-center" style="width:95px;">Data</th>
                   <th class="td-center" style="width:130px;">Situação</th>
-                  <th class="td-center" style="width:190px;">Ações</th>
+                  <th class="td-center" style="width:200px;">Ações</th>
                 </tr>
               </thead>
               <tbody id="corpoListaCompras">
@@ -857,6 +872,31 @@
               <tbody id="corpoCotacoes"><tr><td colspan="8" class="td-center" style="color:#888; padding:20px;">Carregando...</td></tr></tbody>
             </table>
           </div>
+        </div>
+      </div>
+      <!-- ===== HISTÓRICO DE PREÇOS ===== -->
+      <div id="cmpPainelHist" style="display:none;">
+        <div class="card">
+          <div class="req-topo">
+            <div>
+              <div class="req-topo-titulo"><i class="fa-solid fa-clock-rotate-left"></i> Histórico de Preços</div>
+              <div class="req-topo-sub">Onde já compramos e quem já cotou cada produto, com preços e contatos</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; align-items:flex-end;">
+            <div class="form-group" style="flex:0 0 auto; margin-bottom:0;">
+              <label>Buscar por:</label>
+              <div class="req-tipo-grupo" id="grpModoHist">
+                <label class="req-tipo-opcao" data-cor="#1e3a8a"><input type="radio" name="histModo" value="PRODUTO" checked onchange="renderizarHistorico()"><span><i class="fa-solid fa-box"></i> Produto</span></label>
+                <label class="req-tipo-opcao" data-cor="#1e3a8a"><input type="radio" name="histModo" value="FORNECEDOR" onchange="renderizarHistorico()"><span><i class="fa-solid fa-store"></i> Fornecedor</span></label>
+              </div>
+            </div>
+            <div class="form-group" style="flex:1; min-width:240px; margin-bottom:0;">
+              <label id="lblBuscaHist">Produto (ex.: rolamento 6005):</label>
+              <input type="text" id="filtroHist" oninput="renderizarHistoricoDebounced()" placeholder="Digite parte do nome...">
+            </div>
+          </div>
+          <div id="resultadoHist"></div>
         </div>
       </div>
     </div>
@@ -1559,7 +1599,8 @@
       <div class="form-row">
         <div class="form-group" style="flex:3;">
           <label>Item / descrição:</label>
-          <input type="text" id="cmpItem" placeholder="Ex: ROLAMENTO 6005-2RS (VEDAÇÃO DOS DOIS LADOS)">
+          <input type="text" id="cmpItem" placeholder="Ex: ROLAMENTO 6005-2RS (VEDAÇÃO DOS DOIS LADOS)" list="listProdutosCmp" oninput="dicaHistorico(this.value, 'dicaHistItem')">
+          <div class="hist-dica" id="dicaHistItem"></div>
         </div>
         <div class="form-group" style="flex:1;">
           <label>Quantidade:</label>
@@ -1724,7 +1765,8 @@
         </div>
         <div class="form-group" style="flex:2.2;">
           <label>Produto:</label>
-          <input type="text" id="cotProduto" placeholder="Ex: SENSOR DE FLUXO PARA VENTILADOR MONNAL T75">
+          <input type="text" id="cotProduto" placeholder="Ex: SENSOR DE FLUXO PARA VENTILADOR MONNAL T75" list="listProdutosCmp" oninput="dicaHistorico(this.value, 'dicaHistCot')">
+          <div class="hist-dica" id="dicaHistCot"></div>
         </div>
         <div class="form-group" style="flex:0.6;">
           <label>Qtd:</label>
@@ -1808,6 +1850,7 @@
     </div>
   </div>
   <datalist id="listFornecedoresCad"></datalist>
+  <datalist id="listProdutosCmp"></datalist>
 
   <div id="modalRecusaReq" class="modal-overlay">
     <div class="modal-box" style="width: 480px;">
@@ -4261,6 +4304,9 @@
     function trocarSubabaCompras(qual) {
       document.getElementById('cmpPainelLista').style.display = qual === 'lista' ? '' : 'none';
       document.getElementById('cmpPainelMapa').style.display = qual === 'mapa' ? '' : 'none';
+      document.getElementById('cmpPainelHist').style.display = qual === 'hist' ? '' : 'none';
+      document.getElementById('btnSubHist').classList.toggle('ativa', qual === 'hist');
+      if (qual === 'hist') renderizarHistorico();
       document.getElementById('btnSubLista').classList.toggle('ativa', qual === 'lista');
       document.getElementById('btnSubMapa').classList.toggle('ativa', qual === 'mapa');
       if (qual === 'mapa') renderizarCotacoes();
@@ -4274,6 +4320,7 @@
       const cats = unicos([...CATEGORIAS_CMP, ...itens.map(i => i.categoria)]);
       set('listCategoriasCmp', cats);
       set('listClientesCmp', unicos(["LINEMED", ...(bancoDados.clientes || []), ...itens.map(i => i.cliente)]));
+      set('listProdutosCmp', unicos([...itens.map(i => i.item), ...(bancoDados.cotacoes || []).map(c => c.produto)]));
       set('listFornecedoresCmp', unicos([...itens.map(i => i.fornecedor), ...(bancoDados.fornecedores || []).filter(f => f.ativo).map(f => f.nome)]));
       const sel = document.getElementById('filtroCategoriaCmp');
       if (sel) {
@@ -4343,7 +4390,7 @@
           let acoes = "";
           if (i.status === "PENDENTE") acoes = `
               <button type="button" class="cmp-b-edit" onclick="abrirModalItemCompra('${escReq(i.codigo)}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
-              ${cotacaoAtivaDoItem(i) ? '' : `<button type="button" class="cmp-b-reab" style="background:#7c3aed;" onclick="abrirModalCotacao(null, '${escReq(i.codigo)}')" title="Criar mapa de cotação para este item"><i class="fa-solid fa-scale-balanced"></i> Cotar</button>`}
+              ${cotacaoAtivaDoItem(i) ? '' : `<button type="button" class="cmp-b-reab" style="background:#7c3aed;" onclick="abrirModalCotacao(null, '${escReq(i.codigo)}')" title="Criar mapa de cotação para este item"><i class="fa-solid fa-scale-balanced"></i></button>`}
               <button type="button" class="cmp-b-comp" onclick="abrirModalStatusCompra('${escReq(i.codigo)}','COMPRADO')"><i class="fa-solid fa-bag-shopping"></i> Comprado</button>
               <button type="button" class="cmp-b-canc" onclick="abrirModalStatusCompra('${escReq(i.codigo)}','CANCELADO')" title="Cancelar"><i class="fa-solid fa-xmark"></i></button>`;
           else if (i.status === "COMPRADO") acoes = `
@@ -4368,7 +4415,7 @@
             <td class="td-center" style="font-size:11px;">${escReq(ref)}</td>
             <td class="td-center">${escReq(String(i.dataHora || "").split(" ")[0] || "-")}</td>
             <td class="td-center"><span class="cmp-st cmp-st-${i.status}">${i.status}</span>${cotacaoAtivaDoItem(i) ? `<span class="selo-dias" style="background:#ede9fe; color:#6d28d9; cursor:pointer;" onclick="trocarSubabaCompras('mapa')" title="Abrir o Mapa de Cotação">em cotação ${escReq(i.cotacao)}</span>` : ''}${seloValidacaoCmp(i)}${selo}</td>
-            <td class="td-center"><div class="cmp-acoes">${acoes}</div></td>
+            <td class="td-center"><div class="cmp-acoes nowrap">${acoes}</div></td>
           </tr>`;
         }).join('');
       }
@@ -4480,6 +4527,7 @@
       fotosCmpManter = i ? (i.fotos || []).slice() : [];
       fotosCmpNovas = [];
       desenharFotosCompra();
+      dicaHistorico(i ? "" : "", 'dicaHistItem');
       document.getElementById('modalItemCompra').classList.add('active');
       setTimeout(() => document.getElementById('cmpItem').focus(), 50);
     }
@@ -4965,6 +5013,7 @@
       desenharOrcsCot(c ? c.orcamentos : []);
       if (!c && itemCodigo) aoEscolherItemCotacao();
       calcularCotacaoTela();
+      dicaHistorico(document.getElementById('cotProduto').value, 'dicaHistCot');
       document.getElementById('modalCotacao').classList.add('active');
     }
 
@@ -4978,6 +5027,7 @@
       document.getElementById('cotQtd').value = i.qtd;
       document.getElementById('cotSolicitante').value = i.solicitante || "";
       document.getElementById('cotOs').value = i.os || "";
+      dicaHistorico(i.item, 'dicaHistCot');
       calcularCotacaoTela();
     }
 
@@ -5328,6 +5378,143 @@
         buscarAtualizacoesSilenciosas();
       })
       .catch(() => { btn.disabled = false; btn.innerHTML = original; alert("Falha de conexão."); });
+    }
+
+    // ===================== HISTÓRICO DE PREÇOS =====================
+    // Junta: compras da lista (comprado/entregue) + todos os orçamentos das cotações (inclusive os que perderam)
+    function registrosHistorico() {
+      const regs = [];
+      const dataCompraItem = i => {
+        const l = String(i.historico || "").split("\n").reverse().find(x => /COMPRADO/.test(x));
+        return (l && l.match(/\d{2}\/\d{2}\/\d{4}/) || [String(i.dataHora || "").split(" ")[0]])[0];
+      };
+      (bancoDados.itensCompra || []).forEach(i => {
+        if (!["COMPRADO", "ENTREGUE"].includes(i.status) || !i.fornecedor) return;
+        if (i.cotacao && (bancoDados.cotacoes || []).some(c => c.codigo === i.cotacao && c.status === "COMPRADA")) return; // já vem pela cotação
+        const q = numBR(i.qtd);
+        const total = i.valorPago === "" ? null : Number(i.valorPago);
+        regs.push({ produto: i.item, fornecedor: i.fornecedor, data: dataCompraItem(i), qtd: i.qtd, unit: total !== null && q > 0 ? total / q : null,
+                    total, prazo: null, tipo: "COMPRA", origem: "Lista Nº " + i.codigo });
+      });
+      (bancoDados.cotacoes || []).forEach(c => {
+        const r = calcularResultadoCot(c.orcamentos || [], c.qtd);
+        (c.orcamentos || []).forEach((o, k) => {
+          const comprado = c.status === "COMPRADA" && k === c.escolhido;
+          regs.push({ produto: c.produto, fornecedor: o.fornecedor, data: String(c.dataHora || "").split(" ")[0], qtd: c.qtd,
+                      unit: Number(o.valorUnit) || null, total: comprado && c.valorFinal !== "" ? Number(c.valorFinal) : r.totais[k], prazo: o.prazo || null,
+                      tipo: comprado ? "COMPRA" : (k === c.escolhido && ["APROVADA", "COMPRADA"].includes(c.status) ? "VENCEDOR" : "COTAÇÃO"), origem: c.codigo });
+        });
+      });
+      return regs;
+    }
+
+    function tempoBR(d) { const m = String(d || "").match(/(\d{2})\/(\d{2})\/(\d{4})/); return m ? new Date(m[3], m[2] - 1, m[1]).getTime() : 0; }
+    function contemTodas(texto, busca) { const t = normalizarTextoReq(texto); return normalizarTextoReq(busca).split(" ").filter(Boolean).every(p => t.includes(p)); }
+    function fornecedorCad(nome) { return (bancoDados.fornecedores || []).find(f => normalizarTextoReq(f.nome) === normalizarTextoReq(nome)) || null; }
+    function contatoFornHtml(nome) {
+      const f = fornecedorCad(nome);
+      if (!f) return "";
+      const zap = soDigitos(f.whatsapp);
+      return [zap ? `<a href="https://wa.me/${zap.length <= 11 ? '55' + zap : zap}" target="_blank" style="color:#15803d;"><i class="fa-brands fa-whatsapp"></i></a>` : "",
+              f.telefone ? `<a href="tel:${soDigitos(f.telefone)}" title="${escReq(f.telefone)}"><i class="fa-solid fa-phone"></i></a>` : ""].filter(Boolean).join(" ");
+    }
+    const unitTxt = v => v === null || v === undefined || isNaN(v) ? "-" : moedaBR(v);
+
+    function renderizarHistoricoDebounced() { clearTimeout(window.__tHist); window.__tHist = setTimeout(renderizarHistorico, 250); }
+
+    function renderizarHistorico() {
+      const box = document.getElementById('resultadoHist');
+      if (!box) return;
+      document.querySelectorAll('#grpModoHist .req-tipo-opcao').forEach(op => { op.querySelector('span').style.background = op.querySelector('input').checked ? op.dataset.cor : ""; });
+      const modo = document.querySelector('input[name="histModo"]:checked')?.value || "PRODUTO";
+      document.getElementById('lblBuscaHist').innerText = modo === "PRODUTO" ? "Produto (ex.: rolamento 6005):" : "Fornecedor (ex.: casa do rolamento):";
+      const busca = (document.getElementById('filtroHist')?.value || "").trim();
+      const regs = registrosHistorico();
+
+      if (!regs.length) { box.innerHTML = '<div class="dsh-vazio" style="color:#64748b;">Ainda não há compras nem cotações registradas. O histórico vai se formando conforme vocês usam a Lista e o Mapa de Cotação.</div>'; return; }
+      if (!busca) {
+        const ultimas = regs.filter(r => r.tipo === "COMPRA").sort((a, b) => tempoBR(b.data) - tempoBR(a.data)).slice(0, 12);
+        box.innerHTML = `<div class="hist-grupo"><div class="hist-tit">Últimas compras registradas</div>${tabelaHist(ultimas, true)}</div>`;
+        return;
+      }
+
+      if (modo === "PRODUTO") {
+        const achados = regs.filter(r => contemTodas(r.produto, busca));
+        const grupos = {};
+        achados.forEach(r => { const k = normalizarTextoReq(r.produto); (grupos[k] = grupos[k] || { nome: r.produto, regs: [] }).regs.push(r); });
+        const lista = Object.values(grupos);
+        if (!lista.length) { box.innerHTML = '<div class="dsh-vazio" style="color:#64748b;">Nenhum produto encontrado. Tente menos palavras (ex.: só "rolamento").</div>'; return; }
+        box.innerHTML = lista.map(g => {
+          const compras = g.regs.filter(r => r.tipo === "COMPRA").sort((a, b) => tempoBR(b.data) - tempoBR(a.data));
+          const comUnit = g.regs.filter(r => r.unit);
+          const menor = comUnit.sort((a, b) => a.unit - b.unit)[0];
+          const ult = compras[0];
+          const forns = new Set(g.regs.map(r => normalizarTextoReq(r.fornecedor)));
+          return `<div class="hist-grupo">
+            <div class="hist-tit">${escReq(g.nome)}</div>
+            <div class="hist-resumo">
+              <div class="hist-chip verde">Última compra<b>${ult ? `${unitTxt(ult.unit)}/un · ${escReq(ult.fornecedor)}` : "nenhuma"}</b>${ult ? escReq(ult.data) : ""}</div>
+              <div class="hist-chip">Menor preço já visto<b>${menor ? `${unitTxt(menor.unit)}/un · ${escReq(menor.fornecedor)}` : "-"}</b>${menor ? escReq(menor.data) + " · " + (menor.tipo === "COTAÇÃO" ? "orçamento" : "compra") : ""}</div>
+              <div class="hist-chip">Compras<b>${compras.length}</b></div>
+              <div class="hist-chip">Fornecedores<b>${forns.size}</b></div>
+            </div>
+            ${tabelaHist(g.regs.sort((a, b) => tempoBR(b.data) - tempoBR(a.data)), false)}
+          </div>`;
+        }).join('');
+      } else {
+        const achados = regs.filter(r => contemTodas(r.fornecedor, busca));
+        const porForn = {};
+        achados.forEach(r => { const k = normalizarTextoReq(r.fornecedor); (porForn[k] = porForn[k] || { nome: r.fornecedor, regs: [] }).regs.push(r); });
+        const cadSemReg = (bancoDados.fornecedores || []).filter(f => contemTodas(f.nome, busca) && !porForn[normalizarTextoReq(f.nome)]);
+        const lista = Object.values(porForn);
+        if (!lista.length && !cadSemReg.length) { box.innerHTML = '<div class="dsh-vazio" style="color:#64748b;">Nenhum fornecedor encontrado.</div>'; return; }
+        box.innerHTML = lista.concat(cadSemReg.map(f => ({ nome: f.nome, regs: [] }))).map(g => {
+          const f = fornecedorCad(g.nome);
+          const contato = f ? [f.telefone && `☎ ${escReq(f.telefone)}`, f.whatsapp && `WhatsApp ${escReq(f.whatsapp)}`, f.email && escReq(f.email), f.site && escReq(f.site), f.cidade && escReq(f.cidade)].filter(Boolean).join(" · ") : "";
+          return `<div class="hist-grupo">
+            <div class="hist-tit">${escReq(g.nome)} ${contatoFornHtml(g.nome)}</div>
+            <div style="font-size:12px; color:#475569; margin-bottom:8px;">${contato || '<span class="forn-incompleto" style="margin-left:0;">contato não cadastrado</span>'}${f && f.categorias ? `<br>Fornece: <b>${escReq(f.categorias)}</b>` : ""}</div>
+            ${g.regs.length ? tabelaHist(g.regs.sort((a, b) => tempoBR(b.data) - tempoBR(a.data)), true) : '<div style="font-size:12px; color:#64748b;">Sem compras ou orçamentos registrados.</div>'}
+          </div>`;
+        }).join('');
+      }
+    }
+
+    function tabelaHist(regs, mostrarProduto) {
+      if (!regs.length) return '<div style="font-size:12px; color:#64748b;">Sem registros.</div>';
+      const tag = t => t === "COMPRA" ? '<span class="hist-tag t-comp">COMPRADO</span>' : (t === "VENCEDOR" ? '<span class="hist-tag t-venc">APROVADO</span>' : '<span class="hist-tag t-cot">ORÇAMENTO</span>');
+      return `<div class="table-container" style="margin:0;"><table class="hist-tab"><thead><tr>
+        <th>Data</th>${mostrarProduto ? '<th>Produto</th>' : ''}<th>Fornecedor</th><th>Unitário</th><th>Qtd</th><th>Total</th><th>Prazo</th><th>Tipo</th><th>Origem</th></tr></thead><tbody>
+        ${regs.map(r => `<tr><td>${escReq(r.data || '-')}</td>${mostrarProduto ? `<td>${escReq(r.produto)}</td>` : ''}
+          <td><b>${escReq(r.fornecedor)}</b> ${contatoFornHtml(r.fornecedor)}</td><td><b>${unitTxt(r.unit)}</b></td><td>${escReq(r.qtd || '-')}</td>
+          <td>${r.total !== null && r.total !== undefined ? moedaBR(r.total) : '-'}</td><td>${r.prazo ? r.prazo + 'd' : '-'}</td><td>${tag(r.tipo)}</td><td>${escReq(r.origem)}</td></tr>`).join('')}
+      </tbody></table></div>`;
+    }
+
+    // Aviso rápido ao digitar um produto (novo item / cotação): última compra e menor preço
+    function dicaHistorico(texto, idDica) {
+      const el = document.getElementById(idDica);
+      if (!el) return;
+      const t = String(texto || "").trim();
+      if (t.length < 4) { el.style.display = "none"; return; }
+      const regs = registrosHistorico().filter(r => contemTodas(r.produto, t) || contemTodas(t, r.produto));
+      if (!regs.length) { el.style.display = "none"; return; }
+      const ult = regs.filter(r => r.tipo === "COMPRA").sort((a, b) => tempoBR(b.data) - tempoBR(a.data))[0];
+      const menor = regs.filter(r => r.unit).sort((a, b) => a.unit - b.unit)[0];
+      el.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> ' +
+        (ult ? `Última compra: <b>${unitTxt(ult.unit)}/un</b> em <b>${escReq(ult.fornecedor)}</b> (${escReq(ult.data)}). ` : "") +
+        (menor ? `Menor preço já visto: <b>${unitTxt(menor.unit)}/un</b> (${escReq(menor.fornecedor)}). ` : "") +
+        `<a href="#" onclick="abrirHistoricoDe(event, '${escReq(t).replace(/'/g, "")}')">Ver histórico</a>`;
+      el.style.display = "block";
+    }
+
+    function abrirHistoricoDe(ev, texto) {
+      if (ev) ev.preventDefault();
+      fecharModalItemCompra(); fecharModalCotacao();
+      trocarSubabaCompras('hist');
+      document.querySelector('input[name="histModo"][value="PRODUTO"]').checked = true;
+      document.getElementById('filtroHist').value = texto;
+      renderizarHistorico();
     }
 
     // ===== PAINEL DA QUALIDADE (DASHBOARD) =====
