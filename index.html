@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DMA SYS - Gestão de Termos, Requisições, O.S., Locação e Compras</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b2545'/%3E%3Cpath d='M12 42l20 10 20-10-5-2.5-15 7.5-15-7.5z' fill='%2322c55e'/%3E%3Cpath d='M12 32l20 10 20-10-5-2.5-15 7.5-15-7.5z' fill='%23fde047'/%3E%3Cpath d='M32 10l20 10-20 10-20-10z' fill='%2360a5fa'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -1884,7 +1885,7 @@
         <button type="button" class="btn-fechar-manual" onclick="fecharModalManual()"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-manual-body">
-        <p style="margin-bottom:14px;">Clique em cada tópico para abrir. O <b>Módulo Qualidade</b> está detalhado passo a passo; os demais módulos têm um resumo no final.</p>
+        <p style="margin-bottom:14px;">Clique em cada tópico para abrir. O <b>Módulo Qualidade</b> e o <b>Módulo de Compras</b> estão detalhados passo a passo; os demais módulos têm um resumo no final.</p>
 
         <h4 style="color:#1a4d80; margin:4px 0 10px; font-size:14px;"><i class="fa-solid fa-shield-halved"></i> Módulo Qualidade: Requisições e Termos</h4>
 
@@ -2009,9 +2010,134 @@
           </div>
         </details>
 
+        <h4 style="color:#1a4d80; margin:20px 0 10px; font-size:14px;"><i class="fa-solid fa-cart-shopping"></i> Módulo de Compras</h4>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-route"></i> Como funciona (visão geral)</summary>
+          <div class="manual-conteudo">
+            <p>O módulo tem três abas e usa o cadastro de fornecedores:</p>
+            <ul>
+              <li><b>Lista de Compras:</b> peças e materiais pedidos pela equipe, com fotos, para o chefe levar e comprar.</li>
+              <li><b>Mapa de Cotação:</b> compara de 1 a 3 orçamentos e indica o mais barato e o melhor custo-benefício.</li>
+              <li><b>Histórico de Preços:</b> onde já compramos e quem já cotou cada produto, com preços e contatos.</li>
+              <li><b>Fornecedores</b> (menu Cadastros): contatos de quem vende; é preenchido automaticamente.</li>
+            </ul>
+            <p>Caminho de um item: <b style="color:#b45309;">PENDENTE</b> → validado pelo gestor → <b style="color:#1d4ed8;">COMPRADO</b> → <b style="color:#047857;">ENTREGUE</b>. Se o gestor não aprovar, o item fica <b style="color:#64748b;">CANCELADO</b>.</p>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-plus"></i> 1. Cadastrar um item na lista</summary>
+          <div class="manual-conteudo">
+            <ol>
+              <li>Em <b>Lista de Compras</b>, clique em <b>Novo Item</b>.</li>
+              <li>Escreva a <b>descrição</b> e a <b>quantidade</b>. O campo sugere descrições já usadas: escolha a mesma sempre que for o mesmo produto, para o histórico de preços funcionar bem.</li>
+              <li>Informe <b>solicitante</b>, <b>categoria</b> (Médica, Odontologia, Oftalmologia, Refrigeração...) e <b>cliente</b>. A OS é opcional.</li>
+              <li><b>Referência:</b> <b>Foto</b>, <b>Amostra</b> (peça física junto com a lista) ou <b>Amostra + Foto</b>.</li>
+              <li><b>Prioridade:</b> <b style="color:#e11d48;">Alta (urgente)</b>, <b style="color:#b45309;">Média</b> ou <b>Baixa</b>.</li>
+              <li><b>Fotos:</b> até 3. No celular, o botão abre a câmera.</li>
+              <li>Clique em <b>Salvar Item</b>. O número é gerado sozinho (001, 002, 003...).</li>
+            </ol>
+            <div class="manual-dica"><b>Fotos melhores:</b> fotografe a peça sobre uma folha branca. O sistema deixa todas as fotos quadradas, com fundo branco e do mesmo tamanho.</div>
+            <div class="manual-dica">Ao digitar a descrição, aparece em azul a <b>última compra</b> e o <b>menor preço já visto</b> daquele produto.</div>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-user-check"></i> 2. Validação do gestor (WhatsApp ou papel)</summary>
+          <div class="manual-conteudo">
+            <p>Marque as caixinhas dos itens (sem marcar nada, vão todos os pendentes ainda não validados) e escolha:</p>
+            <p><b><i class="fa-brands fa-whatsapp"></i> Validar por WhatsApp</b></p>
+            <ol>
+              <li>Informe o nome do gestor e, se quiser, o WhatsApp dele.</li>
+              <li>Clique em <b>Gerar link</b> e depois em <b>Abrir WhatsApp</b>. A mensagem já vem pronta: confira e envie pelo seu WhatsApp.</li>
+              <li>O gestor abre o link no celular, vê fotos e descrições e toca em <b>Aprovar</b> ou <b>Não comprar</b> em cada item.</li>
+            </ol>
+            <div class="manual-alerta">O link é único, vale <b>uma vez</b> e expira em <b>7 dias</b>. O computador precisa estar com o WhatsApp Web ou o aplicativo do WhatsApp conectado.</div>
+            <p><b><i class="fa-solid fa-file-signature"></i> Registrar validação (papel ou verbal)</b>: na lista impressa, os itens não validados saem com <b>☐ APROVADO ☐ NÃO COMPRAR</b> e campo de assinatura. Depois que o gestor marcar, selecione os itens e registre a decisão. É possível anexar a foto da folha assinada.</p>
+            <p>Na tela, cada item mostra <b style="color:#7e22ce;">aguardando validação</b>, <b style="color:#047857;">✔ validado</b> ou <b style="color:#be123c;">✖ reprovado</b>. Itens que estão num Mapa de Cotação são validados pela cotação.</p>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-print"></i> 3. Imprimir a lista para a compra</summary>
+          <div class="manual-conteudo">
+            <ul>
+              <li>Clique em <b>Imprimir pendentes</b>, ou marque itens e clique em <b>Imprimir selecionados</b>.</li>
+              <li>Saem <b>5 itens por folha</b>, com foto grande e letra grande, ordenados por prioridade (alta com borda vermelha).</li>
+              <li>Itens validados saem com <b>☐ COMPRADO · Valor · Loja</b> para anotar à mão.</li>
+            </ul>
+            <div class="manual-alerta"><b>Na impressão:</b> papel A4, escala <b>100% (Padrão)</b>. Não marque "Ajustar à página".</div>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-bag-shopping"></i> 4. Comprado, entregue ou cancelado</summary>
+          <div class="manual-conteudo">
+            <ul>
+              <li><b>Comprado:</b> informe o <b>valor total pago</b> e a <b>loja</b>. Eles alimentam o histórico de preços (o sistema calcula o unitário).</li>
+              <li><b>Entregue:</b> quando a peça chegar ao solicitante.</li>
+              <li><b>Cancelar (✖):</b> motivo obrigatório. Item cancelado pode ser <b>reaberto</b>.</li>
+              <li>Para corrigir um item pendente ou comprado, use <b>Editar (✏️)</b>. Se a descrição ou a quantidade de um item já aprovado mudar, a aprovação é anulada.</li>
+            </ul>
+            <div class="manual-alerta"><b>Nunca apague linhas na planilha.</b> Para testar ou desistir, use <b>Cancelar</b> com o motivo "TESTE".</div>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-scale-balanced"></i> 5. Mapa de Cotação</summary>
+          <div class="manual-conteudo">
+            <ol>
+              <li>Na lista, clique em <b>Cotar (⚖️)</b> no item, ou em <b>Mapa de Cotação → Nova Cotação</b> (pode ser avulsa, sem item).</li>
+              <li>Preencha de <b>1 a 3 orçamentos</b>: fornecedor, valor unitário, frete, prazo, pagamento e garantia.</li>
+              <li>O sistema calcula o total e mostra <b>🟢 Mais barato</b> e <b>⭐ Melhor custo-benefício</b> (80% preço + 20% prazo de entrega).</li>
+              <li>O indicado já vem escolhido. Se escolher outro, informe a <b>justificativa</b>.</li>
+              <li><b>Imprimir (🖨)</b>: mapa comparativo com campo de assinatura do gestor.</li>
+              <li><b>Aprovação</b>: registre aprovada ou reprovada (papel ou verbal) e anexe a foto do mapa assinado, se quiser.</li>
+              <li>Depois da compra, clique em <b>Comprado</b> e confirme o valor final.</li>
+            </ol>
+            <ul>
+              <li><b>Cotação aprovada</b> valida o item da lista automaticamente. <b>Reprovada</b> cancela o item.</li>
+              <li>Se o gestor mudar de ideia, use <b>Reabrir</b>: a cotação volta para "em cotação" e precisa de nova aprovação.</li>
+              <li>Um item só pode estar em <b>uma cotação ativa</b> por vez.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-clock-rotate-left"></i> 6. Histórico de Preços</summary>
+          <div class="manual-conteudo">
+            <ul>
+              <li><b>Por produto:</b> digite parte do nome (ex.: "rolamento 6005") e veja a última compra, o menor preço já visto e todos os orçamentos, inclusive os que perderam.</li>
+              <li><b>Por fornecedor:</b> veja o contato e tudo o que já foi comprado ou cotado com ele.</li>
+              <li>Sem digitar nada, aparecem as últimas compras.</li>
+            </ul>
+            <div class="manual-dica">Quanto mais padronizadas as descrições e mais completos os valores informados em "Comprado", mais útil fica o histórico.</div>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-solid fa-store"></i> 7. Fornecedores</summary>
+          <div class="manual-conteudo">
+            <ul>
+              <li>Fica em <b>Cadastros → Fornecedores</b>.</li>
+              <li>Todo fornecedor digitado numa cotação ou num "Comprado" entra sozinho, marcado <b>"completar contato"</b>. Clique em <b>Editar</b> para incluir telefone, WhatsApp, e-mail, site, cidade e o que ele fornece.</li>
+              <li>O WhatsApp e o telefone ficam clicáveis no cadastro e no histórico de preços.</li>
+              <li>Fornecedor que não é mais usado: desmarque <b>Fornecedor ativo</b> (não precisa apagar).</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="manual-sec">
+          <summary><i class="fa-brands fa-google-drive"></i> 8. Fotos e espaço no Google Drive</summary>
+          <div class="manual-conteudo">
+            <p>As fotos ficam na pasta <b>"DMA SYS - Fotos Compras"</b> do Google Drive do sistema. Cada foto ocupa cerca de 150 a 300 KB. Abaixo do título da Lista de Compras, o indicador mostra o espaço usado (verde até 80%, amarelo até 90%, vermelho acima disso) e quantas fotos ainda cabem.</p>
+            <div class="manual-alerta">Não apague nem mova fotos de dentro da pasta: elas somem do sistema e da impressão.</div>
+          </div>
+        </details>
+
         <h4 style="color:#1a4d80; margin:20px 0 8px; font-size:14px;"><i class="fa-solid fa-layer-group"></i> Outros módulos</h4>
         <p style="margin-bottom:8px;"><b><i class="fa-solid fa-boxes-packing"></i> Controle de Locação:</b> consulte saldos contratados vs. entregues por cliente e unidade hospitalar. Ajuste saldos físicos, valores e adicione notas de log com data e hora pelo botão <b>"Ajustar"</b>.</p>
-        <p style="margin-bottom:8px;"><b><i class="fa-solid fa-cart-shopping"></i> Módulo de Compras & Mapa Comparativo:</b> cadastre cotações informando 3 fornecedores. O sistema destaca a menor proposta em verde e registra a cotação com cálculo automático.</p>
         <p><b><i class="fa-solid fa-screwdriver-wrench"></i> Manutenção e O.S.:</b> acompanhe e abra ordens de serviço preventivas e corretivas com priorização por cores.</p>
       </div>
     </div>
