@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Validação da Lista de Compras · DMA SYS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root { --azul:#1e3a8a; --verde:#059669; --vermelho:#e11d48; --borda:#e2e8f0; --txt:#0f172a; --txt2:#64748b; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #eef2f7; color: var(--txt);
+           padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+    .topo { background: linear-gradient(135deg, #1e3a8a, #0b2545); color: #fff; padding: calc(18px + env(safe-area-inset-top, 0px)) 18px 18px; }
+    .topo .marca { font-size: 12px; opacity: .8; font-weight: bold; letter-spacing: .5px; }
+    .topo h1 { margin: 6px 0 4px; font-size: 21px; }
+    .topo .sub { font-size: 13px; opacity: .9; }
+    .conteudo { max-width: 680px; margin: 0 auto; padding: 14px; }
+    .acoes-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    .acoes-topo span { font-size: 13px; color: var(--txt2); }
+    .btn-todos { background: #fff; border: 1.5px solid var(--verde); color: var(--verde); border-radius: 10px; padding: 9px 14px; font-weight: bold; font-size: 14px; cursor: pointer; }
+    .card { background: #fff; border: 1px solid var(--borda); border-radius: 14px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(15,23,42,.05); }
+    .card.alta { border: 2px solid var(--vermelho); }
+    .card.aprovado { background: #f0fdf4; border-color: #86efac; }
+    .card.reprovado { background: #fff1f2; border-color: #fda4af; }
+    .linha { display: flex; gap: 14px; }
+    .foto { width: 118px; height: 118px; flex-shrink: 0; border-radius: 10px; border: 1px solid var(--borda); background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+    .foto img { width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
+    .foto .sem { font-size: 12px; color: var(--txt2); text-align: center; font-weight: bold; padding: 6px; }
+    .foto .mais { position: absolute; right: 4px; bottom: 4px; background: rgba(15,23,42,.75); color: #fff; font-size: 11px; padding: 1px 6px; border-radius: 6px; }
+    .info { flex: 1; min-width: 0; }
+    .cab { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 4px; }
+    .num { font-weight: 900; color: var(--azul); font-size: 15px; }
+    .prio { font-size: 11px; font-weight: 900; padding: 2px 8px; border-radius: 6px; }
+    .p-ALTA { background: var(--vermelho); color: #fff; } .p-MEDIA { background: #fef3c7; color: #92400e; } .p-BAIXA { background: #f1f5f9; color: #475569; }
+    .desc { font-size: 18px; font-weight: 800; line-height: 1.25; margin-bottom: 6px; word-wrap: break-word; }
+    .qtd { font-size: 15px; margin-bottom: 4px; } .qtd b { font-size: 20px; }
+    .meta { font-size: 13px; color: #334155; line-height: 1.45; }
+    .decisao { display: flex; gap: 10px; margin-top: 12px; }
+    .decisao button { flex: 1; padding: 13px 8px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; border: 2px solid; background: #fff; }
+    .b-ok { border-color: var(--verde); color: var(--verde); }
+    .b-no { border-color: var(--vermelho); color: var(--vermelho); }
+    .b-ok.sel { background: var(--verde); color: #fff; }
+    .b-no.sel { background: var(--vermelho); color: #fff; }
+    .coment { width: 100%; margin-top: 10px; padding: 11px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 15px; display: none; }
+    .tratado { margin-top: 10px; font-size: 13px; color: var(--txt2); font-weight: bold; }
+    .rodape { position: fixed; left: 0; right: 0; bottom: 0; background: #fff; border-top: 1px solid var(--borda); padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -4px 14px rgba(15,23,42,.08); }
+    .rodape .in { max-width: 680px; margin: 0 auto; display: flex; gap: 12px; align-items: center; }
+    .rodape .cont { flex: 1; font-size: 14px; color: var(--txt2); }
+    .rodape .cont b { color: var(--txt); }
+    .btn-enviar { background: linear-gradient(135deg, #2563eb, #1e3a8a); color: #fff; border: none; border-radius: 12px; padding: 14px 20px; font-size: 16px; font-weight: 800; cursor: pointer; }
+    .btn-enviar:disabled { background: #cbd5e1; cursor: not-allowed; }
+    .aviso { text-align: center; padding: 60px 24px; }
+    .aviso i { font-size: 54px; margin-bottom: 14px; }
+    .aviso h2 { margin: 0 0 8px; font-size: 21px; }
+    .aviso p { color: var(--txt2); font-size: 15px; line-height: 1.5; }
+    @media (max-width: 420px) { .foto { width: 96px; height: 96px; } .desc { font-size: 17px; } }
+  </style>
+</head>
+<body>
+  <div class="topo">
+    <div class="marca">DMA SYS · LINEMED</div>
+    <h1>Validação da Lista de Compras</h1>
+    <div class="sub" id="subTopo">Carregando...</div>
+  </div>
+  <div class="conteudo" id="conteudo">
+    <div class="aviso"><i class="fa-solid fa-spinner fa-spin" style="color:#2563eb;"></i><p>Carregando a lista...</p></div>
+  </div>
+  <div class="rodape" id="rodape" style="display:none;">
+    <div class="in">
+      <div class="cont" id="contador"></div>
+      <button type="button" class="btn-enviar" id="btnEnviar" disabled onclick="enviar()">Enviar validação</button>
+    </div>
+  </div>
+
+<script>
+  // Mesmo endereço do Apps Script usado pelo sistema (index.html)
+  const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
+  const token = new URLSearchParams(location.search).get("t") || "";
+  let itens = [];
+  const decisoes = {};   // codigo -> { decisao, comentario }
+
+  const esc = v => String(v === null || v === undefined ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const foto = id => "https://lh3.googleusercontent.com/d/" + encodeURIComponent(id);
+
+  function aviso(icone, cor, titulo, texto) {
+    document.getElementById('rodape').style.display = "none";
+    document.getElementById('conteudo').innerHTML = `<div class="aviso"><i class="fa-solid ${icone}" style="color:${cor};"></i><h2>${titulo}</h2><p>${texto}</p></div>`;
+  }
+
+  // Leitura por JSONP (mesmo método do sistema)
+  window.receberLista = function (res) {
+    if (!res || res.status === "erro") { document.getElementById('subTopo').innerText = ""; aviso("fa-link-slash", "#e11d48", "Link inválido", "Este link não é válido. Peça um novo link a quem enviou."); return; }
+    if (res.status === "expirado") { document.getElementById('subTopo').innerText = ""; aviso("fa-clock", "#f59e0b", "Link expirado", "Este link passou do prazo de validade. Peça um novo link a quem enviou."); return; }
+    if (res.status === "respondido") { document.getElementById('subTopo').innerText = ""; aviso("fa-circle-check", "#059669", "Lista já validada", "Esta lista foi respondida em " + esc(res.respondidoEm) + (res.resumo ? ".<br><b>" + esc(res.resumo) + "</b>" : ".")); return; }
+    itens = res.itens || [];
+    document.getElementById('subTopo').innerText = "Para: " + res.aprovador + " · enviada em " + res.criadoEm;
+    desenhar();
+  };
+  (function carregar() {
+    if (!token) { aviso("fa-link-slash", "#e11d48", "Link inválido", "Este link está incompleto."); return; }
+    const s = document.createElement('script');
+    s.src = API_URL + "?acao=VALIDACAO_LER&t=" + encodeURIComponent(token) + "&callback=receberLista&x=" + Date.now();
+    s.onerror = () => aviso("fa-wifi", "#e11d48", "Sem conexão", "Não foi possível carregar a lista. Verifique a internet e tente de novo.");
+    document.body.appendChild(s);
+  })();
+
+  function desenhar() {
+    const pendentes = itens.filter(i => i.pendente);
+    if (!pendentes.length) { aviso("fa-circle-check", "#059669", "Nada para validar", "Os itens desta lista já foram tratados."); return; }
+    const ordem = { "ALTA": 3, "MÉDIA": 2, "BAIXA": 1 };
+    itens.sort((a, b) => (ordem[b.prioridade] || 0) - (ordem[a.prioridade] || 0));
+    let html = `<div class="acoes-topo"><span>${pendentes.length} item(ns) · toque na foto para ampliar</span>
+      <button type="button" class="btn-todos" onclick="aprovarTodos()"><i class="fa-solid fa-check-double"></i> Aprovar todos</button></div>`;
+    html += itens.map(i => {
+      const d = decisoes[i.codigo] || {};
+      const p = i.prioridade || "MÉDIA";
+      const fotos = i.fotos || [];
+      const areaFoto = fotos.length
+        ? `<img src="${foto(fotos[0])}" alt="Foto" onclick="window.open('${foto(fotos[0])}', '_blank')">${fotos.length > 1 ? `<span class="mais">+${fotos.length - 1}</span>` : ""}`
+        : `<div class="sem">${(i.referencia === "AMOSTRA" || i.referencia === "A/F") ? "AMOSTRA FÍSICA" : "SEM FOTO"}</div>`;
+      const ref = i.referencia === "A/F" ? "Amostra + foto" : (i.referencia || "—");
+      const classe = "card" + (p === "ALTA" ? " alta" : "") + (d.decisao === "APROVADO" ? " aprovado" : d.decisao === "REPROVADO" ? " reprovado" : "");
+      return `<div class="${classe}" id="card-${esc(i.codigo)}">
+        <div class="linha">
+          <div class="foto">${areaFoto}</div>
+          <div class="info">
+            <div class="cab"><span class="num">Nº ${esc(i.codigo)}</span><span class="prio p-${p === "MÉDIA" ? "MEDIA" : p}">${p === "ALTA" ? "⚠ " : ""}${esc(p)}</span></div>
+            <div class="desc">${esc(i.item)}</div>
+            <div class="qtd">Quantidade: <b>${esc(i.qtd)}</b></div>
+            <div class="meta">Cliente: <b>${esc(i.cliente || "—")}</b><br>Pedido por: <b>${esc(i.solicitante || "—")}</b>${i.os ? " · OS " + esc(i.os) : ""}<br>Ref.: ${esc(ref)}${i.obs ? "<br>Obs.: " + esc(i.obs) : ""}</div>
+          </div>
+        </div>
+        ${i.pendente ? `
+        <div class="decisao">
+          <button type="button" class="b-ok${d.decisao === "APROVADO" ? " sel" : ""}" onclick="decidir('${esc(i.codigo)}', 'APROVADO')"><i class="fa-solid fa-check"></i> Aprovar</button>
+          <button type="button" class="b-no${d.decisao === "REPROVADO" ? " sel" : ""}" onclick="decidir('${esc(i.codigo)}', 'REPROVADO')"><i class="fa-solid fa-xmark"></i> Não comprar</button>
+        </div>
+        <input class="coment" id="com-${esc(i.codigo)}" placeholder="Comentário (opcional)" value="${esc(d.comentario || "")}" oninput="comentar('${esc(i.codigo)}', this.value)" style="display:${d.decisao ? "block" : "none"};">`
+        : `<div class="tratado">Este item já foi tratado pelo setor de compras.</div>`}
+      </div>`;
+    }).join("");
+    document.getElementById('conteudo').innerHTML = html;
+    document.getElementById('rodape').style.display = "";
+    atualizarRodape();
+  }
+
+  function decidir(codigo, decisao) {
+    decisoes[codigo] = Object.assign(decisoes[codigo] || {}, { decisao: decisao });
+    desenhar();
+  }
+  function comentar(codigo, txt) { decisoes[codigo] = Object.assign(decisoes[codigo] || {}, { comentario: txt }); }
+  function aprovarTodos() {
+    itens.filter(i => i.pendente).forEach(i => { decisoes[i.codigo] = Object.assign(decisoes[i.codigo] || {}, { decisao: "APROVADO" }); });
+    desenhar();
+  }
+  function atualizarRodape() {
+    const pend = itens.filter(i => i.pendente);
+    const feitos = pend.filter(i => decisoes[i.codigo] && decisoes[i.codigo].decisao);
+    const ok = feitos.filter(i => decisoes[i.codigo].decisao === "APROVADO").length;
+    document.getElementById('contador').innerHTML = `<b>${feitos.length} de ${pend.length}</b> decididos` + (feitos.length ? `<br>${ok} aprovado(s) · ${feitos.length - ok} não comprar` : "");
+    document.getElementById('btnEnviar').disabled = feitos.length !== pend.length;
+  }
+
+  function enviar() {
+    const pend = itens.filter(i => i.pendente);
+    const nao = pend.filter(i => decisoes[i.codigo].decisao === "REPROVADO").length;
+    if (!confirm(`Confirmar a validação?\n\n${pend.length - nao} aprovado(s)\n${nao} não comprar`)) return;
+    const btn = document.getElementById('btnEnviar');
+    btn.disabled = true; btn.innerText = "Enviando...";
+    const respostas = pend.map(i => ({ codigo: i.codigo, decisao: decisoes[i.codigo].decisao, comentario: decisoes[i.codigo].comentario || "" }));
+    fetch(API_URL, { method: "POST", body: JSON.stringify({ acao: "RESPONDER_VALIDACAO_COMPRA", token: token, respostas: respostas }) })
+      .then(r => r.json())
+      .then(res => {
+        if (res.status !== "sucesso") { btn.disabled = false; btn.innerText = "Enviar validação"; alert(res.mensagem || "Não foi possível enviar."); return; }
+        aviso("fa-circle-check", "#059669", "Validação enviada!", "Obrigado. <b>" + esc(res.resumo) + "</b>.<br>O setor de compras já pode ver sua resposta.");
+      })
+      .catch(() => { btn.disabled = false; btn.innerText = "Enviar validação"; alert("Falha de conexão. Tente de novo."); });
+  }
+</script>
+</body>
+</html>
