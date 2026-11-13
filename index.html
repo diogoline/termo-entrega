@@ -2397,9 +2397,13 @@
       return d + "d" + (hr ? " " + hr + "h" : "");
     }
 
+    // Dias de CALENDÁRIO desde a abertura (aberta ontem = 1 dia, mesmo que tenham passado menos de 24 h)
     function diasEmAbertoReq(r) {
       const t = tempoDataBR(r && r.dataHora);
-      return t ? Math.floor((Date.now() - t) / 86400000) : null;
+      if (!t) return null;
+      const ini = new Date(t); ini.setHours(0, 0, 0, 0);
+      const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+      return Math.max(0, Math.round((hoje - ini) / 86400000));
     }
 
     // Tempo entre abertura da REQ e geração do termo (null se não houver dados confiáveis)
