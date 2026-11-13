@@ -434,6 +434,25 @@
     .cmp-foto-item button { position:absolute; top:-6px; right:-6px; width:22px; height:22px; border-radius:50%; border:none; background:#e11d48; color:#fff; cursor:pointer; font-size:11px; }
     .linha-cmp-inativa td { opacity:.55; }
     .btn-secundario:disabled { opacity:.5; cursor:not-allowed; }
+    /* --- MAPA DE COTAÇÃO --- */
+    .cot-orcs { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:10px; margin-top:6px; }
+    @media (max-width: 820px) { .cot-orcs { grid-template-columns:1fr; } }
+    .cot-orc { border:1.5px solid #e2e8f0; border-radius:12px; padding:10px; background:#fff; position:relative; }
+    .cot-orc.escolhido { border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.15); }
+    .cot-orc-tit { display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:800; color:#1e3a8a; margin-bottom:8px; }
+    .cot-orc .form-group { margin-bottom:7px; }
+    .cot-orc .mini { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+    .cot-orc-total { margin-top:6px; font-size:12px; color:#475569; display:flex; justify-content:space-between; align-items:center; }
+    .cot-orc-total b { font-size:17px; color:#0f172a; }
+    .cot-selos { display:flex; gap:4px; flex-wrap:wrap; min-height:20px; }
+    .cot-selo { font-size:10px; font-weight:bold; padding:2px 7px; border-radius:6px; }
+    .s-barato { background:#dcfce7; color:#166534; } .s-cb { background:#fef9c3; color:#854d0e; }
+    .cot-escolher { display:flex; gap:6px; align-items:center; font-size:11.5px; font-weight:bold; color:#1e3a8a; cursor:pointer; text-transform:none; margin-top:6px; }
+    .cot-escolher input { width:15px; height:15px; accent-color:#2563eb; }
+    .cot-resultado { margin-top:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 12px; font-size:12.5px; color:#334155; }
+    .cot-grid-orc { font-size:11.5px; line-height:1.5; }
+    .cot-grid-orc .win { font-weight:bold; color:#047857; }
+    .forn-incompleto { display:inline-block; font-size:9.5px; font-weight:bold; background:#fef3c7; color:#92400e; border-radius:6px; padding:1px 6px; margin-left:6px; }
     .req-lote-barra { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:8px 10px; margin-bottom:10px; }
     .req-lote-info { font-size:12px; color:#475569; }
     .btn-etiqueta:disabled { background:#cbd5e1; box-shadow:none; cursor:not-allowed; transform:none; }
@@ -571,6 +590,7 @@
         <div class="dropdown-content">
           <button type="button" onclick="mudarAba('cad_equipamento')"><i class="fa-solid fa-truck-medical"></i> Cadastrar Novo Equipamento</button>
           <button type="button" onclick="mudarAba('cad_auxiliares')"><i class="fa-solid fa-tags"></i> Nomenclaturas Padrão</button>
+          <button type="button" onclick="mudarAba('fornecedores')"><i class="fa-solid fa-store"></i> Fornecedores</button>
         </div>
       </div>
     </div>
@@ -785,117 +805,104 @@
         </div>
       </div>
 
-      <!-- ===== MAPA DE COTAÇÃO (versão atual, será substituída na próxima etapa) ===== -->
+      <!-- ===== MAPA DE COTAÇÃO ===== -->
       <div id="cmpPainelMapa" style="display:none;">
-      <div class="card">
-        <div class="card-title">
-          <span><i class="fa-solid fa-cart-plus"></i> Nova Solicitação & Mapa de Cotação de Compras</span>
-        </div>
-
-        <form id="formCompras" onsubmit="return salvarSolicitacaoCompra(event)">
-          <div class="form-row">
-            <div class="form-group" style="flex: 1;">
-              <label>Nº O.S. do Sistema Externo (Manual):</label>
-              <input type="text" id="compOsExterna" placeholder="Ex: OS-2026-8849" required>
+        <div class="card">
+          <div class="req-topo">
+            <div>
+              <div class="req-topo-titulo"><i class="fa-solid fa-scale-balanced"></i> Mapa de Cotação</div>
+              <div class="req-topo-sub">De 1 a 3 orçamentos: o sistema indica o mais barato e o melhor custo-benefício (80% preço + 20% prazo)</div>
             </div>
-
-            <div class="form-group" style="flex: 1.5;">
-              <label>Nome do Solicitante / Comprador:</label>
-              <input type="text" id="compSolicitante" placeholder="Nome do comprador ou solicitante..." required>
+            <button type="button" class="btn-submit" onclick="abrirModalCotacao()"><i class="fa-solid fa-plus"></i> Nova Cotação</button>
+          </div>
+          <div class="req-resumo">
+            <div class="req-kpi kpi-pendente" onclick="filtrarCotPorKpi('EM COTAÇÃO')"><div class="req-kpi-icone"><i class="fa-solid fa-pen-ruler"></i></div><div><div class="req-kpi-num" id="kpiCotEm">0</div><div class="req-kpi-lbl">Em cotação</div></div></div>
+            <div class="req-kpi kpi-total" onclick="filtrarCotPorKpi('AGUARDANDO APROVAÇÃO')"><div class="req-kpi-icone"><i class="fa-solid fa-user-clock"></i></div><div><div class="req-kpi-num" id="kpiCotAg">0</div><div class="req-kpi-lbl">Aguardando aprovação</div></div></div>
+            <div class="req-kpi kpi-atendido" onclick="filtrarCotPorKpi('APROVADA')"><div class="req-kpi-icone"><i class="fa-solid fa-circle-check"></i></div><div><div class="req-kpi-num" id="kpiCotAp">0</div><div class="req-kpi-lbl">Aprovadas (a comprar)</div></div></div>
+            <div class="req-kpi kpi-recusado" onclick="filtrarCotPorKpi('COMPRADA')"><div class="req-kpi-icone"><i class="fa-solid fa-bag-shopping"></i></div><div><div class="req-kpi-num" id="kpiCotCo">0</div><div class="req-kpi-lbl">Compradas no mês</div></div></div>
+          </div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin:14px 0 10px;">
+            <div class="form-group" style="flex:0 0 220px; margin-bottom:0;">
+              <label>Situação:</label>
+              <select id="filtroStatusCot" onchange="renderizarCotacoes()">
+                <option value="ATIVAS" selected>Em andamento</option>
+                <option value="EM COTAÇÃO">Em cotação</option>
+                <option value="AGUARDANDO APROVAÇÃO">Aguardando aprovação</option>
+                <option value="APROVADA">Aprovadas (a comprar)</option>
+                <option value="COMPRADA">Compradas</option>
+                <option value="REPROVADA">Reprovadas</option>
+                <option value="CANCELADA">Canceladas</option>
+                <option value="TODAS">Todas</option>
+              </select>
             </div>
-
-            <div class="form-group" style="flex: 2;">
-              <label>Nome do Produto / Peça Solicitada:</label>
-              <input type="text" id="compProduto" placeholder="Ex: SENSORES DE FLUXO PARA VENTILADOR MONNAL T75" required>
+            <div class="form-group" style="flex:1; min-width:220px; margin-bottom:0;">
+              <label>Buscar (código, produto, fornecedor, item, OS):</label>
+              <input type="text" id="filtroTextoCot" oninput="renderizarCotacoes()" placeholder="Digite para buscar...">
             </div>
           </div>
-
-          <div class="form-group" style="margin-bottom: 14px;">
-            <label>Observações / Justificativa Técnica:</label>
-            <input type="text" id="compObservacao" placeholder="Ex: Peça necessária para atendimento da OS de manutenção corretiva urgente.">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th class="td-center" style="width:80px;">Código</th>
+                  <th class="td-center" style="width:90px;">Data</th>
+                  <th>Produto</th>
+                  <th class="td-center" style="width:55px;">Qtd</th>
+                  <th style="width:260px;">Orçamentos</th>
+                  <th style="width:170px;">Escolhido</th>
+                  <th class="td-center" style="width:140px;">Situação</th>
+                  <th class="td-center" style="width:200px;">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="corpoCotacoes"><tr><td colspan="8" class="td-center" style="color:#888; padding:20px;">Carregando...</td></tr></tbody>
+            </table>
           </div>
-
-          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px; margin-bottom: 14px;">
-            <div style="font-size: 12px; font-weight: bold; color: #1a4d80; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-              <i class="fa-solid fa-scale-balanced"></i> Mapa de Cotação de Preços (3 Fornecedores)
-            </div>
-
-            <div class="form-row">
-              <div class="form-group" id="boxForn1" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: white;">
-                <label>Fornecedor 1:</label>
-                <input type="text" id="compForn1" placeholder="Nome da empresa 1..." style="margin-bottom: 6px;">
-                <label>Valor Orçado (R$):</label>
-                <input type="number" id="compVal1" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
-              </div>
-
-              <div class="form-group" id="boxForn2" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: white;">
-                <label>Fornecedor 2:</label>
-                <input type="text" id="compForn2" placeholder="Nome da empresa 2..." style="margin-bottom: 6px;">
-                <label>Valor Orçado (R$):</label>
-                <input type="number" id="compVal2" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
-              </div>
-
-              <div class="form-group" id="boxForn3" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: white;">
-                <label>Fornecedor 3:</label>
-                <input type="text" id="compForn3" placeholder="Nome da empresa 3..." style="margin-bottom: 6px;">
-                <label>Valor Orçado (R$):</label>
-                <input type="number" id="compVal3" step="0.01" min="0" placeholder="0.00" oninput="calcularMenorPrecoCotacao()">
-              </div>
-            </div>
-
-            <div id="painelMenorPreco" style="background: #e6f4ea; border: 1px solid #a8dab5; color: #137333; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 13px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
-              <span><i class="fa-solid fa-trophy"></i> Menor Proposta Identificada: <span id="lblFornVencedor">-</span></span>
-              <span>Valor: <span id="lblMenorValor">R$ 0,00</span></span>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Prazo de Entrega:</label>
-              <input type="text" id="compPrazo" placeholder="Ex: 5 dias úteis">
-            </div>
-            <div class="form-group">
-              <label>Condição de Pagamento:</label>
-              <input type="text" id="compCondPagto" placeholder="Ex: 28 dias / Pix / Faturado">
-            </div>
-            <div class="form-group">
-              <label>Frete:</label>
-              <input type="text" id="compFrete" placeholder="Ex: CIF (Incluso) ou R$ 45,00">
-            </div>
-          </div>
-
-          <div style="text-align: right; margin-top: 12px;">
-            <button type="submit" id="btnSalvarCompra" class="btn-submit">
-              <i class="fa-solid fa-file-signature"></i> Salvar Cotação
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Central de Gestão de Cotações & Compras</div>
-        <div class="table-container">
-          <table style="table-layout: auto;">
-            <thead>
-              <tr>
-                <th class="td-center">ID</th>
-                <th>Data / Hora</th>
-                <th>Nº OS Ext.</th>
-                <th>Solicitante</th>
-                <th>Produto / Peça</th>
-                <th>Fornecedor Escolhido</th>
-                <th class="td-center">Menor Valor</th>
-                <th class="td-center">Status</th>
-                <th class="td-center">Ações</th>
-              </tr>
-            </thead>
-            <tbody id="corpoTabelaCompras">
-              <tr><td colspan="9" class="td-center" style="color:#888; padding:20px;">Carregando cotações de compras...</td></tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
+
+    <div id="abaFornecedores" class="tab-content">
+      <div class="card">
+        <div class="req-topo">
+          <div>
+            <div class="req-topo-titulo"><i class="fa-solid fa-store"></i> Fornecedores</div>
+            <div class="req-topo-sub">Cadastro único para compras e demais módulos. Fornecedores usados em cotações e compras entram aqui automaticamente.</div>
+          </div>
+          <button type="button" class="btn-submit" onclick="abrirModalFornecedor()"><i class="fa-solid fa-plus"></i> Novo Fornecedor</button>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:10px;">
+          <div class="form-group" style="flex:0 0 220px; margin-bottom:0;">
+            <label>Mostrar:</label>
+            <select id="filtroSitForn" onchange="renderizarFornecedores()">
+              <option value="ATIVOS">Ativos</option>
+              <option value="INCOMPLETOS">Cadastro incompleto (sem contato)</option>
+              <option value="TODOS">Todos (inclui inativos)</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1; min-width:220px; margin-bottom:0;">
+            <label>Buscar (nome, cidade, categoria):</label>
+            <input type="text" id="filtroTextoForn" oninput="renderizarFornecedores()" placeholder="Digite para buscar...">
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:70px;" class="td-center">ID</th>
+                <th>Fornecedor</th>
+                <th style="width:140px;">Telefone</th>
+                <th style="width:150px;">WhatsApp</th>
+                <th style="width:180px;">E-mail / Site</th>
+                <th style="width:130px;">Cidade</th>
+                <th style="width:170px;">Categorias</th>
+                <th style="width:110px;" class="td-center">Compras</th>
+                <th style="width:80px;" class="td-center">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="corpoFornecedores"><tr><td colspan="9" class="td-center" style="color:#888; padding:20px;">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <!-- MÓDULO DASHBOARD -->
@@ -1704,6 +1711,104 @@
     </div>
   </div>
 
+  <div id="modalCotacao" class="modal-overlay">
+    <div class="modal-box" style="width: 980px; max-width: 96vw;">
+      <div class="modal-title">
+        <span id="tituloModalCotacao">Nova Cotação</span>
+        <span onclick="fecharModalCotacao()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1.3;">
+          <label>Item da lista (opcional):</label>
+          <select id="cotItem" onchange="aoEscolherItemCotacao()"></select>
+        </div>
+        <div class="form-group" style="flex:2.2;">
+          <label>Produto:</label>
+          <input type="text" id="cotProduto" placeholder="Ex: SENSOR DE FLUXO PARA VENTILADOR MONNAL T75">
+        </div>
+        <div class="form-group" style="flex:0.6;">
+          <label>Qtd:</label>
+          <input type="text" id="cotQtd" oninput="calcularCotacaoTela()" placeholder="1">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Solicitante:</label><input type="text" id="cotSolicitante" list="listSolicitantesCmp"></div>
+        <div class="form-group"><label>Nº da OS (opcional):</label><input type="text" id="cotOs"></div>
+        <div class="form-group" style="flex:2;"><label>Observação (opcional):</label><input type="text" id="cotObs"></div>
+      </div>
+      <div class="cot-orcs" id="cotOrcs"></div>
+      <div id="cotResultado" class="cot-resultado"></div>
+      <div class="form-group" id="boxJustCot" style="display:none; margin-top:8px;">
+        <label>Justificativa da escolha (obrigatória quando não é o indicado):</label>
+        <input type="text" id="cotJustificativa" placeholder="Ex: fornecedor com garantia maior / entrega imediata">
+      </div>
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
+        <button type="button" class="btn-secundario" onclick="fecharModalCotacao()">Cancelar</button>
+        <button type="button" id="btnSalvarCot" class="btn-submit" onclick="salvarCotacaoTela()"><i class="fa-solid fa-floppy-disk"></i> Salvar Cotação</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalAcaoCot" class="modal-overlay">
+    <div class="modal-box" style="width: 500px;">
+      <div class="modal-title">
+        <span id="tituloAcaoCot">-</span>
+        <span onclick="fecharModalAcaoCot()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div id="infoAcaoCot" style="font-size:12px; color:#334155; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; margin-bottom:12px;"></div>
+      <div id="camposAprovCot">
+        <div class="form-group" style="margin-bottom:12px;">
+          <label>Decisão do gestor:</label>
+          <div class="req-tipo-grupo" id="grpDecCot">
+            <label class="req-tipo-opcao" data-cor="#059669"><input type="radio" name="cotDecisao" value="APROVAR" checked onchange="pintarDecCot()"><span><i class="fa-solid fa-check"></i> Aprovada</span></label>
+            <label class="req-tipo-opcao" data-cor="#e11d48"><input type="radio" name="cotDecisao" value="REPROVAR" onchange="pintarDecCot()"><span><i class="fa-solid fa-xmark"></i> Reprovada</span></label>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Aprovado por:</label><input type="text" id="cotAprovador" placeholder="Nome do gestor"></div>
+          <div class="form-group"><label>Como:</label><select id="cotVia"><option value="PAPEL">Assinou o mapa impresso</option><option value="VERBAL">Verbal / telefone</option></select></div>
+        </div>
+        <div class="form-group"><label>Comentário (opcional):</label><input type="text" id="cotComentario"></div>
+        <div class="form-group"><label>Foto do mapa assinado (opcional):</label><input type="file" id="cotFotoFolha" accept="image/*"></div>
+      </div>
+      <div id="camposCompraCot" class="form-group"><label>Valor final pago (R$):</label><input type="number" id="cotValorFinal" step="0.01" min="0"></div>
+      <div id="camposCancelCot" class="form-group"><label>Motivo do cancelamento (obrigatório):</label><input type="text" id="cotMotivo"></div>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button type="button" class="btn-secundario" onclick="fecharModalAcaoCot()">Voltar</button>
+        <button type="button" id="btnConfirmarAcaoCot" class="btn-submit" onclick="confirmarAcaoCot()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalFornecedor" class="modal-overlay">
+    <div class="modal-box" style="width: 640px;">
+      <div class="modal-title">
+        <span id="tituloModalForn">Novo Fornecedor</span>
+        <span onclick="fecharModalFornecedor()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div class="form-group"><label>Nome / razão social:</label><input type="text" id="fornNome"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Telefone:</label><input type="text" id="fornTelefone" placeholder="(11) 5555-1234"></div>
+        <div class="form-group"><label>WhatsApp:</label><input type="text" id="fornWhatsapp" placeholder="(11) 99999-9999"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>E-mail:</label><input type="text" id="fornEmail"></div>
+        <div class="form-group"><label>Site:</label><input type="text" id="fornSite" placeholder="www..."></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Cidade:</label><input type="text" id="fornCidade"></div>
+        <div class="form-group" style="flex:2;"><label>Categorias (o que fornece):</label><input type="text" id="fornCategorias" placeholder="Ex: ROLAMENTOS, ELETRÔNICA, REFRIGERAÇÃO"></div>
+      </div>
+      <div class="form-group"><label>Observação:</label><input type="text" id="fornObs" placeholder="Ex: falar com João; entrega em 24 h"></div>
+      <label id="boxFornAtivo" style="display:flex; gap:8px; align-items:center; font-size:12px; font-weight:bold; margin-bottom:12px; text-transform:none;"><input type="checkbox" id="fornAtivo" checked style="width:16px; height:16px;"> Fornecedor ativo</label>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button type="button" class="btn-secundario" onclick="fecharModalFornecedor()">Cancelar</button>
+        <button type="button" id="btnSalvarForn" class="btn-submit" onclick="salvarFornecedorTela()"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+      </div>
+    </div>
+  </div>
+  <datalist id="listFornecedoresCad"></datalist>
+
   <div id="modalRecusaReq" class="modal-overlay">
     <div class="modal-box" style="width: 480px;">
       <div class="modal-title">
@@ -1882,7 +1987,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
     const NUMERO_WHATSAPP_SUPORTE = "5511970116092";
 
-    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], relacoesAuxiliares: [], locacoes: [], compras: [], itensCompra: [] };
+    let bancoDados = { clientes: [], equipamentos: [], usuarios: [], termosEmitidos: [], requisicoes: [], ordensServico: [], relacoesAuxiliares: [], locacoes: [], compras: [], itensCompra: [], cotacoes: [], fornecedores: [] };
     let equipamentoSelecionado = null;
     let protocoloReqEmVinculo = null;
     let usuarioLogado = null;
@@ -2340,6 +2445,8 @@
         try { renderizarTabelaLocacao(); } catch(e) {}
         try { renderizarTabelaCompras(); } catch(e) {}
         try { renderizarListaCompras(); } catch(e) {}
+        try { renderizarCotacoes(); } catch(e) {}
+        try { renderizarFornecedores(); } catch(e) {}
         try { atualizarDashboard(); } catch(e) {}
         try { atualizarNotificacoes(); } catch(e) {}
         try { renderizarUsuariosOnline(); } catch(e) {}
@@ -3703,7 +3810,7 @@
 
       if (nomeAba === 'inicio') { document.getElementById('btnNavInicio').classList.add('active'); document.getElementById('abaInicio').classList.add('active'); }
       else if (nomeAba === 'locacao') { document.getElementById('btnNavLocacao').classList.add('active'); document.getElementById('abaLocacao').classList.add('active'); renderizarTabelaLocacao(); }
-      else if (nomeAba === 'compras') { document.getElementById('btnNavCompras').classList.add('active'); document.getElementById('abaCompras').classList.add('active'); try { renderizarTabelaCompras(); } catch(e) {} renderizarListaCompras(); }
+      else if (nomeAba === 'compras') { document.getElementById('btnNavCompras').classList.add('active'); document.getElementById('abaCompras').classList.add('active'); try { renderizarTabelaCompras(); } catch(e) {} renderizarListaCompras(); renderizarCotacoes(); }
       else if (nomeAba === 'dashboard') { document.getElementById('btnNavDashboard').classList.add('active'); document.getElementById('abaDashboard').classList.add('active'); atualizarDashboard(); }
       else if (nomeAba === 'requisicoes') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaRequisicoes').classList.add('active'); }
       else if (nomeAba === 'emissao') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaEmissao').classList.add('active'); }
@@ -3712,6 +3819,7 @@
       else if (nomeAba === 'os_abertura') { document.getElementById('btnNavManutencao').classList.add('active'); document.getElementById('abaOsAbertura').classList.add('active'); }
       else if (nomeAba === 'cad_equipamento') { document.getElementById('btnNavCadastros').classList.add('active'); document.getElementById('abaCadEquipamento').classList.add('active'); }
       else if (nomeAba === 'cad_auxiliares') { document.getElementById('btnNavCadastros').classList.add('active'); document.getElementById('abaCadAuxiliares').classList.add('active'); }
+      else if (nomeAba === 'fornecedores') { document.getElementById('btnNavCadastros').classList.add('active'); document.getElementById('abaFornecedores').classList.add('active'); renderizarFornecedores(); }
     }
 
     function popularAutocomplete() {
@@ -4155,6 +4263,7 @@
       document.getElementById('cmpPainelMapa').style.display = qual === 'mapa' ? '' : 'none';
       document.getElementById('btnSubLista').classList.toggle('ativa', qual === 'lista');
       document.getElementById('btnSubMapa').classList.toggle('ativa', qual === 'mapa');
+      if (qual === 'mapa') renderizarCotacoes();
     }
 
     function preencherListasCompras() {
@@ -4165,7 +4274,7 @@
       const cats = unicos([...CATEGORIAS_CMP, ...itens.map(i => i.categoria)]);
       set('listCategoriasCmp', cats);
       set('listClientesCmp', unicos(["LINEMED", ...(bancoDados.clientes || []), ...itens.map(i => i.cliente)]));
-      set('listFornecedoresCmp', unicos(itens.map(i => i.fornecedor)));
+      set('listFornecedoresCmp', unicos([...itens.map(i => i.fornecedor), ...(bancoDados.fornecedores || []).filter(f => f.ativo).map(f => f.nome)]));
       const sel = document.getElementById('filtroCategoriaCmp');
       if (sel) {
         const atual = sel.value;
@@ -4234,6 +4343,7 @@
           let acoes = "";
           if (i.status === "PENDENTE") acoes = `
               <button type="button" class="cmp-b-edit" onclick="abrirModalItemCompra('${escReq(i.codigo)}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
+              ${cotacaoAtivaDoItem(i) ? '' : `<button type="button" class="cmp-b-reab" style="background:#7c3aed;" onclick="abrirModalCotacao(null, '${escReq(i.codigo)}')" title="Criar mapa de cotação para este item"><i class="fa-solid fa-scale-balanced"></i> Cotar</button>`}
               <button type="button" class="cmp-b-comp" onclick="abrirModalStatusCompra('${escReq(i.codigo)}','COMPRADO')"><i class="fa-solid fa-bag-shopping"></i> Comprado</button>
               <button type="button" class="cmp-b-canc" onclick="abrirModalStatusCompra('${escReq(i.codigo)}','CANCELADO')" title="Cancelar"><i class="fa-solid fa-xmark"></i></button>`;
           else if (i.status === "COMPRADO") acoes = `
@@ -4257,7 +4367,7 @@
             <td>${escReq(i.cliente || "-")}</td>
             <td class="td-center" style="font-size:11px;">${escReq(ref)}</td>
             <td class="td-center">${escReq(String(i.dataHora || "").split(" ")[0] || "-")}</td>
-            <td class="td-center"><span class="cmp-st cmp-st-${i.status}">${i.status}</span>${seloValidacaoCmp(i)}${selo}</td>
+            <td class="td-center"><span class="cmp-st cmp-st-${i.status}">${i.status}</span>${cotacaoAtivaDoItem(i) ? `<span class="selo-dias" style="background:#ede9fe; color:#6d28d9; cursor:pointer;" onclick="trocarSubabaCompras('mapa')" title="Abrir o Mapa de Cotação">em cotação ${escReq(i.cotacao)}</span>` : ''}${seloValidacaoCmp(i)}${selo}</td>
             <td class="td-center"><div class="cmp-acoes">${acoes}</div></td>
           </tr>`;
         }).join('');
@@ -4519,7 +4629,9 @@
               <div class="desc">${escReq(i.item)}</div>
               <div class="meta">Ref.: <b>${escReq(ref)}</b> · Cliente: <b>${escReq(i.cliente || "—")}</b> · Pedido por: <b>${escReq(i.solicitante || "—")}</b>${i.os ? ` · OS <b>${escReq(i.os)}</b>` : ""}</div>
               ${i.obs ? `<div class="meta">Obs.: ${escReq(i.obs)}</div>` : ""}
-              ${pendente && i.validacao !== "APROVADO"
+              ${pendente && i.validacao !== "APROVADO" && cotacaoAtivaDoItem(i)
+                ? `<div class="anota"><span class="chk">EM COTAÇÃO ${escReq(i.cotacao)} — ver mapa de cotação</span></div>`
+                : pendente && i.validacao !== "APROVADO"
                 ? '<div class="anota"><span class="chk">☐ APROVADO</span><span class="chk">☐ NÃO COMPRAR</span><span class="campo">Obs.:<i></i></span></div>'
                 : '<div class="anota"><span class="chk">☐ COMPRADO</span><span class="campo">Valor:<i></i></span><span class="campo">Loja:<i></i></span></div>'}
             </div>
@@ -4529,7 +4641,7 @@
       let cartoes = "";
       for (let k = 0; k < cartoesHtml.length; k += 5) {
         const daPagina = itens.slice(k, k + 5);
-        const precisaAssinar = daPagina.some(i => i.status === "PENDENTE" && i.validacao !== "APROVADO");
+        const precisaAssinar = daPagina.some(i => i.status === "PENDENTE" && i.validacao !== "APROVADO" && !cotacaoAtivaDoItem(i));
         cartoes += '<div class="pagina">' + cartoesHtml.slice(k, k + 5).join('') +
           (precisaAssinar ? '<div class="assina"><span>Validado por:<i></i></span><span>Assinatura:<i></i></span><span class="dt">Data: ____/____/______</span></div>' : '') + '</div>';
       }
@@ -4602,7 +4714,7 @@
 
     // Itens alvo: os selecionados (pendentes) ou, sem seleção, todos os pendentes ainda não aprovados
     function itensParaValidacao() {
-      const itens = (bancoDados.itensCompra || []).filter(i => i.status === "PENDENTE" && i.validacao !== "APROVADO");
+      const itens = (bancoDados.itensCompra || []).filter(i => i.status === "PENDENTE" && i.validacao !== "APROVADO" && !cotacaoAtivaDoItem(i));
       return selecaoCompras.size ? itens.filter(i => selecaoCompras.has(i.codigo)) : itens;
     }
 
@@ -4727,6 +4839,492 @@
         });
         fecharModalValidacaoPapel();
         renderizarListaCompras();
+        buscarAtualizacoesSilenciosas();
+      })
+      .catch(() => { btn.disabled = false; btn.innerHTML = original; alert("Falha de conexão."); });
+    }
+
+    // ===================== MAPA DE COTAÇÃO =====================
+    var PESO_PRECO_COT = 0.8;    // custo-benefício: 80% preço + 20% prazo (igual ao Apps Script)
+    var STATUS_COT_ATIVOS = ["EM COTAÇÃO", "AGUARDANDO APROVAÇÃO", "APROVADA"];
+    var CORES_STATUS_COT = {
+      "EM COTAÇÃO": ["#b45309", "#fffbeb", "#fcd34d"], "AGUARDANDO APROVAÇÃO": ["#7e22ce", "#faf5ff", "#d8b4fe"],
+      "APROVADA": ["#047857", "#ecfdf5", "#6ee7b7"], "COMPRADA": ["#1d4ed8", "#eff6ff", "#93c5fd"],
+      "REPROVADA": ["#be123c", "#fff1f2", "#fda4af"], "CANCELADA": ["#64748b", "#f1f5f9", "#cbd5e1"]
+    };
+    var cotEditando = null, cotEscolhaManual = null, cotAcaoAlvo = null;
+
+    function numBR(v) {
+      if (typeof v === "number") return v;
+      let t = String(v || "").replace(/[^\d,.\-]/g, "");
+      if (t.indexOf(",") !== -1) t = t.replace(/\./g, "").replace(",", ".");
+      const n = parseFloat(t);
+      return isNaN(n) ? 0 : n;
+    }
+    function moedaBR(n) { return Number(n || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+
+    // Mesmo cálculo do servidor: total = unitário × qtd + frete; custo-benefício = 80% preço + 20% prazo
+    function calcularResultadoCot(orcs, qtd) {
+      const q = numBR(qtd) || 1;
+      const lst = orcs.map(o => ({ total: Math.round((numBR(o.valorUnit) * q + numBR(o.frete)) * 100) / 100, prazo: numBR(o.prazo) }));
+      if (!lst.length) return { totais: [], maisBarato: -1, custoBeneficio: -1 };
+      const minTotal = Math.min(...lst.map(x => x.total));
+      const prazos = lst.map(x => x.prazo).filter(p => p > 0);
+      const minPrazo = prazos.length ? Math.min(...prazos) : 0;
+      let mb = 0, cb = 0, melhor = -1;
+      lst.forEach((x, i) => {
+        if (x.total < lst[mb].total) mb = i;
+        // Prazo: o mais rápido vale 1; cada dia a mais tira 1/30 (igual ao Apps Script)
+        const notaPrazo = minPrazo ? (x.prazo > 0 ? Math.max(0, 1 - (x.prazo - minPrazo) / 30) : 0) : 1;
+        const nota = PESO_PRECO_COT * (x.total > 0 ? minTotal / x.total : 0) + (1 - PESO_PRECO_COT) * notaPrazo;
+        if (nota > melhor + 1e-9) { melhor = nota; cb = i; }
+      });
+      return { totais: lst.map(x => x.total), prazos: lst.map(x => x.prazo), maisBarato: mb, custoBeneficio: cb };
+    }
+
+    function cotacaoAtivaDoItem(i) {
+      if (!i || !i.cotacao) return null;
+      const c = (bancoDados.cotacoes || []).find(x => x.codigo === i.cotacao);
+      return c && STATUS_COT_ATIVOS.includes(c.status) ? c : null;
+    }
+
+    function filtrarCotPorKpi(st) { const s = document.getElementById('filtroStatusCot'); if (s) s.value = st; renderizarCotacoes(); }
+
+    function seloStatusCot(st) {
+      const c = CORES_STATUS_COT[st] || CORES_STATUS_COT["CANCELADA"];
+      return `<span class="cmp-st" style="color:${c[0]}; background:${c[1]}; border-color:${c[2]};">${st}</span>`;
+    }
+
+    function renderizarCotacoes() {
+      const tbody = document.getElementById('corpoCotacoes');
+      if (!tbody) return;
+      const cots = bancoDados.cotacoes || [];
+      const hoje = new Date();
+      const mesAtual = String(hoje.getMonth() + 1).padStart(2, "0") + "/" + hoje.getFullYear();
+      const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
+      setTxt('kpiCotEm', cots.filter(c => c.status === "EM COTAÇÃO").length);
+      setTxt('kpiCotAg', cots.filter(c => c.status === "AGUARDANDO APROVAÇÃO").length);
+      setTxt('kpiCotAp', cots.filter(c => c.status === "APROVADA").length);
+      setTxt('kpiCotCo', cots.filter(c => c.status === "COMPRADA" && (c.historico || "").split("\n").reverse().some(l => /COMPRADA/.test(l) && l.indexOf(mesAtual) !== -1)).length);
+
+      const st = document.getElementById('filtroStatusCot')?.value || "ATIVAS";
+      const txt = normalizarTextoReq(document.getElementById('filtroTextoCot')?.value || "");
+      const num = c => parseInt(String(c || "").replace(/\D/g, ""), 10) || 0;
+      const lista = cots.filter(c => {
+        if (st === "ATIVAS" && !STATUS_COT_ATIVOS.includes(c.status)) return false;
+        if (st !== "ATIVAS" && st !== "TODAS" && c.status !== st) return false;
+        if (txt && !normalizarTextoReq([c.codigo, c.produto, c.itemCodigo, c.os, ...(c.orcamentos || []).map(o => o.fornecedor)].join(" ")).includes(txt)) return false;
+        return true;
+      }).sort((a, b) => num(b.codigo) - num(a.codigo));
+
+      if (!lista.length) { tbody.innerHTML = '<tr><td colspan="8" class="td-center" style="color:#888; padding:20px;">Nenhuma cotação para o filtro selecionado.</td></tr>'; return; }
+      tbody.innerHTML = lista.map(c => {
+        const r = calcularResultadoCot(c.orcamentos || [], c.qtd);
+        const orcHtml = (c.orcamentos || []).map((o, k) => `<div${k === c.escolhido ? ' class="win"' : ''}>${k === r.maisBarato ? '🟢' : ''}${k === r.custoBeneficio ? '⭐' : ''} ${escReq(o.fornecedor)} · ${moedaBR(r.totais[k])}${o.prazo ? ` · ${o.prazo}d` : ''}</div>`).join('');
+        const esc = (c.orcamentos || [])[c.escolhido] || {};
+        let acoes = `<button type="button" class="cmp-b-edit" onclick="imprimirMapaCotacao('${escReq(c.codigo)}')" title="Imprimir mapa"><i class="fa-solid fa-print"></i></button>`;
+        if (c.status === "EM COTAÇÃO") acoes += `<button type="button" class="cmp-b-edit" onclick="abrirModalCotacao('${escReq(c.codigo)}')" title="Editar"><i class="fa-solid fa-pen"></i></button>`;
+        if (["EM COTAÇÃO", "AGUARDANDO APROVAÇÃO"].includes(c.status)) acoes += `<button type="button" class="cmp-b-ent" onclick="abrirAcaoCot('${escReq(c.codigo)}','APROVACAO')"><i class="fa-solid fa-user-check"></i> Aprovação</button>`;
+        if (c.status === "APROVADA") acoes += `<button type="button" class="cmp-b-comp" onclick="abrirAcaoCot('${escReq(c.codigo)}','COMPRAR')"><i class="fa-solid fa-bag-shopping"></i> Comprado</button>`;
+        if (STATUS_COT_ATIVOS.includes(c.status)) acoes += `<button type="button" class="cmp-b-canc" onclick="abrirAcaoCot('${escReq(c.codigo)}','CANCELAR')" title="Cancelar"><i class="fa-solid fa-xmark"></i></button>`;
+        if (["REPROVADA", "CANCELADA"].includes(c.status)) acoes += `<button type="button" class="cmp-b-reab" onclick="reabrirCotacao('${escReq(c.codigo)}')"><i class="fa-solid fa-rotate-left"></i> Reabrir</button>`;
+        return `<tr${["CANCELADA", "REPROVADA", "COMPRADA"].includes(c.status) ? ' class="linha-cmp-inativa"' : ''} title="${escReq(c.historico || '')}">
+          <td class="td-center"><b>${escReq(c.codigo)}</b></td>
+          <td class="td-center">${escReq(String(c.dataHora || '').split(' ')[0])}</td>
+          <td><b>${escReq(c.produto)}</b>${c.itemCodigo ? `<span class="req-enviado" style="color:#1d4ed8;">Item da lista Nº ${escReq(c.itemCodigo)}</span>` : ''}${c.os ? `<span class="req-enviado" style="color:#475569;">OS ${escReq(c.os)}</span>` : ''}</td>
+          <td class="td-center"><b>${escReq(c.qtd)}</b></td>
+          <td class="cot-grid-orc">${orcHtml}</td>
+          <td><b>${escReq(esc.fornecedor || '-')}</b><span class="req-enviado" style="color:#0f172a;">${moedaBR(c.status === "COMPRADA" && c.valorFinal !== "" ? c.valorFinal : r.totais[c.escolhido])}</span>${c.justificativa ? `<span class="req-enviado" style="color:#64748b;">${escReq(c.justificativa)}</span>` : ''}</td>
+          <td class="td-center">${seloStatusCot(c.status)}${c.aprovacaoInfo ? `<span class="selo-dias dias-neutro" title="${escReq(c.aprovacaoInfo)}">${escReq(c.aprovacaoInfo.split(' em ')[0])}</span>` : ''}</td>
+          <td class="td-center"><div class="cmp-acoes">${acoes}</div></td>
+        </tr>`;
+      }).join('');
+    }
+
+    // ----- Cadastro / edição da cotação -----
+    function opcoesItensCotacao(atual) {
+      const itens = (bancoDados.itensCompra || []).filter(i => i.status === "PENDENTE" && (!cotacaoAtivaDoItem(i) || i.codigo === atual));
+      return '<option value="">— Cotação avulsa (sem item da lista) —</option>' +
+        ordenarItensCompra(itens).map(i => `<option value="${escReq(i.codigo)}">Nº ${escReq(i.codigo)} · ${escReq(i.item)} (qtd ${escReq(i.qtd)})</option>`).join('');
+    }
+
+    function abrirModalCotacao(codigo, itemCodigo) {
+      const c = codigo ? (bancoDados.cotacoes || []).find(x => x.codigo === codigo) : null;
+      cotEditando = c ? c.codigo : null;
+      cotEscolhaManual = c ? c.escolhido : null;
+      document.getElementById('tituloModalCotacao').innerText = c ? "Editar cotação " + c.codigo : "Nova Cotação";
+      const sel = document.getElementById('cotItem');
+      sel.innerHTML = opcoesItensCotacao(c ? c.itemCodigo : itemCodigo);
+      sel.value = c ? (c.itemCodigo || "") : (itemCodigo || "");
+      document.getElementById('cotProduto').value = c ? c.produto : "";
+      document.getElementById('cotQtd').value = c ? c.qtd : "";
+      document.getElementById('cotSolicitante').value = c ? c.solicitante : "";
+      document.getElementById('cotOs').value = c ? c.os : "";
+      document.getElementById('cotObs').value = c ? c.obs : "";
+      document.getElementById('cotJustificativa').value = c ? c.justificativa : "";
+      desenharOrcsCot(c ? c.orcamentos : []);
+      if (!c && itemCodigo) aoEscolherItemCotacao();
+      calcularCotacaoTela();
+      document.getElementById('modalCotacao').classList.add('active');
+    }
+
+    function fecharModalCotacao() { document.getElementById('modalCotacao').classList.remove('active'); cotEditando = null; }
+
+    function aoEscolherItemCotacao() {
+      const cod = document.getElementById('cotItem').value;
+      const i = (bancoDados.itensCompra || []).find(x => x.codigo === cod);
+      if (!i) return;
+      document.getElementById('cotProduto').value = i.item;
+      document.getElementById('cotQtd').value = i.qtd;
+      document.getElementById('cotSolicitante').value = i.solicitante || "";
+      document.getElementById('cotOs').value = i.os || "";
+      calcularCotacaoTela();
+    }
+
+    function desenharOrcsCot(orcs) {
+      const box = document.getElementById('cotOrcs');
+      box.innerHTML = [0, 1, 2].map(k => {
+        const o = (orcs || [])[k] || {};
+        const v = x => escReq(x === undefined || x === null ? "" : String(x).replace(".", ","));
+        return `<div class="cot-orc" id="cotCard${k}">
+          <div class="cot-orc-tit"><span>Orçamento ${k + 1}${k === 0 ? '' : ' (opcional)'}</span><span class="cot-selos" id="cotSelos${k}"></span></div>
+          <div class="form-group"><label>Fornecedor:</label><input type="text" id="cotF${k}" list="listFornecedoresCad" value="${escReq(o.fornecedor || '')}" oninput="calcularCotacaoTela()"></div>
+          <div class="mini">
+            <div class="form-group"><label>Valor unitário (R$):</label><input type="text" inputmode="decimal" id="cotV${k}" value="${v(o.valorUnit)}" oninput="calcularCotacaoTela()" placeholder="0,00"></div>
+            <div class="form-group"><label>Frete (R$):</label><input type="text" inputmode="decimal" id="cotFr${k}" value="${v(o.frete)}" oninput="calcularCotacaoTela()" placeholder="0,00"></div>
+            <div class="form-group"><label>Prazo (dias):</label><input type="text" inputmode="numeric" id="cotP${k}" value="${v(o.prazo)}" oninput="calcularCotacaoTela()"></div>
+            <div class="form-group"><label>Pagamento:</label><input type="text" id="cotPg${k}" value="${escReq(o.pagamento || '')}" placeholder="Ex: 28 dias"></div>
+          </div>
+          <div class="form-group"><label>Garantia / obs.:</label><input type="text" id="cotG${k}" value="${escReq([o.garantia, o.obs].filter(Boolean).join(' · '))}" placeholder="Ex: 90 dias"></div>
+          <div class="cot-orc-total"><span>Total:</span><b id="cotTot${k}">-</b></div>
+          <label class="cot-escolher"><input type="radio" name="cotEsc" value="${k}" onchange="cotEscolhaManual = ${k}; calcularCotacaoTela()"> Escolher este fornecedor</label>
+        </div>`;
+      }).join('');
+    }
+
+    // Lê os cartões preenchidos (mantendo a posição original de cada um)
+    function lerOrcsTela() {
+      const lista = [];
+      [0, 1, 2].forEach(k => {
+        const f = document.getElementById('cotF' + k).value.trim(), v = document.getElementById('cotV' + k).value.trim();
+        if (!f && !v) return;
+        lista.push({ card: k, fornecedor: f, valorUnit: numBR(v), frete: numBR(document.getElementById('cotFr' + k).value), prazo: numBR(document.getElementById('cotP' + k).value),
+                     pagamento: document.getElementById('cotPg' + k).value.trim(), garantia: document.getElementById('cotG' + k).value.trim() });
+      });
+      return lista;
+    }
+
+    function calcularCotacaoTela() {
+      const orcs = lerOrcsTela();
+      const validos = orcs.filter(o => o.fornecedor && o.valorUnit > 0);
+      const r = calcularResultadoCot(validos, document.getElementById('cotQtd').value);
+      [0, 1, 2].forEach(k => { document.getElementById('cotTot' + k).innerText = "-"; document.getElementById('cotSelos' + k).innerHTML = ""; document.getElementById('cotCard' + k).classList.remove('escolhido'); });
+      validos.forEach((o, i) => {
+        document.getElementById('cotTot' + o.card).innerText = moedaBR(r.totais[i]);
+        document.getElementById('cotSelos' + o.card).innerHTML = (i === r.maisBarato ? '<span class="cot-selo s-barato">🟢 Mais barato</span>' : '') + (i === r.custoBeneficio ? '<span class="cot-selo s-cb">⭐ Custo-benefício</span>' : '');
+      });
+      // Escolhido: o manual (se ainda válido) ou o melhor custo-benefício
+      let escCard = cotEscolhaManual;
+      if (escCard === null || !validos.some(o => o.card === escCard)) escCard = validos.length ? validos[r.custoBeneficio].card : null;
+      document.querySelectorAll('input[name="cotEsc"]').forEach(x => { x.checked = Number(x.value) === escCard; });
+      if (escCard !== null) document.getElementById('cotCard' + escCard).classList.add('escolhido');
+
+      const res = document.getElementById('cotResultado');
+      if (!validos.length) { res.innerHTML = "Preencha ao menos um orçamento com fornecedor e valor unitário."; document.getElementById('boxJustCot').style.display = "none"; return; }
+      const mb = validos[r.maisBarato], cb = validos[r.custoBeneficio];
+      let txt = `🟢 <b>Mais barato:</b> ${escReq(mb.fornecedor)} (${moedaBR(r.totais[r.maisBarato])})`;
+      if (r.custoBeneficio === r.maisBarato) txt += ` — também é o <b>melhor custo-benefício</b> ⭐`;
+      else {
+        const dif = r.totais[r.custoBeneficio] - r.totais[r.maisBarato];
+        const dias = (mb.prazo || 0) - (cb.prazo || 0);
+        const pct = r.totais[r.maisBarato] ? Math.round(dif / r.totais[r.maisBarato] * 100) : 0;
+        txt += `<br>⭐ <b>Melhor custo-benefício:</b> ${escReq(cb.fornecedor)} — entrega ${dias > 0 ? dias + " dia(s) antes" : "em prazo melhor"} por ${moedaBR(dif)} (${pct}%) a mais.`;
+      }
+      if (validos.length === 1) txt += `<br><span style="color:#b45309;">Só um orçamento: o ideal é comparar com pelo menos mais um.</span>`;
+      res.innerHTML = txt;
+      const idxEsc = validos.findIndex(o => o.card === escCard);
+      document.getElementById('boxJustCot').style.display = (idxEsc !== r.custoBeneficio && idxEsc !== r.maisBarato) ? "" : "none";
+    }
+
+    function salvarCotacaoTela() {
+      const produto = document.getElementById('cotProduto').value.trim();
+      const qtd = document.getElementById('cotQtd').value.trim();
+      if (!produto) { alert("Informe o produto."); return; }
+      if (!qtd) { alert("Informe a quantidade."); return; }
+      const orcs = lerOrcsTela();
+      for (const o of orcs) if (!o.fornecedor || !(o.valorUnit > 0)) { alert("Orçamento " + (o.card + 1) + ": informe fornecedor e valor unitário (ou deixe o cartão vazio)."); return; }
+      if (!orcs.length) { alert("Informe ao menos um orçamento."); return; }
+      const r = calcularResultadoCot(orcs, qtd);
+      let escCard = document.querySelector('input[name="cotEsc"]:checked');
+      let idxEsc = escCard ? orcs.findIndex(o => o.card === Number(escCard.value)) : r.custoBeneficio;
+      if (idxEsc < 0) idxEsc = r.custoBeneficio;
+      const just = document.getElementById('cotJustificativa').value.trim();
+      if (idxEsc !== r.custoBeneficio && idxEsc !== r.maisBarato && just.length < 5) { alert("O fornecedor escolhido não é o indicado. Informe a justificativa."); return; }
+
+      const payload = { acao: "SALVAR_COTACAO", codigo: cotEditando || "", itemCodigo: document.getElementById('cotItem').value, produto, qtd,
+        solicitante: document.getElementById('cotSolicitante').value.trim(), os: document.getElementById('cotOs').value.trim(), obs: document.getElementById('cotObs').value.trim(),
+        orcamentos: orcs.map(o => ({ fornecedor: o.fornecedor, valorUnit: o.valorUnit, frete: o.frete, prazo: o.prazo, pagamento: o.pagamento, garantia: o.garantia })),
+        escolhido: idxEsc, justificativa: just, usuario: usuarioAtualCmp() };
+      const btn = document.getElementById('btnSalvarCot'); const original = btn.innerHTML;
+      btn.disabled = true; btn.innerText = "SALVANDO...";
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
+      .then(x => x.json())
+      .then(res => {
+        btn.disabled = false; btn.innerHTML = original;
+        if (res.status !== "sucesso") { alert("Não foi possível salvar: " + (res.mensagem || "erro desconhecido.")); return; }
+        if (!bancoDados.cotacoes) bancoDados.cotacoes = [];
+        const item = (bancoDados.itensCompra || []).find(i => i.codigo === payload.itemCodigo);
+        const local = { codigo: res.codigo, produto: produto.toUpperCase(), qtd, itemCodigo: payload.itemCodigo, solicitante: payload.solicitante.toUpperCase(), os: payload.os, obs: payload.obs,
+          orcamentos: payload.orcamentos.map(o => Object.assign({}, o, { fornecedor: o.fornecedor.toUpperCase() })), escolhido: idxEsc, justificativa: just, status: "EM COTAÇÃO",
+          fotos: item ? (item.fotos || []) : [], dataHora: new Date().toLocaleDateString('pt-BR'), historico: "", aprovacaoInfo: "", valorFinal: "" };
+        const idx = bancoDados.cotacoes.findIndex(c => c.codigo === res.codigo);
+        if (idx >= 0) bancoDados.cotacoes[idx] = Object.assign(bancoDados.cotacoes[idx], local); else bancoDados.cotacoes.push(local);
+        if (item) item.cotacao = res.codigo;
+        fecharModalCotacao();
+        renderizarCotacoes(); renderizarListaCompras();
+        buscarAtualizacoesSilenciosas();
+      })
+      .catch(() => { btn.disabled = false; btn.innerHTML = original; alert("Falha de conexão ao salvar a cotação."); });
+    }
+
+    // ----- Ações: aprovação (papel/verbal), comprado, cancelar, reabrir -----
+    function pintarDecCot() {
+      document.querySelectorAll('#grpDecCot .req-tipo-opcao').forEach(op => { op.querySelector('span').style.background = op.querySelector('input').checked ? op.dataset.cor : ""; });
+    }
+
+    function abrirAcaoCot(codigo, tipo) {
+      const c = (bancoDados.cotacoes || []).find(x => x.codigo === codigo);
+      if (!c) return;
+      cotAcaoAlvo = { codigo, tipo };
+      const r = calcularResultadoCot(c.orcamentos || [], c.qtd);
+      const esc = (c.orcamentos || [])[c.escolhido] || {};
+      document.getElementById('tituloAcaoCot').innerText = ({ APROVACAO: "Registrar aprovação", COMPRAR: "Marcar como comprada", CANCELAR: "Cancelar cotação" })[tipo] + " · " + codigo;
+      document.getElementById('infoAcaoCot').innerHTML = `<b>${escReq(c.produto)}</b> · qtd ${escReq(c.qtd)}<br>Escolhido: <b>${escReq(esc.fornecedor || '-')}</b> · ${moedaBR(r.totais[c.escolhido])}` + (c.itemCodigo ? `<br>Item da lista Nº ${escReq(c.itemCodigo)}` : "");
+      document.getElementById('camposAprovCot').style.display = tipo === "APROVACAO" ? "" : "none";
+      document.getElementById('camposCompraCot').style.display = tipo === "COMPRAR" ? "" : "none";
+      document.getElementById('camposCancelCot').style.display = tipo === "CANCELAR" ? "" : "none";
+      if (tipo === "APROVACAO") {
+        document.querySelector('input[name="cotDecisao"][value="APROVAR"]').checked = true; pintarDecCot();
+        try { document.getElementById('cotAprovador').value = localStorage.getItem('dmaAprovadorCompras') || ""; } catch (e) {}
+        document.getElementById('cotComentario').value = ""; document.getElementById('cotFotoFolha').value = "";
+      }
+      if (tipo === "COMPRAR") document.getElementById('cotValorFinal').value = (r.totais[c.escolhido] || 0).toFixed(2);
+      if (tipo === "CANCELAR") document.getElementById('cotMotivo').value = "";
+      document.getElementById('modalAcaoCot').classList.add('active');
+    }
+
+    function fecharModalAcaoCot() { cotAcaoAlvo = null; document.getElementById('modalAcaoCot').classList.remove('active'); }
+
+    async function confirmarAcaoCot() {
+      if (!cotAcaoAlvo) return;
+      const { codigo, tipo } = cotAcaoAlvo;
+      const payload = { acao: "ACAO_COTACAO", codigo, usuario: usuarioAtualCmp() };
+      if (tipo === "APROVACAO") {
+        payload.acaoCotacao = document.querySelector('input[name="cotDecisao"]:checked').value;
+        payload.aprovador = document.getElementById('cotAprovador').value.trim();
+        payload.via = document.getElementById('cotVia').value;
+        payload.comentario = document.getElementById('cotComentario').value.trim();
+        if (!payload.aprovador) { alert("Informe quem aprovou."); return; }
+        if (payload.acaoCotacao === "REPROVAR" && !confirm("A cotação será REPROVADA" + ((bancoDados.cotacoes.find(c => c.codigo === codigo) || {}).itemCodigo ? " e o item da lista será CANCELADO" : "") + ". Confirma?")) return;
+        const arq = document.getElementById('cotFotoFolha').files[0];
+        if (arq) { try { payload.foto = await comprimirImagemCompra(arq, 1800, 0.82); } catch (e) {} }
+        try { localStorage.setItem('dmaAprovadorCompras', payload.aprovador); } catch (e) {}
+      } else if (tipo === "COMPRAR") {
+        payload.acaoCotacao = "COMPRAR"; payload.valorFinal = document.getElementById('cotValorFinal').value;
+      } else if (tipo === "CANCELAR") {
+        payload.acaoCotacao = "CANCELAR"; payload.motivo = document.getElementById('cotMotivo').value.trim();
+        if (payload.motivo.length < 3) { alert("Informe o motivo do cancelamento."); return; }
+      }
+      enviarAcaoCot(payload, document.getElementById('btnConfirmarAcaoCot'));
+    }
+
+    function reabrirCotacao(codigo) {
+      if (!confirm("Reabrir a cotação " + codigo + "? Ela volta para EM COTAÇÃO e precisará de nova aprovação.")) return;
+      enviarAcaoCot({ acao: "ACAO_COTACAO", codigo, acaoCotacao: "REABRIR", usuario: usuarioAtualCmp() }, null);
+    }
+
+    function enviarAcaoCot(payload, btn) {
+      const original = btn ? btn.innerHTML : "";
+      if (btn) { btn.disabled = true; btn.innerText = "SALVANDO..."; }
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
+      .then(x => x.json())
+      .then(res => {
+        if (btn) { btn.disabled = false; btn.innerHTML = original; }
+        if (res.status !== "sucesso") { alert("Não foi possível concluir: " + (res.mensagem || "erro desconhecido.")); return; }
+        const c = (bancoDados.cotacoes || []).find(x => x.codigo === payload.codigo);
+        const item = c && c.itemCodigo ? (bancoDados.itensCompra || []).find(i => i.codigo === c.itemCodigo) : null;
+        if (c) {
+          c.status = res.novoStatus;
+          if (payload.acaoCotacao === "APROVAR" || payload.acaoCotacao === "REPROVAR") c.aprovacaoInfo = res.novoStatus + " por " + payload.aprovador.toUpperCase() + " em " + new Date().toLocaleDateString('pt-BR');
+          if (payload.acaoCotacao === "REABRIR") c.aprovacaoInfo = "";
+          if (payload.acaoCotacao === "COMPRAR" && payload.valorFinal !== "") c.valorFinal = Number(payload.valorFinal);
+        }
+        if (item) {
+          if (payload.acaoCotacao === "APROVAR") { item.validacao = "APROVADO"; item.validacaoInfo = "APROVADO via cotação " + c.codigo; }
+          if (payload.acaoCotacao === "REPROVAR") { item.status = "CANCELADO"; item.validacao = "REPROVADO"; }
+          if (payload.acaoCotacao === "COMPRAR") { item.status = "COMPRADO"; }
+          if (payload.acaoCotacao === "CANCELAR") { item.cotacao = ""; }
+          if (payload.acaoCotacao === "REABRIR") { item.status = "PENDENTE"; item.validacao = ""; item.cotacao = c.codigo; }
+        }
+        fecharModalAcaoCot();
+        renderizarCotacoes(); renderizarListaCompras();
+        buscarAtualizacoesSilenciosas();
+      })
+      .catch(() => { if (btn) { btn.disabled = false; btn.innerHTML = original; } alert("Falha de conexão."); });
+    }
+
+    // ----- Impressão do mapa (A4, letra grande, campo de assinatura) -----
+    function imprimirHtmlComFotos(html) {
+      const ifr = document.createElement('iframe');
+      ifr.style.cssText = "position:fixed; right:0; bottom:0; width:0; height:0; border:0;";
+      document.body.appendChild(ifr);
+      const doc = ifr.contentWindow.document;
+      doc.open(); doc.write(html); doc.close();
+      const imgs = Array.from(doc.images);
+      let pendentes = imgs.filter(im => !im.complete).length, feito = false;
+      const imprimir = () => { if (feito) return; feito = true; try { ifr.contentWindow.focus(); ifr.contentWindow.print(); } catch (e) { alert("Não foi possível abrir a impressão."); } setTimeout(() => ifr.remove(), 5000); };
+      if (!pendentes) setTimeout(imprimir, 300);
+      imgs.forEach(im => { if (!im.complete) im.onload = im.onerror = () => { if (--pendentes <= 0) setTimeout(imprimir, 200); }; });
+      setTimeout(imprimir, 8000);
+    }
+
+    function imprimirMapaCotacao(codigo) {
+      const c = (bancoDados.cotacoes || []).find(x => x.codigo === codigo);
+      if (!c) return;
+      const orcs = c.orcamentos || [];
+      const r = calcularResultadoCot(orcs, c.qtd);
+      const col = (fn, cls) => orcs.map((o, k) => `<td class="${k === c.escolhido ? 'esc' : ''} ${cls || ''}">${fn(o, k)}</td>`).join('');
+      const foto = c.fotos && c.fotos[0] ? `<img class="foto" src="${urlFotoCompra(c.fotos[0])}">` : "";
+      const aprovado = ["APROVADA", "COMPRADA", "REPROVADA"].includes(c.status) && c.aprovacaoInfo;
+      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Mapa de Cotação ${escReq(c.codigo)}</title><style>
+        @page { size: A4 portrait; margin: 12mm; }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { margin: 0; font-family: Arial, Helvetica, sans-serif; color: #0f172a; }
+        .cab { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 0.8mm solid #1e3a8a; padding-bottom: 2mm; margin-bottom: 4mm; }
+        .cab h1 { margin: 0; font-size: 21pt; color: #1e3a8a; } .cab .cod { font-size: 15pt; font-weight: 900; text-align: right; }
+        .prod { display: flex; gap: 5mm; margin-bottom: 5mm; }
+        .foto { width: 40mm; height: 40mm; object-fit: contain; border: 0.3mm solid #cbd5e1; border-radius: 2mm; }
+        .prod .desc { font-size: 19pt; font-weight: 900; line-height: 1.15; margin-bottom: 2mm; }
+        .prod .meta { font-size: 12.5pt; color: #334155; line-height: 1.5; }
+        table { width: 100%; border-collapse: collapse; font-size: 13pt; }
+        th, td { border: 0.35mm solid #94a3b8; padding: 2.4mm 3mm; text-align: center; }
+        th.lbl, td.lbl { text-align: left; background: #f1f5f9; font-weight: bold; width: 42mm; font-size: 11.5pt; color: #334155; }
+        thead th { background: #1e3a8a; color: #fff; font-size: 12pt; }
+        td.esc { background: #eff6ff; font-weight: bold; border-left: 0.9mm solid #2563eb; border-right: 0.9mm solid #2563eb; }
+        tr.total td { font-size: 16pt; font-weight: 900; }
+        .selo { display: inline-block; font-size: 10.5pt; font-weight: 900; padding: 0.6mm 2mm; border-radius: 1.5mm; margin: 0.5mm; }
+        .barato { background: #dcfce7; color: #166534; } .cb { background: #fef9c3; color: #854d0e; } .escsel { background: #2563eb; color: #fff; }
+        .just { margin-top: 4mm; font-size: 12.5pt; } .info { margin-top: 3mm; font-size: 12pt; color: #334155; }
+        .decisao { margin-top: 9mm; border: 0.5mm solid #334155; border-radius: 2mm; padding: 4mm; }
+        .decisao .op { font-size: 16pt; font-weight: 900; display: flex; gap: 14mm; margin-bottom: 7mm; }
+        .assin { display: flex; gap: 6mm; font-size: 12pt; font-weight: bold; }
+        .assin span { flex: 1; display: flex; align-items: flex-end; gap: 2mm; white-space: nowrap; } .assin i { flex: 1; border-bottom: 0.35mm solid #334155; height: 6mm; }
+        .aprov { margin-top: 8mm; font-size: 14pt; font-weight: 900; color: ${c.status === "REPROVADA" ? "#be123c" : "#047857"}; border: 0.6mm solid currentColor; border-radius: 2mm; padding: 3mm; }
+      </style></head><body>
+        <div class="cab"><h1>MAPA COMPARATIVO DE COTAÇÃO</h1><div class="cod">${escReq(c.codigo)}<br><span style="font-size:11pt; font-weight:normal;">${escReq(c.dataHora || '')}</span></div></div>
+        <div class="prod">${foto}<div>
+          <div class="desc">${escReq(c.produto)}</div>
+          <div class="meta">Quantidade: <b style="font-size:16pt;">${escReq(c.qtd)}</b>${c.itemCodigo ? ` · Item da lista Nº <b>${escReq(c.itemCodigo)}</b>` : ''}${c.os ? ` · OS <b>${escReq(c.os)}</b>` : ''}<br>Solicitante: <b>${escReq(c.solicitante || '—')}</b>${c.obs ? `<br>Obs.: ${escReq(c.obs)}` : ''}</div>
+        </div></div>
+        <table>
+          <thead><tr><th class="lbl" style="background:#1e3a8a; color:#fff;"></th>${orcs.map((o, k) => `<th>ORÇAMENTO ${k + 1}</th>`).join('')}</tr></thead>
+          <tbody>
+            <tr><td class="lbl">Fornecedor</td>${col(o => `<b>${escReq(o.fornecedor)}</b>`)}</tr>
+            <tr><td class="lbl">Valor unitário</td>${col(o => moedaBR(o.valorUnit))}</tr>
+            <tr><td class="lbl">Frete</td>${col(o => o.frete ? moedaBR(o.frete) : '—')}</tr>
+            <tr class="total"><td class="lbl">TOTAL</td>${col((o, k) => moedaBR(r.totais[k]))}</tr>
+            <tr><td class="lbl">Prazo de entrega</td>${col(o => o.prazo ? o.prazo + ' dia(s)' : '—')}</tr>
+            <tr><td class="lbl">Pagamento</td>${col(o => escReq(o.pagamento || '—'))}</tr>
+            <tr><td class="lbl">Garantia / obs.</td>${col(o => escReq([o.garantia, o.obs].filter(Boolean).join(' · ') || '—'))}</tr>
+            <tr><td class="lbl">Indicação</td>${col((o, k) => (k === r.maisBarato ? '<span class="selo barato">MAIS BARATO</span>' : '') + (k === r.custoBeneficio ? '<span class="selo cb">CUSTO-BENEFÍCIO</span>' : '') + (k === c.escolhido ? '<span class="selo escsel">✔ ESCOLHIDO</span>' : '') || '—')}</tr>
+          </tbody>
+        </table>
+        ${c.justificativa ? `<div class="just"><b>Justificativa da escolha:</b> ${escReq(c.justificativa)}</div>` : ''}
+        <div class="info">Critério: total = valor unitário × quantidade + frete. Custo-benefício = 80% preço + 20% prazo de entrega.</div>
+        ${aprovado ? `<div class="aprov">${escReq(c.aprovacaoInfo)}</div>` : `
+        <div class="decisao">
+          <div class="op"><span>☐ APROVADO</span><span>☐ REPROVADO</span></div>
+          <div class="assin"><span>Aprovado por:<i></i></span><span>Assinatura:<i></i></span><span style="flex:0 0 auto;">Data: ____/____/______</span></div>
+        </div>`}
+      </body></html>`;
+      imprimirHtmlComFotos(html);
+    }
+
+    // ===================== CADASTRO DE FORNECEDORES =====================
+    var fornEditando = null;
+
+    function preencherListaFornecedores() {
+      const dl = document.getElementById('listFornecedoresCad');
+      if (dl) dl.innerHTML = (bancoDados.fornecedores || []).filter(f => f.ativo).map(f => `<option value="${escReq(f.nome)}">`).join('');
+    }
+
+    function soDigitos(v) { return String(v || "").replace(/\D/g, ""); }
+
+    function renderizarFornecedores() {
+      preencherListaFornecedores();
+      const tbody = document.getElementById('corpoFornecedores');
+      if (!tbody) return;
+      const sit = document.getElementById('filtroSitForn')?.value || "ATIVOS";
+      const txt = normalizarTextoReq(document.getElementById('filtroTextoForn')?.value || "");
+      const incompleto = f => !f.telefone && !f.whatsapp && !f.email && !f.site;
+      const nf = n => normalizarTextoReq(n);
+      const compras = {}, cotacoes = {};
+      (bancoDados.itensCompra || []).forEach(i => { if (i.fornecedor && ["COMPRADO", "ENTREGUE"].includes(i.status)) compras[nf(i.fornecedor)] = (compras[nf(i.fornecedor)] || 0) + 1; });
+      (bancoDados.cotacoes || []).forEach(c => (c.orcamentos || []).forEach(o => { cotacoes[nf(o.fornecedor)] = (cotacoes[nf(o.fornecedor)] || 0) + 1; }));
+      const lista = (bancoDados.fornecedores || []).filter(f => {
+        if (sit === "ATIVOS" && !f.ativo) return false;
+        if (sit === "INCOMPLETOS" && !(f.ativo && incompleto(f))) return false;
+        if (txt && !normalizarTextoReq([f.nome, f.cidade, f.categorias, f.obs].join(" ")).includes(txt)) return false;
+        return true;
+      }).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+      if (!lista.length) { tbody.innerHTML = '<tr><td colspan="9" class="td-center" style="color:#888; padding:20px;">Nenhum fornecedor encontrado.</td></tr>'; return; }
+      tbody.innerHTML = lista.map(f => {
+        const zap = soDigitos(f.whatsapp);
+        const zapLink = zap ? `<a href="https://wa.me/${zap.length <= 11 ? '55' + zap : zap}" target="_blank" style="color:#15803d; font-weight:bold;"><i class="fa-brands fa-whatsapp"></i> ${escReq(f.whatsapp)}</a>` : '-';
+        const site = f.site ? `<a href="${/^https?:/i.test(f.site) ? '' : 'https://'}${escReq(f.site)}" target="_blank">${escReq(f.site)}</a>` : '';
+        return `<tr${f.ativo ? '' : ' class="linha-cmp-inativa"'}>
+          <td class="td-center">${escReq(f.id)}</td>
+          <td><b>${escReq(f.nome)}</b>${incompleto(f) ? '<span class="forn-incompleto">completar contato</span>' : ''}${f.obs ? `<span class="req-enviado" style="color:#64748b;">${escReq(f.obs)}</span>` : ''}</td>
+          <td>${f.telefone ? `<a href="tel:${soDigitos(f.telefone)}">${escReq(f.telefone)}</a>` : '-'}</td>
+          <td>${zapLink}</td>
+          <td style="font-size:11.5px;">${escReq(f.email || '')}${f.email && site ? '<br>' : ''}${site || (f.email ? '' : '-')}</td>
+          <td>${escReq(f.cidade || '-')}</td>
+          <td style="font-size:11.5px;">${escReq(f.categorias || '-')}</td>
+          <td class="td-center" style="font-size:11.5px;">${compras[nf(f.nome)] || 0} compra(s)<br>${cotacoes[nf(f.nome)] || 0} orçamento(s)</td>
+          <td class="td-center"><div class="cmp-acoes"><button type="button" class="cmp-b-edit" onclick="abrirModalFornecedor('${escReq(f.id)}')"><i class="fa-solid fa-pen"></i> Editar</button></div></td>
+        </tr>`;
+      }).join('');
+    }
+
+    function abrirModalFornecedor(id) {
+      const f = id ? (bancoDados.fornecedores || []).find(x => x.id === id) : null;
+      fornEditando = f ? f.id : null;
+      document.getElementById('tituloModalForn').innerText = f ? "Editar fornecedor " + f.id : "Novo Fornecedor";
+      ['Nome', 'Telefone', 'Whatsapp', 'Email', 'Site', 'Cidade', 'Categorias', 'Obs'].forEach(c => { document.getElementById('forn' + c).value = f ? (f[c.toLowerCase()] || "") : ""; });
+      document.getElementById('fornAtivo').checked = f ? f.ativo : true;
+      document.getElementById('boxFornAtivo').style.display = f ? "flex" : "none";
+      document.getElementById('modalFornecedor').classList.add('active');
+    }
+
+    function fecharModalFornecedor() { fornEditando = null; document.getElementById('modalFornecedor').classList.remove('active'); }
+
+    function salvarFornecedorTela() {
+      const dados = { acao: "SALVAR_FORNECEDOR", id: fornEditando || "", ativo: document.getElementById('fornAtivo').checked };
+      ['Nome', 'Telefone', 'Whatsapp', 'Email', 'Site', 'Cidade', 'Categorias', 'Obs'].forEach(c => { dados[c.toLowerCase()] = document.getElementById('forn' + c).value.trim(); });
+      if (!dados.nome) { alert("Informe o nome do fornecedor."); return; }
+      const btn = document.getElementById('btnSalvarForn'); const original = btn.innerHTML;
+      btn.disabled = true; btn.innerText = "SALVANDO...";
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(dados) })
+      .then(x => x.json())
+      .then(res => {
+        btn.disabled = false; btn.innerHTML = original;
+        if (res.status !== "sucesso") { alert(res.mensagem || "Não foi possível salvar."); return; }
+        if (!bancoDados.fornecedores) bancoDados.fornecedores = [];
+        const novo = { id: res.id, nome: dados.nome.toUpperCase(), telefone: dados.telefone, whatsapp: dados.whatsapp, email: dados.email.toLowerCase(), site: dados.site,
+                       cidade: dados.cidade.toUpperCase(), categorias: dados.categorias.toUpperCase(), obs: dados.obs, ativo: dados.ativo };
+        const idx = bancoDados.fornecedores.findIndex(f => f.id === res.id);
+        if (idx >= 0) bancoDados.fornecedores[idx] = novo; else bancoDados.fornecedores.push(novo);
+        fecharModalFornecedor(); renderizarFornecedores();
         buscarAtualizacoesSilenciosas();
       })
       .catch(() => { btn.disabled = false; btn.innerHTML = original; alert("Falha de conexão."); });
