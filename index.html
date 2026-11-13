@@ -467,6 +467,9 @@
     .t-comp { background:#dbeafe; color:#1d4ed8; } .t-cot { background:#f1f5f9; color:#475569; } .t-venc { background:#dcfce7; color:#166534; }
     .hist-dica { margin-top:6px; font-size:11.5px; background:#eff6ff; border:1px solid #bfdbfe; color:#1e3a8a; border-radius:8px; padding:7px 10px; display:none; }
     .cmp-acoes.nowrap { flex-wrap:nowrap; }
+    .cmp-drive { margin-top:8px; display:inline-flex; align-items:center; gap:10px; font-size:11.5px; color:#475569; background:#f8fafc; border:1px solid #e2e8f0; border-radius:9px; padding:6px 10px; }
+    .cmp-drive-barra { width:140px; height:7px; background:#e2e8f0; border-radius:6px; overflow:hidden; }
+    .cmp-drive-barra div { height:100%; border-radius:6px; }
     .req-lote-barra { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:8px 10px; margin-bottom:10px; }
     .req-lote-info { font-size:12px; color:#475569; }
     .btn-etiqueta:disabled { background:#cbd5e1; box-shadow:none; cursor:not-allowed; transform:none; }
@@ -749,6 +752,7 @@
             <div>
               <div class="req-topo-titulo"><i class="fa-solid fa-cart-shopping"></i> Lista de Compras</div>
               <div class="req-topo-sub">Peças e materiais pedidos pela equipe, com fotos para a compra</div>
+              <div class="cmp-drive" id="cmpDrive" style="display:none;"></div>
             </div>
             <button type="button" class="btn-submit" onclick="abrirModalItemCompra()"><i class="fa-solid fa-plus"></i> Novo Item</button>
           </div>
@@ -4330,6 +4334,24 @@
       }
     }
 
+    // Espaço do Google Drive (atualizado pelo servidor a cada 1 h)
+    function desenharArmazenamento() {
+      const el = document.getElementById('cmpDrive');
+      const a = bancoDados.armazenamento;
+      if (!el || !a || !a.limite) { if (el) el.style.display = "none"; return; }
+      const gb = b => (b / 1073741824).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const mb = b => (b / 1048576).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
+      const pct = Math.round(a.usado / a.limite * 100);
+      const cor = pct >= 90 ? "#e11d48" : (pct >= 80 ? "#f59e0b" : "#10b981");
+      const media = a.fotosQtd >= 5 ? a.fotosBytes / a.fotosQtd : 250 * 1024;   // ~250 KB por foto até haver base real
+      const cabem = Math.max(0, Math.floor((a.limite - a.usado) / media));
+      el.innerHTML = `<i class="fa-brands fa-google-drive"></i> Drive: <b>${gb(a.usado)} de ${gb(a.limite)} GB</b>
+        <span class="cmp-drive-barra"><div style="width:${Math.min(100, pct)}%; background:${cor};"></div></span><b style="color:${cor};">${pct}%</b>
+        · Fotos de compras: ${a.fotosQtd} (${mb(a.fotosBytes)} MB) · cabem ~${cabem.toLocaleString('pt-BR')} fotos`;
+      el.title = "Espaço total da conta Google do sistema (Drive, Gmail e Fotos). Atualizado em " + (a.atualizadoEm || "-") + ", a cada 1 hora.";
+      el.style.display = "inline-flex";
+    }
+
     function filtrarComprasPorKpi(valor) {
       const sel = document.getElementById('filtroStatusCmp');
       if (sel) sel.value = valor;
@@ -4347,6 +4369,7 @@
       const tbody = document.getElementById('corpoListaCompras');
       if (!tbody) return;
       preencherListasCompras();
+      desenharArmazenamento();
       const itens = bancoDados.itensCompra || [];
 
       // Indicadores
