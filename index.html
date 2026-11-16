@@ -428,6 +428,39 @@
     .dsh-lista-item .dsh-li-txt div { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .dsh-li-sub { color:var(--txt2); font-size:10.5px; }
     .dsh-pilula { flex-shrink:0; font-size:10.5px; font-weight:bold; padding:2px 8px; border-radius:20px; color:#fff; }
+    /* --- Dashboard: seletor de módulo, "ao vivo" e animações --- */
+    .dsh-seg { display:inline-flex; background:var(--card); border:1px solid var(--borda); border-radius:10px; padding:3px; gap:3px; }
+    .dsh-seg button { background:transparent; border:none; color:var(--txt2); font-size:12px; font-weight:bold; padding:6px 12px; border-radius:7px; cursor:pointer; display:inline-flex; gap:6px; align-items:center; transition:background .2s, color .2s; }
+    .dsh-seg button.ativo { background:linear-gradient(135deg,#3b82f6,#4f46e5); color:#fff; box-shadow:0 4px 12px rgba(79,70,229,.35); }
+    .dsh-live { display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:bold; color:#10b981; background:rgba(16,185,129,.12); border-radius:20px; padding:2px 8px; margin-left:6px; text-transform:uppercase; letter-spacing:.5px; }
+    .dsh-live i { width:7px; height:7px; border-radius:50%; background:#10b981; animation: dsh-pisca 1.6s ease-in-out infinite; }
+    @keyframes dsh-pisca { 0%,100% { box-shadow:0 0 0 0 rgba(16,185,129,.6); } 50% { box-shadow:0 0 0 5px rgba(16,185,129,0); } }
+    .dsh-kpi { position:relative; overflow:hidden; transition: transform .2s, box-shadow .2s; }
+    .dsh-kpi:hover { transform: translateY(-2px); box-shadow:0 10px 24px rgba(0,0,0,.18); }
+    .dsh-kpi::after { content:""; position:absolute; top:0; left:-60%; width:50%; height:100%; background:linear-gradient(100deg, transparent, rgba(255,255,255,.08), transparent); animation: dsh-reflexo 6s ease-in-out infinite; pointer-events:none; }
+    @keyframes dsh-reflexo { 0%,70% { left:-60%; } 100% { left:130%; } }
+    .dsh-card { transition: border-color .2s; } .dsh-card:hover { border-color:#3b82f6; }
+    .dsh-anim .dsh-kpi, .dsh-anim .dsh-card { animation: dsh-sobe .6s cubic-bezier(.22,1,.36,1) both; }
+    .dsh-anim .dsh-kpi:nth-child(2) { animation-delay:.05s; } .dsh-anim .dsh-kpi:nth-child(3) { animation-delay:.1s; } .dsh-anim .dsh-kpi:nth-child(4) { animation-delay:.15s; }
+    .dsh-anim .dsh-kpi:nth-child(5) { animation-delay:.2s; } .dsh-anim .dsh-kpi:nth-child(6) { animation-delay:.25s; }
+    .dsh-anim .dsh-grid:nth-of-type(2) .dsh-card { animation-delay:.25s; } .dsh-anim .dsh-grid:nth-of-type(3) .dsh-card { animation-delay:.35s; } .dsh-anim .dsh-grid:nth-of-type(4) .dsh-card { animation-delay:.45s; }
+    @keyframes dsh-sobe { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+    .dsh-anim .dsh-preenche { transform-origin:left; animation: dsh-cresce-x 1s cubic-bezier(.22,1,.36,1) .3s both; }
+    @keyframes dsh-cresce-x { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+    .dsh-anim svg rect:not([fill="none"]) { transform-box:fill-box; transform-origin:bottom; animation: dsh-cresce-y .9s cubic-bezier(.22,1,.36,1) .3s both; }
+    @keyframes dsh-cresce-y { from { transform:scaleY(0); } to { transform:scaleY(1); } }
+    .dsh-anim .dsh-linha { stroke-dasharray:1; stroke-dashoffset:1; animation: dsh-desenha 1.4s ease-out .6s forwards; }
+    @keyframes dsh-desenha { to { stroke-dashoffset:0; } }
+    .dsh-anim svg circle:not(.dsh-seg-rosca):not([fill="none"]) { animation: dsh-sobe .4s ease-out 1.2s both; }
+    .dsh-preenche { background-image: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.18)); }
+    .dsh-funil { display:flex; flex-direction:column; gap:10px; align-items:center; padding-top:4px; }
+    .dsh-funil-et { width:100%; display:flex; flex-direction:column; align-items:center; }
+    .dsh-funil-barra { height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:14px; box-shadow:0 4px 12px rgba(0,0,0,.18); }
+    .dsh-anim .dsh-funil-barra { animation: dsh-funil .8s cubic-bezier(.22,1,.36,1) both; }
+    @keyframes dsh-funil { from { transform:scaleX(0); opacity:0; } to { transform:scaleX(1); opacity:1; } }
+    .dsh-funil-lbl { font-size:11px; color:var(--txt2); margin-top:3px; display:flex; gap:8px; }
+    .dsh-funil-lbl span { font-weight:bold; color:var(--txt); }
+    @media (prefers-reduced-motion: reduce) { .dsh-anim *, .dsh-kpi::after, .dsh-live i { animation:none !important; } .dsh-anim .dsh-linha { stroke-dashoffset:0; } }
     .dsh-rodape { font-size:10.5px; color:var(--txt2); text-align:right; margin-top:4px; }
     /* ================= MÓDULO DE COMPRAS ================= */
     .cmp-subabas { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
@@ -972,12 +1005,16 @@
       <div class="dsh" id="dshPainel" data-tema="escuro">
         <div class="dsh-topo">
           <div>
-            <div class="dsh-titulo"><i class="fa-solid fa-chart-line"></i> Painel da Qualidade</div>
+            <div class="dsh-titulo"><i class="fa-solid fa-chart-line"></i> <span id="dshTitulo">Painel da Qualidade</span> <span class="dsh-live"><i></i> ao vivo</span></div>
             <div class="dsh-sub" id="dshSub">Requisições, termos e entregas</div>
           </div>
           <div class="dsh-controles">
-            <input type="month" id="dashFiltroMes" onchange="atualizarDashboard()" title="Mês de referência">
-            <select id="dashModoPeriodo" onchange="atualizarDashboard()" title="Período">
+            <div class="dsh-seg" role="tablist">
+              <button type="button" id="dshSegQual" class="ativo" onclick="trocarModuloDashboard('QUAL')"><i class="fa-solid fa-shield-halved"></i> Qualidade</button>
+              <button type="button" id="dshSegCmp" onclick="trocarModuloDashboard('CMP')"><i class="fa-solid fa-cart-shopping"></i> Compras</button>
+            </div>
+            <input type="month" id="dashFiltroMes" onchange="atualizarDashboard(true)" title="Mês de referência">
+            <select id="dashModoPeriodo" onchange="atualizarDashboard(true)" title="Período">
               <option value="MES">Mês selecionado</option>
               <option value="GERAL">Todo o histórico</option>
             </select>
@@ -986,6 +1023,7 @@
           </div>
         </div>
 
+        <div id="dshQual">
         <div class="dsh-kpis">
           <div class="dsh-kpi" style="--c:#3b82f6;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-clipboard-list"></i> Requisições</div><div class="dsh-kpi-num" id="dkReq">0</div><div class="dsh-kpi-sub" id="dkReqSub"></div></div>
           <div class="dsh-kpi" style="--c:#f59e0b;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-hourglass-half"></i> Pendentes (todas)</div><div class="dsh-kpi-num" id="dkPend">0</div><div class="dsh-kpi-sub" id="dkPendSub"></div></div>
@@ -1033,6 +1071,58 @@
           <div class="dsh-card">
             <div class="dsh-card-tit">Alertas: pendentes mais antigas</div>
             <div id="dshAlertas"></div>
+          </div>
+        </div>
+        </div>
+        <div id="dshCmp" style="display:none;">
+          <div class="dsh-kpis">
+            <div class="dsh-kpi" style="--c:#3b82f6;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-cart-plus"></i> Itens solicitados</div><div class="dsh-kpi-num" id="dcSol">0</div><div class="dsh-kpi-sub" id="dcSolSub"></div></div>
+            <div class="dsh-kpi" style="--c:#f59e0b;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-hourglass-half"></i> Pendentes (todos)</div><div class="dsh-kpi-num" id="dcPend">0</div><div class="dsh-kpi-sub" id="dcPendSub"></div></div>
+            <div class="dsh-kpi" style="--c:#6366f1;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-sack-dollar"></i> Gasto no período</div><div class="dsh-kpi-num" id="dcGasto">R$ 0,00</div><div class="dsh-kpi-sub" id="dcGastoSub"></div></div>
+            <div class="dsh-kpi" style="--c:#10b981;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-piggy-bank"></i> Economia em cotações</div><div class="dsh-kpi-num" id="dcEcon">R$ 0,00</div><div class="dsh-kpi-sub" id="dcEconSub"></div></div>
+            <div class="dsh-kpi" style="--c:#06b6d4;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-stopwatch"></i> Tempo pedido → compra</div><div class="dsh-kpi-num" id="dcTempo">-</div><div class="dsh-kpi-sub" id="dcTempoSub"></div></div>
+            <div class="dsh-kpi" style="--c:#a855f7;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-scale-balanced"></i> Cotações em andamento</div><div class="dsh-kpi-num" id="dcCot">0</div><div class="dsh-kpi-sub" id="dcCotSub"></div></div>
+          </div>
+
+          <div class="dsh-grid">
+            <div class="dsh-card dsh-span2">
+              <div class="dsh-card-tit">Gasto mensal <span class="dsh-card-tag">12 meses</span></div>
+              <div id="dcEvolucao"></div>
+            </div>
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Funil de compras <span class="dsh-card-tag">período</span></div>
+              <div id="dcFunil"></div>
+            </div>
+          </div>
+
+          <div class="dsh-grid">
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Pendentes por prioridade <span class="dsh-card-tag">todos</span></div>
+              <div id="dcPrio"></div>
+            </div>
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Top fornecedores (valor)</div>
+              <div id="dcForn"></div>
+            </div>
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Gasto por categoria</div>
+              <div id="dcCat"></div>
+            </div>
+          </div>
+
+          <div class="dsh-grid">
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Pedidos por solicitante</div>
+              <div id="dcSolic"></div>
+            </div>
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Cotações aguardando decisão</div>
+              <div id="dcCotAg"></div>
+            </div>
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Alertas: pendentes mais antigos</div>
+              <div id="dcAlertas"></div>
+            </div>
           </div>
         </div>
         <div class="dsh-rodape" id="dshRodape"></div>
@@ -4007,7 +4097,7 @@
       if (nomeAba === 'inicio') { document.getElementById('btnNavInicio').classList.add('active'); document.getElementById('abaInicio').classList.add('active'); }
       else if (nomeAba === 'locacao') { document.getElementById('btnNavLocacao').classList.add('active'); document.getElementById('abaLocacao').classList.add('active'); renderizarTabelaLocacao(); }
       else if (nomeAba === 'compras') { document.getElementById('btnNavCompras').classList.add('active'); document.getElementById('abaCompras').classList.add('active'); try { renderizarTabelaCompras(); } catch(e) {} renderizarListaCompras(); renderizarCotacoes(); }
-      else if (nomeAba === 'dashboard') { document.getElementById('btnNavDashboard').classList.add('active'); document.getElementById('abaDashboard').classList.add('active'); atualizarDashboard(); }
+      else if (nomeAba === 'dashboard') { document.getElementById('btnNavDashboard').classList.add('active'); document.getElementById('abaDashboard').classList.add('active'); atualizarDashboard(true); }
       else if (nomeAba === 'requisicoes') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaRequisicoes').classList.add('active'); }
       else if (nomeAba === 'emissao') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaEmissao').classList.add('active'); }
       else if (nomeAba === 'consulta') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaConsulta').classList.add('active'); }
@@ -5753,12 +5843,12 @@
       return `<span class="${classe}">${pct > 0 ? '▲' : '▼'} ${Math.abs(pct)}%</span> vs mês anterior`;
     }
 
-    function barrasDash(itens, cor, sufixo) {
+    function barrasDash(itens, cor, sufixo, fmt) {
       if (!itens.length) return '<div class="dsh-vazio">Sem dados para o período.</div>';
       const max = Math.max(1, ...itens.map(x => x[1]));
       return itens.map(([nome, qtd, corItem]) => `
         <div class="dsh-barra">
-          <div class="dsh-barra-top"><span title="${escReq(nome)}">${escReq(nome)}</span><b>${qtd}${sufixo || ""}</b></div>
+          <div class="dsh-barra-top"><span title="${escReq(nome)}">${escReq(nome)}</span><b>${fmt ? fmt(qtd) : qtd}${sufixo || ""}</b></div>
           <div class="dsh-trilho"><div class="dsh-preenche" style="width:${Math.max(2, qtd / max * 100)}%; background:${corItem || cor};"></div></div>
         </div>`).join('');
     }
@@ -5796,7 +5886,7 @@
         d += (caneta ? "L" : "M") + (ml + slot * i + slot / 2).toFixed(1) + " " + yT(v).toFixed(1) + " ";
         caneta = true;
       });
-      if (d) s += `<path d="${d}" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linejoin="round"/>`;
+      if (d) s += `<path class="dsh-linha" pathLength="1" d="${d}" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linejoin="round"/>`;
       tmaH.forEach((v, i) => {
         if (v === null) return;
         s += `<circle cx="${(ml + slot * i + slot / 2).toFixed(1)}" cy="${yT(v).toFixed(1)}" r="3.5" fill="#f59e0b" stroke="var(--card)" stroke-width="1.5"><title>${nomeMesDash(meses[i])}: ${formatarDuracaoReq(v * 3600000)} em média</title></circle>`;
@@ -5806,7 +5896,7 @@
       return s;
     }
 
-    function svgRoscaDash(itens, total) {
+    function svgRoscaDash(itens, total, rotulo, centroTxt) {
       if (!total) return '<div class="dsh-vazio">Sem dados para o período.</div>';
       const r = 52, c = 2 * Math.PI * r;
       let acum = 0;
@@ -5815,11 +5905,11 @@
       itens.forEach(([nome, q, cor]) => {
         if (!q) return;
         const len = q / total * c;
-        s += `<circle cx="70" cy="70" r="${r}" fill="none" stroke="${cor}" stroke-width="18" stroke-dasharray="${len.toFixed(2)} ${(c - len).toFixed(2)}" stroke-dashoffset="${(-acum).toFixed(2)}" transform="rotate(-90 70 70)"><title>${nome}: ${q}</title></circle>`;
+        s += `<circle class="dsh-seg-rosca" data-len="${len.toFixed(2)}" data-c="${c.toFixed(2)}" cx="70" cy="70" r="${r}" fill="none" stroke="${cor}" stroke-width="18" stroke-dasharray="${len.toFixed(2)} ${(c - len).toFixed(2)}" stroke-dashoffset="${(-acum).toFixed(2)}" transform="rotate(-90 70 70)"><title>${nome}: ${q}</title></circle>`;
         acum += len;
       });
-      s += `<text x="70" y="70" text-anchor="middle" style="font-size:24px; font-weight:800; fill:var(--txt);">${total}</text>`;
-      s += `<text x="70" y="88" text-anchor="middle" style="font-size:10px;">requisições</text></svg>`;
+      s += `<text x="70" y="70" text-anchor="middle" class="dsh-rosca-num" style="font-size:24px; font-weight:800; fill:var(--txt);">${centroTxt || total}</text>`;
+      s += `<text x="70" y="88" text-anchor="middle" style="font-size:10px;">${rotulo || "requisições"}</text></svg>`;
       s += `<div class="dsh-rosca-leg">` + itens.map(([nome, q, cor]) =>
         `<div><span><i style="background:${cor};"></i>${nome}</span><b>${q} · ${Math.round(q / total * 100)}%</b></div>`).join('') + `</div></div>`;
       return s;
@@ -5834,7 +5924,63 @@
       filtrarRequisicoes();
     }
 
-    function atualizarDashboard() {
+    // ===== Seletor de módulo + animações =====
+    var moduloDash = "QUAL";
+    try { moduloDash = localStorage.getItem('dmaModuloDash') === "CMP" ? "CMP" : "QUAL"; } catch (e) {}
+
+    function trocarModuloDashboard(mod) {
+      moduloDash = mod;
+      try { localStorage.setItem('dmaModuloDash', mod); } catch (e) {}
+      atualizarDashboard(true);
+    }
+
+    function atualizarDashboard(animar) {
+      const cmp = moduloDash === "CMP";
+      const q = document.getElementById('dshQual'), c = document.getElementById('dshCmp');
+      if (!q || !c) return;
+      q.style.display = cmp ? "none" : "";
+      c.style.display = cmp ? "" : "none";
+      document.getElementById('dshSegQual').classList.toggle('ativo', !cmp);
+      document.getElementById('dshSegCmp').classList.toggle('ativo', cmp);
+      document.getElementById('dshTitulo').innerText = cmp ? "Painel de Compras" : "Painel da Qualidade";
+      if (!animar) { q.classList.remove('dsh-anim'); c.classList.remove('dsh-anim'); }   // atualização automática: sem repetir a animação
+      try { if (cmp) atualizarDashboardCompras(); else atualizarDashboardQualidade(); } catch (e) { console.error(e); }
+      // Anima só ao abrir o painel ou trocar filtro/módulo (não nas atualizações automáticas)
+      if (animar && document.getElementById('abaDashboard').classList.contains('active')) animarDashboard(cmp ? c : q);
+    }
+
+    // Contagem dos números, barras crescendo, rosca e linhas se desenhando
+    function animarDashboard(raiz) {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      raiz.classList.remove('dsh-anim'); void raiz.offsetWidth; raiz.classList.add('dsh-anim');
+      clearTimeout(window.__tAnimDash);
+      window.__tAnimDash = setTimeout(() => raiz.classList.remove('dsh-anim'), 2600);
+      raiz.querySelectorAll('.dsh-kpi-num, .dsh-rosca-num').forEach(el => contarNumeroDash(el));
+      raiz.querySelectorAll('.dsh-seg-rosca').forEach(ci => {
+        const len = ci.dataset.len, c = ci.dataset.c;
+        ci.style.transition = "none"; ci.setAttribute('stroke-dasharray', "0 " + c);
+        requestAnimationFrame(() => requestAnimationFrame(() => { ci.style.transition = "stroke-dasharray 1.2s cubic-bezier(.22,1,.36,1)"; ci.setAttribute('stroke-dasharray', len + " " + (c - len)); }));
+      });
+    }
+
+    function contarNumeroDash(el) {
+      const final = el.textContent;
+      const m = final.match(/\d[\d.]*(,\d+)?/);
+      if (!m) return;
+      const token = m[0], dec = m[1] ? m[1].length - 1 : 0;
+      const alvo = parseFloat(token.replace(/\./g, "").replace(",", "."));
+      if (!(alvo > 0)) return;
+      const ini = performance.now(), dur = 1200;
+      const passo = t => {
+        const k = Math.min(1, (t - ini) / dur), e = 1 - Math.pow(1 - k, 3);
+        if (k >= 1) { el.textContent = final; return; }
+        el.textContent = final.replace(token, (alvo * e).toLocaleString('pt-BR', { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: token.indexOf(".") !== -1 || alvo >= 1000 }));
+        requestAnimationFrame(passo);
+      };
+      requestAnimationFrame(passo);
+    }
+
+    function atualizarDashboardQualidade() {
       if (!bancoDados || !bancoDados.requisicoes) return;
       const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
       const setHtml = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
@@ -5946,6 +6092,171 @@
       }).join('') : '<div class="dsh-vazio">Nenhuma requisição pendente.</div>');
 
       setTxt('dshRodape', "Atualizado às " + hoje.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + " · dados do Módulo Qualidade");
+    }
+
+    // ===================== PAINEL DE COMPRAS =====================
+    function dataEventoCmp(hist, rotulo) {
+      const l = String(hist || "").split("\n").reverse().find(x => x.indexOf(rotulo) !== -1);
+      const m = l && l.match(/\d{2}\/\d{2}\/\d{4}/);
+      return m ? m[0] : "";
+    }
+    const moedaCurtaDash = v => v >= 100000 ? "R$ " + (v / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 0 }) + " mil" : moedaBR(v);
+
+    // Gastos: itens comprados/entregues (com valor) + cotações avulsas compradas
+    function gastosCompras() {
+      const g = [];
+      (bancoDados.itensCompra || []).forEach(i => {
+        if (!["COMPRADO", "ENTREGUE"].includes(i.status) || i.valorPago === "" || i.valorPago === undefined) return;
+        g.push({ valor: Number(i.valorPago) || 0, data: dataEventoCmp(i.historico, "COMPRADO") || String(i.dataHora || "").split(" ")[0],
+                 fornecedor: i.fornecedor || "NÃO INFORMADO", categoria: i.categoria || "DIVERSOS", pedido: i.dataHora });
+      });
+      (bancoDados.cotacoes || []).forEach(c => {
+        if (c.status !== "COMPRADA" || c.itemCodigo) return;
+        const r = calcularResultadoCot(c.orcamentos || [], c.qtd);
+        g.push({ valor: c.valorFinal !== "" ? Number(c.valorFinal) : (r.totais[c.escolhido] || 0), data: dataEventoCmp(c.historico, "COMPRADA") || String(c.dataHora || "").split(" ")[0],
+                 fornecedor: ((c.orcamentos || [])[c.escolhido] || {}).fornecedor || "-", categoria: "COTAÇÃO AVULSA", pedido: c.dataHora });
+      });
+      return g;
+    }
+
+    function svgGastoDash(meses, gastos, pedidos) {
+      const W = 640, H = 230, ml = 62, mr = 34, mt = 16, mb = 34;
+      const iw = W - ml - mr, ih = H - mt - mb, slot = iw / meses.length, bw = Math.max(6, slot * 0.5);
+      const passoG = Math.max(1, Math.ceil(Math.max(1, ...gastos) / 4 / 50) * 50), topoG = passoG * 4;
+      const passoP = Math.max(1, Math.ceil(Math.max(1, ...pedidos) / 4)), topoP = passoP * 4;
+      const yG = v => mt + ih - (v / topoG) * ih, yP = v => mt + ih - (v / topoP) * ih;
+      let s = `<svg class="dsh-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gasto mensal em compras">
+        <defs><linearGradient id="gradGastoDash" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#818cf8"/><stop offset="1" stop-color="#4f46e5"/></linearGradient></defs>`;
+      for (let i = 0; i <= 4; i++) {
+        const y = mt + ih - i * ih / 4;
+        s += `<line x1="${ml}" x2="${W - mr}" y1="${y}" y2="${y}" stroke="var(--grade)" stroke-width="1"/>`;
+        s += `<text x="${ml - 6}" y="${y + 3.5}" text-anchor="end">${(passoG * i).toLocaleString('pt-BR')}</text>`;
+        s += `<text x="${W - mr + 6}" y="${y + 3.5}">${passoP * i}</text>`;
+      }
+      meses.forEach((m, i) => {
+        const cx = ml + slot * i + slot / 2;
+        s += `<rect x="${cx - bw / 2}" y="${yG(gastos[i])}" width="${bw}" height="${mt + ih - yG(gastos[i])}" rx="3" fill="url(#gradGastoDash)"><title>${nomeMesDash(m)}: ${moedaBR(gastos[i])}</title></rect>`;
+        s += `<text x="${cx}" y="${H - mb + 16}" text-anchor="middle">${nomeMesDash(m)}</text>`;
+      });
+      const d = pedidos.map((v, i) => (i ? "L" : "M") + (ml + slot * i + slot / 2).toFixed(1) + " " + yP(v).toFixed(1)).join(" ");
+      s += `<path class="dsh-linha" pathLength="1" d="${d}" fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-linejoin="round"/>`;
+      pedidos.forEach((v, i) => { s += `<circle cx="${(ml + slot * i + slot / 2).toFixed(1)}" cy="${yP(v).toFixed(1)}" r="3.5" fill="#22d3ee" stroke="var(--card)" stroke-width="1.5"><title>${nomeMesDash(meses[i])}: ${v} item(ns) pedidos</title></circle>`; });
+      s += `</svg><div class="dsh-legenda"><span><i style="background:#6366f1;"></i>Gasto (R$, eixo esquerdo)</span><span><i style="background:#22d3ee;"></i>Itens solicitados (eixo direito)</span></div>`;
+      return s;
+    }
+
+    function funilDash(etapas) {
+      const base = Math.max(1, etapas[0][1]);
+      if (!etapas[0][1]) return '<div class="dsh-vazio">Sem pedidos no período.</div>';
+      return '<div class="dsh-funil">' + etapas.map(([nome, q, cor], k) => `
+        <div class="dsh-funil-et">
+          <div class="dsh-funil-barra" style="width:${Math.max(18, q / base * 100)}%; background:${cor}; animation-delay:${k * 0.12}s;"><b>${q}</b></div>
+          <div class="dsh-funil-lbl">${nome}<span>${Math.round(q / base * 100)}%</span></div>
+        </div>`).join('') + '</div>';
+    }
+
+    function abrirCompraDoDashboard(texto, sub) {
+      mudarAba('compras');
+      trocarSubabaCompras(sub || 'lista');
+      if (sub === 'mapa') { const s = document.getElementById('filtroStatusCot'); if (s) s.value = "TODAS"; const b = document.getElementById('filtroTextoCot'); if (b) b.value = texto; renderizarCotacoes(); }
+      else { const s = document.getElementById('filtroStatusCmp'); if (s) s.value = "TODOS"; const b = document.getElementById('filtroTextoCmp'); if (b) b.value = texto; renderizarListaCompras(); }
+    }
+
+    function atualizarDashboardCompras() {
+      const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
+      const setHtml = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
+      const hoje = new Date();
+      const mesAtual = hoje.getFullYear() + "-" + String(hoje.getMonth() + 1).padStart(2, "0");
+      const elMes = document.getElementById('dashFiltroMes');
+      if (elMes && !elMes.value) elMes.value = mesAtual;
+      const ref = (elMes && elMes.value) || mesAtual;
+      const geral = (document.getElementById('dashModoPeriodo')?.value || "MES") === "GERAL";
+      const ant = deslocarMesDash(ref, -1);
+      const noPer = d => geral || mesKeyDash(d) === ref;
+
+      const itens = (bancoDados.itensCompra || []).filter(Boolean);
+      const cots = (bancoDados.cotacoes || []).filter(Boolean);
+      const gastos = gastosCompras();
+      setTxt('dshSub', "Pedidos, cotações e gastos · " + (geral ? "todo o histórico" : nomeMesLongoDash(ref)));
+
+      // KPIs
+      const itPer = itens.filter(i => noPer(i.dataHora)), itAnt = itens.filter(i => mesKeyDash(i.dataHora) === ant);
+      setTxt('dcSol', itPer.length);
+      setHtml('dcSolSub', geral ? itens.length + " no total" : variacaoDash(itPer.length, itAnt.length, "neutro"));
+
+      const pend = itens.filter(i => i.status === "PENDENTE");
+      const altas = pend.filter(i => prioCmp(i) === "ALTA").length;
+      setTxt('dcPend', pend.length);
+      setHtml('dcPendSub', altas ? `<span class="dsh-down">${altas} de prioridade alta</span>` : '<span class="dsh-up">nenhum de prioridade alta</span>');
+
+      const soma = arr => arr.reduce((a, g) => a + g.valor, 0);
+      const gPer = gastos.filter(g => noPer(g.data)), gAnt = gastos.filter(g => mesKeyDash(g.data) === ant);
+      setTxt('dcGasto', moedaBR(soma(gPer)));
+      setHtml('dcGastoSub', geral ? gPer.length + " compra(s) com valor" : (gAnt.length ? variacaoDash(soma(gPer), soma(gAnt), "menor") : gPer.length + " compra(s) com valor"));
+
+      let econ = 0, nEcon = 0, baseMaior = 0;
+      cots.filter(c => ["APROVADA", "COMPRADA"].includes(c.status) && noPer(c.dataHora) && (c.orcamentos || []).length >= 2).forEach(c => {
+        const r = calcularResultadoCot(c.orcamentos, c.qtd);
+        const maior = Math.max(...r.totais);
+        econ += maior - (r.totais[c.escolhido] || 0); baseMaior += maior; nEcon++;
+      });
+      setTxt('dcEcon', moedaBR(econ));
+      setHtml('dcEconSub', nEcon ? `<span class="dsh-up">${Math.round(econ / baseMaior * 100)}%</span> vs maior orçamento · ${nEcon} cotação(ões)` : "sem cotações com 2+ orçamentos");
+
+      const tempos = gPer.map(g => { const a = tempoDataBR(g.pedido), b = tempoDataBR(g.data); return a && b && b >= a ? (b - a) / 86400000 : null; }).filter(v => v !== null);
+      const tm = tempos.length ? tempos.reduce((a, b) => a + b, 0) / tempos.length : null;
+      setTxt('dcTempo', tm === null ? "-" : (tm < 1 ? "< 1 dia" : tm.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + " dias"));
+      setHtml('dcTempoSub', tempos.length ? "média de " + tempos.length + " compra(s)" : "sem compras no período");
+
+      const cotAtivas = cots.filter(c => STATUS_COT_ATIVOS.includes(c.status));
+      const agAprov = cotAtivas.filter(c => c.status !== "APROVADA").length;
+      setTxt('dcCot', cotAtivas.length);
+      setHtml('dcCotSub', agAprov ? `<span class="dsh-down">${agAprov} aguardando aprovação</span>` : "nenhuma aguardando aprovação");
+
+      // Gasto mensal (12 meses)
+      const fim = geral ? mesAtual : ref;
+      const meses = Array.from({ length: 12 }, (_, k) => deslocarMesDash(fim, k - 11));
+      setHtml('dcEvolucao', svgGastoDash(meses, meses.map(m => soma(gastos.filter(g => mesKeyDash(g.data) === m))), meses.map(m => itens.filter(i => mesKeyDash(i.dataHora) === m).length)));
+
+      // Funil
+      setHtml('dcFunil', funilDash([
+        ["Solicitados", itPer.length, "linear-gradient(90deg,#3b82f6,#60a5fa)"],
+        ["Validados", itPer.filter(i => i.validacao === "APROVADO" || ["COMPRADO", "ENTREGUE"].includes(i.status)).length, "linear-gradient(90deg,#8b5cf6,#a78bfa)"],
+        ["Comprados", itPer.filter(i => ["COMPRADO", "ENTREGUE"].includes(i.status)).length, "linear-gradient(90deg,#6366f1,#818cf8)"],
+        ["Entregues", itPer.filter(i => i.status === "ENTREGUE").length, "linear-gradient(90deg,#10b981,#34d399)"]
+      ]));
+
+      // Prioridade (rosca)
+      const cont = { "ALTA": 0, "MÉDIA": 0, "BAIXA": 0 };
+      pend.forEach(i => cont[prioCmp(i)]++);
+      setHtml('dcPrio', pend.length ? svgRoscaDash([["ALTA", cont["ALTA"], "#f43f5e"], ["MÉDIA", cont["MÉDIA"], "#f59e0b"], ["BAIXA", cont["BAIXA"], "#64748b"]], pend.length, "pendentes")
+                                    : '<div class="dsh-vazio">Nenhum item pendente. 👏</div>');
+
+      // Rankings por valor
+      const somarPor = (arr, ch) => { const o = {}; arr.forEach(g => { const k = (g[ch] || "-").toUpperCase(); o[k] = (o[k] || 0) + g.valor; }); return Object.entries(o).sort((a, b) => b[1] - a[1]).slice(0, 6); };
+      setHtml('dcForn', barrasDash(somarPor(gPer, "fornecedor"), "#6366f1", "", moedaCurtaDash));
+      setHtml('dcCat', barrasDash(somarPor(gPer, "categoria"), "#a855f7", "", moedaCurtaDash));
+      setHtml('dcSolic', barrasDash(contarDash(itPer, i => (i.solicitante || "").toUpperCase(), 6), "#3b82f6", ""));
+
+      // Cotações aguardando decisão / compra
+      const corSt = { "EM COTAÇÃO": "#f59e0b", "AGUARDANDO APROVAÇÃO": "#a855f7", "APROVADA": "#10b981" };
+      setHtml('dcCotAg', cotAtivas.length ? cotAtivas.slice().sort((a, b) => tempoDataBR(a.dataHora) - tempoDataBR(b.dataHora)).slice(0, 5).map(c => {
+        const r = calcularResultadoCot(c.orcamentos || [], c.qtd);
+        return `<div class="dsh-lista-item clicavel" onclick="abrirCompraDoDashboard('${escReq(c.codigo)}', 'mapa')" title="Abrir no Mapa de Cotação">
+          <div class="dsh-li-txt"><div><b>${escReq(c.codigo)}</b> · ${escReq(c.produto)}</div><div class="dsh-li-sub">${moedaBR(r.totais[c.escolhido] || 0)} · ${escReq(((c.orcamentos || [])[c.escolhido] || {}).fornecedor || "-")}</div></div>
+          <span class="dsh-pilula" style="background:${corSt[c.status]};">${c.status === "APROVADA" ? "a comprar" : c.status === "EM COTAÇÃO" ? "em cotação" : "aprovação"}</span></div>`;
+      }).join('') : '<div class="dsh-vazio">Nenhuma cotação em andamento.</div>');
+
+      // Alertas: pendentes por prioridade e idade
+      const antigos = pend.slice().sort((a, b) => (PRIO_CMP[prioCmp(b)].ordem - PRIO_CMP[prioCmp(a)].ordem) || ((diasEmAbertoReq(b) || 0) - (diasEmAbertoReq(a) || 0))).slice(0, 5);
+      setHtml('dcAlertas', antigos.length ? antigos.map(i => {
+        const d = diasEmAbertoReq(i) || 0, p = prioCmp(i);
+        return `<div class="dsh-lista-item clicavel" onclick="abrirCompraDoDashboard('${escReq(i.codigo)}', 'lista')" title="Abrir na Lista de Compras">
+          <div class="dsh-li-txt"><div><b>Nº ${escReq(i.codigo)}</b> · ${escReq(i.item)}</div><div class="dsh-li-sub">${escReq(i.solicitante || '-')} · prioridade ${p.toLowerCase()}</div></div>
+          <span class="dsh-pilula" style="background:${p === "ALTA" ? "#f43f5e" : d > 5 ? "#f59e0b" : "#64748b"};">${d === 0 ? 'hoje' : d + (d === 1 ? ' dia' : ' dias')}</span></div>`;
+      }).join('') : '<div class="dsh-vazio">Nenhum item pendente.</div>');
+
+      setTxt('dshRodape', "Atualizado às " + hoje.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + " · dados do Módulo de Compras");
     }
 
     function atualizarNotificacoes() {
