@@ -36,6 +36,23 @@
     .dropdown-ajuda-container { position: relative; display: inline-block; }
     .menu-ajuda-dropdown { display: none; position: absolute; right: 0; top: 40px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 200px; z-index: 10000; overflow: hidden; }
     .menu-ajuda-dropdown.ativo { display: block; }
+    .menu-ajuda-dropdown { width: 260px; }
+    .mem-box { border-top: 1px solid #e2e8f0; padding: 12px 14px 12px; --c1:#10b981; --c2:#34d399; }
+    .mem-box.mem-alerta { --c1:#f59e0b; --c2:#fbbf24; }
+    .mem-box.mem-critico { --c1:#e11d48; --c2:#fb7185; }
+    .mem-topo { display:flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:#1e293b; margin-bottom:8px; }
+    .mem-ico { width:26px; height:26px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; background:color-mix(in srgb, var(--c1) 15%, #fff); color:var(--c1); animation: mem-pulso 2.4s ease-in-out infinite; }
+    .mem-pct { margin-left:auto; font-size:15px; color:var(--c1); font-variant-numeric: tabular-nums; }
+    .mem-barra { position:relative; height:10px; border-radius:6px; background:#e2e8f0; overflow:hidden; }
+    .mem-fill { position:relative; height:100%; border-radius:6px; background:linear-gradient(90deg, var(--c1), var(--c2)); transition: width 1.1s cubic-bezier(.22,1,.36,1); overflow:hidden; }
+    .mem-fill::after { content:""; position:absolute; inset:0; background: repeating-linear-gradient(45deg, rgba(255,255,255,.28) 0 8px, transparent 8px 16px); background-size: 22px 22px; animation: mem-listras 1s linear infinite; }
+    .mem-fill::before { content:""; position:absolute; top:0; bottom:0; width:40%; left:-40%; background:linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); animation: mem-brilho 2.2s ease-in-out infinite; z-index:1; }
+    .mem-info { font-size:11px; color:#475569; margin-top:6px; }
+    .mem-rodape { font-size:10px; color:#94a3b8; margin-top:6px; }
+    @keyframes mem-listras { from { background-position: 0 0; } to { background-position: 22px 0; } }
+    @keyframes mem-brilho { 0% { left:-40%; } 60%,100% { left:110%; } }
+    @keyframes mem-pulso { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+    @media (prefers-reduced-motion: reduce) { .mem-fill::after, .mem-fill::before, .mem-ico { animation: none; } .mem-fill { transition: none; } }
     .menu-ajuda-item { padding: 11px 14px; font-size: 12px; font-weight: 600; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.2s; }
     .menu-ajuda-item:hover { background: #f1f5f9; color: #1a4d80; }
 
@@ -555,6 +572,7 @@
             <div class="menu-ajuda-item" onclick="abrirModalManual()">
               <i class="fa-solid fa-book-bookmark" style="color:#1a4d80;"></i> Material de Apoio
             </div>
+            <div class="mem-box" id="memBox" style="display:none;"></div>
           </div>
         </div>
 
@@ -753,7 +771,6 @@
             <div>
               <div class="req-topo-titulo"><i class="fa-solid fa-cart-shopping"></i> Lista de Compras</div>
               <div class="req-topo-sub">Peças e materiais pedidos pela equipe, com fotos para a compra</div>
-              <div class="cmp-drive" id="cmpDrive" style="display:none;"></div>
             </div>
             <button type="button" class="btn-submit" onclick="abrirModalItemCompra()"><i class="fa-solid fa-plus"></i> Novo Item</button>
           </div>
@@ -2129,10 +2146,10 @@
         </details>
 
         <details class="manual-sec">
-          <summary><i class="fa-brands fa-google-drive"></i> 8. Fotos e espaço no Google Drive</summary>
+          <summary><i class="fa-solid fa-memory"></i> 8. Fotos e memória do sistema</summary>
           <div class="manual-conteudo">
-            <p>As fotos ficam na pasta <b>"DMA SYS - Fotos Compras"</b> do Google Drive do sistema. Cada foto ocupa cerca de 150 a 300 KB. Abaixo do título da Lista de Compras, o indicador mostra o espaço usado (verde até 80%, amarelo até 90%, vermelho acima disso) e quantas fotos ainda cabem.</p>
-            <div class="manual-alerta">Não apague nem mova fotos de dentro da pasta: elas somem do sistema e da impressão.</div>
+            <p>Cada foto é reduzida automaticamente e ocupa cerca de 150 a 300 KB. Para ver o espaço usado, clique na <b>engrenagem</b> (canto superior direito): o quadro <b>Memória do sistema</b> mostra o percentual (verde até 80%, amarelo até 90%, vermelho acima disso), o espaço livre e quantas imagens ainda cabem.</p>
+            <div class="manual-alerta">Se a memória ficar amarela ou vermelha, avise o responsável pelo sistema.</div>
           </div>
         </details>
 
@@ -2183,7 +2200,13 @@
     const filtrarTabelaTermosDebounced = criarDebounce(() => filtrarTabelaTermos(), 200);
     const renderizarTabelaOSDebounced = criarDebounce(() => renderizarTabelaOS(), 200);
 
-    function alternarMenuAjuda(e) { if(e) e.stopPropagation(); document.getElementById("menuAjudaDropdown")?.classList.toggle("ativo"); }
+    function alternarMenuAjuda(e) {
+      if (e) e.stopPropagation();
+      const m = document.getElementById("menuAjudaDropdown");
+      if (!m) return;
+      m.classList.toggle("ativo");
+      if (m.classList.contains("ativo")) desenharArmazenamento(true);
+    }
     function abrirModalManual() { document.getElementById("modalManualUso")?.classList.add("ativo"); document.getElementById("menuAjudaDropdown")?.classList.remove("ativo"); }
     function fecharModalManual() { document.getElementById("modalManualUso")?.classList.remove("ativo"); }
 
@@ -4460,22 +4483,35 @@
       }
     }
 
-    // Espaço do Google Drive (atualizado pelo servidor a cada 1 h)
-    function desenharArmazenamento() {
-      const el = document.getElementById('cmpDrive');
+    // Status de memória do sistema (menu da engrenagem; atualizado pelo servidor a cada 1 h)
+    function desenharArmazenamento(animar) {
+      const el = document.getElementById('memBox');
       const a = bancoDados.armazenamento;
       if (!el || !a || !a.limite) { if (el) el.style.display = "none"; return; }
       const gb = b => (b / 1073741824).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      const mb = b => (b / 1048576).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
-      const pct = Math.round(a.usado / a.limite * 100);
-      const cor = pct >= 90 ? "#e11d48" : (pct >= 80 ? "#f59e0b" : "#10b981");
-      const media = a.fotosQtd >= 5 ? a.fotosBytes / a.fotosQtd : 250 * 1024;   // ~250 KB por foto até haver base real
+      const pct = Math.min(100, Math.round(a.usado / a.limite * 100));
+      const nivel = pct >= 90 ? "critico" : (pct >= 80 ? "alerta" : "ok");
+      const media = a.fotosQtd >= 5 ? a.fotosBytes / a.fotosQtd : 250 * 1024;
       const cabem = Math.max(0, Math.floor((a.limite - a.usado) / media));
-      el.innerHTML = `<i class="fa-brands fa-google-drive"></i> Drive: <b>${gb(a.usado)} de ${gb(a.limite)} GB</b>
-        <span class="cmp-drive-barra"><div style="width:${Math.min(100, pct)}%; background:${cor};"></div></span><b style="color:${cor};">${pct}%</b>
-        · Fotos de compras: ${a.fotosQtd} (${mb(a.fotosBytes)} MB) · cabem ~${cabem.toLocaleString('pt-BR')} fotos`;
-      el.title = "Espaço total da conta Google do sistema (Drive, Gmail e Fotos). Atualizado em " + (a.atualizadoEm || "-") + ", a cada 1 hora.";
-      el.style.display = "inline-flex";
+      const livre = Math.max(0, a.limite - a.usado);
+      el.className = "mem-box mem-" + nivel;
+      el.innerHTML = `
+        <div class="mem-topo"><span class="mem-ico"><i class="fa-solid fa-memory"></i></span><span>Memória do sistema</span><b class="mem-pct" data-alvo="${pct}">0%</b></div>
+        <div class="mem-barra"><div class="mem-fill" style="width:0%;"></div></div>
+        <div class="mem-info">${gb(a.usado)} GB de ${gb(a.limite)} GB · <b>${gb(livre)} GB livres</b></div>
+        <div class="mem-info">Imagens anexadas: ${a.fotosQtd.toLocaleString('pt-BR')} · cabem ~${cabem.toLocaleString('pt-BR')}</div>
+        <div class="mem-rodape">Atualizado em ${a.atualizadoEm || "-"}</div>`;
+      el.style.display = "block";
+      // Animação: a barra enche e o percentual conta até o valor real
+      requestAnimationFrame(() => { el.querySelector('.mem-fill').style.width = pct + "%"; });
+      const alvo = el.querySelector('.mem-pct');
+      const ini = performance.now(), dur = animar ? 1100 : 0;
+      const passo = t => {
+        const k = dur ? Math.min(1, (t - ini) / dur) : 1;
+        alvo.textContent = Math.round(pct * (1 - Math.pow(1 - k, 3))) + "%";
+        if (k < 1) requestAnimationFrame(passo);
+      };
+      requestAnimationFrame(passo);
     }
 
     function filtrarComprasPorKpi(valor) {
@@ -4495,7 +4531,6 @@
       const tbody = document.getElementById('corpoListaCompras');
       if (!tbody) return;
       preencherListasCompras();
-      desenharArmazenamento();
       const itens = bancoDados.itensCompra || [];
 
       // Indicadores
