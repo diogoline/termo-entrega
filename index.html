@@ -1736,7 +1736,7 @@
       </div>
       <div class="form-row" style="flex-wrap:wrap;">
         <div class="form-group" style="flex:1 1 200px;"><label>Localização (cidade-UF):</label><input type="text" id="ctrLocLocal" list="listLocLocais" placeholder="Ex.: SÃO PAULO-SP" oninput="this.value=this.value.toUpperCase()"></div>
-        <div class="form-group" style="flex:1 1 160px;"><label>Nº do contrato:</label><input type="text" id="ctrLocNum" placeholder="Ex.: CT-2026/253" oninput="this.value=this.value.toUpperCase()"></div>
+        <div class="form-group" style="flex:1 1 160px;"><label>Nº do contrato (automático):</label><input type="text" id="ctrLocNum" placeholder="Gerado ao salvar (CT cliente.unidade)" readonly title="Gerado pelo sistema: CT + código do cliente + código da unidade"></div>
         <div class="form-group" style="flex:0 0 150px;"><label>Início (opcional):</label><input type="date" id="ctrLocInicio"></div>
         <div class="form-group" style="flex:0 0 150px;"><label>Fim (opcional):</label><input type="date" id="ctrLocFim"></div>
       </div>
@@ -6573,8 +6573,12 @@
       ITEM_INCLUIDO: "ITEM INCLUÍDO", QTD: "QUANTIDADE", VALOR: "VALOR UNITÁRIO", ITEM_SITUACAO: "SITUAÇÃO DO ITEM",
       ITEM_REMOVIDO: "ITEM REMOVIDO", ITEM_REATIVADO: "ITEM REATIVADO", ITEM_OBS: "OBS DO ITEM",
       FAM_RENOMEADA: "FAMÍLIA RENOMEADA", FAM_UNIFICADA: "FAMÍLIA UNIFICADA", FAM_SOMADA: "FAMÍLIAS UNIFICADAS",
-      FAM_NOVA: "FAMÍLIA INCLUÍDA", FAM_ATIVADA: "FAMÍLIA ATIVADA", FAM_DESATIVADA: "FAMÍLIA DESATIVADA"
+      FAM_NOVA: "FAMÍLIA INCLUÍDA", FAM_ATIVADA: "FAMÍLIA ATIVADA", FAM_DESATIVADA: "FAMÍLIA DESATIVADA",
+      ITEM_TRANSFERIDO: "ITEM TRANSFERIDO", QTD_UNIF: "QUANTIDADE SOMADA"
     };
+    var MOTIVO_UNIFICACAO_LOC = "Unificado no contrato ";   // contrato absorvido por outro da mesma unidade
+    function locUnificado(c) { return !!c && c.status === "CANCELADO" && String(c.cancelMotivo || "").indexOf(MOTIVO_UNIFICACAO_LOC) === 0; }
+    function locEventoPadronizacao(h) { return String(h.motivo || "").indexOf("Padronização") === 0 || String(h.motivo || "").indexOf(MOTIVO_UNIFICACAO_LOC) === 0; }
     var LOC_HIST_FAMILIAS = "FAMÍLIAS";   // eventos do cadastro de famílias (não pertencem a um contrato)
     var DIAS_ALERTA_VIGENCIA_LOC = 60;
     var CORES_ST_LOC = { "ATIVO": "#10b981", "EMPRÉSTIMO": "#8b5cf6", "SUSPENSO": "#f59e0b", "ENCERRADO": "#94a3b8", "CANCELADO": "#f43f5e" };
@@ -6767,6 +6771,7 @@
           <div><div class="loc-card-cli">${escReq(c.cliente)}</div><div class="loc-card-uni">${escReq(c.unidade)}${c.localizacao ? " · " + escReq(c.localizacao) : ""}</div></div>
           <div class="loc-card-nums"><span><b>${its.length}</b>família(s)</span><span><b>${locNum(qtd)}</b>equipamento(s)</span></div>
           ${locVigenciaHtml(c) ? `<div>${locVigenciaHtml(c)}</div>` : ""}
+          ${locUnificado(c) ? `<div class="loc-nota">${escReq(c.cancelMotivo)}</div>` : ""}
         </div>`;
       }).join('') + '</div>';
     }
@@ -7080,6 +7085,8 @@
       if (h.acao === A.FAM_RENOMEADA) return ["Família renomeada: " + h.de + " → " + h.para, "#8b5cf6", "fa-tags"];
       if (h.acao === A.FAM_UNIFICADA) return ["Família unificada: " + h.de + " → " + h.para, "#8b5cf6", "fa-object-group"];
       if (h.acao === A.FAM_SOMADA) return [fam + ": quantidade " + h.de + " → " + h.para + " (famílias unificadas)", "#8b5cf6", "fa-object-group"];
+      if (h.acao === A.ITEM_TRANSFERIDO) return [fam + " transferido do contrato " + h.de + " (mesma unidade)", "#0ea5e9", "fa-right-to-bracket"];
+      if (h.acao === A.QTD_UNIF) return [fam + ": quantidade " + h.de + " → " + h.para + " (lançamentos da mesma unidade somados)", "#0ea5e9", "fa-object-group"];
       return [h.acao + (h.para ? ": " + h.para : ""), "#64748b", "fa-circle"];
     }
 
@@ -7127,7 +7134,7 @@
       const botoes = [];
       if (c.status !== "CANCELADO") botoes.push(`<button type="button" class="btn-secundario" onclick="abrirModalContratoLoc('${escReq(c.id)}')"><i class="fa-solid fa-pen-to-square"></i> Editar dados</button>`);
       if (editavel) botoes.push(`<button type="button" class="btn-secundario" onclick="abrirModalItemLoc('INCLUIR', '${escReq(c.id)}')"><i class="fa-solid fa-plus"></i> Incluir família</button>`);
-      if (["CANCELADO", "ENCERRADO", "SUSPENSO"].includes(c.status)) botoes.push(`<button type="button" class="btn-atender" style="height:34px; padding:0 14px;" onclick="abrirMotivoLoc('REATIVAR', '${escReq(c.id)}')"><i class="fa-solid fa-rotate-left"></i> Reativar contrato</button>`);
+      if (["CANCELADO", "ENCERRADO", "SUSPENSO"].includes(c.status) && !locUnificado(c)) botoes.push(`<button type="button" class="btn-atender" style="height:34px; padding:0 14px;" onclick="abrirMotivoLoc('REATIVAR', '${escReq(c.id)}')"><i class="fa-solid fa-rotate-left"></i> Reativar contrato</button>`);
       if (c.status !== "CANCELADO") botoes.push(`<button type="button" class="btn-negar" style="height:34px; padding:0 14px;" onclick="abrirMotivoLoc('CANCELAR', '${escReq(c.id)}')"><i class="fa-solid fa-ban"></i> Cancelar contrato</button>`);
 
       corpo.innerHTML = `
@@ -7452,7 +7459,8 @@
         else if (h.acao === A.VALOR) it.valorUnit = h.de === "" ? "" : (Number(h.de) || "");
         else if ([A.ITEM_SITUACAO, A.ITEM_REMOVIDO, A.ITEM_REATIVADO].includes(h.acao)) it.status = h.de;
         else if (h.acao === A.FAM_RENOMEADA || h.acao === A.FAM_UNIFICADA) it.familia = h.de;
-        else if (h.acao === A.FAM_SOMADA) it.qtd = Number(h.de) || 0;
+        else if (h.acao === A.FAM_SOMADA || h.acao === A.QTD_UNIF) it.qtd = Number(h.de) || 0;
+        else if (h.acao === A.ITEM_TRANSFERIDO) it.contrato = h.de;
         return;
       }
       const c = C[h.contrato];
@@ -7549,7 +7557,7 @@
       if (boxV) boxV.style.display = r.valor > 0 ? "" : "none";
       setTxt('dlValor', moedaCurtaDash(r.valor));
       setHtml('dlValorSub', (geral || !anterior ? "" : variacaoDash(r.valor, anterior.valor, "neutro")) || "só itens com valor unitário");
-      const encerrados = L.contratos.filter(locInativo);
+      const encerrados = L.contratos.filter(c => locInativo(c) && !locUnificado(c));
       const eqHist = encerrados.reduce((s, c) => s + L.itens.filter(i => i.contrato === c.id && i.status !== "CANCELADO").reduce((x, i) => x + i.qtd, 0), 0);
       setTxt('dlEnc', locNum(encerrados.length));
       setHtml('dlEncSub', encerrados.length ? `${encerrados.filter(c => c.status === "CANCELADO").length} cancelado(s) · ${locNum(eqHist)} equip. no histórico` : "nenhum contrato encerrado");
@@ -7571,7 +7579,7 @@
       const noPer = d => geral || mesKeyDash(d) === ref;
       const itensPorId = {}; L.itens.forEach(i => itensPorId[i.id] = i);
       const A = LOC_ACAO;
-      const evs = L.historico.filter(h => h.acao !== A.IMPORTADO && h.contrato !== LOC_HIST_FAMILIAS && noPer(h.data));
+      const evs = L.historico.filter(h => h.acao !== A.IMPORTADO && h.contrato !== LOC_HIST_FAMILIAS && !locEventoPadronizacao(h) && noPer(h.data));
       let mais = 0, menos = 0;
       evs.forEach(h => {
         if (h.acao === A.QTD) { const d = (Number(h.para) || 0) - (Number(h.de) || 0); if (d > 0) mais += d; else menos -= d; }
@@ -7588,7 +7596,7 @@
       setHtml('dlAlteracoes', evs.length ? barrasDash(linhasAlt.filter(x => x[1] > 0), "#3b82f6", "", locNum) : '<div class="dsh-vazio">Nenhuma alteração no período.</div>');
 
       // Últimas movimentações (todas, mais recentes primeiro)
-      const ultimas = L.historico.filter(h => h.acao !== A.IMPORTADO && h.acao.indexOf(A.EDITADO) !== 0 && h.contrato !== LOC_HIST_FAMILIAS).slice(-6).reverse();
+      const ultimas = L.historico.filter(h => h.acao !== A.IMPORTADO && h.acao.indexOf(A.EDITADO) !== 0 && h.contrato !== LOC_HIST_FAMILIAS && !locEventoPadronizacao(h)).slice(-6).reverse();
       setHtml('dlUltimas', ultimas.length ? ultimas.map(h => {
         const c = locContrato(h.contrato) || {};
         const [txt, cor] = textoEventoLoc(h, itensPorId);
@@ -7609,7 +7617,7 @@
         : '<div class="dsh-vazio">Nenhum alerta. 👏</div>');
 
       // Contratos por situação (situação atual, inclui o histórico de encerrados)
-      setHtml('dlSituacao', barrasDash(["ATIVO", "EMPRÉSTIMO", "SUSPENSO", "ENCERRADO", "CANCELADO"].map(st => [st, L.contratos.filter(c => c.status === st).length, CORES_ST_LOC[st]]).filter(x => x[1] > 0), "#3b82f6", ""));
+      setHtml('dlSituacao', barrasDash(["ATIVO", "EMPRÉSTIMO", "SUSPENSO", "ENCERRADO", "CANCELADO"].map(st => [st, L.contratos.filter(c => c.status === st && !locUnificado(c)).length, CORES_ST_LOC[st]]).filter(x => x[1] > 0), "#3b82f6", ""));
 
       setTxt('dshRodape', "Atualizado às " + hoje.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + " · dados do Módulo de Locação");
     }
