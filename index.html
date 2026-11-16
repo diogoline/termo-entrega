@@ -526,6 +526,120 @@
     .btn-etiqueta:disabled { background:#cbd5e1; box-shadow:none; cursor:not-allowed; transform:none; }
     #chkTodasReq, .chk-req { width:16px; height:16px; cursor:pointer; accent-color:#2563eb; }
     #corpoRequisicoes .btn-action-container { justify-content:flex-start !important; padding-left:4px; }
+    /* ================= MÓDULO LOCAÇÃO (v2) ================= */
+    .loc-acoes-topo { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .kpi-loc-valor .req-kpi-icone { background:#ede9fe; color:#6d28d9; }
+    .kpi-loc-uni .req-kpi-icone { background:#cffafe; color:#0e7490; }
+    .kpi-loc-eq .req-kpi-icone { background:#dbeafe; color:#1d4ed8; }
+    .req-kpi.kpi-sem-acao { cursor:default; }
+    .loc-filtros { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin:14px 0 12px; }
+    .loc-filtros .form-group { margin-bottom:0; }
+    .loc-chk { display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:bold; color:#475569; text-transform:none; cursor:pointer; background:#f8fafc; border:1px solid #e2e8f0; border-radius:9px; padding:8px 11px; white-space:nowrap; margin:0; }
+    .loc-chk input { width:15px; height:15px; }
+    .loc-aviso { display:flex; gap:10px; align-items:flex-start; background:#fffbeb; border:1px solid #fcd34d; color:#92400e; border-radius:12px; padding:10px 12px; font-size:12px; margin-top:12px; }
+    .loc-aviso b { color:#78350f; }
+    .loc-aviso a { color:#92400e; font-weight:bold; cursor:pointer; text-decoration:underline; margin-right:8px; white-space:nowrap; }
+    .loc-cliente { border:1px solid #e2e8f0; border-radius:14px; margin-bottom:12px; background:#fff; overflow:hidden; }
+    .loc-cliente > summary { list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; padding:12px 14px; background:linear-gradient(180deg,#f6f9fe,#eaf1fb); border-bottom:1px solid #e2e8f0; }
+    .loc-cliente > summary::-webkit-details-marker { display:none; }
+    .loc-cliente-nome { font-size:14.5px; font-weight:800; color:#0b2545; display:flex; gap:8px; align-items:center; }
+    .loc-cliente-nome i.fa-chevron-right { font-size:11px; color:#64748b; transition:transform .2s; }
+    .loc-cliente[open] .loc-cliente-nome i.fa-chevron-right { transform:rotate(90deg); }
+    .loc-cliente-tot { display:flex; gap:6px; flex-wrap:wrap; }
+    .loc-chip { font-size:11px; font-weight:bold; color:#334155; background:#fff; border:1px solid #dbe3ef; border-radius:20px; padding:3px 10px; white-space:nowrap; }
+    .loc-chip b { color:#0b2545; font-size:12px; }
+    .loc-unidades { display:grid; grid-template-columns:repeat(auto-fill, minmax(290px, 1fr)); gap:10px; padding:12px; }
+    .loc-uni { border:1px solid #e2e8f0; border-radius:12px; padding:11px 12px; background:#fff; display:flex; flex-direction:column; gap:8px; transition:border-color .15s, box-shadow .15s; }
+    .loc-uni:hover { border-color:#93c5fd; box-shadow:0 6px 16px rgba(37,99,235,.08); }
+    .loc-uni.inativa { background:#f8fafc; opacity:.8; }
+    .loc-uni-topo { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+    .loc-uni-nome { font-size:12.5px; font-weight:800; color:#0f172a; line-height:1.3; }
+    .loc-uni-local { font-size:11px; color:#64748b; margin-top:2px; }
+    .loc-uni-total { text-align:right; flex-shrink:0; }
+    .loc-uni-total b { display:block; font-size:22px; line-height:1; color:#1d4ed8; }
+    .loc-uni-total span { font-size:10px; color:#64748b; font-weight:bold; text-transform:uppercase; }
+    .loc-fams { display:flex; flex-direction:column; gap:3px; }
+    .loc-fam { display:flex; justify-content:space-between; gap:8px; font-size:11.5px; padding:3px 6px; border-radius:6px; }
+    .loc-fam:nth-child(odd) { background:#f8fafc; }
+    .loc-fam span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .loc-fam b { flex-shrink:0; color:#0b2545; }
+    .loc-uni-ctrs { display:flex; gap:5px; flex-wrap:wrap; }
+    .loc-ctr-chip { font-size:10.5px; font-weight:bold; border-radius:7px; padding:2px 8px; cursor:pointer; border:1px solid; background:#fff; }
+    .loc-ctr-chip:hover { filter:brightness(.95); }
+    .loc-nota { font-size:11px; color:#92400e; background:#fffbeb; border-radius:7px; padding:4px 8px; }
+    .loc-st { display:inline-block; padding:2px 9px; border-radius:20px; font-size:10px; font-weight:bold; border:1px solid; white-space:nowrap; }
+    .loc-st-ATIVO { color:#047857; background:#ecfdf5; border-color:#6ee7b7; }
+    .loc-st-EMPRÉSTIMO { color:#6d28d9; background:#f5f3ff; border-color:#c4b5fd; }
+    .loc-st-SUSPENSO { color:#b45309; background:#fffbeb; border-color:#fcd34d; }
+    .loc-st-ENCERRADO { color:#475569; background:#f1f5f9; border-color:#cbd5e1; }
+    .loc-st-CANCELADO { color:#be123c; background:#fff1f2; border-color:#fda4af; }
+    .loc-cards { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:12px; }
+    .loc-card { border:1px solid #e2e8f0; border-left:4px solid #10b981; border-radius:12px; padding:12px 13px; background:#fff; cursor:pointer; display:flex; flex-direction:column; gap:7px; transition:transform .15s, box-shadow .15s; }
+    .loc-card:hover { transform:translateY(-2px); box-shadow:0 10px 22px rgba(11,37,69,.10); }
+    .loc-card.st-EMPRÉSTIMO { border-left-color:#8b5cf6; } .loc-card.st-SUSPENSO { border-left-color:#f59e0b; }
+    .loc-card.st-ENCERRADO { border-left-color:#94a3b8; background:#f8fafc; } .loc-card.st-CANCELADO { border-left-color:#f43f5e; background:#fff8f9; }
+    .loc-card-topo { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .loc-card-id { font-size:12px; font-weight:800; color:#1e3a8a; }
+    .loc-card-id small { color:#64748b; font-weight:bold; margin-left:4px; }
+    .loc-card-cli { font-size:13px; font-weight:800; color:#0f172a; }
+    .loc-card-uni { font-size:11.5px; color:#475569; line-height:1.35; }
+    .loc-card-nums { display:flex; gap:14px; font-size:11px; color:#64748b; }
+    .loc-card-nums b { font-size:16px; color:#0b2545; margin-right:3px; }
+    .loc-vig { font-size:10.5px; font-weight:bold; border-radius:6px; padding:2px 7px; display:inline-block; }
+    .loc-vig-ok { background:#f1f5f9; color:#475569; } .loc-vig-alerta { background:#fef3c7; color:#92400e; } .loc-vig-vencido { background:#ffe4e6; color:#be123c; }
+    .loc-vazio { text-align:center; color:#94a3b8; font-size:13px; padding:30px 10px; }
+    /* Ficha do contrato */
+    .loc-ficha-cab { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:8px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:10px 12px; margin-bottom:12px; }
+    .loc-ficha-cab div { font-size:12px; color:#0f172a; font-weight:bold; }
+    .loc-ficha-cab span { display:block; font-size:10px; color:#64748b; text-transform:uppercase; letter-spacing:.4px; font-weight:bold; margin-bottom:2px; }
+    .loc-ficha-botoes { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+    .loc-sec-tit { font-size:12px; font-weight:800; color:#1e3a8a; text-transform:uppercase; letter-spacing:.4px; margin:14px 0 8px; display:flex; justify-content:space-between; align-items:center; }
+    .loc-tab-itens { width:100%; border-collapse:collapse; font-size:12px; table-layout:auto; }
+    .loc-tab-itens th { position:static; font-size:10.5px; padding:7px 8px; }
+    .loc-tab-itens td { padding:7px 8px; white-space:normal; }
+    .loc-tab-itens tr.cancelado td { opacity:.5; text-decoration:line-through; }
+    .loc-tab-itens tr.cancelado td.loc-sem-risco { text-decoration:none; opacity:1; }
+    .loc-tab-itens tfoot td { font-weight:800; background:#f1f5f9; }
+    .loc-mini { height:24px; padding:0 8px; font-size:10.5px; border-radius:7px; border:none; color:#fff; font-weight:bold; cursor:pointer; display:inline-flex; gap:4px; align-items:center; }
+    .loc-mini.azul { background:#2563eb; } .loc-mini.vermelho { background:#e11d48; } .loc-mini.verde { background:#059669; }
+    .loc-obs { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:9px 11px; font-size:12px; color:#334155; white-space:pre-wrap; }
+    .loc-linha-tempo { position:relative; padding-left:22px; }
+    .loc-linha-tempo::before { content:""; position:absolute; left:8px; top:4px; bottom:4px; width:2px; background:#e2e8f0; }
+    .loc-ev { position:relative; margin-bottom:10px; }
+    .loc-ev::before { content:""; position:absolute; left:-18px; top:4px; width:10px; height:10px; border-radius:50%; background:var(--c, #94a3b8); box-shadow:0 0 0 3px #fff; }
+    .loc-ev-top { font-size:11px; color:#64748b; }
+    .loc-ev-top b { color:#0f172a; }
+    .loc-ev-txt { font-size:12.5px; color:#0f172a; font-weight:bold; margin-top:1px; }
+    .loc-ev-mot { font-size:11.5px; color:#475569; margin-top:1px; }
+    .loc-itens-novo { display:flex; flex-direction:column; gap:6px; }
+    .loc-item-linha { display:grid; grid-template-columns:minmax(0, 2.4fr) 80px 110px minmax(0, 1.4fr) 30px; gap:6px; align-items:center; }
+    .loc-item-linha button { height:30px; border:none; background:#fff1f2; color:#e11d48; border-radius:8px; cursor:pointer; }
+    @media (max-width: 720px) { .loc-item-linha { grid-template-columns:1fr 70px 90px 30px; } .loc-item-linha .loc-item-obs { display:none; } }
+    .loc-delta { font-size:12px; font-weight:bold; margin-top:4px; }
+    .loc-motivo-obr::after { content:" *"; color:#e11d48; }
+    /* Conferência DMA SYS -> Neovero */
+    .loc-conf-resumo { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+    .loc-conf-resumo span { font-size:11.5px; color:#475569; background:#f8fafc; border:1px solid #e2e8f0; border-radius:20px; padding:4px 11px; }
+    .loc-conf-resumo b { color:#0b2545; font-size:13px; }
+    .loc-conf-resumo .ok { background:#ecfdf5; border-color:#a7f3d0; } .loc-conf-resumo .aj { background:#fff1f2; border-color:#fecdd3; }
+    .loc-conf { display:grid; grid-template-columns:330px minmax(0, 1fr); gap:12px; align-items:start; }
+    @media (max-width: 980px) { .loc-conf { grid-template-columns:1fr; } }
+    .loc-conf-lista { max-height:680px; overflow-y:auto; padding-right:4px; }
+    .loc-conf-uni { border:1px solid #e2e8f0; border-radius:11px; padding:8px 10px; margin-bottom:6px; cursor:pointer; display:flex; justify-content:space-between; gap:8px; align-items:center; background:#fff; transition:border-color .15s; }
+    .loc-conf-uni:hover { border-color:#93c5fd; }
+    .loc-conf-uni.on { border:2px solid #2563eb; background:#f5f9ff; }
+    .loc-conf-uni .n { font-weight:800; font-size:12px; color:#0f172a; line-height:1.3; }
+    .loc-conf-uni .s { font-size:10.5px; color:#64748b; margin-top:2px; }
+    .loc-conf-uni .q { text-align:right; flex-shrink:0; } .loc-conf-uni .q b { display:block; font-size:17px; color:#1d4ed8; line-height:1; } .loc-conf-uni .q span { font-size:10px; color:#64748b; }
+    .loc-conf-det { border:1px solid #e2e8f0; border-radius:12px; padding:12px; background:#fff; position:sticky; top:8px; }
+    .loc-conf-cab { display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+    .loc-tab-conf input.loc-neo { width:76px; text-align:center; font-weight:bold; font-size:14px; padding:5px; }
+    .loc-tab-conf tr.loc-extra td { background:#fff7f8; }
+    .loc-tab-conf select { font-size:12px; padding:5px 8px; }
+    .loc-pill { display:inline-block; font-size:10.5px; font-weight:bold; border-radius:20px; padding:2px 9px; white-space:nowrap; }
+    .loc-p-ok { background:#dcfce7; color:#166534; } .loc-p-inc { background:#ffedd5; color:#c2410c; } .loc-p-ret { background:#ffe4e6; color:#be123c; } .loc-p-pend { background:#f1f5f9; color:#64748b; }
+    #modalContratoLoc input[type="date"] { width:100%; padding:8px 12px; border:1px solid #d3dbe8; border-radius:10px; font-size:13px; background:#fbfcfe; box-shadow:inset 0 1px 2px rgba(11,37,69,.04); }
+    #modalContratoLoc input[type="date"]:focus { border-color:#2563eb; background:#fff; box-shadow:0 0 0 4px rgba(37,99,235,.16); outline:none; }
   </style>
 </head>
 <body>
@@ -681,7 +795,7 @@
         <div class="quick-card" onclick="mudarAba('locacao')">
           <div class="quick-icon"><i class="fa-solid fa-boxes-packing"></i></div>
           <div class="quick-title">Controle de Locação</div>
-          <div class="quick-desc">Consulte o saldo contratado vs. físico por cliente, unidade e família de equipamento.</div>
+          <div class="quick-desc">Consulte o quantitativo contratado por cliente, unidade e família de equipamento.</div>
         </div>
 
         <div class="quick-card" onclick="mudarAba('compras')">
@@ -710,81 +824,79 @@
       </div>
     </div>
 
-    <!-- MÓDULO LOCAÇÃO -->
+    <!-- MÓDULO LOCAÇÃO (v2): quantitativo contratado por cliente / unidade -->
     <div id="abaLocacao" class="tab-content">
-      <div class="dash-metrics" style="grid-template-columns: repeat(4, 1fr);">
-        <div class="metric-card blue">
-          <div class="metric-title">Total de Registros / Famílias</div>
-          <div class="metric-value" id="locTotalRegistros">0</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-title">Total Qtd Contratada</div>
-          <div class="metric-value" id="locTotalContratada">0</div>
-        </div>
-        <div class="metric-card green">
-          <div class="metric-title">Total Qtd Física (Entregue)</div>
-          <div class="metric-value" id="locTotalFisica">0</div>
-        </div>
-        <div class="metric-card yellow" id="cardMetricSaldo">
-          <div class="metric-title">Saldo Global (Pendente / Sobra)</div>
-          <div class="metric-value" id="locTotalSaldo">0</div>
-        </div>
-      </div>
-
       <div class="card">
-        <div class="card-title">
-          <span><i class="fa-solid fa-boxes-packing"></i> Saldos de Equipamentos Locados por Cliente / Unidade</span>
-          <button type="button" class="btn-submit" style="padding: 4px 10px; font-size: 11px;" onclick="buscarAtualizacoesSilenciosas()"><i class="fa-solid fa-rotate"></i> Atualizar Dados</button>
+        <div class="req-topo">
+          <div>
+            <div class="req-topo-titulo"><i class="fa-solid fa-boxes-packing"></i> Locação · Quantitativo Contratado</div>
+            <div class="req-topo-sub">O DMA SYS é a referência do contrato. Saldo e movimentação ficam no Neovero, que deve bater com o DMA SYS.</div>
+          </div>
+          <div class="loc-acoes-topo">
+            <button type="button" class="btn-secundario" onclick="imprimirQuantitativoLoc()" title="Imprimir o quantitativo dos contratos ativos (respeita os filtros)"><i class="fa-solid fa-print"></i> Imprimir quantitativo</button>
+            <button type="button" class="btn-secundario" onclick="exportarCsvLoc()" title="Exportar os contratos filtrados em CSV (abre no Excel)"><i class="fa-solid fa-file-csv"></i> Exportar CSV</button>
+            <button type="button" class="btn-secundario" onclick="buscarAtualizacoesSilenciosas()" title="Buscar dados atualizados"><i class="fa-solid fa-rotate"></i></button>
+            <button type="button" class="btn-submit" onclick="abrirModalContratoLoc()"><i class="fa-solid fa-plus"></i> Novo Contrato</button>
+          </div>
         </div>
 
-        <div class="form-row" style="background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px; flex-wrap: wrap;">
-          <div class="form-group" style="flex: 1.2;">
+        <div class="req-resumo">
+          <div class="req-kpi kpi-atendido" onclick="filtrarLocPorKpi('ATIVO')" title="Ver contratos ativos"><div class="req-kpi-icone"><i class="fa-solid fa-file-contract"></i></div><div><div class="req-kpi-num" id="kpiLocContratos">0</div><div class="req-kpi-lbl">Contratos ativos</div></div></div>
+          <div class="req-kpi kpi-total kpi-sem-acao"><div class="req-kpi-icone"><i class="fa-solid fa-hospital"></i></div><div><div class="req-kpi-num" id="kpiLocClientes">0</div><div class="req-kpi-lbl">Clientes</div></div></div>
+          <div class="req-kpi kpi-loc-uni kpi-sem-acao"><div class="req-kpi-icone"><i class="fa-solid fa-location-dot"></i></div><div><div class="req-kpi-num" id="kpiLocUnidades">0</div><div class="req-kpi-lbl">Unidades</div></div></div>
+          <div class="req-kpi kpi-loc-eq kpi-sem-acao"><div class="req-kpi-icone"><i class="fa-solid fa-truck-medical"></i></div><div><div class="req-kpi-num" id="kpiLocEquip">0</div><div class="req-kpi-lbl">Equip. contratados</div><div class="req-kpi-sub" id="kpiLocEquipSub"></div></div></div>
+          <div class="req-kpi kpi-loc-valor kpi-sem-acao" id="kpiLocValorBox" style="display:none;"><div class="req-kpi-icone"><i class="fa-solid fa-sack-dollar"></i></div><div><div class="req-kpi-num" id="kpiLocValor">R$ 0</div><div class="req-kpi-lbl">Valor mensal</div><div class="req-kpi-sub" id="kpiLocValorSub"></div></div></div>
+        </div>
+        <div id="locAvisoVigencia"></div>
+
+        <div class="cmp-subabas" style="margin-top:14px;">
+          <button type="button" class="cmp-subaba ativa" id="btnLocSubConf" onclick="trocarSubabaLoc('conf')"><i class="fa-solid fa-scale-balanced"></i> Conferência DMA SYS → Neovero</button>
+          <button type="button" class="cmp-subaba" id="btnLocSubCtr" onclick="trocarSubabaLoc('contratos')"><i class="fa-solid fa-table-cells-large"></i> Contratos</button>
+          <button type="button" class="cmp-subaba" id="btnLocSubFam" onclick="trocarSubabaLoc('familias')"><i class="fa-solid fa-tags"></i> Famílias</button>
+        </div>
+
+        <div class="loc-filtros" id="locFiltrosComuns">
+          <div class="form-group" style="flex:1 1 200px;">
             <label>Cliente:</label>
-            <input type="text" id="locFiltroCliente" list="listClientes" placeholder="Todos os clientes..." oninput="filtrarTabelaLocacaoDebounced()">
+            <select id="locFiltroCli" onchange="aoMudarClienteLoc()"><option value="">Todos os clientes</option></select>
           </div>
-          <div class="form-group" style="flex: 1.2;">
-            <label>Unidade / Hospital:</label>
-            <input type="text" id="locFiltroUnidade" list="listUnidadesLocacao" placeholder="Todas as unidades..." oninput="filtrarTabelaLocacaoDebounced()">
+          <div class="form-group" style="flex:1 1 190px;">
+            <label>Localização:</label>
+            <select id="locFiltroLoc" onchange="renderizarLocacao()"><option value="">Todas as localizações</option></select>
           </div>
-          <div class="form-group" style="flex: 1.2;">
-            <label>Família do Equipamento:</label>
-            <input type="text" id="locFiltroFamilia" list="listFamiliasLocacao" placeholder="Todas as famílias..." oninput="filtrarTabelaLocacaoDebounced()">
-          </div>
-          <div class="form-group" style="flex: 1;">
-            <label>Situação:</label>
-            <select id="locFiltroSituacao" onchange="filtrarTabelaLocacao()">
-              <option value="TODOS" selected>Todas as Situações</option>
-              <option value="ATIVO">Apenas ATIVO</option>
-              <option value="ENCERRADO">Apenas ENCERRADO</option>
+          <div class="form-group loc-so-conf" style="flex:0 0 190px;">
+            <label>Situação da conferência:</label>
+            <select id="locFiltroConf" onchange="renderizarLocacao()">
+              <option value="">Todas</option><option value="pend">Não conferidas</option><option value="aj">Com ajuste no Neovero</option><option value="ok">OK</option>
             </select>
           </div>
-          <div class="form-group" style="flex: 1.5;">
-            <label>Busca Rápida (Contrato, ID, Cidade):</label>
-            <input type="text" id="locFiltroTexto" placeholder="Digite para buscar..." oninput="filtrarTabelaLocacaoDebounced()">
+          <div class="form-group loc-so-ctr" style="flex:1 1 180px; display:none;">
+            <label>Família:</label>
+            <select id="locFiltroFam" onchange="renderizarLocacao()"><option value="">Todas as famílias</option></select>
           </div>
+          <div class="form-group loc-so-ctr" style="flex:0 0 150px; display:none;">
+            <label>Situação:</label>
+            <select id="locFiltroSit" onchange="renderizarLocacao()">
+              <option value="">Todas</option><option value="ATIVO">Ativo</option><option value="EMPRÉSTIMO">Empréstimo</option><option value="SUSPENSO">Suspenso</option><option value="ENCERRADO">Encerrado</option><option value="CANCELADO">Cancelado</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1 1 180px;">
+            <label>Buscar (unidade, nº, ID):</label>
+            <input type="text" id="locFiltroTxt" placeholder="Digite para buscar..." oninput="renderizarLocacaoDebounced()">
+          </div>
+          <label class="loc-chk loc-so-ctr" style="display:none;" title="Contratos encerrados e cancelados ficam escondidos por padrão"><input type="checkbox" id="locMostrarEnc" onchange="renderizarLocacao()"> Mostrar encerrados</label>
+          <button type="button" class="btn-secundario loc-so-conf" onclick="abrirAjustesLoc()" title="Todas as diferenças encontradas, para corrigir o Neovero"><i class="fa-solid fa-list-check"></i> Lista de ajustes no Neovero</button>
         </div>
 
-        <div class="table-container">
-          <table style="table-layout: auto;">
-            <thead>
-              <tr>
-                <th class="td-center" style="width: 50px;">ID</th>
-                <th>Cliente</th>
-                <th>Contrato</th>
-                <th>Unidade</th>
-                <th>Localização</th>
-                <th>Família do Equipamento</th>
-                <th class="td-center">Qtd Contratada</th>
-                <th class="td-center">Qtd Física</th>
-                <th class="td-center">Saldo</th>
-                <th class="td-center">Situação</th>
-                <th class="td-center">Ação</th>
-              </tr>
-            </thead>
-            <tbody id="corpoTabelaLocacao">
-              <tr><td colspan="11" class="td-center" style="color:#888; padding:20px;">Carregando dados de locação...</td></tr>
-            </tbody>
-          </table>
+        <div id="locPainelConf"><div class="loc-vazio">Carregando contratos...</div></div>
+        <div id="locPainelCtr" style="display:none;"></div>
+        <div id="locPainelFam" style="display:none;">
+          <div class="loc-filtros" style="margin-top:0;">
+            <div class="form-group" style="flex:1 1 260px;"><label>Buscar família:</label><input type="text" id="locFamTxt" placeholder="Ex.: oxímetro, balança" oninput="renderizarFamiliasLoc()"></div>
+            <label class="loc-chk"><input type="checkbox" id="locFamInat" onchange="renderizarFamiliasLoc()"> Mostrar inativas</label>
+            <button type="button" class="btn-submit" onclick="abrirModalFamiliaLoc('NOVA')"><i class="fa-solid fa-plus"></i> Nova família</button>
+          </div>
+          <div id="locFamTabela"></div>
         </div>
       </div>
     </div>
@@ -1012,6 +1124,7 @@
             <div class="dsh-seg" role="tablist">
               <button type="button" id="dshSegQual" class="ativo" onclick="trocarModuloDashboard('QUAL')"><i class="fa-solid fa-shield-halved"></i> Qualidade</button>
               <button type="button" id="dshSegCmp" onclick="trocarModuloDashboard('CMP')"><i class="fa-solid fa-cart-shopping"></i> Compras</button>
+              <button type="button" id="dshSegLoc" onclick="trocarModuloDashboard('LOC')"><i class="fa-solid fa-boxes-packing"></i> Locação</button>
             </div>
             <input type="month" id="dashFiltroMes" onchange="atualizarDashboard(true)" title="Mês de referência">
             <select id="dashModoPeriodo" onchange="atualizarDashboard(true)" title="Período">
@@ -1122,6 +1235,57 @@
             <div class="dsh-card">
               <div class="dsh-card-tit">Alertas: pendentes mais antigos</div>
               <div id="dcAlertas"></div>
+            </div>
+          </div>
+        </div>
+        <div id="dshLoc" style="display:none;">
+          <div class="dsh-kpis">
+            <div class="dsh-kpi" style="--c:#10b981;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-file-contract"></i> Contratos ativos</div><div class="dsh-kpi-num" id="dlCtr">0</div><div class="dsh-kpi-sub" id="dlCtrSub"></div></div>
+            <div class="dsh-kpi" style="--c:#3b82f6;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-hospital"></i> Clientes</div><div class="dsh-kpi-num" id="dlCli">0</div><div class="dsh-kpi-sub" id="dlCliSub"></div></div>
+            <div class="dsh-kpi" style="--c:#06b6d4;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-location-dot"></i> Unidades</div><div class="dsh-kpi-num" id="dlUni">0</div><div class="dsh-kpi-sub" id="dlUniSub"></div></div>
+            <div class="dsh-kpi" style="--c:#6366f1;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-truck-medical"></i> Equipamentos contratados</div><div class="dsh-kpi-num" id="dlEq">0</div><div class="dsh-kpi-sub" id="dlEqSub"></div></div>
+            <div class="dsh-kpi" style="--c:#a855f7;" id="dlValorBox"><div class="dsh-kpi-lbl"><i class="fa-solid fa-sack-dollar"></i> Valor mensal</div><div class="dsh-kpi-num" id="dlValor">R$ 0,00</div><div class="dsh-kpi-sub" id="dlValorSub"></div></div>
+            <div class="dsh-kpi" style="--c:#94a3b8;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-box-archive"></i> Encerrados (histórico)</div><div class="dsh-kpi-num" id="dlEnc">0</div><div class="dsh-kpi-sub" id="dlEncSub"></div></div>
+          </div>
+
+          <div class="dsh-grid">
+            <div class="dsh-card dsh-span2">
+              <div class="dsh-card-tit">Evolução mês a mês <span class="dsh-card-tag">12 meses</span></div>
+              <div id="dlEvolucao"></div>
+            </div>
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Equipamentos por família</div>
+              <div id="dlFamilias"></div>
+            </div>
+          </div>
+
+          <div class="dsh-grid">
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Ranking de clientes <span class="dsh-card-tag">equipamentos</span></div>
+              <div id="dlClientes"></div>
+            </div>
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Ranking de unidades <span class="dsh-card-tag">equipamentos</span></div>
+              <div id="dlUnidades"></div>
+            </div>
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Alterações e cancelamentos <span class="dsh-card-tag">período</span></div>
+              <div id="dlAlteracoes"></div>
+            </div>
+          </div>
+
+          <div class="dsh-grid">
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Últimas movimentações</div>
+              <div id="dlUltimas"></div>
+            </div>
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Alertas <span class="dsh-card-tag">vigência · suspensos · empréstimos</span></div>
+              <div id="dlAlertas"></div>
+            </div>
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Contratos por situação <span class="dsh-card-tag">inclui histórico</span></div>
+              <div id="dlSituacao"></div>
             </div>
           </div>
         </div>
@@ -1546,6 +1710,140 @@
       </div>
     </div>
   </div>
+
+  <!-- ===== MÓDULO LOCAÇÃO (v2): FICHA DO CONTRATO ===== -->
+  <div id="modalFichaLoc" class="modal-overlay">
+    <div class="modal-box" style="width:900px;">
+      <div class="modal-title">
+        <span id="fichaLocTitulo">Contrato</span>
+        <span onclick="fecharFichaLoc()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div id="fichaLocCorpo"></div>
+    </div>
+  </div>
+
+  <!-- ===== MÓDULO LOCAÇÃO (v2): NOVO / EDITAR CONTRATO ===== -->
+  <div id="modalContratoLoc" class="modal-overlay">
+    <div class="modal-box" style="width:820px;">
+      <div class="modal-title">
+        <span id="ctrLocTitulo">Novo contrato de locação</span>
+        <span onclick="fecharModalLoc('modalContratoLoc')" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <input type="hidden" id="ctrLocId">
+      <div class="form-row" style="flex-wrap:wrap;">
+        <div class="form-group" style="flex:1 1 240px;"><label class="loc-motivo-obr">Cliente:</label><input type="text" id="ctrLocCliente" list="listLocClientes" placeholder="Ex.: MONTE AZUL" oninput="this.value=this.value.toUpperCase(); atualizarDatalistUnidadesLoc()"></div>
+        <div class="form-group" style="flex:1 1 300px;"><label class="loc-motivo-obr">Unidade:</label><input type="text" id="ctrLocUnidade" list="listLocUnidades" placeholder="Ex.: UBS JARDIM CELESTE" oninput="this.value=this.value.toUpperCase()"></div>
+      </div>
+      <div class="form-row" style="flex-wrap:wrap;">
+        <div class="form-group" style="flex:1 1 200px;"><label>Localização (cidade-UF):</label><input type="text" id="ctrLocLocal" list="listLocLocais" placeholder="Ex.: SÃO PAULO-SP" oninput="this.value=this.value.toUpperCase()"></div>
+        <div class="form-group" style="flex:1 1 160px;"><label>Nº do contrato:</label><input type="text" id="ctrLocNum" placeholder="Ex.: CT-2026/253" oninput="this.value=this.value.toUpperCase()"></div>
+        <div class="form-group" style="flex:0 0 150px;"><label>Início (opcional):</label><input type="date" id="ctrLocInicio"></div>
+        <div class="form-group" style="flex:0 0 150px;"><label>Fim (opcional):</label><input type="date" id="ctrLocFim"></div>
+      </div>
+      <div class="form-row" style="flex-wrap:wrap;">
+        <div class="form-group" style="flex:0 0 190px;"><label>Situação:</label>
+          <select id="ctrLocStatus" onchange="atualizarMotivoContratoLoc()">
+            <option value="ATIVO">Ativo</option><option value="EMPRÉSTIMO">Empréstimo</option><option value="SUSPENSO">Suspenso</option><option value="ENCERRADO">Encerrado</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex:1 1 300px;"><label>Observações do contrato:</label><textarea id="ctrLocObs" style="height:38px;" placeholder="Opcional"></textarea></div>
+      </div>
+      <div class="form-group" id="ctrLocMotivoBox" style="display:none; margin-bottom:12px;">
+        <label class="loc-motivo-obr" id="ctrLocMotivoLbl">Motivo da mudança de situação:</label>
+        <textarea id="ctrLocMotivo" style="height:46px;" placeholder="Fica registrado no histórico do contrato"></textarea>
+      </div>
+
+      <div id="ctrLocItensBox">
+        <div class="loc-sec-tit"><span><i class="fa-solid fa-list-ol"></i> Famílias contratadas</span>
+          <button type="button" class="btn-secundario" onclick="adicionarLinhaItemLoc()"><i class="fa-solid fa-plus"></i> Família</button>
+        </div>
+        <div class="loc-item-linha" style="font-size:10.5px; font-weight:bold; color:#64748b; text-transform:uppercase;"><span>Família (lista padronizada)</span><span>Qtd</span><span>Valor unit. (R$)</span><span class="loc-item-obs">Obs. do item</span><span></span></div>
+        <div class="loc-itens-novo" id="ctrLocItens"></div>
+        <div class="req-tipo-dica" id="ctrLocItensTotal"></div>
+      </div>
+
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:16px;">
+        <button type="button" class="btn-secundario" onclick="fecharModalLoc('modalContratoLoc')">Cancelar</button>
+        <button type="button" id="btnSalvarCtrLoc" class="btn-submit" onclick="salvarContratoLoc()"><i class="fa-solid fa-floppy-disk"></i> Salvar contrato</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MÓDULO LOCAÇÃO (v2): INCLUIR / ALTERAR ITEM ===== -->
+  <div id="modalItemLoc" class="modal-overlay">
+    <div class="modal-box" style="width:540px;">
+      <div class="modal-title">
+        <span id="itemLocTitulo">Alterar quantidade</span>
+        <span onclick="fecharModalLoc('modalItemLoc')" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <input type="hidden" id="itemLocContrato"><input type="hidden" id="itemLocId"><input type="hidden" id="itemLocOp">
+      <div class="loc-obs" id="itemLocInfo" style="margin-bottom:12px;"></div>
+      <div class="form-group" style="margin-bottom:12px;"><label class="loc-motivo-obr">Família:</label><select id="itemLocFamilia"></select></div>
+      <div class="form-row">
+        <div class="form-group"><label class="loc-motivo-obr">Quantidade:</label><input type="number" id="itemLocQtd" min="1" step="1" oninput="atualizarDeltaItemLoc()" style="font-size:16px; font-weight:bold;"><div class="loc-delta" id="itemLocDelta"></div></div>
+        <div class="form-group"><label>Valor unitário (R$, opcional):</label><input type="text" id="itemLocValor" placeholder="0,00" inputmode="decimal"></div>
+        <div class="form-group" id="itemLocStatusBox"><label>Situação do item:</label>
+          <select id="itemLocStatus"><option value="ATIVO">Ativo</option><option value="EMPRÉSTIMO">Empréstimo</option><option value="ENCERRADO">Encerrado</option></select>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:12px;"><label>Observação do item:</label><input type="text" id="itemLocObs" placeholder="Opcional"></div>
+      <div class="form-group" style="margin-bottom:12px;"><label class="loc-motivo-obr">Motivo:</label><textarea id="itemLocMotivo" style="height:52px;" placeholder="Ex.: aditivo contratual nº 3, pedido do cliente por e-mail de 10/11..."></textarea></div>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button type="button" class="btn-secundario" onclick="fecharModalLoc('modalItemLoc')">Cancelar</button>
+        <button type="button" id="btnSalvarItemLoc" class="btn-submit" onclick="salvarItemLoc()"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MÓDULO LOCAÇÃO (v2): CANCELAR / REATIVAR (motivo obrigatório) ===== -->
+  <div id="modalMotivoLoc" class="modal-overlay">
+    <div class="modal-box" style="width:480px;">
+      <div class="modal-title">
+        <span id="motivoLocTitulo">Cancelar contrato</span>
+        <span onclick="fecharModalLoc('modalMotivoLoc')" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div class="loc-obs" id="motivoLocInfo" style="margin-bottom:12px;"></div>
+      <div class="form-group" style="margin-bottom:14px;"><label class="loc-motivo-obr">Motivo:</label><textarea id="motivoLocTexto" style="height:70px;" placeholder="Fica registrado no histórico (mínimo de 5 letras)"></textarea></div>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button type="button" class="btn-secundario" onclick="fecharModalLoc('modalMotivoLoc')">Voltar</button>
+        <button type="button" id="btnConfirmarMotivoLoc" class="btn-submit" onclick="confirmarMotivoLoc()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MÓDULO LOCAÇÃO (v2): CADASTRO DE FAMÍLIAS ===== -->
+  <div id="modalFamiliaLoc" class="modal-overlay">
+    <div class="modal-box" style="width:520px;">
+      <div class="modal-title">
+        <span id="famLocTitulo">Família</span>
+        <span onclick="fecharModalLoc('modalFamiliaLoc')" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <input type="hidden" id="famLocOp"><input type="hidden" id="famLocAtual">
+      <div class="loc-obs" id="famLocInfo" style="margin-bottom:12px;"></div>
+      <div class="form-group" id="famLocNomeBox" style="margin-bottom:12px;"><label class="loc-motivo-obr">Nome (igual ao Neovero):</label><input type="text" id="famLocNome" oninput="this.value=this.value.toUpperCase()"></div>
+      <div class="form-group" id="famLocDestBox" style="margin-bottom:12px;"><label class="loc-motivo-obr">Juntar em:</label><select id="famLocDestino"></select></div>
+      <div class="form-group" style="margin-bottom:14px;"><label class="loc-motivo-obr">Motivo:</label><textarea id="famLocMotivo" style="height:56px;" placeholder="Ex.: nome corrigido no Neovero em 16/11 (vai para o histórico)"></textarea></div>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button type="button" class="btn-secundario" onclick="fecharModalLoc('modalFamiliaLoc')">Voltar</button>
+        <button type="button" id="btnSalvarFamLoc" class="btn-submit" onclick="salvarFamiliaLoc()"><i class="fa-solid fa-floppy-disk"></i> Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MÓDULO LOCAÇÃO (v2): LISTA DE AJUSTES NO NEOVERO ===== -->
+  <div id="modalAjustesLoc" class="modal-overlay">
+    <div class="modal-box" style="width:860px;">
+      <div class="modal-title">
+        <span><i class="fa-solid fa-list-check"></i> Lista de ajustes no Neovero</span>
+        <span onclick="fecharModalLoc('modalAjustesLoc')" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div id="ajustesLocCorpo"></div>
+    </div>
+  </div>
+
+  <datalist id="listLocClientes"></datalist>
+  <datalist id="listLocUnidades"></datalist>
+  <datalist id="listLocLocais"></datalist>
 
   <!-- MODAL LOCAÇÃO ATUALIZADO -->
   <div id="modalLocacao" class="modal-overlay">
@@ -2244,7 +2542,7 @@
         </details>
 
         <h4 style="color:#1a4d80; margin:20px 0 8px; font-size:14px;"><i class="fa-solid fa-layer-group"></i> Outros módulos</h4>
-        <p style="margin-bottom:8px;"><b><i class="fa-solid fa-boxes-packing"></i> Controle de Locação:</b> consulte saldos contratados vs. entregues por cliente e unidade hospitalar. Ajuste saldos físicos, valores e adicione notas de log com data e hora pelo botão <b>"Ajustar"</b>.</p>
+        <p style="margin-bottom:8px;"><b><i class="fa-solid fa-boxes-packing"></i> Controle de Locação:</b> cadastro e consulta do quantitativo contratado por cliente e unidade (somando os contratos ativos). Abra a <b>ficha</b> do contrato para alterar quantidades, incluir ou remover famílias, cancelar ou reativar; tudo pede motivo e fica na linha do tempo. Saldo e movimentação continuam no Neovero.</p>
         <p><b><i class="fa-solid fa-screwdriver-wrench"></i> Manutenção e O.S.:</b> acompanhe e abra ordens de serviço preventivas e corretivas com priorização por cores.</p>
       </div>
     </div>
@@ -2729,6 +3027,7 @@
         try { filtrarRequisicoes(); } catch(e) {}
         try { renderizarTabelaOS(); } catch(e) {}
         try { renderizarTabelaLocacao(); } catch(e) {}
+        try { renderizarLocacao(); } catch(e) { console.error(e); }
         try { renderizarTabelaCompras(); } catch(e) {}
         try { renderizarListaCompras(); } catch(e) {}
         try { renderizarCotacoes(); } catch(e) {}
@@ -4095,7 +4394,7 @@
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
       if (nomeAba === 'inicio') { document.getElementById('btnNavInicio').classList.add('active'); document.getElementById('abaInicio').classList.add('active'); }
-      else if (nomeAba === 'locacao') { document.getElementById('btnNavLocacao').classList.add('active'); document.getElementById('abaLocacao').classList.add('active'); renderizarTabelaLocacao(); }
+      else if (nomeAba === 'locacao') { document.getElementById('btnNavLocacao').classList.add('active'); document.getElementById('abaLocacao').classList.add('active'); renderizarLocacao(); }
       else if (nomeAba === 'compras') { document.getElementById('btnNavCompras').classList.add('active'); document.getElementById('abaCompras').classList.add('active'); try { renderizarTabelaCompras(); } catch(e) {} renderizarListaCompras(); renderizarCotacoes(); }
       else if (nomeAba === 'dashboard') { document.getElementById('btnNavDashboard').classList.add('active'); document.getElementById('abaDashboard').classList.add('active'); atualizarDashboard(true); }
       else if (nomeAba === 'requisicoes') { document.getElementById('btnNavQualidade').classList.add('active'); document.getElementById('abaRequisicoes').classList.add('active'); }
@@ -5926,7 +6225,7 @@
 
     // ===== Seletor de módulo + animações =====
     var moduloDash = "QUAL";
-    try { moduloDash = localStorage.getItem('dmaModuloDash') === "CMP" ? "CMP" : "QUAL"; } catch (e) {}
+    try { const m = localStorage.getItem('dmaModuloDash'); moduloDash = (m === "CMP" || m === "LOC") ? m : "QUAL"; } catch (e) {}
 
     function trocarModuloDashboard(mod) {
       moduloDash = mod;
@@ -5935,18 +6234,20 @@
     }
 
     function atualizarDashboard(animar) {
-      const cmp = moduloDash === "CMP";
-      const q = document.getElementById('dshQual'), c = document.getElementById('dshCmp');
+      const mod = (moduloDash === "CMP" || moduloDash === "LOC") ? moduloDash : "QUAL";
+      const q = document.getElementById('dshQual'), c = document.getElementById('dshCmp'), l = document.getElementById('dshLoc');
       if (!q || !c) return;
-      q.style.display = cmp ? "none" : "";
-      c.style.display = cmp ? "" : "none";
-      document.getElementById('dshSegQual').classList.toggle('ativo', !cmp);
-      document.getElementById('dshSegCmp').classList.toggle('ativo', cmp);
-      document.getElementById('dshTitulo').innerText = cmp ? "Painel de Compras" : "Painel da Qualidade";
-      if (!animar) { q.classList.remove('dsh-anim'); c.classList.remove('dsh-anim'); }   // atualização automática: sem repetir a animação
-      try { if (cmp) atualizarDashboardCompras(); else atualizarDashboardQualidade(); } catch (e) { console.error(e); }
+      q.style.display = mod === "QUAL" ? "" : "none";
+      c.style.display = mod === "CMP" ? "" : "none";
+      if (l) l.style.display = mod === "LOC" ? "" : "none";
+      document.getElementById('dshSegQual').classList.toggle('ativo', mod === "QUAL");
+      document.getElementById('dshSegCmp').classList.toggle('ativo', mod === "CMP");
+      document.getElementById('dshSegLoc')?.classList.toggle('ativo', mod === "LOC");
+      document.getElementById('dshTitulo').innerText = { QUAL: "Painel da Qualidade", CMP: "Painel de Compras", LOC: "Painel de Locação" }[mod];
+      if (!animar) [q, c, l].forEach(x => x && x.classList.remove('dsh-anim'));   // atualização automática: sem repetir a animação
+      try { if (mod === "CMP") atualizarDashboardCompras(); else if (mod === "LOC") atualizarDashboardLocacao(); else atualizarDashboardQualidade(); } catch (e) { console.error(e); }
       // Anima só ao abrir o painel ou trocar filtro/módulo (não nas atualizações automáticas)
-      if (animar && document.getElementById('abaDashboard').classList.contains('active')) animarDashboard(cmp ? c : q);
+      if (animar && document.getElementById('abaDashboard').classList.contains('active')) animarDashboard(mod === "CMP" ? c : (mod === "LOC" ? l : q));
     }
 
     // Contagem dos números, barras crescendo, rosca e linhas se desenhando
@@ -6257,6 +6558,1060 @@
       }).join('') : '<div class="dsh-vazio">Nenhum item pendente.</div>');
 
       setTxt('dshRodape', "Atualizado às " + hoje.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + " · dados do Módulo de Compras");
+    }
+
+
+    // =====================================================================
+    // MÓDULO LOCAÇÃO (v2) — quantitativo contratado por cliente / unidade
+    // Dados: bancoDados.locacao = { contratos, itens, historico, familias } (abas LOCACAO_CONTRATOS / ITENS / HISTORICO)
+    // Conta como "contratado": contrato ATIVO + item ATIVO. Empréstimo aparece à parte.
+    // =====================================================================
+    // Mesmos nomes de ação gravados pelo Apps Script (LOC_ACAO). Usados para montar a linha do tempo e a evolução mensal.
+    var LOC_ACAO = {
+      IMPORTADO: "IMPORTADO", CRIADO: "CONTRATO CRIADO", EDITADO: "EDITADO: ", SITUACAO: "SITUAÇÃO",
+      CANCELADO: "CANCELADO", REATIVADO: "REATIVADO",
+      ITEM_INCLUIDO: "ITEM INCLUÍDO", QTD: "QUANTIDADE", VALOR: "VALOR UNITÁRIO", ITEM_SITUACAO: "SITUAÇÃO DO ITEM",
+      ITEM_REMOVIDO: "ITEM REMOVIDO", ITEM_REATIVADO: "ITEM REATIVADO", ITEM_OBS: "OBS DO ITEM",
+      FAM_RENOMEADA: "FAMÍLIA RENOMEADA", FAM_UNIFICADA: "FAMÍLIA UNIFICADA", FAM_SOMADA: "FAMÍLIAS UNIFICADAS",
+      FAM_NOVA: "FAMÍLIA INCLUÍDA", FAM_ATIVADA: "FAMÍLIA ATIVADA", FAM_DESATIVADA: "FAMÍLIA DESATIVADA"
+    };
+    var LOC_HIST_FAMILIAS = "FAMÍLIAS";   // eventos do cadastro de famílias (não pertencem a um contrato)
+    var DIAS_ALERTA_VIGENCIA_LOC = 60;
+    var CORES_ST_LOC = { "ATIVO": "#10b981", "EMPRÉSTIMO": "#8b5cf6", "SUSPENSO": "#f59e0b", "ENCERRADO": "#94a3b8", "CANCELADO": "#f43f5e" };
+    var subabaLoc = "conf";
+    var fichaLocAberta = "";
+    var motivoLocAcao = null;
+    const renderizarLocacaoDebounced = criarDebounce(() => renderizarLocacao(), 200);
+
+    function locDados() {
+      const L = bancoDados && bancoDados.locacao;
+      return { contratos: (L && L.contratos) || [], itens: (L && L.itens) || [], historico: (L && L.historico) || [], familias: (L && L.familias) || [] };
+    }
+    function locContrato(id) { return locDados().contratos.find(c => c.id === id); }
+    function locItensDe(id) { return locDados().itens.filter(i => i.contrato === id); }
+    function locConta(c, i) { return c && i && c.status === "ATIVO" && i.status === "ATIVO"; }
+    function locEmprestado(c, i) {
+      if (!c || !i || ["ENCERRADO", "CANCELADO"].includes(c.status) || i.status === "CANCELADO" || i.status === "ENCERRADO") return false;
+      return i.status === "EMPRÉSTIMO" || c.status === "EMPRÉSTIMO";
+    }
+    function locInativo(c) { return c.status === "ENCERRADO" || c.status === "CANCELADO"; }
+    function locStPill(st) { return `<span class="loc-st loc-st-${escReq(st)}">${escReq(st)}</span>`; }
+    function locNum(n) { return Number(n || 0).toLocaleString('pt-BR'); }
+    function locMoeda(n) { return moedaBR(n); }
+    function locDataISO(br) { const m = String(br || "").match(/(\d{2})\/(\d{2})\/(\d{4})/); return m ? `${m[3]}-${m[2]}-${m[1]}` : ""; }
+    function locDiasParaFim(c) {
+      const t = tempoDataBR(c.fim);
+      if (!t) return null;
+      const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+      return Math.round((t - hoje.getTime()) / 86400000);
+    }
+    function locVigenciaHtml(c) {
+      if (!c.inicio && !c.fim) return "";
+      const d = locDiasParaFim(c);
+      const txt = (c.inicio || "…") + " a " + (c.fim || "…");
+      if (d === null || locInativo(c)) return `<span class="loc-vig loc-vig-ok"><i class="fa-regular fa-calendar"></i> ${escReq(txt)}</span>`;
+      if (d < 0) return `<span class="loc-vig loc-vig-vencido" title="${escReq(txt)}"><i class="fa-solid fa-triangle-exclamation"></i> vencido há ${-d} dia(s)</span>`;
+      if (d <= DIAS_ALERTA_VIGENCIA_LOC) return `<span class="loc-vig loc-vig-alerta" title="${escReq(txt)}"><i class="fa-solid fa-hourglass-half"></i> vence em ${d} dia(s)</span>`;
+      return `<span class="loc-vig loc-vig-ok"><i class="fa-regular fa-calendar"></i> ${escReq(txt)}</span>`;
+    }
+    // Contratos em vigor com data de fim nos próximos 60 dias (ou já vencida). Só quando há data.
+    function locAlertasVigencia() {
+      return locDados().contratos.filter(c => !locInativo(c) && c.fim)
+        .map(c => ({ c, d: locDiasParaFim(c) })).filter(x => x.d !== null && x.d <= DIAS_ALERTA_VIGENCIA_LOC)
+        .sort((a, b) => a.d - b.d);
+    }
+
+    // ---------- Filtros ----------
+    // Cliente, localização e busca valem para todas as subabas; família/situação/encerrados só para "Contratos".
+    function locValoresFiltro() {
+      const ctr = subabaLoc === "contratos";
+      return {
+        cli: document.getElementById('locFiltroCli')?.value || "",
+        loc: document.getElementById('locFiltroLoc')?.value || "",
+        fam: ctr ? (document.getElementById('locFiltroFam')?.value || "") : "",
+        sit: ctr ? (document.getElementById('locFiltroSit')?.value || "") : "",
+        txt: normalizarTextoReq(document.getElementById('locFiltroTxt')?.value || ""),
+        enc: ctr && !!document.getElementById('locMostrarEnc')?.checked
+      };
+    }
+    // ignorarSit: usado nos indicadores (sempre contam só o que está ativo)
+    function locContratosFiltrados(ignorarSit) {
+      const f = locValoresFiltro();
+      const itens = locDados().itens;
+      return locDados().contratos.filter(c => {
+        if (f.cli && c.cliente !== f.cli) return false;
+        if (f.loc && c.localizacao !== f.loc) return false;
+        if (!ignorarSit) {
+          if (f.sit && c.status !== f.sit) return false;
+          if (!f.sit && !f.enc && locInativo(c)) return false;
+        }
+        if (f.fam && !itens.some(i => i.contrato === c.id && i.familia === f.fam && i.status !== "CANCELADO")) return false;
+        if (f.txt) {
+          const alvo = normalizarTextoReq([c.id, c.numContrato, c.cliente, c.unidade, c.localizacao, c.obs].join(" "));
+          if (alvo.indexOf(f.txt) === -1) return false;
+        }
+        return true;
+      });
+    }
+
+    function preencherFiltrosLoc() {
+      const L = locDados();
+      const unicos = arr => [...new Set(arr.filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+      const selCli = document.getElementById('locFiltroCli'), selLoc = document.getElementById('locFiltroLoc'), selFam = document.getElementById('locFiltroFam');
+      if (!selCli || !selLoc || !selFam) return;
+      const preencher = (sel, rotulo, valores) => {
+        const atual = sel.value;
+        sel.innerHTML = `<option value="">${rotulo}</option>` + valores.map(v => `<option value="${escReq(v)}">${escReq(v)}</option>`).join('');
+        sel.value = valores.includes(atual) ? atual : "";
+      };
+      preencher(selCli, "Todos os clientes", unicos(L.contratos.map(c => c.cliente)));
+      preencher(selLoc, "Todas as localizações", unicos(L.contratos.filter(c => !selCli.value || c.cliente === selCli.value).map(c => c.localizacao)));
+      const usadas = new Set(L.itens.map(i => i.familia));
+      preencher(selFam, "Todas as famílias", unicos([...usadas]));
+      // listas de apoio do cadastro
+      const dl = (id, vals) => { const el = document.getElementById(id); if (el) el.innerHTML = vals.map(v => `<option value="${escReq(v)}">`).join(''); };
+      dl('listLocClientes', unicos(L.contratos.map(c => c.cliente).concat((bancoDados.clientes || []).map(c => String(c).toUpperCase()))));
+      dl('listLocLocais', unicos(L.contratos.map(c => c.localizacao)));
+    }
+    function aoMudarClienteLoc() { const l = document.getElementById('locFiltroLoc'); if (l) l.value = ""; renderizarLocacao(); }
+    function filtrarLocPorKpi(st) {
+      document.getElementById('locFiltroSit').value = st;
+      trocarSubabaLoc('contratos');
+    }
+    function trocarSubabaLoc(qual) {
+      subabaLoc = qual;
+      document.getElementById('btnLocSubConf').classList.toggle('ativa', qual === 'conf');
+      document.getElementById('btnLocSubCtr').classList.toggle('ativa', qual === 'contratos');
+      document.getElementById('btnLocSubFam').classList.toggle('ativa', qual === 'familias');
+      document.getElementById('locPainelConf').style.display = qual === 'conf' ? '' : 'none';
+      document.getElementById('locPainelCtr').style.display = qual === 'contratos' ? '' : 'none';
+      document.getElementById('locPainelFam').style.display = qual === 'familias' ? '' : 'none';
+      document.getElementById('locFiltrosComuns').style.display = qual === 'familias' ? 'none' : '';
+      document.querySelectorAll('#locFiltrosComuns .loc-so-conf').forEach(e => e.style.display = qual === 'conf' ? '' : 'none');
+      document.querySelectorAll('#locFiltrosComuns .loc-so-ctr').forEach(e => e.style.display = qual === 'contratos' ? '' : 'none');
+      renderizarLocacao();
+    }
+
+    // ---------- Agrupamento cliente -> unidade (soma dos contratos ATIVOS) ----------
+    function locAgrupar(contratos, familiaFiltro) {
+      const itens = locDados().itens;
+      const clientes = {};
+      contratos.forEach(c => {
+        const cli = clientes[c.cliente] || (clientes[c.cliente] = { nome: c.cliente, unidades: {}, equip: 0, valor: 0, ctrAtivos: 0, emprest: 0 });
+        const u = cli.unidades[c.unidade] || (cli.unidades[c.unidade] = { nome: c.unidade, locais: new Set(), contratos: [], fam: {}, equip: 0, valor: 0, emprest: 0, suspensos: 0 });
+        if (c.localizacao) u.locais.add(c.localizacao);
+        u.contratos.push(c);
+        if (c.status === "ATIVO") cli.ctrAtivos++;
+        if (c.status === "SUSPENSO") u.suspensos++;
+        itens.filter(i => i.contrato === c.id && (!familiaFiltro || i.familia === familiaFiltro)).forEach(i => {
+          if (locConta(c, i)) {
+            u.fam[i.familia] = (u.fam[i.familia] || 0) + i.qtd;
+            u.equip += i.qtd; cli.equip += i.qtd;
+            if (i.valorUnit) { u.valor += i.qtd * i.valorUnit; cli.valor += i.qtd * i.valorUnit; }
+          } else if (locEmprestado(c, i)) { u.emprest += i.qtd; cli.emprest += i.qtd; }
+        });
+      });
+      return Object.values(clientes).sort((a, b) => b.equip - a.equip || a.nome.localeCompare(b.nome, 'pt-BR'));
+    }
+
+    function renderizarLocacao() {
+      if (!document.getElementById('abaLocacao')) return;
+      preencherFiltrosLoc();
+      const f = locValoresFiltro();
+      const itens = locDados().itens;
+
+      // Indicadores (sempre só o que está ativo, dentro do filtro de cliente/unidade/família/busca)
+      const base = locContratosFiltrados(true);
+      let equip = 0, valor = 0, comValor = 0, emprest = 0;
+      const ativos = base.filter(c => c.status === "ATIVO");
+      const cli = new Set(), uni = new Set();
+      ativos.forEach(c => { cli.add(c.cliente); uni.add(c.cliente + "|" + c.unidade); });
+      base.forEach(c => itens.filter(i => i.contrato === c.id && (!f.fam || i.familia === f.fam)).forEach(i => {
+        if (locConta(c, i)) { equip += i.qtd; if (i.valorUnit) { valor += i.qtd * i.valorUnit; comValor++; } }
+        else if (locEmprestado(c, i)) emprest += i.qtd;
+      }));
+      const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
+      setTxt('kpiLocContratos', locNum(ativos.length));
+      setTxt('kpiLocClientes', locNum(cli.size));
+      setTxt('kpiLocUnidades', locNum(uni.size));
+      setTxt('kpiLocEquip', locNum(equip));
+      setTxt('kpiLocEquipSub', emprest ? "+ " + locNum(emprest) + " em empréstimo" : "");
+      const boxValor = document.getElementById('kpiLocValorBox');
+      if (boxValor) boxValor.style.display = valor > 0 ? "" : "none";
+      setTxt('kpiLocValor', locMoeda(valor));
+      setTxt('kpiLocValorSub', comValor ? comValor + " item(ns) com valor" : "");
+
+      // Alerta de vigência (só contratos com data de fim)
+      const alertas = locAlertasVigencia().filter(x => base.includes(x.c));
+      const av = document.getElementById('locAvisoVigencia');
+      if (av) av.innerHTML = alertas.length ? `<div class="loc-aviso"><i class="fa-solid fa-calendar-xmark" style="margin-top:2px;"></i><div><b>Vigência:</b> ${alertas.length} contrato(s) vencendo em até ${DIAS_ALERTA_VIGENCIA_LOC} dias ou já vencido(s): ` +
+        alertas.slice(0, 8).map(x => `<a onclick="abrirFichaLoc('${escReq(x.c.id)}')">${escReq(x.c.numContrato || x.c.id)} · ${escReq(x.c.unidade)} (${x.d < 0 ? "vencido" : x.d + "d"})</a>`).join('') +
+        (alertas.length > 8 ? ` e mais ${alertas.length - 8}.` : "") + `</div></div>` : "";
+
+      const lista = locContratosFiltrados(false);
+      if (subabaLoc === "conf") renderizarConferenciaLoc(); else if (subabaLoc === "familias") renderizarFamiliasLoc(); else renderizarCardsLoc(lista);
+      if (fichaLocAberta && document.getElementById('modalFichaLoc')?.classList.contains('active')) desenharFichaLoc(fichaLocAberta);
+    }
+
+    function renderizarCardsLoc(lista) {
+      const el = document.getElementById('locPainelCtr');
+      if (!el) return;
+      if (!lista.length) { el.innerHTML = '<div class="loc-vazio">Nenhum contrato para o filtro escolhido.</div>'; return; }
+      const itens = locDados().itens;
+      const ordemSt = { "ATIVO": 0, "EMPRÉSTIMO": 1, "SUSPENSO": 2, "ENCERRADO": 3, "CANCELADO": 4 };
+      el.innerHTML = '<div class="loc-cards">' + lista.slice().sort((a, b) => (ordemSt[a.status] - ordemSt[b.status]) || a.cliente.localeCompare(b.cliente, 'pt-BR') || a.unidade.localeCompare(b.unidade, 'pt-BR')).map(c => {
+        const its = itens.filter(i => i.contrato === c.id && i.status !== "CANCELADO");
+        const qtd = its.filter(i => i.status !== "ENCERRADO").reduce((s, i) => s + i.qtd, 0);
+        return `<div class="loc-card st-${escReq(c.status)}" onclick="abrirFichaLoc('${escReq(c.id)}')" title="Abrir ficha do contrato">
+          <div class="loc-card-topo"><div class="loc-card-id">${escReq(c.id)}<small>${escReq(c.numContrato || "sem nº")}</small></div>${locStPill(c.status)}</div>
+          <div><div class="loc-card-cli">${escReq(c.cliente)}</div><div class="loc-card-uni">${escReq(c.unidade)}${c.localizacao ? " · " + escReq(c.localizacao) : ""}</div></div>
+          <div class="loc-card-nums"><span><b>${its.length}</b>família(s)</span><span><b>${locNum(qtd)}</b>equipamento(s)</span></div>
+          ${locVigenciaHtml(c) ? `<div>${locVigenciaHtml(c)}</div>` : ""}
+        </div>`;
+      }).join('') + '</div>';
+    }
+
+    // ---------- Conferência DMA SYS → Neovero ----------
+    // O DMA SYS é a referência: a tela diz o que incluir/retirar NO NEOVERO.
+    // Esperado no Neovero = itens ATIVOS e em EMPRÉSTIMO de contratos ATIVOS ou em EMPRÉSTIMO (suspensos e encerrados não entram).
+    // As quantidades digitadas do Neovero NÃO são gravadas na planilha: ficam só neste navegador (localStorage).
+    var locConfNeo = {}, locConfExtra = {}, locConfSel = "";
+    try { locConfNeo = JSON.parse(localStorage.getItem('dmaLocConfNeo') || "{}"); locConfExtra = JSON.parse(localStorage.getItem('dmaLocConfExtra') || "{}"); } catch (e) {}
+    function salvarConfLoc() { try { localStorage.setItem('dmaLocConfNeo', JSON.stringify(locConfNeo)); localStorage.setItem('dmaLocConfExtra', JSON.stringify(locConfExtra)); } catch (e) {} }
+
+    function locUnidadesConf(contratos) {
+      const itens = locDados().itens, U = {};
+      contratos.filter(c => !locInativo(c)).forEach(c => {
+        const k = c.cliente + "|" + c.unidade;
+        const u = U[k] || (U[k] = { k, cliente: c.cliente, unidade: c.unidade, locais: new Set(), ctrs: [], fam: {}, emp: {}, total: 0 });
+        if (c.localizacao) u.locais.add(c.localizacao);
+        u.ctrs.push(c);
+        if (c.status === "SUSPENSO") return;
+        itens.filter(i => i.contrato === c.id && (i.status === "ATIVO" || i.status === "EMPRÉSTIMO")).forEach(i => {
+          u.fam[i.familia] = (u.fam[i.familia] || 0) + i.qtd; u.total += i.qtd;
+          if (c.status === "EMPRÉSTIMO" || i.status === "EMPRÉSTIMO") u.emp[i.familia] = (u.emp[i.familia] || 0) + i.qtd;
+        });
+      });
+      return Object.values(U).sort((a, b) => a.cliente.localeCompare(b.cliente, 'pt-BR') || a.unidade.localeCompare(b.unidade, 'pt-BR'));
+    }
+    function locVazio(v) { return v === undefined || v === null || v === ""; }
+    function locEstadoConf(u) {
+      const n = locConfNeo[u.k] || {}, ex = (locConfExtra[u.k] || []).filter(e => e.familia && e.qtd > 0);
+      const fams = Object.keys(u.fam);
+      let conf = 0, aj = 0;
+      fams.forEach(f => { if (!locVazio(n[f])) { conf++; if (Number(n[f]) !== u.fam[f]) aj++; } });
+      aj += ex.length;
+      const base = { conf, aj, total: fams.length };
+      if (!conf && !ex.length) return Object.assign(base, { t: "pend", txt: "não conferida" });
+      if (aj) return Object.assign(base, { t: "aj", txt: aj + " ajuste(s) no Neovero" });
+      if (conf < fams.length) return Object.assign(base, { t: "pend", txt: conf + " de " + fams.length + " conferidas" });
+      return Object.assign(base, { t: "ok", txt: "OK" });
+    }
+    function locPillConf(s) { return `<span class="loc-pill ${s.t === 'ok' ? 'loc-p-ok' : s.t === 'aj' ? 'loc-p-ret' : 'loc-p-pend'}">${escReq(s.txt)}</span>`; }
+    function locAcaoNeovero(dma, v) {
+      if (locVazio(v)) return '<span class="loc-pill loc-p-pend">a conferir</span>';
+      const d = dma - Number(v);
+      if (d === 0) return '<span class="loc-pill loc-p-ok">OK</span>';
+      return d > 0 ? `<span class="loc-pill loc-p-inc">Incluir ${d} no Neovero</span>` : `<span class="loc-pill loc-p-ret">Retirar ${-d} do Neovero</span>`;
+    }
+    const locJsq = v => escReq(v).replace(/\\/g, "\\\\").replace(/&#39;/g, "\\&#39;");   // texto seguro dentro de onclick='...'
+
+    function renderizarConferenciaLoc() {
+      const el = document.getElementById('locPainelConf');
+      if (!el) return;
+      if (!locDados().contratos.length) { el.innerHTML = '<div class="loc-vazio"><i class="fa-solid fa-box-open" style="font-size:28px; display:block; margin-bottom:8px;"></i>Nenhum contrato cadastrado. Use <b>Novo Contrato</b> ou rode a importação inicial.</div>'; return; }
+      const stF = document.getElementById('locFiltroConf')?.value || "";
+      const todas = locUnidadesConf(locContratosFiltrados(true));
+      const lista = todas.filter(u => !stF || locEstadoConf(u).t === stF);
+      const sts = lista.map(locEstadoConf);
+      if (!lista.find(u => u.k === locConfSel)) locConfSel = lista.length ? lista[0].k : "";
+      const resumo = `<div class="loc-conf-resumo">
+          <span><b>${lista.length}</b> unidade(s)</span><span><b>${locNum(lista.reduce((s, u) => s + u.total, 0))}</b> equip. esperados no Neovero</span>
+          <span class="ok"><b>${sts.filter(s => s.t === 'ok').length}</b> OK</span><span class="aj"><b>${sts.filter(s => s.t === 'aj').length}</b> com ajuste</span><span><b>${sts.filter(s => s.t === 'pend').length}</b> não conferidas</span></div>`;
+      const itensLista = lista.length ? lista.map((u, i) => `
+        <div class="loc-conf-uni${u.k === locConfSel ? ' on' : ''}" onclick="selecionarUnidadeConfLoc('${locJsq(u.k)}')">
+          <div style="min-width:0;"><div class="n">${escReq(u.unidade)}</div><div class="s">${escReq(u.cliente)} · ${escReq([...u.locais].join(' / ') || '-')}</div><div style="margin-top:4px;">${locPillConf(sts[i])}</div></div>
+          <div class="q"><b>${locNum(u.total)}</b><span>equip.</span></div>
+        </div>`).join('') : '<div class="loc-vazio">Nenhuma unidade para o filtro.</div>';
+      el.innerHTML = resumo + `<div class="loc-conf"><div class="loc-conf-lista">${itensLista}</div><div class="loc-conf-det" id="locConfDet"></div></div>`;
+      desenharUnidadeConfLoc(lista.find(u => u.k === locConfSel));
+    }
+    function selecionarUnidadeConfLoc(k) { locConfSel = k; renderizarConferenciaLoc(); }
+
+    function desenharUnidadeConfLoc(u) {
+      const el = document.getElementById('locConfDet');
+      if (!el) return;
+      if (!u) { el.innerHTML = '<div class="loc-vazio">Escolha uma unidade na lista.</div>'; return; }
+      const n = locConfNeo[u.k] || {}, ex = locConfExtra[u.k] || [];
+      const fams = Object.entries(u.fam).sort((a, b) => a[0].localeCompare(b[0], 'pt-BR'));
+      const s = locEstadoConf(u), kq = locJsq(u.k);
+      const totN = fams.reduce((t, [f]) => t + (locVazio(n[f]) ? 0 : Number(n[f])), 0) + ex.reduce((t, e) => t + (Number(e.qtd) || 0), 0);
+      const opcExtra = locDados().familias.filter(f => !u.fam[f]);
+      el.innerHTML = `
+        <div class="loc-conf-cab">
+          <div style="min-width:0;"><div class="loc-uni-nome" style="font-size:14px;">${escReq(u.unidade)}</div>
+            <div class="loc-uni-local">${escReq(u.cliente)} · ${escReq([...u.locais].join(' / ') || '-')}</div>
+            <div class="loc-uni-ctrs" style="margin-top:5px;">${u.ctrs.map(c => `<span class="loc-ctr-chip" style="color:${CORES_ST_LOC[c.status]}; border-color:${CORES_ST_LOC[c.status]};" onclick="abrirFichaLoc('${escReq(c.id)}')" title="Abrir ficha do contrato">${escReq(c.numContrato || c.id)} · ${escReq(c.status.toLowerCase())}</span>`).join('')}</div></div>
+          <div style="text-align:right; flex-shrink:0;">${locPillConf(s)}
+            <div style="display:flex; gap:6px; justify-content:flex-end; margin-top:6px;">
+              <button type="button" class="btn-secundario" style="padding:5px 10px;" onclick="tudoIgualConfLoc('${kq}')" title="Preenche o Neovero igual ao DMA SYS (quando tudo bate)"><i class="fa-solid fa-check-double"></i> Tudo igual</button>
+              <button type="button" class="btn-secundario" style="padding:5px 10px;" onclick="limparConfLoc('${kq}')">Limpar</button>
+            </div></div>
+        </div>
+        <table class="loc-tab-itens loc-tab-conf">
+          <thead><tr><th>Família</th><th class="td-center" style="width:95px;">DMA SYS</th><th class="td-center" style="width:105px;">No Neovero</th><th class="td-center" style="width:190px;">Ação no Neovero</th></tr></thead>
+          <tbody>
+          ${fams.length ? fams.map(([f, q]) => `<tr>
+            <td><b>${escReq(f)}</b>${u.emp[f] ? `<div style="font-size:10.5px; color:#6d28d9;">inclui ${u.emp[f]} em empréstimo</div>` : ""}</td>
+            <td class="td-center" style="font-size:15px; font-weight:800;">${locNum(q)}</td>
+            <td class="td-center"><input type="number" class="loc-neo" min="0" step="1" value="${locVazio(n[f]) ? "" : n[f]}" data-fam="${escReq(f)}" oninput="digitarNeoLoc('${kq}', this)"></td>
+            <td class="td-center loc-acao-cel">${locAcaoNeovero(q, n[f])}</td></tr>`).join('')
+            : '<tr><td colspan="4" class="td-center" style="color:#94a3b8;">Nenhum item em vigor nesta unidade (contrato suspenso ou sem itens).</td></tr>'}
+          ${ex.map((e, i) => `<tr class="loc-extra">
+            <td><select onchange="extraConfLoc('${kq}', ${i}, 'familia', this.value)"><option value="">Família que está no Neovero...</option>${opcExtra.map(f => `<option value="${escReq(f)}"${f === e.familia ? " selected" : ""}>${escReq(f)}</option>`).join('')}</select>
+              <div style="font-size:10.5px; color:#be123c;">não consta no contrato</div></td>
+            <td class="td-center" style="color:#94a3b8;">0</td>
+            <td class="td-center"><input type="number" class="loc-neo" min="0" step="1" value="${e.qtd || ""}" onchange="extraConfLoc('${kq}', ${i}, 'qtd', this.value)"></td>
+            <td class="td-center">${e.familia && e.qtd > 0 ? `<span class="loc-pill loc-p-ret">Retirar ${e.qtd} do Neovero</span>` : '<span class="loc-pill loc-p-pend">informe família e qtd</span>'}
+              <button type="button" class="loc-mini vermelho" onclick="tirarExtraConfLoc('${kq}', ${i})" title="Tirar linha"><i class="fa-solid fa-xmark"></i></button></td></tr>`).join('')}
+          </tbody>
+          <tfoot><tr><td>Total</td><td class="td-center">${locNum(u.total)}</td><td class="td-center">${s.conf || ex.length ? locNum(totN) : "-"}</td>
+            <td class="td-center">${!(s.conf || ex.length) ? "" : (s.conf < s.total ? '<span class="loc-pill loc-p-pend">conferência parcial</span>' : locAcaoNeovero(u.total, totN))}</td></tr></tfoot>
+        </table>
+        <button type="button" class="btn-secundario" style="margin-top:8px;" onclick="addExtraConfLoc('${kq}')"><i class="fa-solid fa-plus"></i> Família que está no Neovero e não está no contrato</button>
+        <div class="loc-nota" style="margin-top:10px; background:#f8fafc; color:#475569;">As quantidades do Neovero <b>não são gravadas na planilha</b>: ficam só neste navegador, para a conferência e a lista de ajustes.${Object.keys(u.emp).length ? " Equipamentos em empréstimo entram no esperado do Neovero." : ""}</div>`;
+    }
+    function digitarNeoLoc(k, inp) {
+      const f = inp.dataset.fam, v = inp.value;
+      (locConfNeo[k] = locConfNeo[k] || {})[f] = v === "" ? "" : Math.max(0, Math.round(Number(v) || 0));
+      salvarConfLoc();
+      const u = locUnidadesConf(locDados().contratos).find(x => x.k === k);
+      const cel = inp.closest('tr').querySelector('.loc-acao-cel');
+      if (u && cel) cel.innerHTML = locAcaoNeovero(u.fam[f], locConfNeo[k][f]);
+      clearTimeout(window.__tConfLoc);
+      window.__tConfLoc = setTimeout(() => {   // redesenha (totais e lista) sem tirar o foco do campo em uso
+        const foco = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.fam : null;
+        renderizarConferenciaLoc();
+        if (foco) { const alvo = [...document.querySelectorAll('#locConfDet input.loc-neo')].find(x => x.dataset.fam === foco); if (alvo) { alvo.focus(); const t = alvo.value; alvo.value = ""; alvo.value = t; } }
+      }, 900);
+    }
+    function tudoIgualConfLoc(k) { const u = locUnidadesConf(locDados().contratos).find(x => x.k === k); if (!u) return; locConfNeo[k] = Object.assign({}, u.fam); salvarConfLoc(); renderizarConferenciaLoc(); }
+    function limparConfLoc(k) { delete locConfNeo[k]; delete locConfExtra[k]; salvarConfLoc(); renderizarConferenciaLoc(); }
+    function addExtraConfLoc(k) { (locConfExtra[k] = locConfExtra[k] || []).push({ familia: "", qtd: "" }); salvarConfLoc(); renderizarConferenciaLoc(); }
+    function extraConfLoc(k, i, campo, v) { if (!locConfExtra[k] || !locConfExtra[k][i]) return; locConfExtra[k][i][campo] = campo === 'qtd' ? Math.max(0, Math.round(Number(v) || 0)) : v; salvarConfLoc(); renderizarConferenciaLoc(); }
+    function tirarExtraConfLoc(k, i) { if (locConfExtra[k]) locConfExtra[k].splice(i, 1); salvarConfLoc(); renderizarConferenciaLoc(); }
+
+    // Todas as diferenças (respeita cliente/localização/busca)
+    function locListaAjustes() {
+      const out = [];
+      locUnidadesConf(locContratosFiltrados(true)).forEach(u => {
+        const n = locConfNeo[u.k] || {}, aj = [];
+        Object.keys(u.fam).sort((a, b) => a.localeCompare(b, 'pt-BR')).forEach(f => {
+          if (locVazio(n[f]) || Number(n[f]) === u.fam[f]) return;
+          const d = u.fam[f] - Number(n[f]);
+          aj.push({ familia: f, dma: u.fam[f], neo: Number(n[f]), acao: d > 0 ? "INCLUIR " + d : "RETIRAR " + (-d) });
+        });
+        (locConfExtra[u.k] || []).filter(e => e.familia && e.qtd > 0).forEach(e => aj.push({ familia: e.familia, dma: 0, neo: e.qtd, acao: "RETIRAR " + e.qtd + " (não contratada)" }));
+        if (aj.length) out.push({ u, aj });
+      });
+      return out;
+    }
+    function abrirAjustesLoc() {
+      const lista = locListaAjustes();
+      const corpo = document.getElementById('ajustesLocCorpo');
+      corpo.innerHTML = lista.length ? `
+        <div class="req-tipo-dica" style="margin:0 0 8px;">${lista.length} unidade(s) com ajuste · respeita os filtros de cliente, localização e busca.</div>
+        ${lista.map(({ u, aj }) => `<div class="loc-sec-tit" style="margin-top:10px;"><span>${escReq(u.cliente)} · ${escReq(u.unidade)} <small style="color:#64748b; text-transform:none;">(${escReq([...u.locais].join(' / '))})</small></span></div>
+          <table class="loc-tab-itens"><thead><tr><th>Família</th><th class="td-center" style="width:90px;">DMA SYS</th><th class="td-center" style="width:90px;">Neovero</th><th style="width:240px;">O que fazer no Neovero</th></tr></thead><tbody>
+          ${aj.map(a => `<tr><td>${escReq(a.familia)}</td><td class="td-center">${a.dma}</td><td class="td-center">${a.neo}</td><td><b style="color:${a.acao.indexOf('INCLUIR') === 0 ? '#c2410c' : '#be123c'};">${escReq(a.acao)}</b></td></tr>`).join('')}</tbody></table>`).join('')}
+        <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:14px;">
+          <button type="button" class="btn-secundario" onclick="if (confirm('Apagar todas as quantidades do Neovero digitadas neste navegador?')) { locConfNeo = {}; locConfExtra = {}; salvarConfLoc(); fecharModalLoc('modalAjustesLoc'); renderizarConferenciaLoc(); }">Limpar toda a conferência</button>
+          <button type="button" class="btn-secundario" onclick="exportarAjustesCsvLoc()"><i class="fa-solid fa-file-csv"></i> Exportar CSV</button>
+          <button type="button" class="btn-submit" onclick="imprimirAjustesLoc()"><i class="fa-solid fa-print"></i> Imprimir</button>
+        </div>`
+        : '<div class="loc-vazio">Nenhum ajuste ainda. Confira as unidades digitando as quantidades do Neovero.</div>';
+      document.getElementById('modalAjustesLoc').classList.add('active');
+    }
+    function imprimirAjustesLoc() {
+      const lista = locListaAjustes();
+      if (!lista.length) return;
+      const e = escReq, agora = new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+      const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ajustes no Neovero - DMA SYS</title><style>
+        @page { size: A4 portrait; margin: 12mm; } body { font-family: Arial, Helvetica, sans-serif; color:#0f172a; font-size:11px; margin:0; }
+        header { display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid #1e3a8a; padding-bottom:6px; margin-bottom:10px; }
+        header h1 { font-size:16px; color:#1e3a8a; margin:0; } header div { font-size:9.5px; color:#64748b; text-align:right; }
+        h2 { font-size:12px; color:#0b2545; background:#eef2f9; padding:5px 8px; border-left:4px solid #1e3a8a; margin:12px 0 4px; page-break-after:avoid; }
+        h2 span { font-weight:normal; color:#475569; font-size:10px; }
+        table { width:100%; border-collapse:collapse; page-break-inside:avoid; } th { text-align:left; background:#f8fafc; border:1px solid #cbd5e1; padding:4px 7px; font-size:10px; }
+        td { border:1px solid #e2e8f0; padding:4px 7px; } td.q { width:70px; text-align:center; } td.ok { width:40px; }
+        .inc { color:#c2410c; font-weight:bold; } .ret { color:#be123c; font-weight:bold; }
+        footer { margin-top:12px; font-size:9px; color:#94a3b8; text-align:center; border-top:1px solid #e2e8f0; padding-top:5px; }
+      </style></head><body>
+        <header><h1>Ajustes no Neovero (referência: DMA SYS)</h1><div>LINEMED HOSPITALAR · DMA SYS<br>Emitido em ${e(agora)} por ${e(usuarioAtualCmp() || "-")}</div></header>
+        ${lista.map(({ u, aj }) => `<h2>${e(u.cliente)} · ${e(u.unidade)} <span>${e([...u.locais].join(' / '))}</span></h2>
+          <table><thead><tr><th>Família</th><th>DMA SYS</th><th>Neovero</th><th>O que fazer no Neovero</th><th>Feito</th></tr></thead><tbody>
+          ${aj.map(a => `<tr><td>${e(a.familia)}</td><td class="q">${a.dma}</td><td class="q">${a.neo}</td><td class="${a.acao.indexOf('INCLUIR') === 0 ? 'inc' : 'ret'}">${e(a.acao)}</td><td class="ok">☐</td></tr>`).join('')}</tbody></table>`).join('')}
+        <footer>O contrato no DMA SYS é a referência. Ajustar o Neovero para ficar igual ao DMA SYS.</footer>
+        <script>window.onload = function () { window.print(); };<\/script></body></html>`;
+      const w = window.open("", "_blank");
+      if (!w) { alert("O navegador bloqueou a janela de impressão. Libere pop-ups para este site."); return; }
+      w.document.open(); w.document.write(html); w.document.close();
+    }
+    function exportarAjustesCsvLoc() {
+      const lista = locListaAjustes();
+      if (!lista.length) return;
+      const cel = v => { const t = String(v === null || v === undefined ? "" : v); return /[";\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+      const linhas = [["CLIENTE", "UNIDADE", "LOCALIZAÇÃO", "FAMÍLIA", "DMA SYS", "NEOVERO", "AÇÃO NO NEOVERO"]];
+      lista.forEach(({ u, aj }) => aj.forEach(a => linhas.push([u.cliente, u.unidade, [...u.locais].join(" / "), a.familia, a.dma, a.neo, a.acao])));
+      const blob = new Blob(["﻿" + linhas.map(l => l.map(cel).join(";")).join("\r\n")], { type: "text/csv;charset=utf-8" });
+      const a = document.createElement('a'), d = new Date();
+      a.href = URL.createObjectURL(blob);
+      a.download = `ajustes_neovero_${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}.csv`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    }
+
+    // ---------- Cadastro de famílias (pela tela, sem acessar a planilha) ----------
+    function locCadastroFamilias() {
+      const L = bancoDados && bancoDados.locacao;
+      const cad = (L && L.familiasCadastro && L.familiasCadastro.length) ? L.familiasCadastro : locDados().familias.map(f => ({ nome: f, ativa: true, obs: "" }));
+      return cad;
+    }
+    function locUsoFamilia(nome) {
+      const ctr = {}; locDados().contratos.forEach(c => ctr[c.id] = c);
+      const its = locDados().itens.filter(i => i.familia === nome);
+      return {
+        contratos: new Set(its.filter(i => i.status !== "CANCELADO").map(i => i.contrato)).size,
+        equip: its.filter(i => locConta(ctr[i.contrato], i)).reduce((s, i) => s + i.qtd, 0)
+      };
+    }
+    function renderizarFamiliasLoc() {
+      const el = document.getElementById('locFamTabela');
+      if (!el) return;
+      const txt = normalizarTextoReq(document.getElementById('locFamTxt')?.value || "");
+      const inat = !!document.getElementById('locFamInat')?.checked;
+      const lista = locCadastroFamilias().filter(f => (inat || f.ativa) && (!txt || normalizarTextoReq(f.nome + " " + f.obs).indexOf(txt) !== -1))
+        .slice().sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+      el.innerHTML = `<div class="req-tipo-dica" style="margin:0 0 6px;">${lista.length} família(s). Renomear e unificar atualizam todos os contratos e ficam no histórico de cada um.</div>
+        <div class="table-container" style="max-height:560px;"><table class="loc-tab-itens">
+          <thead><tr><th>Família</th><th>Observação</th><th class="td-center" style="width:90px;">Contratos</th><th class="td-center" style="width:110px;">Equip. contratados</th><th class="td-center" style="width:90px;">Situação</th><th class="td-center" style="width:250px;">Ações</th></tr></thead>
+          <tbody>${lista.map(f => {
+            const u = locUsoFamilia(f.nome), fq = locJsq(f.nome);
+            return `<tr><td><b>${escReq(f.nome)}</b></td><td style="font-size:11px; color:#64748b;">${escReq(f.obs || "-")}</td>
+              <td class="td-center">${u.contratos}</td><td class="td-center"><b>${locNum(u.equip)}</b></td>
+              <td class="td-center">${f.ativa ? '<span class="loc-st loc-st-ATIVO">ATIVA</span>' : '<span class="loc-st loc-st-ENCERRADO">INATIVA</span>'}</td>
+              <td class="td-center" style="white-space:nowrap;">
+                <button type="button" class="loc-mini azul" onclick="abrirModalFamiliaLoc('RENOMEAR', '${fq}')"><i class="fa-solid fa-pen"></i> Renomear</button>
+                ${f.ativa ? `<button type="button" class="loc-mini azul" style="background:#6366f1;" onclick="abrirModalFamiliaLoc('UNIFICAR', '${fq}')"><i class="fa-solid fa-object-group"></i> Unificar</button>` : ""}
+                <button type="button" class="loc-mini ${f.ativa ? 'vermelho' : 'verde'}" onclick="abrirModalFamiliaLoc('${f.ativa ? 'DESATIVAR' : 'ATIVAR'}', '${fq}')">${f.ativa ? 'Desativar' : 'Ativar'}</button>
+              </td></tr>`;
+          }).join('') || '<tr><td colspan="6" class="td-center" style="color:#94a3b8;">Nenhuma família.</td></tr>'}</tbody></table></div>
+        <div class="loc-nota" style="margin-top:10px; background:#f8fafc; color:#475569;">Desativar só tira a família da lista de escolha para itens novos; os contratos que já usam continuam iguais. Nada é excluído.</div>`;
+    }
+    function abrirModalFamiliaLoc(op, nome) {
+      const u = nome ? locUsoFamilia(nome) : null;
+      document.getElementById('famLocOp').value = op;
+      document.getElementById('famLocAtual').value = nome || "";
+      document.getElementById('famLocTitulo').innerText = { NOVA: "Nova família", RENOMEAR: "Renomear família", UNIFICAR: "Unificar famílias", ATIVAR: "Ativar família", DESATIVAR: "Desativar família" }[op];
+      document.getElementById('famLocInfo').innerHTML = {
+        NOVA: "Use o mesmo nome do Neovero. A família passa a aparecer na lista de escolha dos contratos.",
+        RENOMEAR: `<b>${escReq(nome)}</b> · usada em ${u && u.contratos} contrato(s). Todos os itens passam a usar o nome novo e cada contrato registra a troca no histórico.`,
+        UNIFICAR: `<b>${escReq(nome)}</b> será juntada em outra família e ficará inativa. Se um contrato tiver as duas, as quantidades são somadas num item só.`,
+        ATIVAR: `<b>${escReq(nome)}</b> volta para a lista de escolha.`,
+        DESATIVAR: `<b>${escReq(nome)}</b> sai da lista de escolha para itens novos. Os ${u && u.contratos} contrato(s) que usam continuam iguais.`
+      }[op];
+      document.getElementById('famLocNomeBox').style.display = (op === "NOVA" || op === "RENOMEAR") ? "" : "none";
+      document.getElementById('famLocNome').value = op === "RENOMEAR" ? nome : "";
+      document.getElementById('famLocDestBox').style.display = op === "UNIFICAR" ? "" : "none";
+      document.getElementById('famLocDestino').innerHTML = locDados().familias.filter(f => f !== nome).map(f => `<option value="${escReq(f)}">${escReq(f)}</option>`).join('');
+      document.getElementById('famLocMotivo').value = "";
+      document.getElementById('modalFamiliaLoc').classList.add('active');
+      setTimeout(() => document.getElementById(op === "NOVA" || op === "RENOMEAR" ? 'famLocNome' : 'famLocMotivo').focus(), 50);
+    }
+    function salvarFamiliaLoc() {
+      const op = document.getElementById('famLocOp').value;
+      const payload = { acao: "LOC_FAMILIA", operacao: op, familia: document.getElementById('famLocAtual').value,
+                        novoNome: document.getElementById('famLocNome').value.trim(), destino: document.getElementById('famLocDestino').value,
+                        motivo: document.getElementById('famLocMotivo').value.trim() };
+      if ((op === "NOVA" || op === "RENOMEAR") && !payload.novoNome) { alert("Informe o nome."); return; }
+      if (payload.motivo.length < 5) { alert("Informe o motivo (mínimo de 5 letras)."); return; }
+      if (op === "UNIFICAR" && !confirm(`Unificar ${payload.familia} em ${payload.destino}? Isso altera todos os contratos que usam ${payload.familia}.`)) return;
+      postLoc(payload, document.getElementById('btnSalvarFamLoc'), () => {
+        // a conferência acompanha a troca de nome
+        if (op === "RENOMEAR" || op === "UNIFICAR") {
+          const novo = op === "RENOMEAR" ? payload.novoNome.toUpperCase().replace(/\s+/g, " ") : payload.destino;
+          Object.values(locConfNeo).forEach(m => { if (m[payload.familia] !== undefined) { if (m[novo] === undefined) m[novo] = m[payload.familia]; delete m[payload.familia]; } });
+          salvarConfLoc();
+        }
+        fecharModalLoc('modalFamiliaLoc');
+      });
+    }
+
+    // ---------- Ficha do contrato ----------
+    function abrirFichaLoc(id) {
+      if (!locContrato(id)) return;
+      fichaLocAberta = id;
+      desenharFichaLoc(id);
+      document.getElementById('modalFichaLoc').classList.add('active');
+    }
+    function fecharFichaLoc() { fichaLocAberta = ""; document.getElementById('modalFichaLoc').classList.remove('active'); }
+    function fecharModalLoc(id) { document.getElementById(id)?.classList.remove('active'); }
+
+    function textoEventoLoc(h, itensPorId) {
+      const it = itensPorId[h.item];
+      const fam = it ? it.familia : (h.item || "");
+      const A = LOC_ACAO;
+      if (h.acao === A.IMPORTADO) return ["Importado da planilha (" + (h.para || "-") + ")", "#64748b", "fa-file-import"];
+      if (h.acao === A.CRIADO) return ["Contrato cadastrado (" + (h.para || "-") + ")", "#2563eb", "fa-file-circle-plus"];
+      if (h.acao === A.CANCELADO) return ["Contrato cancelado (" + h.de + " → CANCELADO)", "#f43f5e", "fa-ban"];
+      if (h.acao === A.REATIVADO) return ["Contrato reativado (" + h.de + " → ATIVO)", "#10b981", "fa-rotate-left"];
+      if (h.acao === A.SITUACAO) return ["Situação: " + h.de + " → " + h.para, CORES_ST_LOC[h.para] || "#f59e0b", "fa-arrows-rotate"];
+      if (h.acao.indexOf(A.EDITADO) === 0) return [h.acao.slice(A.EDITADO.length) + ": " + (h.de || "(vazio)") + " → " + (h.para || "(vazio)"), "#64748b", "fa-pen"];
+      if (h.acao === A.ITEM_INCLUIDO) return ["Incluído " + fam + ": " + h.para, "#2563eb", "fa-plus"];
+      if (h.acao === A.QTD) {
+        const d = (Number(h.para) || 0) - (Number(h.de) || 0);
+        return [fam + ": quantidade " + h.de + " → " + h.para + " (" + (d > 0 ? "+" : "") + d + ")", d > 0 ? "#2563eb" : "#f59e0b", "fa-hashtag"];
+      }
+      if (h.acao === A.VALOR) return [fam + ": valor unitário " + (h.de ? locMoeda(Number(h.de)) : "(vazio)") + " → " + (h.para ? locMoeda(Number(h.para)) : "(vazio)"), "#8b5cf6", "fa-dollar-sign"];
+      if (h.acao === A.ITEM_SITUACAO) return [fam + ": " + h.de + " → " + h.para, "#f59e0b", "fa-arrows-rotate"];
+      if (h.acao === A.ITEM_REMOVIDO) return [fam + " removido do contrato", "#f43f5e", "fa-minus"];
+      if (h.acao === A.ITEM_REATIVADO) return [fam + " reativado", "#10b981", "fa-rotate-left"];
+      if (h.acao === A.ITEM_OBS) return [fam + ": observação alterada", "#64748b", "fa-note-sticky"];
+      if (h.acao === A.FAM_RENOMEADA) return ["Família renomeada: " + h.de + " → " + h.para, "#8b5cf6", "fa-tags"];
+      if (h.acao === A.FAM_UNIFICADA) return ["Família unificada: " + h.de + " → " + h.para, "#8b5cf6", "fa-object-group"];
+      if (h.acao === A.FAM_SOMADA) return [fam + ": quantidade " + h.de + " → " + h.para + " (famílias unificadas)", "#8b5cf6", "fa-object-group"];
+      return [h.acao + (h.para ? ": " + h.para : ""), "#64748b", "fa-circle"];
+    }
+
+    function desenharFichaLoc(id) {
+      const c = locContrato(id);
+      const corpo = document.getElementById('fichaLocCorpo');
+      if (!c || !corpo) return;
+      const itens = locItensDe(id);
+      const itensPorId = {}; locDados().itens.forEach(i => itensPorId[i.id] = i);
+      const editavel = !locInativo(c);
+      document.getElementById('fichaLocTitulo').innerHTML = `<span><i class="fa-solid fa-file-contract"></i> ${escReq(c.id)} · ${escReq(c.numContrato || "sem nº")} ${locStPill(c.status)}</span>`;
+
+      const ordem = { "ATIVO": 0, "EMPRÉSTIMO": 1, "ENCERRADO": 2, "CANCELADO": 3 };
+      let totQ = 0, totV = 0, temValor = false;
+      const linhas = itens.slice().sort((a, b) => (ordem[a.status] - ordem[b.status]) || a.familia.localeCompare(b.familia, 'pt-BR')).map(i => {
+        const sub = i.valorUnit ? i.qtd * i.valorUnit : 0;
+        if (i.status !== "CANCELADO" && i.status !== "ENCERRADO") { totQ += i.qtd; totV += sub; }
+        if (i.valorUnit) temValor = true;
+        const acoes = !editavel ? "" : i.status === "CANCELADO"
+          ? (locDados().familias.includes(i.familia)
+              ? `<button type="button" class="loc-mini verde" onclick="abrirMotivoLoc('REATIVAR_ITEM', '${escReq(c.id)}', '${escReq(i.id)}')"><i class="fa-solid fa-rotate-left"></i> Reativar</button>`
+              : `<span style="font-size:10.5px; color:#94a3b8;" title="Família inativa">família inativa</span>`)
+          : `<button type="button" class="loc-mini azul" onclick="abrirModalItemLoc('ALTERAR', '${escReq(c.id)}', '${escReq(i.id)}')"><i class="fa-solid fa-pen"></i> Alterar</button>
+             <button type="button" class="loc-mini vermelho" onclick="abrirMotivoLoc('REMOVER_ITEM', '${escReq(c.id)}', '${escReq(i.id)}')" title="Remover do contrato (fica no histórico)"><i class="fa-solid fa-minus"></i></button>`;
+        return `<tr class="${i.status === "CANCELADO" ? "cancelado" : ""}">
+          <td><b>${escReq(i.familia)}</b>${i.obs ? `<div style="font-size:10.5px; color:#64748b;">${escReq(i.obs)}</div>` : ""}</td>
+          <td class="td-center" style="font-size:14px; font-weight:800;">${locNum(i.qtd)}</td>
+          <td class="td-center">${i.valorUnit ? locMoeda(i.valorUnit) : "-"}</td>
+          <td class="td-center">${sub ? locMoeda(sub) : "-"}</td>
+          <td class="td-center loc-sem-risco">${i.status === "CANCELADO" ? '<span class="loc-st loc-st-CANCELADO">REMOVIDO</span>' : locStPill(i.status)}</td>
+          <td class="td-center loc-sem-risco" style="white-space:nowrap;">${acoes}</td>
+        </tr>`;
+      }).join('');
+
+      const hist = locDados().historico.filter(h => h.contrato === id).slice().reverse();
+      const tempo = hist.map(h => {
+        const [txt, cor, ico] = textoEventoLoc(h, itensPorId);
+        return `<div class="loc-ev" style="--c:${cor};">
+          <div class="loc-ev-top"><b>${escReq(h.data)}</b> · ${escReq(h.usuario || "-")}</div>
+          <div class="loc-ev-txt"><i class="fa-solid ${ico}" style="color:${cor}; width:14px;"></i> ${escReq(txt)}</div>
+          ${h.motivo ? `<div class="loc-ev-mot">Motivo: ${escReq(h.motivo)}</div>` : ""}
+        </div>`;
+      }).join('');
+
+      const botoes = [];
+      if (c.status !== "CANCELADO") botoes.push(`<button type="button" class="btn-secundario" onclick="abrirModalContratoLoc('${escReq(c.id)}')"><i class="fa-solid fa-pen-to-square"></i> Editar dados</button>`);
+      if (editavel) botoes.push(`<button type="button" class="btn-secundario" onclick="abrirModalItemLoc('INCLUIR', '${escReq(c.id)}')"><i class="fa-solid fa-plus"></i> Incluir família</button>`);
+      if (["CANCELADO", "ENCERRADO", "SUSPENSO"].includes(c.status)) botoes.push(`<button type="button" class="btn-atender" style="height:34px; padding:0 14px;" onclick="abrirMotivoLoc('REATIVAR', '${escReq(c.id)}')"><i class="fa-solid fa-rotate-left"></i> Reativar contrato</button>`);
+      if (c.status !== "CANCELADO") botoes.push(`<button type="button" class="btn-negar" style="height:34px; padding:0 14px;" onclick="abrirMotivoLoc('CANCELAR', '${escReq(c.id)}')"><i class="fa-solid fa-ban"></i> Cancelar contrato</button>`);
+
+      corpo.innerHTML = `
+        <div class="loc-ficha-cab">
+          <div><span>Cliente</span>${escReq(c.cliente)}</div>
+          <div><span>Unidade</span>${escReq(c.unidade)}</div>
+          <div><span>Localização</span>${escReq(c.localizacao || "-")}</div>
+          <div><span>Vigência</span>${c.inicio || c.fim ? escReq((c.inicio || "…") + " a " + (c.fim || "…")) : "Não informada"} ${locVigenciaHtml(c).indexOf("loc-vig-ok") === -1 ? locVigenciaHtml(c) : ""}</div>
+          <div><span>Cadastro</span>${escReq(c.criadoPor || "-")} · ${escReq(c.criadoEm || "-")}</div>
+          ${c.status === "CANCELADO" ? `<div style="grid-column:1/-1; color:#be123c;"><span>Cancelamento</span>${escReq(c.cancelData)} · ${escReq(c.cancelUsuario)} · ${escReq(c.cancelMotivo)}</div>` : ""}
+        </div>
+        <div class="loc-ficha-botoes">${botoes.join('')}</div>
+        ${!editavel ? `<div class="loc-nota" style="margin-bottom:10px;">Contrato ${escReq(c.status.toLowerCase())}: os itens ficam só para consulta. Reative para alterar.</div>` : ""}
+        <div class="loc-sec-tit"><span><i class="fa-solid fa-list-ol"></i> Itens contratados</span><span style="font-size:11px; color:#64748b; text-transform:none;">${itens.filter(i => i.status !== "CANCELADO").length} família(s)</span></div>
+        <div class="table-container" style="min-height:0; max-height:none;">
+          <table class="loc-tab-itens">
+            <thead><tr><th>Família</th><th class="td-center" style="width:70px;">Qtd</th><th class="td-center" style="width:110px;">Valor unit.</th><th class="td-center" style="width:110px;">Subtotal</th><th class="td-center" style="width:100px;">Situação</th><th class="td-center" style="width:150px;">Ações</th></tr></thead>
+            <tbody>${linhas || '<tr><td colspan="6" class="td-center" style="color:#888;">Nenhum item.</td></tr>'}</tbody>
+            <tfoot><tr><td>Total (sem removidos e encerrados)</td><td class="td-center">${locNum(totQ)}</td><td></td><td class="td-center">${temValor ? locMoeda(totV) + "/mês" : "-"}</td><td colspan="2"></td></tr></tfoot>
+          </table>
+        </div>
+        <div class="loc-sec-tit"><span><i class="fa-solid fa-note-sticky"></i> Observações</span></div>
+        <div class="loc-obs">${c.obs ? escReq(c.obs) : '<span style="color:#94a3b8;">Sem observações. Use Editar dados para incluir.</span>'}</div>
+        <div class="loc-sec-tit"><span><i class="fa-solid fa-clock-rotate-left"></i> Linha do tempo</span><span style="font-size:11px; color:#64748b; text-transform:none;">${hist.length} registro(s)</span></div>
+        <div class="loc-linha-tempo">${tempo || '<div style="color:#94a3b8; font-size:12px;">Sem histórico.</div>'}</div>`;
+    }
+
+    // ---------- Novo / editar contrato ----------
+    function opcoesFamiliaLoc(sel) {
+      const fams = locDados().familias;
+      return '<option value="">Escolha a família...</option>' + fams.map(f => `<option value="${escReq(f)}"${f === sel ? " selected" : ""}>${escReq(f)}</option>`).join('');
+    }
+    function adicionarLinhaItemLoc(it) {
+      const box = document.getElementById('ctrLocItens');
+      const div = document.createElement('div');
+      div.className = 'loc-item-linha';
+      div.innerHTML = `<select class="loc-i-fam" onchange="totalItensNovoLoc()">${opcoesFamiliaLoc(it && it.familia)}</select>
+        <input type="number" class="loc-i-qtd" min="1" step="1" placeholder="Qtd" value="${it ? escReq(it.qtd) : ""}" oninput="totalItensNovoLoc()">
+        <input type="text" class="loc-i-val" placeholder="Opcional" inputmode="decimal">
+        <input type="text" class="loc-i-obs loc-item-obs" placeholder="Opcional">
+        <button type="button" title="Tirar esta linha" onclick="this.parentElement.remove(); totalItensNovoLoc();"><i class="fa-solid fa-xmark"></i></button>`;
+      box.appendChild(div);
+      totalItensNovoLoc();
+    }
+    function totalItensNovoLoc() {
+      const linhas = [...document.querySelectorAll('#ctrLocItens .loc-item-linha')];
+      const tot = linhas.reduce((s, l) => s + (parseInt(l.querySelector('.loc-i-qtd').value, 10) || 0), 0);
+      const el = document.getElementById('ctrLocItensTotal');
+      if (el) el.innerText = linhas.length ? `${linhas.length} família(s) · ${locNum(tot)} equipamento(s)` : "Inclua ao menos uma família.";
+    }
+    function atualizarDatalistUnidadesLoc() {
+      const cli = (document.getElementById('ctrLocCliente').value || "").trim().toUpperCase();
+      const unis = [...new Set(locDados().contratos.filter(c => !cli || c.cliente === cli).map(c => c.unidade))].sort();
+      const dl = document.getElementById('listLocUnidades');
+      if (dl) dl.innerHTML = unis.map(u => `<option value="${escReq(u)}">`).join('');
+    }
+    function atualizarMotivoContratoLoc() {
+      const id = document.getElementById('ctrLocId').value;
+      const c = id ? locContrato(id) : null;
+      const mudou = c && document.getElementById('ctrLocStatus').value !== c.status;
+      document.getElementById('ctrLocMotivoBox').style.display = mudou ? "" : (c ? "" : "none");
+      document.getElementById('ctrLocMotivoLbl').className = mudou ? "loc-motivo-obr" : "";
+      document.getElementById('ctrLocMotivoLbl').innerText = mudou ? "Motivo da mudança de situação:" : "Motivo da alteração (opcional):";
+    }
+    function abrirModalContratoLoc(id) {
+      const c = id ? locContrato(id) : null;
+      document.getElementById('ctrLocId').value = c ? c.id : "";
+      document.getElementById('ctrLocTitulo').innerText = c ? "Editar contrato " + c.id : "Novo contrato de locação";
+      const f = locValoresFiltro();
+      document.getElementById('ctrLocCliente').value = c ? c.cliente : (f.cli || "");
+      document.getElementById('ctrLocUnidade').value = c ? c.unidade : "";
+      document.getElementById('ctrLocLocal').value = c ? c.localizacao : "";
+      document.getElementById('ctrLocNum').value = c ? c.numContrato : "";
+      document.getElementById('ctrLocInicio').value = c ? locDataISO(c.inicio) : "";
+      document.getElementById('ctrLocFim').value = c ? locDataISO(c.fim) : "";
+      document.getElementById('ctrLocObs').value = c ? c.obs : "";
+      document.getElementById('ctrLocMotivo').value = "";
+      const sel = document.getElementById('ctrLocStatus');
+      [...sel.options].forEach(o => o.disabled = !c && o.value === "ENCERRADO");
+      sel.value = c ? c.status : "ATIVO";
+      document.getElementById('ctrLocItensBox').style.display = c ? "none" : "";
+      document.getElementById('ctrLocItens').innerHTML = "";
+      if (!c) adicionarLinhaItemLoc();
+      atualizarMotivoContratoLoc();
+      atualizarDatalistUnidadesLoc();
+      document.getElementById('modalContratoLoc').classList.add('active');
+    }
+
+    function postLoc(payload, btn, aoConcluir) {
+      const txtOrig = btn ? btn.innerHTML : "";
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...'; }
+      payload.usuario = usuarioAtualCmp();
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
+        .then(r => r.json())
+        .then(res => {
+          if (btn) { btn.disabled = false; btn.innerHTML = txtOrig; }
+          if (res.status !== "sucesso") { alert(res.mensagem || "Não foi possível salvar."); return; }
+          if (res.locacao) bancoDados.locacao = res.locacao;
+          if (aoConcluir) aoConcluir(res);
+          renderizarLocacao();
+          if (document.getElementById('abaDashboard')?.classList.contains('active')) atualizarDashboard();
+        })
+        .catch(() => { if (btn) { btn.disabled = false; btn.innerHTML = txtOrig; } alert("Falha de conexão. Tente de novo."); });
+    }
+
+    function salvarContratoLoc() {
+      const id = document.getElementById('ctrLocId').value;
+      const payload = {
+        acao: "LOC_SALVAR_CONTRATO", id: id,
+        cliente: document.getElementById('ctrLocCliente').value.trim(),
+        unidade: document.getElementById('ctrLocUnidade').value.trim(),
+        localizacao: document.getElementById('ctrLocLocal').value.trim(),
+        numContrato: document.getElementById('ctrLocNum').value.trim(),
+        inicio: document.getElementById('ctrLocInicio').value,
+        fim: document.getElementById('ctrLocFim').value,
+        status: document.getElementById('ctrLocStatus').value,
+        obs: document.getElementById('ctrLocObs').value.trim(),
+        motivo: document.getElementById('ctrLocMotivo').value.trim()
+      };
+      if (!payload.cliente || !payload.unidade) { alert("Informe o cliente e a unidade."); return; }
+      if (!id) {
+        payload.itens = [...document.querySelectorAll('#ctrLocItens .loc-item-linha')].map(l => ({
+          familia: l.querySelector('.loc-i-fam').value, qtd: l.querySelector('.loc-i-qtd').value,
+          valorUnit: l.querySelector('.loc-i-val').value, obs: l.querySelector('.loc-i-obs').value
+        })).filter(i => i.familia || i.qtd);
+        if (!payload.itens.length) { alert("Inclua ao menos uma família com quantidade."); return; }
+        if (payload.itens.some(i => !i.familia || !(parseInt(i.qtd, 10) > 0))) { alert("Em cada linha, escolha a família e informe a quantidade."); return; }
+      } else {
+        const c = locContrato(id);
+        if (c && payload.status !== c.status && payload.motivo.length < 5) { alert("Informe o motivo da mudança de situação."); return; }
+      }
+      postLoc(payload, document.getElementById('btnSalvarCtrLoc'), res => {
+        fecharModalLoc('modalContratoLoc');
+        abrirFichaLoc(res.id || id);
+      });
+    }
+
+    // ---------- Incluir / alterar item ----------
+    function abrirModalItemLoc(op, idC, idItem) {
+      const c = locContrato(idC);
+      if (!c) return;
+      const it = idItem ? locDados().itens.find(i => i.id === idItem) : null;
+      document.getElementById('itemLocOp').value = op;
+      document.getElementById('itemLocContrato').value = idC;
+      document.getElementById('itemLocId').value = it ? it.id : "";
+      document.getElementById('itemLocTitulo').innerText = op === "INCLUIR" ? "Incluir família no contrato" : "Alterar item";
+      document.getElementById('itemLocInfo').innerHTML = `<b>${escReq(c.id)} · ${escReq(c.numContrato || "sem nº")}</b><br>${escReq(c.cliente)} · ${escReq(c.unidade)}` +
+        (it ? `<br>Atual: <b>${escReq(it.familia)}</b> · ${locNum(it.qtd)} un.${it.valorUnit ? " · " + locMoeda(it.valorUnit) : ""} · ${escReq(it.status)}` : "");
+      const selF = document.getElementById('itemLocFamilia');
+      const jaTem = new Set(locItensDe(idC).map(i => i.familia));
+      selF.innerHTML = it ? `<option>${escReq(it.familia)}</option>` : '<option value="">Escolha a família...</option>' + locDados().familias.filter(f => !jaTem.has(f)).map(f => `<option value="${escReq(f)}">${escReq(f)}</option>`).join('');
+      selF.disabled = !!it;
+      document.getElementById('itemLocQtd').value = it ? it.qtd : "";
+      document.getElementById('itemLocValor').value = it && it.valorUnit ? String(it.valorUnit).replace(".", ",") : "";
+      document.getElementById('itemLocStatus').value = it ? it.status : "ATIVO";
+      document.getElementById('itemLocStatusBox').style.display = it ? "" : "none";
+      document.getElementById('itemLocObs').value = it ? it.obs : "";
+      document.getElementById('itemLocMotivo').value = "";
+      atualizarDeltaItemLoc();
+      document.getElementById('modalItemLoc').classList.add('active');
+      setTimeout(() => document.getElementById(it ? 'itemLocQtd' : 'itemLocFamilia').focus(), 50);
+    }
+    function atualizarDeltaItemLoc() {
+      const idItem = document.getElementById('itemLocId').value;
+      const it = idItem ? locDados().itens.find(i => i.id === idItem) : null;
+      const el = document.getElementById('itemLocDelta');
+      const nova = parseInt(document.getElementById('itemLocQtd').value, 10);
+      if (!el) return;
+      if (!it || !(nova > 0) || nova === it.qtd) { el.innerHTML = ""; return; }
+      const d = nova - it.qtd;
+      el.innerHTML = `<span style="color:${d > 0 ? "#047857" : "#be123c"};">${it.qtd} → ${nova} (${d > 0 ? "+" : ""}${d})</span>`;
+    }
+    function salvarItemLoc() {
+      const op = document.getElementById('itemLocOp').value;
+      const payload = {
+        acao: "LOC_ITEM", operacao: op,
+        contrato: document.getElementById('itemLocContrato').value,
+        item: document.getElementById('itemLocId').value,
+        familia: document.getElementById('itemLocFamilia').value,
+        qtd: document.getElementById('itemLocQtd').value,
+        valorUnit: document.getElementById('itemLocValor').value.trim(),
+        status: op === "ALTERAR" ? document.getElementById('itemLocStatus').value : "",
+        obs: document.getElementById('itemLocObs').value.trim(),
+        motivo: document.getElementById('itemLocMotivo').value.trim()
+      };
+      if (op === "INCLUIR" && !payload.familia) { alert("Escolha a família."); return; }
+      if (!(parseInt(payload.qtd, 10) > 0)) { alert("Informe a quantidade (número inteiro maior que zero). Para zerar, use o botão de remover."); return; }
+      postLoc(payload, document.getElementById('btnSalvarItemLoc'), () => fecharModalLoc('modalItemLoc'));
+    }
+
+    // ---------- Cancelar / reativar (contrato ou item) ----------
+    function abrirMotivoLoc(tipo, idC, idItem) {
+      const c = locContrato(idC);
+      if (!c) return;
+      const it = idItem ? locDados().itens.find(i => i.id === idItem) : null;
+      motivoLocAcao = { tipo, idC, idItem };
+      const cfg = {
+        CANCELAR: ["Cancelar contrato", "btn-negar", "Cancelar contrato", "O contrato sai da contagem de equipamentos contratados. Nada é apagado: ele continua no histórico e pode ser reativado."],
+        REATIVAR: ["Reativar contrato", "btn-atender", "Reativar", "O contrato volta para ATIVO e passa a contar no quantitativo."],
+        REMOVER_ITEM: ["Remover família do contrato", "btn-negar", "Remover", "A família deixa de contar neste contrato. A quantidade fica registrada no histórico e pode ser reativada."],
+        REATIVAR_ITEM: ["Reativar família", "btn-atender", "Reativar", "A família volta a contar neste contrato, com a quantidade registrada."]
+      }[tipo];
+      document.getElementById('motivoLocTitulo').innerText = cfg[0];
+      document.getElementById('motivoLocInfo').innerHTML = `<b>${escReq(c.id)} · ${escReq(c.numContrato || "sem nº")}</b> ${locStPill(c.status)}<br>${escReq(c.cliente)} · ${escReq(c.unidade)}` +
+        (it ? `<br>Item: <b>${escReq(it.familia)}</b> · ${locNum(it.qtd)} un.` : "") + `<div style="margin-top:6px; color:#64748b;">${cfg[3]}</div>`;
+      const btn = document.getElementById('btnConfirmarMotivoLoc');
+      btn.className = cfg[1]; btn.style.height = "36px"; btn.style.padding = "0 16px"; btn.innerText = cfg[2];
+      document.getElementById('motivoLocTexto').value = "";
+      document.getElementById('modalMotivoLoc').classList.add('active');
+      setTimeout(() => document.getElementById('motivoLocTexto').focus(), 50);
+    }
+    function confirmarMotivoLoc() {
+      const a = motivoLocAcao;
+      if (!a) return;
+      const motivo = document.getElementById('motivoLocTexto').value.trim();
+      if (motivo.length < 5) { alert("Informe o motivo (mínimo de 5 letras)."); return; }
+      const payload = (a.tipo === "CANCELAR" || a.tipo === "REATIVAR")
+        ? { acao: "LOC_SITUACAO_CONTRATO", id: a.idC, operacao: a.tipo, motivo }
+        : { acao: "LOC_ITEM", contrato: a.idC, item: a.idItem, operacao: a.tipo === "REMOVER_ITEM" ? "REMOVER" : "REATIVAR", motivo };
+      postLoc(payload, document.getElementById('btnConfirmarMotivoLoc'), () => fecharModalLoc('modalMotivoLoc'));
+    }
+
+    // ---------- Impressão do quantitativo por cliente ----------
+    function imprimirQuantitativoLoc() {
+      const f = locValoresFiltro();
+      const lista = locContratosFiltrados(true).filter(c => c.status === "ATIVO");
+      const grupos = locAgrupar(lista, f.fam).filter(g => g.equip > 0);
+      if (!grupos.length) { alert("Nenhum contrato ativo para o filtro escolhido."); return; }
+      const e = escReq;
+      const agora = new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+      const filtroTxt = [f.cli && "Cliente: " + f.cli, f.loc && "Localização: " + f.loc, f.fam && "Família: " + f.fam].filter(Boolean).join(" · ") || "Todos os clientes";
+      const corpo = grupos.map(g => {
+        const unis = Object.values(g.unidades).filter(u => u.equip > 0).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+        return `<section><h2>${e(g.nome)} <span>${unis.length} unidade(s) · ${locNum(g.equip)} equipamento(s)${g.valor ? " · " + locMoeda(g.valor) + "/mês" : ""}</span></h2>` +
+          unis.map(u => {
+            const ctrs = u.contratos.filter(c => c.status === "ATIVO").map(c => c.numContrato || c.id).join(", ");
+            const fams = Object.entries(u.fam).sort((a, b) => a[0].localeCompare(b[0], 'pt-BR'));
+            return `<table><thead><tr><th colspan="2">${e(u.nome)}<small>${e([...u.locais].join(" / "))}${ctrs ? " · Contrato(s): " + e(ctrs) : ""}</small></th></tr></thead><tbody>` +
+              fams.map(([n, q]) => `<tr><td>${e(n)}</td><td class="q">${locNum(q)}</td></tr>`).join('') +
+              `</tbody><tfoot><tr><td>Total da unidade</td><td class="q">${locNum(u.equip)}</td></tr></tfoot></table>`;
+          }).join('') + `</section>`;
+      }).join('');
+      const total = grupos.reduce((s, g) => s + g.equip, 0);
+      const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Quantitativo contratado - DMA SYS</title><style>
+        @page { size: A4 portrait; margin: 12mm; }
+        body { font-family: Arial, Helvetica, sans-serif; color:#0f172a; font-size:11px; margin:0; }
+        header { display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid #1e3a8a; padding-bottom:6px; margin-bottom:10px; }
+        header h1 { font-size:16px; color:#1e3a8a; margin:0; } header div { font-size:9.5px; color:#64748b; text-align:right; }
+        .resumo { font-size:11px; margin-bottom:10px; color:#334155; }
+        section { margin-bottom:14px; }
+        h2 { font-size:13px; color:#0b2545; background:#eef2f9; padding:6px 8px; border-left:4px solid #1e3a8a; margin:0 0 6px; page-break-after:avoid; }
+        h2 span { font-size:10px; color:#475569; font-weight:normal; margin-left:6px; }
+        table { width:100%; border-collapse:collapse; margin-bottom:8px; page-break-inside:avoid; }
+        th { text-align:left; background:#f8fafc; border:1px solid #cbd5e1; padding:5px 7px; font-size:11px; }
+        th small { display:block; font-weight:normal; color:#64748b; font-size:9.5px; margin-top:2px; }
+        td { border:1px solid #e2e8f0; padding:4px 7px; } td.q { width:70px; text-align:center; font-weight:bold; }
+        tfoot td { background:#f1f5f9; font-weight:bold; }
+        footer { margin-top:12px; font-size:9px; color:#94a3b8; text-align:center; border-top:1px solid #e2e8f0; padding-top:5px; }
+      </style></head><body>
+        <header><h1>Quantitativo Contratado por Cliente</h1><div>LINEMED HOSPITALAR · DMA SYS<br>Emitido em ${e(agora)} por ${e(usuarioAtualCmp() || "-")}</div></header>
+        <div class="resumo"><b>Filtro:</b> ${e(filtroTxt)} · <b>${grupos.length}</b> cliente(s) · <b>${locNum(total)}</b> equipamento(s) em contratos ativos</div>
+        ${corpo}
+        <footer>Somente contratos e itens ATIVOS. Equipamentos em empréstimo, suspensos e encerrados não entram na soma.</footer>
+        <script>window.onload = function () { window.print(); };<\/script>
+      </body></html>`;
+      const w = window.open("", "_blank");
+      if (!w) { alert("O navegador bloqueou a janela de impressão. Libere pop-ups para este site."); return; }
+      w.document.open(); w.document.write(html); w.document.close();
+    }
+
+    // ---------- Exportação CSV (abre no Excel) ----------
+    function exportarCsvLoc() {
+      const lista = locContratosFiltrados(false);
+      if (!lista.length) { alert("Nenhum contrato para exportar com o filtro atual."); return; }
+      const f = locValoresFiltro();
+      const cel = v => { const t = String(v === null || v === undefined ? "" : v); return /[";\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+      const num = v => v === "" || v === null || v === undefined ? "" : String(Math.round(Number(v) * 100) / 100).replace(".", ",");
+      const linhas = [["ID", "Nº CONTRATO", "CLIENTE", "UNIDADE", "LOCALIZAÇÃO", "SITUAÇÃO CONTRATO", "INÍCIO", "FIM", "FAMÍLIA", "QTD", "VALOR UNIT.", "SUBTOTAL", "SITUAÇÃO ITEM", "CONTA NO CONTRATADO", "OBS ITEM", "OBS CONTRATO"]];
+      lista.slice().sort((a, b) => a.cliente.localeCompare(b.cliente, 'pt-BR') || a.unidade.localeCompare(b.unidade, 'pt-BR') || a.id.localeCompare(b.id)).forEach(c => {
+        locItensDe(c.id).filter(i => !f.fam || i.familia === f.fam).forEach(i => {
+          linhas.push([c.id, c.numContrato, c.cliente, c.unidade, c.localizacao, c.status, c.inicio, c.fim, i.familia, i.qtd, num(i.valorUnit),
+                       i.valorUnit ? num(i.qtd * i.valorUnit) : "", i.status, locConta(c, i) ? "SIM" : "NÃO", i.obs, c.obs]);
+        });
+      });
+      const csv = "﻿" + linhas.map(l => l.map(cel).join(";")).join("\r\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const a = document.createElement('a');
+      const d = new Date();
+      a.href = URL.createObjectURL(blob);
+      a.download = `locacao_quantitativo_${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}.csv`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    }
+
+    // =====================================================================
+    // PAINEL DE LOCAÇÃO (dashboard) — terceira opção do seletor
+    // A evolução mês a mês é refeita a partir do histórico (desfazendo os eventos do mais novo para o mais antigo).
+    // =====================================================================
+    function locResumoEstado(C, I) {
+      const ativos = new Set(), cli = new Set(), uni = new Set(), fam = {}, porCli = {}, porUni = {};
+      Object.values(C).forEach(c => { if (c.status === "ATIVO") { ativos.add(c.id); cli.add(c.cliente); uni.add(c.cliente + "|" + c.unidade); } });
+      let equip = 0, valor = 0;
+      Object.values(I).forEach(i => {
+        if (!ativos.has(i.contrato) || i.status !== "ATIVO") return;
+        const c = C[i.contrato];
+        equip += i.qtd;
+        if (i.valorUnit) valor += i.qtd * i.valorUnit;
+        fam[i.familia] = (fam[i.familia] || 0) + i.qtd;
+        porCli[c.cliente] = (porCli[c.cliente] || 0) + i.qtd;
+        const ku = c.unidade + " · " + c.cliente;
+        porUni[ku] = (porUni[ku] || 0) + i.qtd;
+      });
+      return { contratos: ativos.size, clientes: cli.size, unidades: uni.size, equip, valor, fam, porCli, porUni };
+    }
+    function locDesfazerEvento(h, C, I) {
+      const A = LOC_ACAO;
+      if (h.item) {
+        const it = I[h.item];
+        if (!it) return;
+        if (h.acao === A.ITEM_INCLUIDO) delete I[h.item];
+        else if (h.acao === A.QTD) it.qtd = Number(h.de) || 0;
+        else if (h.acao === A.VALOR) it.valorUnit = h.de === "" ? "" : (Number(h.de) || "");
+        else if ([A.ITEM_SITUACAO, A.ITEM_REMOVIDO, A.ITEM_REATIVADO].includes(h.acao)) it.status = h.de;
+        else if (h.acao === A.FAM_RENOMEADA || h.acao === A.FAM_UNIFICADA) it.familia = h.de;
+        else if (h.acao === A.FAM_SOMADA) it.qtd = Number(h.de) || 0;
+        return;
+      }
+      const c = C[h.contrato];
+      if (!c) return;
+      if (h.acao === A.IMPORTADO || h.acao === A.CRIADO) {
+        delete C[h.contrato];
+        Object.keys(I).forEach(k => { if (I[k].contrato === h.contrato) delete I[k]; });
+      } else if ([A.SITUACAO, A.CANCELADO, A.REATIVADO].includes(h.acao)) c.status = h.de;
+      else if (h.acao.indexOf(A.EDITADO) === 0) {
+        const p = { "CLIENTE": "cliente", "UNIDADE": "unidade", "LOCALIZAÇÃO": "localizacao", "Nº CONTRATO": "numContrato", "INÍCIO": "inicio", "FIM": "fim", "OBS": "obs" }[h.acao.slice(A.EDITADO.length)];
+        if (p) c[p] = h.de;
+      }
+    }
+    // meses: chaves "aaaa-mm" em ordem crescente. Devolve o resumo no fim de cada mês (null antes do 1º registro).
+    function locSerieMensal(meses) {
+      const L = locDados();
+      const hist = L.historico;
+      if (!hist.length) return meses.map(() => null);
+      const primeiro = hist.map(h => mesKeyDash(h.data)).filter(Boolean).sort()[0] || "";
+      const C = {}, I = {};
+      L.contratos.forEach(c => C[c.id] = Object.assign({}, c));
+      L.itens.forEach(i => I[i.id] = Object.assign({}, i));
+      let k = hist.length - 1;
+      const out = new Array(meses.length);
+      for (let m = meses.length - 1; m >= 0; m--) {
+        while (k >= 0 && mesKeyDash(hist[k].data) > meses[m]) { locDesfazerEvento(hist[k], C, I); k--; }
+        out[m] = (!primeiro || meses[m] < primeiro) ? null : locResumoEstado(C, I);
+      }
+      return out;
+    }
+
+    function svgEvolucaoLoc(meses, serie) {
+      const W = 640, H = 230, ml = 44, mr = 40, mt = 16, mb = 34;
+      const iw = W - ml - mr, ih = H - mt - mb, slot = iw / meses.length, bw = Math.max(6, slot * 0.52);
+      const eq = serie.map(s => s ? s.equip : null), ct = serie.map(s => s ? s.contratos : null);
+      if (!eq.some(v => v !== null)) return '<div class="dsh-vazio">Sem histórico para montar a evolução.</div>';
+      const passoE = Math.max(1, Math.ceil(Math.max(1, ...eq.filter(v => v !== null)) / 4 / 10) * 10), topoE = passoE * 4;
+      const passoC = Math.max(1, Math.ceil(Math.max(1, ...ct.filter(v => v !== null)) / 4)), topoC = passoC * 4;
+      const yE = v => mt + ih - (v / topoE) * ih, yC = v => mt + ih - (v / topoC) * ih;
+      let s = `<svg class="dsh-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolução mensal dos equipamentos contratados">
+        <defs><linearGradient id="gradEqLoc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#60a5fa"/><stop offset="1" stop-color="#2563eb"/></linearGradient></defs>`;
+      for (let i = 0; i <= 4; i++) {
+        const y = mt + ih - i * ih / 4;
+        s += `<line x1="${ml}" x2="${W - mr}" y1="${y}" y2="${y}" stroke="var(--grade)" stroke-width="1"/>`;
+        s += `<text x="${ml - 6}" y="${y + 3.5}" text-anchor="end">${(passoE * i).toLocaleString('pt-BR')}</text>`;
+        s += `<text x="${W - mr + 6}" y="${y + 3.5}">${passoC * i}</text>`;
+      }
+      meses.forEach((m, i) => {
+        const cx = ml + slot * i + slot / 2;
+        if (eq[i] !== null) s += `<rect x="${cx - bw / 2}" y="${yE(eq[i])}" width="${bw}" height="${mt + ih - yE(eq[i])}" rx="3" fill="url(#gradEqLoc)"><title>${nomeMesDash(m)}: ${locNum(eq[i])} equipamentos contratados</title></rect>`;
+        s += `<text x="${cx}" y="${H - mb + 16}" text-anchor="middle">${nomeMesDash(m)}</text>`;
+      });
+      let d = "", caneta = false;
+      ct.forEach((v, i) => { if (v === null) { caneta = false; return; } d += (caneta ? "L" : "M") + (ml + slot * i + slot / 2).toFixed(1) + " " + yC(v).toFixed(1) + " "; caneta = true; });
+      if (d) s += `<path class="dsh-linha" pathLength="1" d="${d}" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linejoin="round"/>`;
+      ct.forEach((v, i) => { if (v !== null) s += `<circle cx="${(ml + slot * i + slot / 2).toFixed(1)}" cy="${yC(v).toFixed(1)}" r="3.5" fill="#10b981" stroke="var(--card)" stroke-width="1.5"><title>${nomeMesDash(meses[i])}: ${v} contratos ativos</title></circle>`; });
+      s += `</svg><div class="dsh-legenda"><span><i style="background:#2563eb;"></i>Equipamentos contratados no fim do mês (eixo esquerdo)</span><span><i style="background:#10b981;"></i>Contratos ativos (eixo direito)</span></div>`;
+      return s;
+    }
+
+    function abrirLocDoDashboard(id) { mudarAba('locacao'); abrirFichaLoc(id); }
+
+    function atualizarDashboardLocacao() {
+      const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
+      const setHtml = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
+      const L = locDados();
+      const hoje = new Date();
+      const mesAtual = hoje.getFullYear() + "-" + String(hoje.getMonth() + 1).padStart(2, "0");
+      const elMes = document.getElementById('dashFiltroMes');
+      if (elMes && !elMes.value) elMes.value = mesAtual;
+      const ref = (elMes && elMes.value) || mesAtual;
+      const geral = (document.getElementById('dashModoPeriodo')?.value || "MES") === "GERAL";
+      const fim = geral || ref > mesAtual ? mesAtual : ref;
+      setTxt('dshSub', "Quantitativo contratado · " + (geral ? "situação atual e todo o histórico" : "fim de " + nomeMesLongoDash(fim)));
+
+      const meses = Array.from({ length: 12 }, (_, k) => deslocarMesDash(fim, k - 11));
+      const serie = locSerieMensal(meses);
+      const atual = serie[11], anterior = serie[10];
+      const r = atual || { contratos: 0, clientes: 0, unidades: 0, equip: 0, valor: 0, fam: {}, porCli: {}, porUni: {} };
+      // Contagens: mostra a diferença em unidades (1.057 -> 1.059 aparece como "+2", não "igual")
+      const varia = (a, b) => {
+        if (geral || !anterior) return "";
+        const d = a - (b || 0);
+        return d === 0 ? '<span class="dsh-neutro">igual ao mês anterior</span>' : `<span class="dsh-neutro">${d > 0 ? '▲ +' : '▼ '}${locNum(d)}</span> vs mês anterior`;
+      };
+
+      setTxt('dlCtr', locNum(r.contratos)); setHtml('dlCtrSub', varia(r.contratos, anterior && anterior.contratos) || "contratos com situação ATIVO");
+      setTxt('dlCli', locNum(r.clientes)); setHtml('dlCliSub', "com contrato ativo");
+      setTxt('dlUni', locNum(r.unidades)); setHtml('dlUniSub', "unidades atendidas");
+      setTxt('dlEq', locNum(r.equip));
+      const emp = L.contratos.reduce((s, c) => s + L.itens.filter(i => i.contrato === c.id && locEmprestado(c, i)).reduce((x, i) => x + i.qtd, 0), 0);
+      setHtml('dlEqSub', (varia(r.equip, anterior && anterior.equip) || "contratos e itens ativos") + (emp ? ` · ${locNum(emp)} em empréstimo hoje` : ""));
+      const boxV = document.getElementById('dlValorBox');
+      if (boxV) boxV.style.display = r.valor > 0 ? "" : "none";
+      setTxt('dlValor', moedaCurtaDash(r.valor));
+      setHtml('dlValorSub', (geral || !anterior ? "" : variacaoDash(r.valor, anterior.valor, "neutro")) || "só itens com valor unitário");
+      const encerrados = L.contratos.filter(locInativo);
+      const eqHist = encerrados.reduce((s, c) => s + L.itens.filter(i => i.contrato === c.id && i.status !== "CANCELADO").reduce((x, i) => x + i.qtd, 0), 0);
+      setTxt('dlEnc', locNum(encerrados.length));
+      setHtml('dlEncSub', encerrados.length ? `${encerrados.filter(c => c.status === "CANCELADO").length} cancelado(s) · ${locNum(eqHist)} equip. no histórico` : "nenhum contrato encerrado");
+
+      setHtml('dlEvolucao', svgEvolucaoLoc(meses, serie));
+
+      // Rosca por família (top 6 + outras)
+      const fams = Object.entries(r.fam).sort((a, b) => b[1] - a[1]);
+      const paleta = ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#06b6d4", "#f43f5e", "#64748b"];
+      const top = fams.slice(0, 6).map(([n, q], k) => [n, q, paleta[k]]);
+      const resto = fams.slice(6).reduce((s, x) => s + x[1], 0);
+      if (resto) top.push(["OUTRAS (" + (fams.length - 6) + ")", resto, paleta[6]]);
+      setHtml('dlFamilias', svgRoscaDash(top, r.equip, "equipamentos", locNum(r.equip)));
+
+      setHtml('dlClientes', barrasDash(Object.entries(r.porCli).sort((a, b) => b[1] - a[1]).slice(0, 7), "#3b82f6", "", locNum));
+      setHtml('dlUnidades', barrasDash(Object.entries(r.porUni).sort((a, b) => b[1] - a[1]).slice(0, 7), "#06b6d4", "", locNum));
+
+      // Alterações e cancelamentos no período
+      const noPer = d => geral || mesKeyDash(d) === ref;
+      const itensPorId = {}; L.itens.forEach(i => itensPorId[i.id] = i);
+      const A = LOC_ACAO;
+      const evs = L.historico.filter(h => h.acao !== A.IMPORTADO && h.contrato !== LOC_HIST_FAMILIAS && noPer(h.data));
+      let mais = 0, menos = 0;
+      evs.forEach(h => {
+        if (h.acao === A.QTD) { const d = (Number(h.para) || 0) - (Number(h.de) || 0); if (d > 0) mais += d; else menos -= d; }
+        else if (h.acao === A.ITEM_INCLUIDO) mais += Number(h.para) || 0;
+        else if (h.acao === A.ITEM_REMOVIDO) menos += (itensPorId[h.item] || {}).qtd || 0;
+        else if (h.acao === A.ITEM_REATIVADO) mais += (itensPorId[h.item] || {}).qtd || 0;
+      });
+      const contar = acao => evs.filter(h => h.acao === acao).length;
+      const linhasAlt = [
+        ["Equipamentos acrescentados", mais, "#10b981"], ["Equipamentos retirados", menos, "#f59e0b"],
+        ["Contratos novos", contar(A.CRIADO), "#3b82f6"], ["Cancelamentos", contar(A.CANCELADO), "#f43f5e"],
+        ["Reativações", contar(A.REATIVADO), "#22c55e"], ["Mudanças de situação", contar(A.SITUACAO) + contar(A.ITEM_SITUACAO), "#8b5cf6"]
+      ];
+      setHtml('dlAlteracoes', evs.length ? barrasDash(linhasAlt.filter(x => x[1] > 0), "#3b82f6", "", locNum) : '<div class="dsh-vazio">Nenhuma alteração no período.</div>');
+
+      // Últimas movimentações (todas, mais recentes primeiro)
+      const ultimas = L.historico.filter(h => h.acao !== A.IMPORTADO && h.acao.indexOf(A.EDITADO) !== 0 && h.contrato !== LOC_HIST_FAMILIAS).slice(-6).reverse();
+      setHtml('dlUltimas', ultimas.length ? ultimas.map(h => {
+        const c = locContrato(h.contrato) || {};
+        const [txt, cor] = textoEventoLoc(h, itensPorId);
+        return `<div class="dsh-lista-item clicavel" onclick="abrirLocDoDashboard('${escReq(h.contrato)}')" title="${escReq(h.motivo || "")}">
+          <div class="dsh-li-txt"><div><b>${escReq(c.numContrato || h.contrato)}</b> · ${escReq(txt)}</div><div class="dsh-li-sub">${escReq(c.unidade || "-")} · ${escReq(h.usuario || "-")}</div></div>
+          <span class="dsh-pilula" style="background:${cor};">${escReq((h.data || "").slice(0, 5))}</span></div>`;
+      }).join('') : '<div class="dsh-vazio">Nenhuma alteração desde a importação.</div>');
+
+      // Alertas: vigência, suspensos, empréstimos
+      const alertas = [];
+      locAlertasVigencia().forEach(x => alertas.push([x.c, x.d < 0 ? "vencido" : x.d + " dias", x.d < 0 ? "#f43f5e" : "#f59e0b", "vigência até " + x.c.fim]));
+      L.contratos.filter(c => c.status === "SUSPENSO").forEach(c => alertas.push([c, "suspenso", "#f59e0b", "contrato suspenso"]));
+      L.contratos.filter(c => c.status === "EMPRÉSTIMO").forEach(c => alertas.push([c, "empréstimo", "#8b5cf6", "equipamento emprestado"]));
+      setHtml('dlAlertas', alertas.length ? alertas.slice(0, 6).map(([c, pil, cor, sub]) => `
+        <div class="dsh-lista-item clicavel" onclick="abrirLocDoDashboard('${escReq(c.id)}')" title="Abrir a ficha do contrato">
+          <div class="dsh-li-txt"><div><b>${escReq(c.numContrato || c.id)}</b> · ${escReq(c.cliente)}</div><div class="dsh-li-sub">${escReq(c.unidade)} · ${escReq(sub)}</div></div>
+          <span class="dsh-pilula" style="background:${cor};">${escReq(pil)}</span></div>`).join('') + (alertas.length > 6 ? `<div class="dsh-li-sub" style="text-align:center;">e mais ${alertas.length - 6}</div>` : "")
+        : '<div class="dsh-vazio">Nenhum alerta. 👏</div>');
+
+      // Contratos por situação (situação atual, inclui o histórico de encerrados)
+      setHtml('dlSituacao', barrasDash(["ATIVO", "EMPRÉSTIMO", "SUSPENSO", "ENCERRADO", "CANCELADO"].map(st => [st, L.contratos.filter(c => c.status === st).length, CORES_ST_LOC[st]]).filter(x => x[1] > 0), "#3b82f6", ""));
+
+      setTxt('dshRodape', "Atualizado às " + hoje.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + " · dados do Módulo de Locação");
     }
 
     function atualizarNotificacoes() {
