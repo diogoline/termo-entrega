@@ -642,6 +642,22 @@
     .loc-tipo-item { display:flex; flex-direction:column; gap:4px; }
     .loc-tipo-item label { font-weight:normal; display:flex; gap:6px; align-items:center; cursor:pointer; }
     .loc-tipo-item small { color:#64748b; }
+    .dl-conf-topo { display:flex; align-items:flex-end; gap:28px; flex-wrap:wrap; margin-bottom:12px; }
+    .dl-conf-pct { font-size:34px; font-weight:800; color:var(--txt); line-height:1; }
+    .dl-conf-pct-sub { font-size:12px; color:var(--txt2); margin-top:4px; }
+    .dl-conf-num { display:flex; flex-direction:column; }
+    .dl-conf-num b { font-size:20px; color:var(--txt); line-height:1.1; }
+    .dl-conf-num span { font-size:11px; color:var(--txt2); }
+    .dl-conf-barra { display:flex; height:14px; border-radius:7px; overflow:hidden; background:var(--trilho); }
+    .dl-conf-barra div { cursor:pointer; transition:opacity .15s; }
+    .dl-conf-barra div:hover { opacity:.8; }
+    .dl-conf-leg { display:flex; flex-wrap:wrap; gap:6px 16px; margin-top:10px; font-size:12px; color:var(--txt); }
+    .dl-conf-leg span { cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+    .dl-conf-leg span:hover { text-decoration:underline; }
+    .dl-conf-leg span.zero { opacity:.45; }
+    .dl-conf-leg i { width:10px; height:10px; border-radius:3px; display:inline-block; }
+    .dl-conf-rod { display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px 16px; margin-top:12px; padding-top:10px; border-top:1px dashed var(--borda); font-size:12px; color:var(--txt2); }
+    .dl-conf-cli { max-height:260px; overflow-y:auto; padding-right:4px; }
     .loc-sem-acesso { display:flex; flex-direction:column; align-items:center; gap:8px; padding:60px 20px; color:#64748b; text-align:center; }
     .loc-sem-acesso i { font-size:34px; color:#94a3b8; }
     .loc-sem-acesso b { font-size:18px; color:#334155; }
@@ -1261,6 +1277,17 @@
             <div class="dsh-kpi" style="--c:#6366f1;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-truck-medical"></i> Equipamentos contratados</div><div class="dsh-kpi-num" id="dlEq">0</div><div class="dsh-kpi-sub" id="dlEqSub"></div></div>
             <div class="dsh-kpi" style="--c:#a855f7;" id="dlValorBox"><div class="dsh-kpi-lbl"><i class="fa-solid fa-sack-dollar"></i> Valor mensal</div><div class="dsh-kpi-num" id="dlValor">R$ 0,00</div><div class="dsh-kpi-sub" id="dlValorSub"></div></div>
             <div class="dsh-kpi" style="--c:#94a3b8;"><div class="dsh-kpi-lbl"><i class="fa-solid fa-box-archive"></i> Encerrados (histórico)</div><div class="dsh-kpi-num" id="dlEnc">0</div><div class="dsh-kpi-sub" id="dlEncSub"></div></div>
+          </div>
+
+          <div class="dsh-grid">
+            <div class="dsh-card dsh-span2">
+              <div class="dsh-card-tit">Conferência DMA SYS → Neovero <span class="dsh-card-tag">situação atual</span></div>
+              <div id="dlConf"></div>
+            </div>
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Conferência por cliente <span class="dsh-card-tag">unidades OK</span></div>
+              <div id="dlConfCli"></div>
+            </div>
           </div>
 
           <div class="dsh-grid">
@@ -7845,8 +7872,62 @@
 
     function abrirLocDoDashboard(id) { mudarAba('locacao'); abrirFichaLoc(id); }
 
+    // Dashboard: progresso da conferência com o Neovero (sempre a situação atual, sem filtro de período)
+    function dashConferenciaLoc() {
+      const el = document.getElementById('dlConf'), elC = document.getElementById('dlConfCli');
+      if (!el) return;
+      locCarregarConfDaPlanilha();
+      const us = locUnidadesConf(locDados().contratos);
+      if (!us.length) { el.innerHTML = '<div class="dsh-vazio">Nenhuma unidade com equipamento para conferir.</div>'; if (elC) elC.innerHTML = ""; return; }
+      const G = { ok: 0, aj: 0, rc: 0, vc: 0, pend: 0 }, porCli = {};
+      let inc = 0, ret = 0, ultimo = null;
+      us.forEach(u => {
+        const s = locEstadoConf(u);
+        const g = s.t === "ok" ? "ok" : s.t === "aj" ? "aj" : s.t === "reconf" ? "rc" : s.t === "venc" ? "vc" : "pend";
+        G[g]++;
+        const c = porCli[u.cliente] || (porCli[u.cliente] = { tot: 0, ok: 0, aj: 0 });
+        c.tot++; if (g === "ok") c.ok++; if (g === "aj") c.aj++;
+        const n = locConfNeo[u.k] || {};
+        Object.keys(u.fam).forEach(f => { if (locVazio(n[f])) return; const d = u.fam[f] - Number(n[f]); if (d > 0) inc += d; else ret -= d; });
+        (locConfExtra[u.k] || []).forEach(e => { if (e.familia && e.qtd > 0) ret += Number(e.qtd); });
+        const inf = locConfInfo[u.k];
+        if (inf && inf.t && (!ultimo || inf.t > ultimo.t)) ultimo = inf;
+      });
+      const tot = us.length, conferidas = tot - G.pend, pct = v => Math.round(v / tot * 100);
+      const seg = [["ok", G.ok, "#10b981", "OK"], ["aj", G.aj, "#ef4444", "Com ajuste no Neovero"], ["reconf", G.rc, "#f59e0b", "Reconferir (contrato mudou)"], ["venc", G.vc, "#fb923c", "Prazo vencido"], ["pend", G.pend, "#64748b", "Não conferidas"]];
+      el.innerHTML = `
+        <div class="dl-conf-topo">
+          <div><div class="dl-conf-pct">${pct(G.ok)}%</div><div class="dl-conf-pct-sub">das unidades OK (${G.ok} de ${tot})</div></div>
+          <div class="dl-conf-num"><b>${conferidas}</b><span>conferidas</span></div>
+          <div class="dl-conf-num"><b style="color:var(--txt2);">${G.pend}</b><span>falta conferir</span></div>
+          <div class="dl-conf-num"><b style="color:${inc + ret ? "#ef4444" : "#10b981"};">${inc + ret}</b><span>equip. a ajustar no Neovero</span></div>
+        </div>
+        <div class="dl-conf-barra">${seg.filter(x => x[1]).map(([f, q, cor, nome]) => `<div style="width:${q / tot * 100}%; background:${cor};" title="${nome}: ${q}" onclick="irConferenciaLocDash('${f}')"></div>`).join("")}</div>
+        <div class="dl-conf-leg">${seg.map(([f, q, cor, nome]) => `<span class="${q ? "" : "zero"}" onclick="irConferenciaLocDash('${f}')"><i style="background:${cor};"></i>${nome}: <b>${q}</b></span>`).join("")}</div>
+        <div class="dl-conf-rod">
+          ${inc + ret ? `<span>Ajustes no Neovero: incluir <b>${inc}</b> · retirar <b>${ret}</b> equipamento(s)</span>` : `<span>Nenhum ajuste pendente no Neovero.</span>`}
+          <span>${ultimo ? `Última conferência: ${escReq(String(ultimo.data || ""))}${ultimo.usuario ? " · " + escReq(ultimo.usuario) : ""}` : "Nenhuma conferência registrada ainda."}</span>
+        </div>`;
+      if (elC) {
+        const lista = Object.entries(porCli).sort((a, b) => (a[1].ok / a[1].tot) - (b[1].ok / b[1].tot) || a[0].localeCompare(b[0], "pt-BR"));
+        elC.innerHTML = `<div class="dl-conf-cli">` + lista.map(([nome, c]) => `
+          <div class="dsh-barra" onclick="irConferenciaLocDash('', '${locJsq(nome)}')" style="cursor:pointer;" title="Abrir a conferência de ${escReq(nome)}">
+            <div class="dsh-barra-top"><span>${escReq(nome)}</span><b>${c.ok}/${c.tot}${c.aj ? ` <small style="color:#ef4444;">· ${c.aj} c/ ajuste</small>` : ""}</b></div>
+            <div class="dsh-trilho"><div class="dsh-preenche" style="width:${Math.max(2, c.ok / c.tot * 100)}%; background:${c.ok === c.tot ? "#10b981" : "#3b82f6"};"></div></div>
+          </div>`).join("") + `</div>`;
+      }
+    }
+    // Clique no dashboard: abre a conferência já filtrada (por situação e/ou cliente)
+    function irConferenciaLocDash(situacao, cliente) {
+      mudarAba('locacao');
+      trocarSubabaLoc('conf');
+      const sel = document.getElementById('locFiltroConf'); if (sel) sel.value = situacao || "";
+      if (cliente !== undefined) { const c = document.getElementById('locFiltroCli'); if (c) c.value = cliente; }
+      renderizarLocacao();
+    }
     function atualizarDashboardLocacao() {
       if (!locAplicarAcesso()) { atualizarDashboard(); return; }
+      try { dashConferenciaLoc(); } catch (e) { console.error(e); }
       const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
       const setHtml = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
       const L = locDados();
