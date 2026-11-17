@@ -6947,6 +6947,7 @@
       if (!el) return;
       if (!locDados().contratos.length) { el.innerHTML = '<div class="loc-vazio"><i class="fa-solid fa-box-open" style="font-size:28px; display:block; margin-bottom:8px;"></i>Nenhum contrato cadastrado. Use <b>Novo Contrato</b> ou rode a importação inicial.</div>'; return; }
       locCarregarConfDaPlanilha();
+      const rolagemLista = el.querySelector('.loc-conf-lista')?.scrollTop || 0;   // guarda a posição da lista de unidades
       const ativo = document.activeElement, focoFam = ativo && ativo.classList && ativo.classList.contains('loc-neo') ? ativo.dataset.fam : null;
       const stF = document.getElementById('locFiltroConf')?.value || "";
       const todas = locUnidadesConf(locContratosFiltrados(true));
@@ -6957,7 +6958,7 @@
           <span><b>${lista.length}</b> unidade(s)</span><span><b>${locNum(lista.reduce((s, u) => s + u.total, 0))}</b> equip. esperados no Neovero</span>
           <span class="ok"><b>${sts.filter(s => s.t === 'ok').length}</b> OK</span><span class="aj"><b>${sts.filter(s => s.t === 'aj').length}</b> com ajuste</span><span><b>${sts.filter(s => s.t === 'pend').length}</b> não conferidas</span></div>`;
       const itensLista = lista.length ? lista.map((u, i) => `
-        <div class="loc-conf-uni${u.k === locConfSel ? ' on' : ''}" onclick="selecionarUnidadeConfLoc('${locJsq(u.k)}')">
+        <div class="loc-conf-uni${u.k === locConfSel ? ' on' : ''}" data-k="${escReq(u.k)}" onclick="selecionarUnidadeConfLoc('${locJsq(u.k)}')">
           <div style="min-width:0;"><div class="n">${escReq(u.unidade)}</div><div class="s">${escReq(u.cliente)} · ${escReq([...u.locais].join(' / ') || '-')}</div><div style="margin-top:4px;">${locPillConf(sts[i])}</div></div>
           <div class="q"><b>${locNum(u.total)}</b><span>equip.</span></div>
         </div>`).join('') : '<div class="loc-vazio">Nenhuma unidade para o filtro.</div>';
@@ -6966,13 +6967,25 @@
           <i class="fa-solid fa-circle-info"></i><div style="flex:1;">Você tem conferência de <b>${nAntigo} unidade(s)</b> guardada só neste navegador. Envie para a planilha para os outros usuários verem.</div>
           <button type="button" class="btn-submit" onclick="enviarConfAntigaLoc(this)"><i class="fa-solid fa-cloud-arrow-up"></i> Enviar para a planilha</button></div>` : "";
       el.innerHTML = aviso + resumo + `<div class="loc-conf"><div class="loc-conf-lista">${itensLista}</div><div class="loc-conf-det" id="locConfDet"></div></div>`;
+      const listaEl = el.querySelector('.loc-conf-lista');
+      if (listaEl) listaEl.scrollTop = rolagemLista;
       desenharUnidadeConfLoc(lista.find(u => u.k === locConfSel));
       if (focoFam) {   // a atualização automática não tira o cursor do campo em uso
         const alvo = [...document.querySelectorAll('#locConfDet input.loc-neo')].find(x => x.dataset.fam === focoFam);
         if (alvo) { alvo.focus(); const t = alvo.value; alvo.value = ""; alvo.value = t; }
       }
     }
-    function selecionarUnidadeConfLoc(k) { locConfSel = k; renderizarConferenciaLoc(); }
+    // Troca a unidade sem redesenhar a lista (a barra de rolagem fica onde está)
+    function selecionarUnidadeConfLoc(k) {
+      locConfSel = k;
+      const itens = document.querySelectorAll('#locPainelConf .loc-conf-uni');
+      if (!itens.length) { renderizarConferenciaLoc(); return; }
+      itens.forEach(e => e.classList.toggle('on', e.dataset.k === k));
+      const u = locUnidadesConf(locContratosFiltrados(true)).find(x => x.k === k);
+      desenharUnidadeConfLoc(u);
+      const det = document.getElementById('locConfDet');   // em tela estreita o painel fica abaixo da lista: leva até ele
+      if (det && window.innerWidth <= 980) det.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
     function desenharUnidadeConfLoc(u) {
       const el = document.getElementById('locConfDet');
