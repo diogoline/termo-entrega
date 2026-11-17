@@ -635,6 +635,10 @@
     .loc-conf-cab { display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
     .loc-tab-conf input.loc-neo { width:76px; text-align:center; font-weight:bold; font-size:14px; padding:5px; }
     .loc-tab-conf tr.loc-extra td { background:#fff7f8; }
+    .loc-tab-conf tfoot td { background:#0b2545 !important; color:#fff; font-size:14px; font-weight:800; padding:10px 8px; border-top:3px solid #2563eb; text-transform:uppercase; letter-spacing:.3px; }
+    .loc-tab-conf tfoot td:first-child { border-radius:0 0 0 10px; } .loc-tab-conf tfoot td:last-child { border-radius:0 0 10px 0; }
+    .loc-tab-conf tfoot .loc-pill { font-size:11px; text-transform:none; letter-spacing:0; }
+    .loc-conf-quem { font-size:10.5px; color:#475569; } .loc-conf-quem i { color:#2563eb; }
     .loc-tab-conf select { font-size:12px; padding:5px 8px; }
     .loc-pill { display:inline-block; font-size:10.5px; font-weight:bold; border-radius:20px; padding:2px 9px; white-space:nowrap; }
     .loc-p-ok { background:#dcfce7; color:#166534; } .loc-p-inc { background:#ffedd5; color:#c2410c; } .loc-p-ret { background:#ffe4e6; color:#be123c; } .loc-p-pend { background:#f1f5f9; color:#64748b; }
@@ -6779,10 +6783,105 @@
     // ---------- Conferência DMA SYS → Neovero ----------
     // O DMA SYS é a referência: a tela diz o que incluir/retirar NO NEOVERO.
     // Esperado no Neovero = itens ATIVOS e em EMPRÉSTIMO de contratos ATIVOS ou em EMPRÉSTIMO (suspensos e encerrados não entram).
-    // As quantidades digitadas do Neovero NÃO são gravadas na planilha: ficam só neste navegador (localStorage).
+    // As quantidades do Neovero ficam gravadas na aba LOCACAO_CONFERENCIA (todos os usuários veem a mesma conferência).
+    // O que é digitado fica pendente na tela e é salvo sozinho ~2 s depois de parar de digitar naquela unidade.
+    // Versões anteriores guardavam só no navegador: se houver esses dados, a tela oferece "Enviar para a planilha".
     var locConfNeo = {}, locConfExtra = {}, locConfSel = "";
-    try { locConfNeo = JSON.parse(localStorage.getItem('dmaLocConfNeo') || "{}"); locConfExtra = JSON.parse(localStorage.getItem('dmaLocConfExtra') || "{}"); } catch (e) {}
-    function salvarConfLoc() { try { localStorage.setItem('dmaLocConfNeo', JSON.stringify(locConfNeo)); localStorage.setItem('dmaLocConfExtra', JSON.stringify(locConfExtra)); } catch (e) {} }
+    var locConfPend = {}, locConfInfo = {}, locConfEstado = {}, locConfTimers = {};
+    var locConfLocalAntigo = null;
+    try {
+      const n = JSON.parse(localStorage.getItem('dmaLocConfNeo') || "{}"), e = JSON.parse(localStorage.getItem('dmaLocConfExtra') || "{}");
+      if (!localStorage.getItem('dmaLocConfEnviado') && (Object.keys(n).length || Object.keys(e).length)) locConfLocalAntigo = { neo: n, extra: e };
+    } catch (e) {}
+    function locTempoDataHora(t) { const m = String(t || "").match(/(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?/); return m ? new Date(+m[3], +m[2] - 1, +m[1], +(m[4] || 0), +(m[5] || 0)).getTime() : 0; }
+    function locExtrasIncompletos(k) { return (locConfExtra[k] || []).some(e => !e.familia || !(e.qtd > 0)); }
+
+    // Monta a conferência a partir da planilha (mantém o que ainda está pendente de salvar nesta tela)
+    function locCarregarConfDaPlanilha() {
+      const rows = (bancoDados && bancoDados.locacao && bancoDados.locacao.conferencia) || [];
+      const neo = {}, extra = {}, info = {};
+      rows.forEach(r => {
+        const k = r.cliente + "|" + r.unidade;
+        if (!locVazio(r.neo)) {
+          if (r.extra) (extra[k] = extra[k] || []).push({ familia: r.familia, qtd: Number(r.neo) });
+          else (neo[k] = neo[k] || {})[r.familia] = Number(r.neo);
+        }
+        const t = locTempoDataHora(r.data);
+        if (!locVazio(r.neo) && (!info[k] || t > info[k].t)) info[k] = { t, usuario: r.usuario, data: r.data };
+      });
+      // Dados antigos do navegador (ainda não enviados): aparecem nas unidades que a planilha não tem
+      if (locConfLocalAntigo) {
+        Object.keys(locConfLocalAntigo.neo).forEach(k => { if (!info[k] && !neo[k]) neo[k] = locConfLocalAntigo.neo[k]; });
+        Object.keys(locConfLocalAntigo.extra).forEach(k => { if (!info[k] && !extra[k]) extra[k] = locConfLocalAntigo.extra[k]; });
+      }
+      Object.keys(locConfPend).forEach(k => { neo[k] = locConfNeo[k]; extra[k] = locConfExtra[k]; });
+      locConfNeo = neo; locConfExtra = extra; locConfInfo = info;
+    }
+
+    function agendarSalvarConfLoc(k) {
+      locConfPend[k] = true;
+      locConfEstado[k] = "pendente";
+      locAtualizarEstadoSalvarConf();
+      clearTimeout(locConfTimers[k]);
+      locConfTimers[k] = setTimeout(() => enviarConfLoc([k]), 1800);
+    }
+    function locLinhasConf(k) {
+      const u = locUnidadesConf(locDados().contratos).find(x => x.k === k);
+      const p = k.split("|");
+      const n = locConfNeo[k] || {};
+      const linhas = Object.keys(n).filter(f => !locVazio(n[f])).map(f => ({ familia: f, dma: u ? (u.fam[f] || 0) : "", neo: n[f], extra: false }));
+      (locConfExtra[k] || []).filter(e => e.familia && e.qtd > 0).forEach(e => linhas.push({ familia: e.familia, dma: 0, neo: e.qtd, extra: true }));
+      return { cliente: u ? u.cliente : p[0], unidade: u ? u.unidade : p.slice(1).join("|"), linhas };
+    }
+    function enviarConfLoc(chaves, aoConcluir) {
+      chaves.forEach(k => { locConfEstado[k] = "salvando"; });
+      locAtualizarEstadoSalvarConf();
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "LOC_CONFERENCIA", usuario: usuarioAtualCmp(), unidades: chaves.map(locLinhasConf) }) })
+        .then(r => r.json())
+        .then(res => {
+          if (res.status !== "sucesso") throw new Error(res.mensagem || "erro");
+          if (bancoDados.locacao) bancoDados.locacao.conferencia = res.conferencia || [];
+          chaves.forEach(k => { if (!locExtrasIncompletos(k)) delete locConfPend[k]; locConfEstado[k] = "salvo"; });
+          if (aoConcluir) aoConcluir(true);
+          locCarregarConfDaPlanilha();
+          renderizarConferenciaLoc();
+        })
+        .catch(() => {
+          chaves.forEach(k => { locConfEstado[k] = "erro"; clearTimeout(locConfTimers[k]); locConfTimers[k] = setTimeout(() => enviarConfLoc([k]), 15000); });
+          locAtualizarEstadoSalvarConf();
+          if (aoConcluir) aoConcluir(false);
+        });
+    }
+    function locTextoEstadoConf(k) {
+      const st = locConfEstado[k];
+      if (st === "pendente" || st === "salvando") return '<span class="loc-pill loc-p-pend"><i class="fa-solid fa-spinner fa-spin"></i> Salvando...</span>';
+      if (st === "erro") return '<span class="loc-pill loc-p-ret" title="Sem conexão: o sistema tenta de novo sozinho">Não salvo · tentando de novo</span>';
+      const inf = locConfInfo[k];
+      return inf ? `<span class="loc-conf-quem"><i class="fa-solid fa-cloud"></i> Conferido por <b>${escReq(inf.usuario || "-")}</b> em ${escReq(inf.data)}</span>` : "";
+    }
+    function locAtualizarEstadoSalvarConf() {
+      const el = document.getElementById('locConfEstadoSalvar');
+      if (el && el.dataset.k) el.innerHTML = locTextoEstadoConf(el.dataset.k);
+    }
+    window.addEventListener('beforeunload', e => { if (Object.keys(locConfPend).length) { e.preventDefault(); e.returnValue = ""; } });
+
+    // Envia para a planilha o que ficou guardado só neste navegador (versão anterior)
+    function enviarConfAntigaLoc(btn) {
+      if (!locConfLocalAntigo) return;
+      const chaves = [...new Set(Object.keys(locConfLocalAntigo.neo).concat(Object.keys(locConfLocalAntigo.extra)))];
+      chaves.forEach(k => { if (!locConfNeo[k] && locConfLocalAntigo.neo[k]) locConfNeo[k] = locConfLocalAntigo.neo[k]; if (!locConfExtra[k] && locConfLocalAntigo.extra[k]) locConfExtra[k] = locConfLocalAntigo.extra[k]; });
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...'; }
+      enviarConfLoc(chaves, ok => {
+        if (ok) {
+          try { localStorage.setItem('dmaLocConfEnviado', new Date().toISOString()); } catch (e) {}   // os dados antigos continuam no navegador, só não são mais oferecidos
+          locConfLocalAntigo = null;
+          alert("Conferência enviada para a planilha. Agora os outros usuários também veem.");
+        } else {
+          if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Enviar para a planilha'; }
+          alert("Não foi possível enviar agora. Verifique a conexão e tente de novo (os dados continuam guardados neste navegador).");
+        }
+      });
+    }
 
     function locUnidadesConf(contratos) {
       const itens = locDados().itens, U = {};
@@ -6825,6 +6924,8 @@
       const el = document.getElementById('locPainelConf');
       if (!el) return;
       if (!locDados().contratos.length) { el.innerHTML = '<div class="loc-vazio"><i class="fa-solid fa-box-open" style="font-size:28px; display:block; margin-bottom:8px;"></i>Nenhum contrato cadastrado. Use <b>Novo Contrato</b> ou rode a importação inicial.</div>'; return; }
+      locCarregarConfDaPlanilha();
+      const ativo = document.activeElement, focoFam = ativo && ativo.classList && ativo.classList.contains('loc-neo') ? ativo.dataset.fam : null;
       const stF = document.getElementById('locFiltroConf')?.value || "";
       const todas = locUnidadesConf(locContratosFiltrados(true));
       const lista = todas.filter(u => !stF || locEstadoConf(u).t === stF);
@@ -6838,8 +6939,16 @@
           <div style="min-width:0;"><div class="n">${escReq(u.unidade)}</div><div class="s">${escReq(u.cliente)} · ${escReq([...u.locais].join(' / ') || '-')}</div><div style="margin-top:4px;">${locPillConf(sts[i])}</div></div>
           <div class="q"><b>${locNum(u.total)}</b><span>equip.</span></div>
         </div>`).join('') : '<div class="loc-vazio">Nenhuma unidade para o filtro.</div>';
-      el.innerHTML = resumo + `<div class="loc-conf"><div class="loc-conf-lista">${itensLista}</div><div class="loc-conf-det" id="locConfDet"></div></div>`;
+      const nAntigo = locConfLocalAntigo ? new Set(Object.keys(locConfLocalAntigo.neo).concat(Object.keys(locConfLocalAntigo.extra))).size : 0;
+      const aviso = nAntigo ? `<div class="loc-aviso" style="margin:0 0 10px; background:#eff6ff; border-color:#93c5fd; color:#1e3a8a; align-items:center;">
+          <i class="fa-solid fa-circle-info"></i><div style="flex:1;">Você tem conferência de <b>${nAntigo} unidade(s)</b> guardada só neste navegador. Envie para a planilha para os outros usuários verem.</div>
+          <button type="button" class="btn-submit" onclick="enviarConfAntigaLoc(this)"><i class="fa-solid fa-cloud-arrow-up"></i> Enviar para a planilha</button></div>` : "";
+      el.innerHTML = aviso + resumo + `<div class="loc-conf"><div class="loc-conf-lista">${itensLista}</div><div class="loc-conf-det" id="locConfDet"></div></div>`;
       desenharUnidadeConfLoc(lista.find(u => u.k === locConfSel));
+      if (focoFam) {   // a atualização automática não tira o cursor do campo em uso
+        const alvo = [...document.querySelectorAll('#locConfDet input.loc-neo')].find(x => x.dataset.fam === focoFam);
+        if (alvo) { alvo.focus(); const t = alvo.value; alvo.value = ""; alvo.value = t; }
+      }
     }
     function selecionarUnidadeConfLoc(k) { locConfSel = k; renderizarConferenciaLoc(); }
 
@@ -6858,6 +6967,7 @@
             <div class="loc-uni-local">${escReq(u.cliente)} · ${escReq([...u.locais].join(' / ') || '-')}</div>
             <div class="loc-uni-ctrs" style="margin-top:5px;">${u.ctrs.map(c => `<span class="loc-ctr-chip" style="color:${CORES_ST_LOC[c.status]}; border-color:${CORES_ST_LOC[c.status]};" onclick="abrirFichaLoc('${escReq(c.id)}')" title="Abrir ficha do contrato">${escReq(c.numContrato || c.id)} · ${escReq(c.status.toLowerCase())}</span>`).join('')}</div></div>
           <div style="text-align:right; flex-shrink:0;">${locPillConf(s)}
+            <div id="locConfEstadoSalvar" data-k="${escReq(u.k)}" style="margin-top:4px;">${locTextoEstadoConf(u.k)}</div>
             <div style="display:flex; gap:6px; justify-content:flex-end; margin-top:6px;">
               <button type="button" class="btn-secundario" style="padding:5px 10px;" onclick="tudoIgualConfLoc('${kq}')" title="Preenche o Neovero igual ao DMA SYS (quando tudo bate)"><i class="fa-solid fa-check-double"></i> Tudo igual</button>
               <button type="button" class="btn-secundario" style="padding:5px 10px;" onclick="limparConfLoc('${kq}')">Limpar</button>
@@ -6880,16 +6990,16 @@
             <td class="td-center">${e.familia && e.qtd > 0 ? `<span class="loc-pill loc-p-ret">Retirar ${e.qtd} do Neovero</span>` : '<span class="loc-pill loc-p-pend">informe família e qtd</span>'}
               <button type="button" class="loc-mini vermelho" onclick="tirarExtraConfLoc('${kq}', ${i})" title="Tirar linha"><i class="fa-solid fa-xmark"></i></button></td></tr>`).join('')}
           </tbody>
-          <tfoot><tr><td>Total</td><td class="td-center">${locNum(u.total)}</td><td class="td-center">${s.conf || ex.length ? locNum(totN) : "-"}</td>
+          <tfoot><tr><td>Total da unidade</td><td class="td-center">${locNum(u.total)}</td><td class="td-center">${s.conf || ex.length ? locNum(totN) : "-"}</td>
             <td class="td-center">${!(s.conf || ex.length) ? "" : (s.conf < s.total ? '<span class="loc-pill loc-p-pend">conferência parcial</span>' : locAcaoNeovero(u.total, totN))}</td></tr></tfoot>
         </table>
         <button type="button" class="btn-secundario" style="margin-top:8px;" onclick="addExtraConfLoc('${kq}')"><i class="fa-solid fa-plus"></i> Família que está no Neovero e não está no contrato</button>
-        <div class="loc-nota" style="margin-top:10px; background:#f8fafc; color:#475569;">As quantidades do Neovero <b>não são gravadas na planilha</b>: ficam só neste navegador, para a conferência e a lista de ajustes.${Object.keys(u.emp).length ? " Equipamentos em empréstimo entram no esperado do Neovero." : ""}</div>`;
+        <div class="loc-nota" style="margin-top:10px; background:#f8fafc; color:#475569;">As quantidades do Neovero são <b>salvas automaticamente na planilha</b> e aparecem para todos os usuários. Elas não alteram o contrato.${Object.keys(u.emp).length ? " Equipamentos em empréstimo entram no esperado do Neovero." : ""}</div>`;
     }
     function digitarNeoLoc(k, inp) {
       const f = inp.dataset.fam, v = inp.value;
       (locConfNeo[k] = locConfNeo[k] || {})[f] = v === "" ? "" : Math.max(0, Math.round(Number(v) || 0));
-      salvarConfLoc();
+      agendarSalvarConfLoc(k);
       const u = locUnidadesConf(locDados().contratos).find(x => x.k === k);
       const cel = inp.closest('tr').querySelector('.loc-acao-cel');
       if (u && cel) cel.innerHTML = locAcaoNeovero(u.fam[f], locConfNeo[k][f]);
@@ -6900,11 +7010,14 @@
         if (foco) { const alvo = [...document.querySelectorAll('#locConfDet input.loc-neo')].find(x => x.dataset.fam === foco); if (alvo) { alvo.focus(); const t = alvo.value; alvo.value = ""; alvo.value = t; } }
       }, 900);
     }
-    function tudoIgualConfLoc(k) { const u = locUnidadesConf(locDados().contratos).find(x => x.k === k); if (!u) return; locConfNeo[k] = Object.assign({}, u.fam); salvarConfLoc(); renderizarConferenciaLoc(); }
-    function limparConfLoc(k) { delete locConfNeo[k]; delete locConfExtra[k]; salvarConfLoc(); renderizarConferenciaLoc(); }
-    function addExtraConfLoc(k) { (locConfExtra[k] = locConfExtra[k] || []).push({ familia: "", qtd: "" }); salvarConfLoc(); renderizarConferenciaLoc(); }
-    function extraConfLoc(k, i, campo, v) { if (!locConfExtra[k] || !locConfExtra[k][i]) return; locConfExtra[k][i][campo] = campo === 'qtd' ? Math.max(0, Math.round(Number(v) || 0)) : v; salvarConfLoc(); renderizarConferenciaLoc(); }
-    function tirarExtraConfLoc(k, i) { if (locConfExtra[k]) locConfExtra[k].splice(i, 1); salvarConfLoc(); renderizarConferenciaLoc(); }
+    function tudoIgualConfLoc(k) { const u = locUnidadesConf(locDados().contratos).find(x => x.k === k); if (!u) return; locConfNeo[k] = Object.assign({}, u.fam); agendarSalvarConfLoc(k); renderizarConferenciaLoc(); }
+    function limparConfLoc(k) {
+      if (!confirm("Apagar a conferência desta unidade? Ela some para todos os usuários.")) return;
+      locConfNeo[k] = {}; locConfExtra[k] = []; agendarSalvarConfLoc(k); renderizarConferenciaLoc();
+    }
+    function addExtraConfLoc(k) { (locConfExtra[k] = locConfExtra[k] || []).push({ familia: "", qtd: "" }); locConfPend[k] = true; renderizarConferenciaLoc(); }
+    function extraConfLoc(k, i, campo, v) { if (!locConfExtra[k] || !locConfExtra[k][i]) return; locConfExtra[k][i][campo] = campo === 'qtd' ? Math.max(0, Math.round(Number(v) || 0)) : v; agendarSalvarConfLoc(k); renderizarConferenciaLoc(); }
+    function tirarExtraConfLoc(k, i) { if (locConfExtra[k]) locConfExtra[k].splice(i, 1); agendarSalvarConfLoc(k); renderizarConferenciaLoc(); }
 
     // Todas as diferenças (respeita cliente/localização/busca)
     function locListaAjustes() {
@@ -6930,7 +7043,6 @@
           <table class="loc-tab-itens"><thead><tr><th>Família</th><th class="td-center" style="width:90px;">DMA SYS</th><th class="td-center" style="width:90px;">Neovero</th><th style="width:240px;">O que fazer no Neovero</th></tr></thead><tbody>
           ${aj.map(a => `<tr><td>${escReq(a.familia)}</td><td class="td-center">${a.dma}</td><td class="td-center">${a.neo}</td><td><b style="color:${a.acao.indexOf('INCLUIR') === 0 ? '#c2410c' : '#be123c'};">${escReq(a.acao)}</b></td></tr>`).join('')}</tbody></table>`).join('')}
         <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:14px;">
-          <button type="button" class="btn-secundario" onclick="if (confirm('Apagar todas as quantidades do Neovero digitadas neste navegador?')) { locConfNeo = {}; locConfExtra = {}; salvarConfLoc(); fecharModalLoc('modalAjustesLoc'); renderizarConferenciaLoc(); }">Limpar toda a conferência</button>
           <button type="button" class="btn-secundario" onclick="exportarAjustesCsvLoc()"><i class="fa-solid fa-file-csv"></i> Exportar CSV</button>
           <button type="button" class="btn-submit" onclick="imprimirAjustesLoc()"><i class="fa-solid fa-print"></i> Imprimir</button>
         </div>`
@@ -7046,7 +7158,6 @@
         if (op === "RENOMEAR" || op === "UNIFICAR") {
           const novo = op === "RENOMEAR" ? payload.novoNome.toUpperCase().replace(/\s+/g, " ") : payload.destino;
           Object.values(locConfNeo).forEach(m => { if (m[payload.familia] !== undefined) { if (m[novo] === undefined) m[novo] = m[payload.familia]; delete m[payload.familia]; } });
-          salvarConfLoc();
         }
         fecharModalLoc('modalFamiliaLoc');
       });
