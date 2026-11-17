@@ -639,6 +639,12 @@
     .loc-tab-conf tfoot td:first-child { border-radius:0 0 0 10px; } .loc-tab-conf tfoot td:last-child { border-radius:0 0 10px 0; }
     .loc-tab-conf tfoot .loc-pill { font-size:11px; text-transform:none; letter-spacing:0; }
     .loc-conf-quem { font-size:10.5px; color:#475569; } .loc-conf-quem i { color:#2563eb; }
+    .loc-tipo-item { display:flex; flex-direction:column; gap:4px; }
+    .loc-tipo-item label { font-weight:normal; display:flex; gap:6px; align-items:center; cursor:pointer; }
+    .loc-tipo-item small { color:#64748b; }
+    .loc-ja-existe { background:#fffbeb; border:1px solid #fcd34d; color:#78350f; border-radius:10px; padding:10px 12px; margin:0 0 12px; font-size:13px; }
+    .loc-ja-existe-bt { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:center; }
+    .loc-ja-existe-bt button { height:32px; padding:0 12px; font-size:12px; }
     .loc-conf-idade { font-size:10px; color:#94a3b8; margin-left:4px; white-space:nowrap; }
     .loc-conf-resumo .rc { background:#fff7ed; border-color:#fed7aa; }
     .loc-tab-conf select { font-size:12px; padding:5px 8px; }
@@ -1737,9 +1743,10 @@
       </div>
       <input type="hidden" id="ctrLocId">
       <div class="form-row" style="flex-wrap:wrap;">
-        <div class="form-group" style="flex:1 1 240px;"><label class="loc-motivo-obr">Cliente:</label><input type="text" id="ctrLocCliente" list="listLocClientes" placeholder="Ex.: MONTE AZUL" oninput="this.value=this.value.toUpperCase(); atualizarDatalistUnidadesLoc()"></div>
-        <div class="form-group" style="flex:1 1 300px;"><label class="loc-motivo-obr">Unidade:</label><input type="text" id="ctrLocUnidade" list="listLocUnidades" placeholder="Ex.: UBS JARDIM CELESTE" oninput="this.value=this.value.toUpperCase()"></div>
+        <div class="form-group" style="flex:1 1 240px;"><label class="loc-motivo-obr">Cliente:</label><input type="text" id="ctrLocCliente" list="listLocClientes" placeholder="Ex.: MONTE AZUL" oninput="this.value=this.value.toUpperCase(); atualizarDatalistUnidadesLoc(); avisoUnidadeExistenteLoc()"></div>
+        <div class="form-group" style="flex:1 1 300px;"><label class="loc-motivo-obr">Unidade:</label><input type="text" id="ctrLocUnidade" list="listLocUnidades" placeholder="Ex.: UBS JARDIM CELESTE" oninput="this.value=this.value.toUpperCase(); avisoUnidadeExistenteLoc()" onchange="avisoUnidadeExistenteLoc()"></div>
       </div>
+      <div id="ctrLocJaExiste" class="loc-ja-existe" style="display:none;"></div>
       <div class="form-row" style="flex-wrap:wrap;">
         <div class="form-group" style="flex:1 1 200px;"><label>Localização (cidade-UF):</label><input type="text" id="ctrLocLocal" list="listLocLocais" placeholder="Ex.: SÃO PAULO-SP" oninput="this.value=this.value.toUpperCase()"></div>
         <div class="form-group" style="flex:1 1 160px;"><label>Nº do contrato (automático):</label><input type="text" id="ctrLocNum" placeholder="Gerado ao salvar (CT cliente.unidade)" readonly title="Gerado pelo sistema: CT + código do cliente + código da unidade"></div>
@@ -1784,6 +1791,12 @@
       </div>
       <input type="hidden" id="itemLocContrato"><input type="hidden" id="itemLocId"><input type="hidden" id="itemLocOp">
       <div class="loc-obs" id="itemLocInfo" style="margin-bottom:12px;"></div>
+      <div class="form-group" id="itemLocTipoBox" style="margin-bottom:12px;"><label class="loc-motivo-obr">Tipo:</label>
+        <div class="loc-tipo-item">
+          <label><input type="radio" name="itemLocTipo" value="ATIVO" checked onchange="trocarTipoItemLoc()"> Locação <small>(entra no contratado)</small></label>
+          <label><input type="radio" name="itemLocTipo" value="EMPRÉSTIMO" onchange="trocarTipoItemLoc()"> Empréstimo <small>(não entra no contratado, mas conta no Neovero)</small></label>
+        </div>
+      </div>
       <div class="form-group" style="margin-bottom:12px;"><label class="loc-motivo-obr">Família:</label><select id="itemLocFamilia"></select></div>
       <div class="form-row">
         <div class="form-group"><label class="loc-motivo-obr">Quantidade:</label><input type="number" id="itemLocQtd" min="1" step="1" oninput="atualizarDeltaItemLoc()" style="font-size:16px; font-weight:bold;"><div class="loc-delta" id="itemLocDelta"></div></div>
@@ -7354,7 +7367,7 @@
 
       const botoes = [];
       if (c.status !== "CANCELADO") botoes.push(`<button type="button" class="btn-secundario" onclick="abrirModalContratoLoc('${escReq(c.id)}')"><i class="fa-solid fa-pen-to-square"></i> Editar dados</button>`);
-      if (editavel) botoes.push(`<button type="button" class="btn-secundario" onclick="abrirModalItemLoc('INCLUIR', '${escReq(c.id)}')"><i class="fa-solid fa-plus"></i> Incluir família</button>`);
+      if (editavel) botoes.push(`<button type="button" class="btn-secundario" onclick="abrirModalItemLoc('INCLUIR', '${escReq(c.id)}')"><i class="fa-solid fa-plus"></i> Incluir família</button>`, `<button type="button" class="btn-secundario" onclick="abrirModalItemLoc('EMPRESTAR', '${escReq(c.id)}')"><i class="fa-solid fa-right-left"></i> Emprestar equipamento</button>`);
       if (["CANCELADO", "ENCERRADO", "SUSPENSO"].includes(c.status) && !locUnificado(c) && locEhAdmin()) botoes.push(`<button type="button" class="btn-atender" style="height:34px; padding:0 14px;" onclick="abrirMotivoLoc('REATIVAR', '${escReq(c.id)}')"><i class="fa-solid fa-rotate-left"></i> Reativar contrato</button>`);
       if (c.status !== "CANCELADO" && locEhAdmin()) botoes.push(`<button type="button" class="btn-negar" style="height:34px; padding:0 14px;" onclick="abrirMotivoLoc('CANCELAR', '${escReq(c.id)}')"><i class="fa-solid fa-ban"></i> Cancelar contrato</button>`);
 
@@ -7406,6 +7419,32 @@
       const el = document.getElementById('ctrLocItensTotal');
       if (el) el.innerText = linhas.length ? `${linhas.length} família(s) · ${locNum(tot)} equipamento(s)` : "Inclua ao menos uma família.";
     }
+    // Novo contrato: se a unidade já tem contrato, oferece emprestar/incluir nele (1 contrato por cliente × unidade)
+    function avisoUnidadeExistenteLoc() {
+      const box = document.getElementById('ctrLocJaExiste');
+      if (!box) return;
+      const id = document.getElementById('ctrLocId').value;
+      const norm = v => String(v || "").trim().replace(/\s+/g, " ").toUpperCase();
+      const cli = norm(document.getElementById('ctrLocCliente').value), uni = norm(document.getElementById('ctrLocUnidade').value);
+      const c = (!id && cli && uni) ? locDados().contratos.find(x => !locUnificado(x) && norm(x.cliente) === cli && norm(x.unidade) === uni) : null;
+      const chave = c ? c.id + "|" + c.status : "";
+      if (box.dataset.chave === chave) return;   // não redesenha à toa (o clique no botão dispara o onchange do campo)
+      box.dataset.chave = chave;
+      if (!c) { box.style.display = "none"; box.innerHTML = ""; return; }
+      const ativo = !locInativo(c);
+      box.innerHTML = `<div><i class="fa-solid fa-circle-info"></i> Esta unidade já tem o contrato <b>${escReq(c.numContrato || c.id)}</b> ${locStPill(c.status)}. Não é preciso criar outro: o empréstimo ou a família nova entram nele.</div>
+        <div class="loc-ja-existe-bt">` + (ativo
+          ? `<button type="button" class="btn-submit" onclick="irParaContratoExistenteLoc('${escReq(c.id)}', 'EMPRESTAR')"><i class="fa-solid fa-right-left"></i> Emprestar equipamento</button>
+             <button type="button" class="btn-secundario" onclick="irParaContratoExistenteLoc('${escReq(c.id)}', 'INCLUIR')"><i class="fa-solid fa-plus"></i> Incluir família (locação)</button>`
+          : `<span>Contrato ${escReq(String(c.status).toLowerCase())}: ${locEhAdmin() ? "reative-o na ficha para incluir equipamentos." : "peça ao administrador para reativá-lo."}</span>`) +
+        `<button type="button" class="btn-secundario" onclick="irParaContratoExistenteLoc('${escReq(c.id)}', '')"><i class="fa-solid fa-folder-open"></i> Abrir ficha</button></div>`;
+      box.style.display = "";
+    }
+    function irParaContratoExistenteLoc(idC, op) {
+      fecharModalLoc('modalContratoLoc');
+      abrirFichaLoc(idC);
+      if (op) abrirModalItemLoc(op, idC);
+    }
     function atualizarDatalistUnidadesLoc() {
       const cli = (document.getElementById('ctrLocCliente').value || "").trim().toUpperCase();
       const unis = [...new Set(locDados().contratos.filter(c => !cli || c.cliente === cli).map(c => c.unidade))].sort();
@@ -7437,6 +7476,7 @@
       [...sel.options].forEach(o => o.disabled = !c && o.value === "ENCERRADO");
       sel.value = c ? c.status : "ATIVO";
       document.getElementById('ctrLocItensBox').style.display = c ? "none" : "";
+      avisoUnidadeExistenteLoc();
       document.getElementById('ctrLocItens').innerHTML = "";
       if (!c) adicionarLinhaItemLoc();
       atualizarMotivoContratoLoc();
@@ -7502,12 +7542,14 @@
       document.getElementById('itemLocOp').value = op;
       document.getElementById('itemLocContrato').value = idC;
       document.getElementById('itemLocId').value = it ? it.id : "";
-      document.getElementById('itemLocTitulo').innerText = op === "INCLUIR" ? "Incluir família no contrato" : "Alterar item";
+      document.getElementById('itemLocTitulo').innerText = op === "EMPRESTAR" ? "Emprestar equipamento" : op === "INCLUIR" ? "Incluir família no contrato" : "Alterar item";
       document.getElementById('itemLocInfo').innerHTML = `<b>${escReq(c.id)} · ${escReq(c.numContrato || "sem nº")}</b><br>${escReq(c.cliente)} · ${escReq(c.unidade)}` +
         (it ? `<br>Atual: <b>${escReq(it.familia)}</b> · ${locNum(it.qtd)} un.${it.valorUnit ? " · " + locMoeda(it.valorUnit) : ""} · ${escReq(it.status)}` : "");
       const selF = document.getElementById('itemLocFamilia');
-      const jaTem = new Set(locItensDe(idC).map(i => i.familia));
-      selF.innerHTML = it ? `<option>${escReq(it.familia)}</option>` : '<option value="">Escolha a família...</option>' + locDados().familias.filter(f => !jaTem.has(f)).map(f => `<option value="${escReq(f)}">${escReq(f)}</option>`).join('');
+      document.getElementById('itemLocTipoBox').style.display = it ? "none" : "";
+      document.querySelector('input[name="itemLocTipo"][value="' + (op === "EMPRESTAR" ? "EMPRÉSTIMO" : "ATIVO") + '"]').checked = true;
+      if (op === "EMPRESTAR") document.getElementById('itemLocOp').value = "INCLUIR";
+      if (it) selF.innerHTML = `<option>${escReq(it.familia)}</option>`; else trocarTipoItemLoc();
       selF.disabled = !!it;
       document.getElementById('itemLocQtd').value = it ? it.qtd : "";
       document.getElementById('itemLocValor').value = it && it.valorUnit ? String(it.valorUnit).replace(".", ",") : "";
@@ -7518,6 +7560,17 @@
       atualizarDeltaItemLoc();
       document.getElementById('modalItemLoc').classList.add('active');
       setTimeout(() => document.getElementById(it ? 'itemLocQtd' : 'itemLocFamilia').focus(), 50);
+    }
+    // Locação: famílias que o contrato ainda não tem. Empréstimo: qualquer família sem empréstimo aberto neste contrato.
+    function trocarTipoItemLoc() {
+      const idC = document.getElementById('itemLocContrato').value;
+      const emp = document.querySelector('input[name="itemLocTipo"]:checked').value === "EMPRÉSTIMO";
+      const selF = document.getElementById('itemLocFamilia'), atual = selF.value;
+      const jaTem = new Set(locItensDe(idC).filter(i => emp ? i.status === "EMPRÉSTIMO" : i.status !== "EMPRÉSTIMO").map(i => i.familia));
+      selF.innerHTML = '<option value="">Escolha a família...</option>' + locDados().familias.filter(f => !jaTem.has(f)).map(f => `<option value="${escReq(f)}">${escReq(f)}</option>`).join('');
+      if (atual && !jaTem.has(atual)) selF.value = atual;
+      document.getElementById('itemLocTitulo').innerText = emp ? "Emprestar equipamento" : "Incluir família no contrato";
+      document.getElementById('itemLocMotivo').placeholder = emp ? "Ex.: empréstimo para cobrir manutenção do equipamento X, pedido de fulano em 17/11..." : "Ex.: aditivo contratual nº 3, pedido do cliente por e-mail de 10/11...";
     }
     function atualizarDeltaItemLoc() {
       const idItem = document.getElementById('itemLocId').value;
@@ -7538,7 +7591,7 @@
         familia: document.getElementById('itemLocFamilia').value,
         qtd: document.getElementById('itemLocQtd').value,
         valorUnit: document.getElementById('itemLocValor').value.trim(),
-        status: op === "ALTERAR" ? document.getElementById('itemLocStatus').value : "",
+        status: op === "ALTERAR" ? document.getElementById('itemLocStatus').value : document.querySelector('input[name="itemLocTipo"]:checked').value,
         obs: document.getElementById('itemLocObs').value.trim(),
         motivo: document.getElementById('itemLocMotivo').value.trim()
       };
