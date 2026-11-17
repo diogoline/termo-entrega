@@ -7010,7 +7010,24 @@
           if (c.status === "EMPRÉSTIMO" || i.status === "EMPRÉSTIMO") u.emp[i.familia] = (u.emp[i.familia] || 0) + i.qtd;
         });
       });
-      return Object.values(U).sort((a, b) => a.cliente.localeCompare(b.cliente, 'pt-BR') || a.unidade.localeCompare(b.unidade, 'pt-BR'));
+      // Unidade só com contratos encerrados/cancelados: entra apenas se a última conferência ainda tem equipamento no Neovero
+      contratos.filter(c => locInativo(c) && !locUnificado(c)).forEach(c => {
+        const k = c.cliente + "|" + c.unidade;
+        if (U[k] && !U[k].soInativo) return;
+        const u = U[k] || (U[k] = { k, cliente: c.cliente, unidade: c.unidade, locais: new Set(), ctrs: [], fam: {}, emp: {}, total: 0, soInativo: true });
+        if (c.localizacao) u.locais.add(c.localizacao);
+        u.ctrs.push(c);
+      });
+      // Família que saiu do contrato mas a conferência ainda registra no Neovero: aparece com DMA SYS = 0 (retirar)
+      Object.values(U).forEach(u => {
+        const n = locConfNeo[u.k] || {};
+        u.orf = {};
+        Object.keys(n).forEach(f => { if (!(f in u.fam) && !locVazio(n[f]) && (Number(n[f]) > 0 || Number((locConfDmaReg[u.k] || {})[f]) > 0)) { u.fam[f] = 0; u.orf[f] = true; } });
+      });
+      // Sem equipamento no DMA SYS e nada a retirar no Neovero: não precisa de conferência
+      const temExtra = k => (locConfExtra[k] || []).some(e => e.familia && e.qtd > 0);
+      return Object.values(U).filter(u => u.total > 0 || Object.keys(u.orf).length || temExtra(u.k))
+        .sort((a, b) => a.cliente.localeCompare(b.cliente, 'pt-BR') || a.unidade.localeCompare(b.unidade, 'pt-BR'));
     }
     function locVazio(v) { return v === undefined || v === null || v === ""; }
     function locEstadoConf(u) {
@@ -7127,7 +7144,7 @@
           <thead><tr><th>Família</th><th class="td-center" style="width:95px;">DMA SYS</th><th class="td-center" style="width:105px;">No Neovero</th><th class="td-center" style="width:190px;">Ação no Neovero</th></tr></thead>
           <tbody>
           ${fams.length ? fams.map(([f, q]) => `<tr>
-            <td><b>${escReq(f)}</b>${u.emp[f] ? `<div style="font-size:10.5px; color:#6d28d9;">inclui ${u.emp[f]} em empréstimo</div>` : ""}${s.mudou.includes(f) ? `<div style="font-size:10.5px; color:#b45309; font-weight:bold;">contrato mudou: na conferência era ${(locConfDmaReg[u.k] || {})[f]}</div>` : ""}</td>
+            <td><b>${escReq(f)}</b>${u.emp[f] ? `<div style="font-size:10.5px; color:#6d28d9;">inclui ${u.emp[f]} em empréstimo</div>` : ""}${u.orf && u.orf[f] ? `<div style="font-size:10.5px; color:#be123c; font-weight:bold;">não está mais no contrato: retirar do Neovero</div>` : s.mudou.includes(f) ? `<div style="font-size:10.5px; color:#b45309; font-weight:bold;">contrato mudou: na conferência era ${(locConfDmaReg[u.k] || {})[f]}</div>` : ""}</td>
             <td class="td-center" style="font-size:15px; font-weight:800;">${locNum(q)}</td>
             <td class="td-center"><input type="number" class="loc-neo" min="0" step="1" value="${locVazio(n[f]) ? "" : n[f]}" data-fam="${escReq(f)}" oninput="digitarNeoLoc('${kq}', this)" onkeydown="teclaConfLoc(event, this)"></td>
             <td class="td-center loc-acao-cel">${locAcaoNeovero(q, n[f])}</td></tr>`).join('')
