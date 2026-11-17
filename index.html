@@ -639,6 +639,8 @@
     .loc-tab-conf tfoot td:first-child { border-radius:0 0 0 10px; } .loc-tab-conf tfoot td:last-child { border-radius:0 0 10px 0; }
     .loc-tab-conf tfoot .loc-pill { font-size:11px; text-transform:none; letter-spacing:0; }
     .loc-conf-quem { font-size:10.5px; color:#475569; } .loc-conf-quem i { color:#2563eb; }
+    .loc-conf-idade { font-size:10px; color:#94a3b8; margin-left:4px; white-space:nowrap; }
+    .loc-conf-resumo .rc { background:#fff7ed; border-color:#fed7aa; }
     .loc-tab-conf select { font-size:12px; padding:5px 8px; }
     .loc-pill { display:inline-block; font-size:10.5px; font-weight:bold; border-radius:20px; padding:2px 9px; white-space:nowrap; }
     .loc-p-ok { background:#dcfce7; color:#166534; } .loc-p-inc { background:#ffedd5; color:#c2410c; } .loc-p-ret { background:#ffe4e6; color:#be123c; } .loc-p-pend { background:#f1f5f9; color:#64748b; }
@@ -871,7 +873,7 @@
           <div class="form-group loc-so-conf" style="flex:0 0 190px;">
             <label>Situação da conferência:</label>
             <select id="locFiltroConf" onchange="renderizarLocacao()">
-              <option value="">Todas</option><option value="pend">Não conferidas</option><option value="aj">Com ajuste no Neovero</option><option value="ok">OK</option>
+              <option value="">Todas</option><option value="pend">Não conferidas</option><option value="aj">Com ajuste no Neovero</option><option value="reconf">Reconferir (contrato mudou)</option><option value="venc">Conferir de novo (prazo vencido)</option><option value="ok">OK</option>
             </select>
           </div>
           <div class="form-group loc-so-ctr" style="flex:1 1 180px; display:none;">
@@ -898,7 +900,7 @@
           <div class="loc-filtros" style="margin-top:0;">
             <div class="form-group" style="flex:1 1 260px;"><label>Buscar família:</label><input type="text" id="locFamTxt" placeholder="Ex.: oxímetro, balança" oninput="renderizarFamiliasLoc()"></div>
             <label class="loc-chk"><input type="checkbox" id="locFamInat" onchange="renderizarFamiliasLoc()"> Mostrar inativas</label>
-            <button type="button" class="btn-submit" onclick="abrirModalFamiliaLoc('NOVA')"><i class="fa-solid fa-plus"></i> Nova família</button>
+            <button type="button" class="btn-submit" id="btnNovaFamiliaLoc" onclick="abrirModalFamiliaLoc('NOVA')"><i class="fa-solid fa-plus"></i> Nova família</button>
           </div>
           <div id="locFamTabela"></div>
         </div>
@@ -6581,6 +6583,15 @@
       ITEM_TRANSFERIDO: "ITEM TRANSFERIDO", QTD_UNIF: "QUANTIDADE SOMADA"
     };
     var MOTIVO_UNIFICACAO_LOC = "Unificado no contrato ";   // contrato absorvido por outro da mesma unidade
+    // Configurações vêm do Script (ADMINS_LOCACAO e DIAS_VALIDADE_CONFERENCIA_LOC)
+    function locConfig() { const c = bancoDados && bancoDados.locacao && bancoDados.locacao.config; return { admins: (c && c.admins) || [], dias: (c && c.diasValidadeConferencia) || 30 }; }
+    // Lista vazia = todos podem. A trava também existe no Script (esta aqui só esconde os botões).
+    function locEhAdmin() {
+      const adm = locConfig().admins.map(a => String(a).trim().toLowerCase()).filter(Boolean);
+      if (!adm.length) return true;
+      const quem = [usuarioLogado && usuarioLogado.usuario, usuarioLogado && usuarioLogado.nome].map(v => String(v || "").trim().toLowerCase());
+      return adm.some(a => quem.includes(a));
+    }
     function locUnificado(c) { return !!c && c.status === "CANCELADO" && String(c.cancelMotivo || "").indexOf(MOTIVO_UNIFICACAO_LOC) === 0; }
     function locEventoPadronizacao(h) { return String(h.motivo || "").indexOf("Padronização") === 0 || String(h.motivo || "").indexOf(MOTIVO_UNIFICACAO_LOC) === 0; }
     var LOC_HIST_FAMILIAS = "FAMÍLIAS";   // eventos do cadastro de famílias (não pertencem a um contrato)
@@ -6792,6 +6803,8 @@
     // só libera a unidade se nada mudou depois do envio. E, por 60 s depois de editar/salvar, a tela mantém o que
     // foi digitado mesmo que chegue da planilha uma leitura mais antiga (atualização automática ou resposta atrasada).
     var locConfVer = {}, locConfProtegidoAte = {};
+    var locConfDmaReg = {};      // qtd do DMA SYS no momento da conferência (para avisar "contrato mudou, reconferir")
+    var locConfListaAtual = [];  // ordem das unidades na lista (para o botão "Próxima pendente")
     var LOC_CONF_PROTECAO_MS = 60000;
     var locConfLocalAntigo = null;
     try {
@@ -6804,9 +6817,10 @@
     // Monta a conferência a partir da planilha (mantém o que ainda está pendente de salvar nesta tela)
     function locCarregarConfDaPlanilha() {
       const rows = (bancoDados && bancoDados.locacao && bancoDados.locacao.conferencia) || [];
-      const neo = {}, extra = {}, info = {};
+      const neo = {}, extra = {}, info = {}, reg = {};
       rows.forEach(r => {
         const k = r.cliente + "|" + r.unidade;
+        if (!r.extra && !locVazio(r.neo) && !locVazio(r.dma)) (reg[k] = reg[k] || {})[r.familia] = Number(r.dma);
         if (!locVazio(r.neo)) {
           if (r.extra) (extra[k] = extra[k] || []).push({ familia: r.familia, qtd: Number(r.neo) });
           else (neo[k] = neo[k] || {})[r.familia] = Number(r.neo);
@@ -6822,7 +6836,7 @@
       const agora = Date.now();
       const manter = new Set(Object.keys(locConfPend).concat(Object.keys(locConfProtegidoAte).filter(k => locConfProtegidoAte[k] > agora)));
       manter.forEach(k => { neo[k] = locConfNeo[k] || {}; extra[k] = locConfExtra[k] || []; });
-      locConfNeo = neo; locConfExtra = extra; locConfInfo = info;
+      locConfNeo = neo; locConfExtra = extra; locConfInfo = info; locConfDmaReg = reg;
     }
 
     function agendarSalvarConfLoc(k) {
@@ -6846,9 +6860,16 @@
       const versoes = {};
       chaves.forEach(k => { versoes[k] = locConfVer[k] || 0; clearTimeout(locConfTimers[k]); locConfEstado[k] = "salvando"; });
       locAtualizarEstadoSalvarConf();
-      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "LOC_CONFERENCIA", usuario: usuarioAtualCmp(), unidades: chaves.map(locLinhasConf) }) })
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "LOC_CONFERENCIA", usuario: usuarioAtualCmp(), login: usuarioLogado ? usuarioLogado.usuario : "", unidades: chaves.map(locLinhasConf) }) })
         .then(r => r.json())
         .then(res => {
+          if (res.status === "erro" && res.mensagem) {   // recusado pelo Script (ex.: sem permissão): avisa e volta ao que está na planilha
+            chaves.forEach(k => { delete locConfPend[k]; delete locConfProtegidoAte[k]; locConfEstado[k] = ""; });
+            alert(res.mensagem);
+            if (aoConcluir) aoConcluir(false);
+            renderizarConferenciaLoc();
+            return;
+          }
           if (res.status !== "sucesso") throw new Error(res.mensagem || "erro");
           if (bancoDados.locacao) bancoDados.locacao.conferencia = res.conferencia || [];
           chaves.forEach(k => {
@@ -6866,6 +6887,34 @@
           locAtualizarEstadoSalvarConf();
           if (aoConcluir) aoConcluir(false);
         });
+    }
+    // Enter: vai para o próximo campo; no último, vai para o botão "Próxima pendente"
+    function teclaConfLoc(ev, inp) {
+      if (ev.key !== "Enter") return;
+      ev.preventDefault();
+      const campos = [...document.querySelectorAll('#locConfDet input.loc-neo')];
+      const i = campos.indexOf(inp);
+      if (i >= 0 && i < campos.length - 1) { campos[i + 1].focus(); campos[i + 1].select(); }
+      else document.getElementById('btnProximaConfLoc')?.focus();
+    }
+    // Próxima unidade da lista (na ordem da tela) que precisa de conferência
+    function proximaPendenteConfLoc() {
+      const todas = locUnidadesConf(locContratosFiltrados(true));
+      const porK = {}; todas.forEach(u => porK[u.k] = u);
+      const ordem = locConfListaAtual.filter(k => porK[k]);
+      const i = ordem.indexOf(locConfSel);
+      const seq = ordem.slice(i + 1).concat(ordem.slice(0, Math.max(i, 0)));
+      const prox = seq.find(k => ["pend", "reconf", "venc"].includes(locEstadoConf(porK[k]).t));
+      if (!prox) { alert("Nenhuma outra unidade pendente na lista atual."); return; }
+      selecionarUnidadeConfLoc(prox);
+      const item = [...document.querySelectorAll('#locPainelConf .loc-conf-uni')].find(e => e.dataset.k === prox);
+      const lista = document.querySelector('#locPainelConf .loc-conf-lista');
+      if (item && lista) {   // mostra a unidade na lista sem mexer na página
+        const topo = item.offsetTop - lista.offsetTop;
+        if (topo < lista.scrollTop || topo + item.offsetHeight > lista.scrollTop + lista.clientHeight) lista.scrollTop = topo - 8;
+      }
+      const primeiro = [...document.querySelectorAll('#locConfDet input.loc-neo')].find(x => !x.value) || document.querySelector('#locConfDet input.loc-neo');
+      if (primeiro) primeiro.focus();
     }
     function salvarAgoraConfLoc(k) {
       const ativo = document.activeElement;
@@ -6927,13 +6976,28 @@
       let conf = 0, aj = 0;
       fams.forEach(f => { if (!locVazio(n[f])) { conf++; if (Number(n[f]) !== u.fam[f]) aj++; } });
       aj += ex.length;
-      const base = { conf, aj, total: fams.length };
+      // Contrato mudou depois da conferência (a qtd do DMA SYS registrada é diferente da atual)
+      const reg = locConfDmaReg[u.k] || {};
+      const mudou = locConfPend[u.k] ? [] : Object.keys(reg).filter(f => !locVazio(n[f]) && reg[f] !== (u.fam[f] || 0));
+      const inf = locConfInfo[u.k];
+      const dias = inf && inf.t ? Math.floor((Date.now() - inf.t) / 86400000) : null;
+      const vencida = !locConfPend[u.k] && dias !== null && dias > locConfig().dias;
+      const base = { conf, aj, total: fams.length, dias, mudou };
       if (!conf && !ex.length) return Object.assign(base, { t: "pend", txt: "não conferida" });
+      if (mudou.length) return Object.assign(base, { t: "reconf", txt: "reconferir: contrato mudou" });
       if (aj) return Object.assign(base, { t: "aj", txt: aj + " ajuste(s) no Neovero" });
+      if (vencida) return Object.assign(base, { t: "venc", txt: "conferir de novo (" + dias + " dias)" });
       if (conf < fams.length) return Object.assign(base, { t: "pend", txt: conf + " de " + fams.length + " conferidas" });
       return Object.assign(base, { t: "ok", txt: "OK" });
     }
-    function locPillConf(s) { return `<span class="loc-pill ${s.t === 'ok' ? 'loc-p-ok' : s.t === 'aj' ? 'loc-p-ret' : 'loc-p-pend'}">${escReq(s.txt)}</span>`; }
+    function locPillConf(s) {
+      const cls = s.t === 'ok' ? 'loc-p-ok' : s.t === 'aj' ? 'loc-p-ret' : (s.t === 'reconf' || s.t === 'venc') ? 'loc-p-inc' : 'loc-p-pend';
+      return `<span class="loc-pill ${cls}">${escReq(s.txt)}</span>`;
+    }
+    function locIdadeConf(s) {
+      if (s.dias === null || s.dias === undefined) return "";
+      return `<span class="loc-conf-idade">${s.dias === 0 ? "conferida hoje" : s.dias === 1 ? "conferida ontem" : "conferida há " + s.dias + " dias"}</span>`;
+    }
     function locAcaoNeovero(dma, v) {
       if (locVazio(v)) return '<span class="loc-pill loc-p-pend">a conferir</span>';
       const d = dma - Number(v);
@@ -6954,12 +7018,16 @@
       const lista = todas.filter(u => !stF || locEstadoConf(u).t === stF);
       const sts = lista.map(locEstadoConf);
       if (!lista.find(u => u.k === locConfSel)) locConfSel = lista.length ? lista[0].k : "";
+      locConfListaAtual = lista.map(u => u.k);
       const resumo = `<div class="loc-conf-resumo">
           <span><b>${lista.length}</b> unidade(s)</span><span><b>${locNum(lista.reduce((s, u) => s + u.total, 0))}</b> equip. esperados no Neovero</span>
-          <span class="ok"><b>${sts.filter(s => s.t === 'ok').length}</b> OK</span><span class="aj"><b>${sts.filter(s => s.t === 'aj').length}</b> com ajuste</span><span><b>${sts.filter(s => s.t === 'pend').length}</b> não conferidas</span></div>`;
+          <span class="ok"><b>${sts.filter(s => s.t === 'ok').length}</b> OK</span><span class="aj"><b>${sts.filter(s => s.t === 'aj').length}</b> com ajuste</span>
+          ${sts.some(s => s.t === 'reconf') ? `<span class="rc"><b>${sts.filter(s => s.t === 'reconf').length}</b> reconferir</span>` : ""}
+          ${sts.some(s => s.t === 'venc') ? `<span class="rc"><b>${sts.filter(s => s.t === 'venc').length}</b> prazo vencido</span>` : ""}
+          <span><b>${sts.filter(s => s.t === 'pend').length}</b> não conferidas</span></div>`;
       const itensLista = lista.length ? lista.map((u, i) => `
         <div class="loc-conf-uni${u.k === locConfSel ? ' on' : ''}" data-k="${escReq(u.k)}" onclick="selecionarUnidadeConfLoc('${locJsq(u.k)}')">
-          <div style="min-width:0;"><div class="n">${escReq(u.unidade)}</div><div class="s">${escReq(u.cliente)} · ${escReq([...u.locais].join(' / ') || '-')}</div><div style="margin-top:4px;">${locPillConf(sts[i])}</div></div>
+          <div style="min-width:0;"><div class="n">${escReq(u.unidade)}</div><div class="s">${escReq(u.cliente)} · ${escReq([...u.locais].join(' / ') || '-')}</div><div style="margin-top:4px;">${locPillConf(sts[i])} ${locIdadeConf(sts[i])}</div></div>
           <div class="q"><b>${locNum(u.total)}</b><span>equip.</span></div>
         </div>`).join('') : '<div class="loc-vazio">Nenhuma unidade para o filtro.</div>';
       const nAntigo = locConfLocalAntigo ? new Set(Object.keys(locConfLocalAntigo.neo).concat(Object.keys(locConfLocalAntigo.extra))).size : 0;
@@ -7005,17 +7073,20 @@
             <div id="locConfEstadoSalvar" data-k="${escReq(u.k)}" style="margin-top:4px;">${locTextoEstadoConf(u.k)}</div>
             <div style="display:flex; gap:6px; justify-content:flex-end; margin-top:6px;">
               <button type="button" class="btn-secundario" style="padding:5px 10px;" onclick="tudoIgualConfLoc('${kq}')" title="Preenche o Neovero igual ao DMA SYS (quando tudo bate)"><i class="fa-solid fa-check-double"></i> Tudo igual</button>
-              <button type="button" class="btn-secundario" style="padding:5px 10px;" onclick="limparConfLoc('${kq}')">Limpar</button>
+              ${locEhAdmin() ? `<button type="button" class="btn-secundario" style="padding:5px 10px;" onclick="limparConfLoc('${kq}')">Limpar</button>` : ""}
               <button type="button" class="btn-submit" style="padding:5px 12px;" onclick="salvarAgoraConfLoc('${kq}')" title="Salva já esta unidade na planilha (o salvamento também é automático)"><i class="fa-solid fa-floppy-disk"></i> Salvar agora</button>
+              <button type="button" class="btn-secundario" id="btnProximaConfLoc" style="padding:5px 10px;" onclick="proximaPendenteConfLoc()" title="Vai para a próxima unidade da lista que precisa de conferência">Próxima pendente <i class="fa-solid fa-arrow-right"></i></button>
             </div></div>
         </div>
+        ${s.t === 'reconf' ? `<div class="loc-aviso" style="margin:0 0 10px;"><i class="fa-solid fa-triangle-exclamation"></i><div>O contrato mudou depois da conferência (${s.mudou.length} família(s), marcadas abaixo). Confira de novo no Neovero, corrija o que for preciso e clique em <b>Salvar agora</b>.</div></div>` : ""}
+        ${s.t === 'venc' ? `<div class="loc-aviso" style="margin:0 0 10px;"><i class="fa-solid fa-clock-rotate-left"></i><div>Última conferência há ${s.dias} dias (prazo: ${locConfig().dias}). Confira de novo no Neovero e clique em <b>Salvar agora</b>, mesmo que nada tenha mudado.</div></div>` : ""}
         <table class="loc-tab-itens loc-tab-conf">
           <thead><tr><th>Família</th><th class="td-center" style="width:95px;">DMA SYS</th><th class="td-center" style="width:105px;">No Neovero</th><th class="td-center" style="width:190px;">Ação no Neovero</th></tr></thead>
           <tbody>
           ${fams.length ? fams.map(([f, q]) => `<tr>
-            <td><b>${escReq(f)}</b>${u.emp[f] ? `<div style="font-size:10.5px; color:#6d28d9;">inclui ${u.emp[f]} em empréstimo</div>` : ""}</td>
+            <td><b>${escReq(f)}</b>${u.emp[f] ? `<div style="font-size:10.5px; color:#6d28d9;">inclui ${u.emp[f]} em empréstimo</div>` : ""}${s.mudou.includes(f) ? `<div style="font-size:10.5px; color:#b45309; font-weight:bold;">contrato mudou: na conferência era ${(locConfDmaReg[u.k] || {})[f]}</div>` : ""}</td>
             <td class="td-center" style="font-size:15px; font-weight:800;">${locNum(q)}</td>
-            <td class="td-center"><input type="number" class="loc-neo" min="0" step="1" value="${locVazio(n[f]) ? "" : n[f]}" data-fam="${escReq(f)}" oninput="digitarNeoLoc('${kq}', this)"></td>
+            <td class="td-center"><input type="number" class="loc-neo" min="0" step="1" value="${locVazio(n[f]) ? "" : n[f]}" data-fam="${escReq(f)}" oninput="digitarNeoLoc('${kq}', this)" onkeydown="teclaConfLoc(event, this)"></td>
             <td class="td-center loc-acao-cel">${locAcaoNeovero(q, n[f])}</td></tr>`).join('')
             : '<tr><td colspan="4" class="td-center" style="color:#94a3b8;">Nenhum item em vigor nesta unidade (contrato suspenso ou sem itens).</td></tr>'}
           ${ex.map((e, i) => `<tr class="loc-extra">
@@ -7141,6 +7212,8 @@
     function renderizarFamiliasLoc() {
       const el = document.getElementById('locFamTabela');
       if (!el) return;
+      const bNova = document.getElementById('btnNovaFamiliaLoc');
+      if (bNova) bNova.style.display = locEhAdmin() ? "" : "none";
       const txt = normalizarTextoReq(document.getElementById('locFamTxt')?.value || "");
       const inat = !!document.getElementById('locFamInat')?.checked;
       const lista = locCadastroFamilias().filter(f => (inat || f.ativa) && (!txt || normalizarTextoReq(f.nome + " " + f.obs).indexOf(txt) !== -1))
@@ -7153,10 +7226,10 @@
             return `<tr><td><b>${escReq(f.nome)}</b></td><td style="font-size:11px; color:#64748b;">${escReq(f.obs || "-")}</td>
               <td class="td-center">${u.contratos}</td><td class="td-center"><b>${locNum(u.equip)}</b></td>
               <td class="td-center">${f.ativa ? '<span class="loc-st loc-st-ATIVO">ATIVA</span>' : '<span class="loc-st loc-st-ENCERRADO">INATIVA</span>'}</td>
-              <td class="td-center" style="white-space:nowrap;">
+              <td class="td-center" style="white-space:nowrap;">${!locEhAdmin() ? '<span style="font-size:10.5px; color:#94a3b8;">só administrador</span>' : `
                 <button type="button" class="loc-mini azul" onclick="abrirModalFamiliaLoc('RENOMEAR', '${fq}')"><i class="fa-solid fa-pen"></i> Renomear</button>
                 ${f.ativa ? `<button type="button" class="loc-mini azul" style="background:#6366f1;" onclick="abrirModalFamiliaLoc('UNIFICAR', '${fq}')"><i class="fa-solid fa-object-group"></i> Unificar</button>` : ""}
-                <button type="button" class="loc-mini ${f.ativa ? 'vermelho' : 'verde'}" onclick="abrirModalFamiliaLoc('${f.ativa ? 'DESATIVAR' : 'ATIVAR'}', '${fq}')">${f.ativa ? 'Desativar' : 'Ativar'}</button>
+                <button type="button" class="loc-mini ${f.ativa ? 'vermelho' : 'verde'}" onclick="abrirModalFamiliaLoc('${f.ativa ? 'DESATIVAR' : 'ATIVAR'}', '${fq}')">${f.ativa ? 'Desativar' : 'Ativar'}</button>`}
               </td></tr>`;
           }).join('') || '<tr><td colspan="6" class="td-center" style="color:#94a3b8;">Nenhuma família.</td></tr>'}</tbody></table></div>
         <div class="loc-nota" style="margin-top:10px; background:#f8fafc; color:#475569;">Desativar só tira a família da lista de escolha para itens novos; os contratos que já usam continuam iguais. Nada é excluído.</div>`;
@@ -7252,12 +7325,13 @@
         const sub = i.valorUnit ? i.qtd * i.valorUnit : 0;
         if (i.status !== "CANCELADO" && i.status !== "ENCERRADO") { totQ += i.qtd; totV += sub; }
         if (i.valorUnit) temValor = true;
+        const adm = locEhAdmin();
         const acoes = !editavel ? "" : i.status === "CANCELADO"
-          ? (locDados().familias.includes(i.familia)
+          ? (!adm ? "" : locDados().familias.includes(i.familia)
               ? `<button type="button" class="loc-mini verde" onclick="abrirMotivoLoc('REATIVAR_ITEM', '${escReq(c.id)}', '${escReq(i.id)}')"><i class="fa-solid fa-rotate-left"></i> Reativar</button>`
               : `<span style="font-size:10.5px; color:#94a3b8;" title="Família inativa">família inativa</span>`)
           : `<button type="button" class="loc-mini azul" onclick="abrirModalItemLoc('ALTERAR', '${escReq(c.id)}', '${escReq(i.id)}')"><i class="fa-solid fa-pen"></i> Alterar</button>
-             <button type="button" class="loc-mini vermelho" onclick="abrirMotivoLoc('REMOVER_ITEM', '${escReq(c.id)}', '${escReq(i.id)}')" title="Remover do contrato (fica no histórico)"><i class="fa-solid fa-minus"></i></button>`;
+             ${adm ? `<button type="button" class="loc-mini vermelho" onclick="abrirMotivoLoc('REMOVER_ITEM', '${escReq(c.id)}', '${escReq(i.id)}')" title="Remover do contrato (fica no histórico)"><i class="fa-solid fa-minus"></i></button>` : ""}`;
         return `<tr class="${i.status === "CANCELADO" ? "cancelado" : ""}">
           <td><b>${escReq(i.familia)}</b>${i.obs ? `<div style="font-size:10.5px; color:#64748b;">${escReq(i.obs)}</div>` : ""}</td>
           <td class="td-center" style="font-size:14px; font-weight:800;">${locNum(i.qtd)}</td>
@@ -7281,8 +7355,8 @@
       const botoes = [];
       if (c.status !== "CANCELADO") botoes.push(`<button type="button" class="btn-secundario" onclick="abrirModalContratoLoc('${escReq(c.id)}')"><i class="fa-solid fa-pen-to-square"></i> Editar dados</button>`);
       if (editavel) botoes.push(`<button type="button" class="btn-secundario" onclick="abrirModalItemLoc('INCLUIR', '${escReq(c.id)}')"><i class="fa-solid fa-plus"></i> Incluir família</button>`);
-      if (["CANCELADO", "ENCERRADO", "SUSPENSO"].includes(c.status) && !locUnificado(c)) botoes.push(`<button type="button" class="btn-atender" style="height:34px; padding:0 14px;" onclick="abrirMotivoLoc('REATIVAR', '${escReq(c.id)}')"><i class="fa-solid fa-rotate-left"></i> Reativar contrato</button>`);
-      if (c.status !== "CANCELADO") botoes.push(`<button type="button" class="btn-negar" style="height:34px; padding:0 14px;" onclick="abrirMotivoLoc('CANCELAR', '${escReq(c.id)}')"><i class="fa-solid fa-ban"></i> Cancelar contrato</button>`);
+      if (["CANCELADO", "ENCERRADO", "SUSPENSO"].includes(c.status) && !locUnificado(c) && locEhAdmin()) botoes.push(`<button type="button" class="btn-atender" style="height:34px; padding:0 14px;" onclick="abrirMotivoLoc('REATIVAR', '${escReq(c.id)}')"><i class="fa-solid fa-rotate-left"></i> Reativar contrato</button>`);
+      if (c.status !== "CANCELADO" && locEhAdmin()) botoes.push(`<button type="button" class="btn-negar" style="height:34px; padding:0 14px;" onclick="abrirMotivoLoc('CANCELAR', '${escReq(c.id)}')"><i class="fa-solid fa-ban"></i> Cancelar contrato</button>`);
 
       corpo.innerHTML = `
         <div class="loc-ficha-cab">
@@ -7374,6 +7448,7 @@
       const txtOrig = btn ? btn.innerHTML : "";
       if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...'; }
       payload.usuario = usuarioAtualCmp();
+      payload.login = usuarioLogado ? usuarioLogado.usuario : "";
       fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
         .then(r => r.json())
         .then(res => {
