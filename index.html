@@ -6788,6 +6788,11 @@
     // Versões anteriores guardavam só no navegador: se houver esses dados, a tela oferece "Enviar para a planilha".
     var locConfNeo = {}, locConfExtra = {}, locConfSel = "";
     var locConfPend = {}, locConfInfo = {}, locConfEstado = {}, locConfTimers = {};
+    // Proteção contra "voltar valor antigo": cada edição aumenta a versão da unidade; uma resposta de salvamento
+    // só libera a unidade se nada mudou depois do envio. E, por 60 s depois de editar/salvar, a tela mantém o que
+    // foi digitado mesmo que chegue da planilha uma leitura mais antiga (atualização automática ou resposta atrasada).
+    var locConfVer = {}, locConfProtegidoAte = {};
+    var LOC_CONF_PROTECAO_MS = 60000;
     var locConfLocalAntigo = null;
     try {
       const n = JSON.parse(localStorage.getItem('dmaLocConfNeo') || "{}"), e = JSON.parse(localStorage.getItem('dmaLocConfExtra') || "{}");
@@ -6814,11 +6819,15 @@
         Object.keys(locConfLocalAntigo.neo).forEach(k => { if (!info[k] && !neo[k]) neo[k] = locConfLocalAntigo.neo[k]; });
         Object.keys(locConfLocalAntigo.extra).forEach(k => { if (!info[k] && !extra[k]) extra[k] = locConfLocalAntigo.extra[k]; });
       }
-      Object.keys(locConfPend).forEach(k => { neo[k] = locConfNeo[k]; extra[k] = locConfExtra[k]; });
+      const agora = Date.now();
+      const manter = new Set(Object.keys(locConfPend).concat(Object.keys(locConfProtegidoAte).filter(k => locConfProtegidoAte[k] > agora)));
+      manter.forEach(k => { neo[k] = locConfNeo[k] || {}; extra[k] = locConfExtra[k] || []; });
       locConfNeo = neo; locConfExtra = extra; locConfInfo = info;
     }
 
     function agendarSalvarConfLoc(k) {
+      locConfVer[k] = (locConfVer[k] || 0) + 1;
+      locConfProtegidoAte[k] = Date.now() + LOC_CONF_PROTECAO_MS;
       locConfPend[k] = true;
       locConfEstado[k] = "pendente";
       locAtualizarEstadoSalvarConf();
@@ -6834,29 +6843,42 @@
       return { cliente: u ? u.cliente : p[0], unidade: u ? u.unidade : p.slice(1).join("|"), linhas };
     }
     function enviarConfLoc(chaves, aoConcluir) {
-      chaves.forEach(k => { locConfEstado[k] = "salvando"; });
+      const versoes = {};
+      chaves.forEach(k => { versoes[k] = locConfVer[k] || 0; clearTimeout(locConfTimers[k]); locConfEstado[k] = "salvando"; });
       locAtualizarEstadoSalvarConf();
       fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "LOC_CONFERENCIA", usuario: usuarioAtualCmp(), unidades: chaves.map(locLinhasConf) }) })
         .then(r => r.json())
         .then(res => {
           if (res.status !== "sucesso") throw new Error(res.mensagem || "erro");
           if (bancoDados.locacao) bancoDados.locacao.conferencia = res.conferencia || [];
-          chaves.forEach(k => { if (!locExtrasIncompletos(k)) delete locConfPend[k]; locConfEstado[k] = "salvo"; });
+          chaves.forEach(k => {
+            locConfProtegidoAte[k] = Date.now() + LOC_CONF_PROTECAO_MS;
+            if ((locConfVer[k] || 0) !== versoes[k]) return;   // houve edição depois do envio: o próximo salvamento já está agendado
+            if (!locExtrasIncompletos(k)) delete locConfPend[k];
+            locConfEstado[k] = "salvo";
+          });
           if (aoConcluir) aoConcluir(true);
           locCarregarConfDaPlanilha();
           renderizarConferenciaLoc();
         })
         .catch(() => {
-          chaves.forEach(k => { locConfEstado[k] = "erro"; clearTimeout(locConfTimers[k]); locConfTimers[k] = setTimeout(() => enviarConfLoc([k]), 15000); });
+          chaves.forEach(k => { locConfEstado[k] = "erro"; locConfPend[k] = true; clearTimeout(locConfTimers[k]); locConfTimers[k] = setTimeout(() => enviarConfLoc([k]), 15000); });
           locAtualizarEstadoSalvarConf();
           if (aoConcluir) aoConcluir(false);
         });
+    }
+    function salvarAgoraConfLoc(k) {
+      const ativo = document.activeElement;
+      if (ativo && ativo.classList && ativo.classList.contains('loc-neo')) ativo.blur();   // garante que o último número digitado entrou
+      locConfPend[k] = true;
+      enviarConfLoc([k]);
     }
     function locTextoEstadoConf(k) {
       const st = locConfEstado[k];
       if (st === "pendente" || st === "salvando") return '<span class="loc-pill loc-p-pend"><i class="fa-solid fa-spinner fa-spin"></i> Salvando...</span>';
       if (st === "erro") return '<span class="loc-pill loc-p-ret" title="Sem conexão: o sistema tenta de novo sozinho">Não salvo · tentando de novo</span>';
       const inf = locConfInfo[k];
+      if (st === "salvo") return `<span class="loc-pill loc-p-ok"><i class="fa-solid fa-check"></i> Salvo na planilha</span>` + (inf ? `<div class="loc-conf-quem">por <b>${escReq(inf.usuario || "-")}</b> em ${escReq(inf.data)}</div>` : "");
       return inf ? `<span class="loc-conf-quem"><i class="fa-solid fa-cloud"></i> Conferido por <b>${escReq(inf.usuario || "-")}</b> em ${escReq(inf.data)}</span>` : "";
     }
     function locAtualizarEstadoSalvarConf() {
@@ -6971,6 +6993,7 @@
             <div style="display:flex; gap:6px; justify-content:flex-end; margin-top:6px;">
               <button type="button" class="btn-secundario" style="padding:5px 10px;" onclick="tudoIgualConfLoc('${kq}')" title="Preenche o Neovero igual ao DMA SYS (quando tudo bate)"><i class="fa-solid fa-check-double"></i> Tudo igual</button>
               <button type="button" class="btn-secundario" style="padding:5px 10px;" onclick="limparConfLoc('${kq}')">Limpar</button>
+              <button type="button" class="btn-submit" style="padding:5px 12px;" onclick="salvarAgoraConfLoc('${kq}')" title="Salva já esta unidade na planilha (o salvamento também é automático)"><i class="fa-solid fa-floppy-disk"></i> Salvar agora</button>
             </div></div>
         </div>
         <table class="loc-tab-itens loc-tab-conf">
