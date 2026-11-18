@@ -676,6 +676,8 @@
     body.jan-dock-on { padding-bottom:110px; }
     body.jan-dock-on .modal-overlay { padding-bottom:96px; box-sizing:border-box; }
     body.jan-dock-on .modal-overlay .modal-box { max-height:calc(100vh - 120px); }
+    .loc-aviso-vazio { background:#fef2f2 !important; border-color:#fecaca !important; color:#991b1b !important; }
+    .loc-nota-vazio { background:#fef2f2; color:#b91c1c; border-color:#fecaca; }
     .loc-sem-acesso { display:flex; flex-direction:column; align-items:center; gap:8px; padding:60px 20px; color:#64748b; text-align:center; }
     .loc-sem-acesso i { font-size:34px; color:#94a3b8; }
     .loc-sem-acesso b { font-size:18px; color:#334155; }
@@ -6702,6 +6704,11 @@
       return i.status === "EMPRÉSTIMO" || c.status === "EMPRÉSTIMO";
     }
     function locInativo(c) { return c.status === "ENCERRADO" || c.status === "CANCELADO"; }
+    // Contrato em uso (ativo, empréstimo ou suspenso) sem nenhum equipamento ativo/emprestado: deveria ser cancelado/encerrado
+    function locSemEquipamento(c) {
+      if (!c || locInativo(c)) return false;
+      return !locDados().itens.some(i => i.contrato === c.id && (i.status === "ATIVO" || i.status === "EMPRÉSTIMO") && Number(i.qtd) > 0);
+    }
     function locStPill(st) { return `<span class="loc-st loc-st-${escReq(st)}">${escReq(st)}</span>`; }
     function locNum(n) { return Number(n || 0).toLocaleString('pt-BR'); }
     function locMoeda(n) { return moedaBR(n); }
@@ -6855,6 +6862,9 @@
       if (av) av.innerHTML = alertas.length ? `<div class="loc-aviso"><i class="fa-solid fa-calendar-xmark" style="margin-top:2px;"></i><div><b>Vigência:</b> ${alertas.length} contrato(s) vencendo em até ${DIAS_ALERTA_VIGENCIA_LOC} dias ou já vencido(s): ` +
         alertas.slice(0, 8).map(x => `<a onclick="abrirFichaLoc('${escReq(x.c.id)}')">${escReq(x.c.numContrato || x.c.id)} · ${escReq(x.c.unidade)} (${x.d < 0 ? "vencido" : x.d + "d"})</a>`).join('') +
         (alertas.length > 8 ? ` e mais ${alertas.length - 8}.` : "") + `</div></div>` : "";
+      const vazios = base.filter(locSemEquipamento);
+      if (av && vazios.length) av.innerHTML += `<div class="loc-aviso loc-aviso-vazio"><i class="fa-solid fa-box-open" style="margin-top:2px;"></i><div><b>Sem equipamento:</b> ${vazios.length} contrato(s) em uso sem nenhum equipamento. Se o equipamento foi devolvido, cancele o contrato: `
+        + vazios.slice(0, 8).map(c => `<a onclick="abrirFichaLoc('${escReq(c.id)}')">${escReq(c.numContrato || c.id)} · ${escReq(c.unidade)}</a>`).join('') + (vazios.length > 8 ? ` e mais ${vazios.length - 8}.` : "") + `</div></div>`;
 
       const lista = locContratosFiltrados(false);
       if (subabaLoc === "conf") renderizarConferenciaLoc(); else if (subabaLoc === "familias") renderizarFamiliasLoc(); else renderizarCardsLoc(lista);
@@ -6877,6 +6887,7 @@
           <div class="loc-card-nums"><span><b>${its.length}</b>família(s)</span><span><b>${locNum(qtd)}</b>equipamento(s)</span></div>
           ${locVigenciaHtml(c) ? `<div>${locVigenciaHtml(c)}</div>` : ""}
           ${locUnificado(c) ? `<div class="loc-nota">${escReq(c.cancelMotivo)}</div>` : ""}
+          ${locSemEquipamento(c) ? `<div class="loc-nota loc-nota-vazio"><i class="fa-solid fa-box-open"></i> Sem equipamento: cancelar se foi devolvido</div>` : ""}
         </div>`;
       }).join('') + '</div>';
     }
@@ -7481,6 +7492,7 @@
       const itensPorId = {}; locDados().itens.forEach(i => itensPorId[i.id] = i);
       const editavel = !locInativo(c);
       document.getElementById('fichaLocTitulo').innerHTML = `<span><i class="fa-solid fa-file-contract"></i> ${escReq(c.id)} · ${escReq(c.numContrato || "sem nº")} ${locStPill(c.status)}</span>`;
+      const avisoVazio = locSemEquipamento(c) ? `<div class="loc-aviso loc-aviso-vazio" style="margin-bottom:12px;"><i class="fa-solid fa-box-open" style="margin-top:2px;"></i><div><b>Contrato sem equipamento.</b> Ele continua contando como contrato em uso. Se o equipamento foi devolvido, ${locEhAdmin() ? `<a onclick="abrirMotivoLoc('CANCELAR', '${escReq(c.id)}')">cancele o contrato</a>` : "peça ao administrador para cancelar o contrato"}.</div></div>` : "";
 
       const ordem = { "ATIVO": 0, "EMPRÉSTIMO": 1, "ENCERRADO": 2, "CANCELADO": 3 };
       let totQ = 0, totV = 0, temValor = false;
@@ -7521,7 +7533,7 @@
       if (["CANCELADO", "ENCERRADO", "SUSPENSO"].includes(c.status) && !locUnificado(c) && locEhAdmin()) botoes.push(`<button type="button" class="btn-atender" style="height:34px; padding:0 14px;" onclick="abrirMotivoLoc('REATIVAR', '${escReq(c.id)}')"><i class="fa-solid fa-rotate-left"></i> Reativar contrato</button>`);
       if (c.status !== "CANCELADO" && locEhAdmin()) botoes.push(`<button type="button" class="btn-negar" style="height:34px; padding:0 14px;" onclick="abrirMotivoLoc('CANCELAR', '${escReq(c.id)}')"><i class="fa-solid fa-ban"></i> Cancelar contrato</button>`);
 
-      corpo.innerHTML = `
+      corpo.innerHTML = avisoVazio + `
         <div class="loc-ficha-cab">
           <div><span>Cliente</span>${escReq(c.cliente)}</div>
           <div><span>Unidade</span>${escReq(c.unidade)}</div>
@@ -7779,7 +7791,17 @@
       const payload = (a.tipo === "CANCELAR" || a.tipo === "REATIVAR")
         ? { acao: "LOC_SITUACAO_CONTRATO", id: a.idC, operacao: a.tipo, motivo }
         : { acao: "LOC_ITEM", contrato: a.idC, item: a.idItem, operacao: a.tipo === "REMOVER_ITEM" ? "REMOVER" : "REATIVAR", motivo };
-      postLoc(payload, document.getElementById('btnConfirmarMotivoLoc'), () => fecharModalLoc('modalMotivoLoc'));
+      postLoc(payload, document.getElementById('btnConfirmarMotivoLoc'), () => {
+        fecharModalLoc('modalMotivoLoc');
+        // tirou o último equipamento: oferece cancelar o contrato na hora, já com o mesmo motivo
+        if (a.tipo === "REMOVER_ITEM" && locSemEquipamento(locContrato(a.idC)) && locEhAdmin()) {
+          setTimeout(() => {
+            if (!confirm("O contrato ficou sem nenhum equipamento.\n\nSe o equipamento foi devolvido, o certo é cancelar o contrato (senão ele continua contando como ativo).\n\nCancelar o contrato agora?")) return;
+            abrirMotivoLoc('CANCELAR', a.idC);
+            document.getElementById('motivoLocTexto').value = motivo;
+          }, 150);
+        }
+      });
     }
 
     // ---------- Impressão do quantitativo por cliente ----------
@@ -8087,6 +8109,7 @@
 
       // Alertas: vigência, suspensos, empréstimos
       const alertas = [];
+      L.contratos.filter(locSemEquipamento).forEach(c => alertas.push([c, "sem equip.", "#ef4444", "em uso sem equipamento: cancelar se foi devolvido"]));
       locAlertasVigencia().forEach(x => alertas.push([x.c, x.d < 0 ? "vencido" : x.d + " dias", x.d < 0 ? "#f43f5e" : "#f59e0b", "vigência até " + x.c.fim]));
       L.contratos.filter(c => c.status === "SUSPENSO").forEach(c => alertas.push([c, "suspenso", "#f59e0b", "contrato suspenso"]));
       L.contratos.filter(c => c.status === "EMPRÉSTIMO").forEach(c => alertas.push([c, "empréstimo", "#8b5cf6", "equipamento emprestado"]));
