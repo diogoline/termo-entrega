@@ -678,6 +678,34 @@
     body.jan-dock-on .modal-overlay .modal-box { max-height:calc(100vh - 120px); }
     .loc-aviso-vazio { background:#fef2f2 !important; border-color:#fecaca !important; color:#991b1b !important; }
     .loc-nota-vazio { background:#fef2f2; color:#b91c1c; border-color:#fecaca; }
+    .dx-barra { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+    .dx-escopo { flex:1 1 420px; font-size:12px; color:var(--txt2); background:var(--card); border:1px solid var(--borda); border-radius:10px; padding:8px 12px; }
+    .dx-escopo i { color:#3b82f6; margin-right:4px; }
+    .dx-meta { font-size:12px; color:var(--txt2); display:flex; align-items:center; gap:6px; }
+    .dx-meta input { width:64px; height:30px; border-radius:8px; border:1px solid var(--borda); background:var(--card); color:var(--txt); padding:0 8px; font-weight:bold; }
+    .dx-tend { font-size:12.5px; font-weight:bold; margin-bottom:10px; }
+    .dx-tend.bom { color:#10b981; } .dx-tend.ruim { color:#f59e0b; }
+    .dx-colunas { display:flex; gap:10px; align-items:flex-end; overflow-x:auto; padding-bottom:4px; }
+    .dx-col { flex:1 0 64px; display:flex; flex-direction:column; align-items:center; gap:4px; text-align:center; }
+    .dx-col-val { font-size:12px; font-weight:bold; color:var(--txt); }
+    .dx-col-trilho { width:34px; height:150px; background:var(--trilho); border-radius:8px; display:flex; align-items:flex-end; overflow:hidden; }
+    .dx-col-barra { width:100%; border-radius:8px; transition:height .8s cubic-bezier(.22,1,.36,1); }
+    .dx-col-mes { font-size:11.5px; font-weight:bold; color:var(--txt); }
+    .dx-col-sub { font-size:10.5px; color:var(--txt2); line-height:1.25; }
+    .dx-legenda { display:flex; gap:14px; flex-wrap:wrap; margin-top:10px; font-size:11px; color:var(--txt2); }
+    .dx-legenda i { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:-1px; }
+    .dx-aa { display:flex; flex-direction:column; gap:8px; }
+    .dx-aa-l { border-bottom:1px dashed var(--borda); padding-bottom:7px; }
+    .dx-aa-o { font-size:11px; font-weight:bold; color:var(--txt2); text-transform:uppercase; letter-spacing:.3px; }
+    .dx-aa-a { font-size:12px; color:#ef4444; text-decoration:line-through; text-decoration-color:rgba(239,68,68,.45); }
+    .dx-aa-b { font-size:12.5px; color:var(--txt); font-weight:600; }
+    .dx-aa-b::before { content:"✓ "; color:#10b981; }
+    .dx-linha { display:flex; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px solid var(--borda); font-size:12.5px; color:var(--txt2); }
+    .dx-linha b { color:var(--txt); text-align:right; }
+    .dx-linha small { font-weight:normal; color:var(--txt2); }
+    .dx-sub-tit { margin:12px 0 6px; font-size:11px; font-weight:bold; text-transform:uppercase; color:var(--txt2); }
+    .dx-obs { font-size:11px; color:var(--txt2); margin-top:8px; line-height:1.4; }
+    .dx-rodape { font-size:11px; color:var(--txt2); text-align:center; margin:6px 0 4px; }
     .loc-sem-acesso { display:flex; flex-direction:column; align-items:center; gap:8px; padding:60px 20px; color:#64748b; text-align:center; }
     .loc-sem-acesso i { font-size:34px; color:#94a3b8; }
     .loc-sem-acesso b { font-size:18px; color:#334155; }
@@ -1176,6 +1204,7 @@
               <button type="button" id="dshSegQual" class="ativo" onclick="trocarModuloDashboard('QUAL')"><i class="fa-solid fa-shield-halved"></i> Qualidade</button>
               <button type="button" id="dshSegCmp" onclick="trocarModuloDashboard('CMP')"><i class="fa-solid fa-cart-shopping"></i> Compras</button>
               <button type="button" id="dshSegLoc" onclick="trocarModuloDashboard('LOC')"><i class="fa-solid fa-boxes-packing"></i> Locação</button>
+              <button type="button" id="dshSegExec" onclick="trocarModuloDashboard('EXEC')"><i class="fa-solid fa-chart-line"></i> Resumo executivo</button>
             </div>
             <input type="month" id="dashFiltroMes" onchange="atualizarDashboard(true)" title="Mês de referência">
             <select id="dashModoPeriodo" onchange="atualizarDashboard(true)" title="Período">
@@ -1350,6 +1379,32 @@
               <div id="dlSituacao"></div>
             </div>
           </div>
+        </div>
+
+        <!-- ===== Resumo executivo (Diretoria / gestão) — só leitura, usa os mesmos cálculos dos outros painéis ===== -->
+        <div id="dshExec" style="display:none;">
+          <div class="dx-barra">
+            <div class="dx-escopo"><i class="fa-solid fa-circle-info"></i> Mede o que o DMA SYS controla: da <b>solicitação</b> até a <b>liberação do termo para a expedição</b>. Transporte, OS, calibração e segurança elétrica ficam no Neovero.</div>
+            <label class="dx-meta">Meta de atendimento <input type="number" id="dxMeta" min="1" max="720" step="1" onchange="salvarMetaExec()"> h</label>
+            <button type="button" class="dsh-btn dx-btn-rel" onclick="imprimirResumoExec()"><i class="fa-solid fa-print"></i> Relatório para a Diretoria</button>
+          </div>
+          <div class="dsh-kpis" id="dxKpis"></div>
+          <div class="dsh-grid">
+            <div class="dsh-card dsh-span2">
+              <div class="dsh-card-tit">Tempo de atendimento mês a mês <span class="dsh-card-tag">solicitação → termo</span></div>
+              <div id="dxEvolucao"></div>
+            </div>
+            <div class="dsh-card">
+              <div class="dsh-card-tit">Antes × Agora <span class="dsh-card-tag">o que passou a ser controlado</span></div>
+              <div id="dxAntesAgora"></div>
+            </div>
+          </div>
+          <div class="dsh-grid">
+            <div class="dsh-card"><div class="dsh-card-tit"><span><i class="fa-solid fa-shield-halved"></i> Requisições e termos</span></div><div id="dxQual"></div></div>
+            <div class="dsh-card"><div class="dsh-card-tit"><span><i class="fa-solid fa-cart-shopping"></i> Compras</span></div><div id="dxCmp"></div></div>
+            <div class="dsh-card" id="dxLocCard"><div class="dsh-card-tit"><span><i class="fa-solid fa-boxes-packing"></i> Locação</span></div><div id="dxLoc"></div></div>
+          </div>
+          <div class="dx-rodape">Os números são calculados ao vivo a partir dos registros do sistema, com as mesmas regras dos painéis de Qualidade, Compras e Locação. O detalhe de cada área está no respectivo painel.</div>
         </div>
         <div class="dsh-rodape" id="dshRodape"></div>
       </div>
@@ -6294,7 +6349,7 @@
 
     // ===== Seletor de módulo + animações =====
     var moduloDash = "QUAL";
-    try { const m = localStorage.getItem('dmaModuloDash'); moduloDash = (m === "CMP" || m === "LOC") ? m : "QUAL"; } catch (e) {}
+    try { const m = localStorage.getItem('dmaModuloDash'); moduloDash = (m === "CMP" || m === "LOC" || m === "EXEC") ? m : "QUAL"; } catch (e) {}
 
     function trocarModuloDashboard(mod) {
       moduloDash = mod;
@@ -6303,20 +6358,22 @@
     }
 
     function atualizarDashboard(animar) {
-      const mod = (moduloDash === "CMP" || moduloDash === "LOC") ? moduloDash : "QUAL";
-      const q = document.getElementById('dshQual'), c = document.getElementById('dshCmp'), l = document.getElementById('dshLoc');
+      const mod = (moduloDash === "CMP" || moduloDash === "LOC" || moduloDash === "EXEC") ? moduloDash : "QUAL";
+      const q = document.getElementById('dshQual'), c = document.getElementById('dshCmp'), l = document.getElementById('dshLoc'), x = document.getElementById('dshExec');
       if (!q || !c) return;
       q.style.display = mod === "QUAL" ? "" : "none";
       c.style.display = mod === "CMP" ? "" : "none";
       if (l) l.style.display = mod === "LOC" ? "" : "none";
+      if (x) x.style.display = mod === "EXEC" ? "" : "none";
       document.getElementById('dshSegQual').classList.toggle('ativo', mod === "QUAL");
       document.getElementById('dshSegCmp').classList.toggle('ativo', mod === "CMP");
       document.getElementById('dshSegLoc')?.classList.toggle('ativo', mod === "LOC");
-      document.getElementById('dshTitulo').innerText = { QUAL: "Painel da Qualidade", CMP: "Painel de Compras", LOC: "Painel de Locação" }[mod];
-      if (!animar) [q, c, l].forEach(x => x && x.classList.remove('dsh-anim'));   // atualização automática: sem repetir a animação
-      try { if (mod === "CMP") atualizarDashboardCompras(); else if (mod === "LOC") atualizarDashboardLocacao(); else atualizarDashboardQualidade(); } catch (e) { console.error(e); }
+      document.getElementById('dshSegExec')?.classList.toggle('ativo', mod === "EXEC");
+      document.getElementById('dshTitulo').innerText = { QUAL: "Painel da Qualidade", CMP: "Painel de Compras", LOC: "Painel de Locação", EXEC: "Resumo executivo" }[mod];
+      if (!animar) [q, c, l, x].forEach(y => y && y.classList.remove('dsh-anim'));   // atualização automática: sem repetir a animação
+      try { if (mod === "CMP") atualizarDashboardCompras(); else if (mod === "LOC") atualizarDashboardLocacao(); else if (mod === "EXEC") atualizarDashboardExecutivo(); else atualizarDashboardQualidade(); } catch (e) { console.error(e); }
       // Anima só ao abrir o painel ou trocar filtro/módulo (não nas atualizações automáticas)
-      if (animar && document.getElementById('abaDashboard').classList.contains('active')) animarDashboard(mod === "CMP" ? c : (mod === "LOC" ? l : q));
+      if (animar && document.getElementById('abaDashboard').classList.contains('active')) animarDashboard(mod === "CMP" ? c : (mod === "LOC" ? l : (mod === "EXEC" ? x : q)));
     }
 
     // Contagem dos números, barras crescendo, rosca e linhas se desenhando
@@ -6348,6 +6405,224 @@
         requestAnimationFrame(passo);
       };
       requestAnimationFrame(passo);
+    }
+
+    // ===================== RESUMO EXECUTIVO (Diretoria / gestão) =====================
+    // Só leitura. Reaproveita as regras dos painéis existentes para os números baterem:
+    //  - tempo de atendimento = tempoAtendimentoReq (abertura da REQ -> termo válido, horas corridas)
+    //  - taxa de atendimento = atendidas / (total - recusadas)
+    //  - compras = gastosCompras / calcularResultadoCot (mesmo cálculo do painel de Compras)
+    //  - locação = locSerieMensal (mesmo cálculo do painel de Locação)
+    var META_EXEC_PADRAO_H = 48;
+    function metaExecH() { try { const v = Number(localStorage.getItem('dmaMetaExecH')); return v > 0 ? v : META_EXEC_PADRAO_H; } catch (e) { return META_EXEC_PADRAO_H; } }
+    function salvarMetaExec() {
+      const v = Number(document.getElementById('dxMeta').value);
+      if (!(v > 0)) { document.getElementById('dxMeta').value = metaExecH(); return; }
+      try { localStorage.setItem('dmaMetaExecH', String(Math.round(v))); } catch (e) {}
+      atualizarDashboard(true);
+    }
+    function medianaExec(arr) { if (!arr.length) return null; const a = arr.slice().sort((x, y) => x - y), m = Math.floor(a.length / 2); return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2; }
+    function mediaExec(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null; }
+    function pctExec(a, b) { return b ? Math.round(a / b * 100) : null; }
+
+    function dadosResumoExec() {
+      const hoje = new Date();
+      const mesAtual = hoje.getFullYear() + "-" + String(hoje.getMonth() + 1).padStart(2, "0");
+      const elMes = document.getElementById('dashFiltroMes');
+      if (elMes && !elMes.value) elMes.value = mesAtual;
+      const ref = (elMes && elMes.value) || mesAtual;
+      const geral = (document.getElementById('dashModoPeriodo')?.value || "MES") === "GERAL";
+      const noPer = d => geral || mesKeyDash(d) === ref;
+      const metaH = metaExecH(), metaMs = metaH * 3600000;
+      const stDe = r => (r.status || "PENDENTE").toUpperCase();
+
+      // ---- Requisições ----
+      const reqsAll = (bancoDados.requisicoes || []).filter(r => r && r.dataHora);
+      const reqs = reqsAll.filter(r => noPer(r.dataHora));
+      const atendidas = reqs.filter(r => stDe(r) === "ATENDIDO"), recusadas = reqs.filter(r => stDe(r) === "RECUSADO");
+      const tempos = atendidas.map(tempoAtendimentoReq).filter(v => v !== null);
+      const semTempo = atendidas.length - tempos.length;   // termo vinculado manualmente antes da REQ, ou sem data
+      const pendAll = reqsAll.filter(r => stDe(r) === "PENDENTE");
+      const R = {
+        total: reqs.length, atendidas: atendidas.length, recusadas: recusadas.length,
+        taxa: pctExec(atendidas.length, reqs.length - recusadas.length),
+        media: mediaExec(tempos), mediana: medianaExec(tempos), nTempos: tempos.length, semTempo,
+        naMeta: tempos.filter(t => t <= metaMs).length,
+        pctMeta: pctExec(tempos.filter(t => t <= metaMs).length, tempos.length),
+        pendentes: pendAll.length, pendAtraso: pendAll.filter(r => (diasEmAbertoReq(r) || 0) > PRAZO_REQ.atencao).length,
+        tipos: contarDash(reqs, r => r.tipoSolicitacao || "SEM TIPO", 5)
+      };
+
+      // ---- Termos (documentação e retrabalho) ----
+      const termos = (bancoDados.termosEmitidos || []).filter(t => t && t.protocolo && noPer(t.dataHora));
+      const comPdf = termos.filter(t => /^https?:/i.test(String(t.pdfUrl || ""))).length;
+      const reemitidos = termos.filter(t => /SUBSTITUI:/i.test(String(t.substituicao || ""))).length;
+      const cancelados = termos.filter(termoCancelado).length;
+      const T = { total: termos.length, comPdf, pctPdf: pctExec(comPdf, termos.length), reemitidos, cancelados, pctRetrab: pctExec(reemitidos, termos.length) };
+
+      // ---- Evolução mensal (todo o histórico do sistema) ----
+      const mesesSet = {};
+      reqsAll.forEach(r => { const k = mesKeyDash(r.dataHora); if (k) mesesSet[k] = 1; });
+      const meses = Object.keys(mesesSet).sort();
+      const evol = meses.map(m => {
+        const at = reqsAll.filter(r => mesKeyDash(r.dataHora) === m && stDe(r) === "ATENDIDO");
+        const tp = at.map(tempoAtendimentoReq).filter(v => v !== null);
+        return { mes: m, abertas: reqsAll.filter(r => mesKeyDash(r.dataHora) === m).length, mediana: medianaExec(tp), media: mediaExec(tp), pctMeta: pctExec(tp.filter(t => t <= metaMs).length, tp.length), n: tp.length };
+      });
+
+      // ---- Compras (mesmas regras do painel de Compras) ----
+      const itens = (bancoDados.itensCompra || []).filter(Boolean), cots = (bancoDados.cotacoes || []).filter(Boolean);
+      const gPer = gastosCompras().filter(g => noPer(g.data));
+      const tCmp = gPer.map(g => { const a = tempoDataBR(g.pedido), b = tempoDataBR(g.data); return a && b && b >= a ? (b - a) / 86400000 : null; }).filter(v => v !== null);
+      let dif = 0, nComp = 0, baseMaior = 0;
+      cots.filter(c => ["APROVADA", "COMPRADA"].includes(c.status) && noPer(c.dataHora) && (c.orcamentos || []).length >= 2).forEach(c => {
+        const r = calcularResultadoCot(c.orcamentos, c.qtd), maior = Math.max(...r.totais);
+        dif += maior - (r.totais[c.escolhido] || 0); baseMaior += maior; nComp++;
+      });
+      const cotPer = cots.filter(c => noPer(c.dataHora));
+      const C = {
+        solicitados: itens.filter(i => noPer(i.dataHora)).length, comprados: gPer.length, gasto: gPer.reduce((a, g) => a + g.valor, 0),
+        tempoDias: mediaExec(tCmp), nTempo: tCmp.length, cotacoes: cotPer.length, cotComparadas: nComp, diferenca: dif, pctDif: pctExec(dif, baseMaior),
+        pendentes: itens.filter(i => i.status === "PENDENTE").length
+      };
+
+      // ---- Locação (só para quem tem acesso ao módulo) ----
+      let Lc = null;
+      if (bancoDados.locacao && typeof locTemAcesso === "function" && locTemAcesso()) {
+        const fim = geral || ref > mesAtual ? mesAtual : ref;
+        const r = (locSerieMensal([fim]) || [])[0] || {};
+        let ok = 0, tot = 0;
+        try { locCarregarConfDaPlanilha(); locUnidadesConf(locDados().contratos).forEach(u => { tot++; if (locEstadoConf(u).t === "ok") ok++; }); } catch (e) {}
+        const hist = (locDados().historico || []).filter(h => h.acao !== LOC_ACAO.IMPORTADO && !locEventoPadronizacao(h) && noPer(h.data));
+        Lc = { contratos: r.contratos || 0, clientes: r.clientes || 0, unidades: r.unidades || 0, equip: r.equip || 0, confOk: ok, confTot: tot, pctConf: pctExec(ok, tot), alteracoes: hist.length };
+      }
+
+      const inicio = meses[0] || "";
+      return { ref, geral, periodo: geral ? "Todo o histórico" + (inicio ? " (desde " + nomeMesLongoDash(inicio) + ")" : "") : nomeMesLongoDash(ref), metaH, R, T, C, L: Lc, evol, inicio,
+               reqsTotalSistema: reqsAll.length, termosTotalSistema: (bancoDados.termosEmitidos || []).filter(t => t && t.protocolo).length };
+    }
+
+    function duracaoExec(ms) { return ms === null || ms === undefined ? "-" : formatarDuracaoReq(ms); }
+
+    function atualizarDashboardExecutivo() {
+      if (!bancoDados || !bancoDados.requisicoes) return;
+      const D = dadosResumoExec();
+      const setHtml = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
+      const st = document.getElementById('dshSub'); if (st) st.innerText = "Visão consolidada para a Diretoria · " + D.periodo;
+      const rod = document.getElementById('dshRodape'); if (rod) rod.innerText = "Atualizado às " + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + " · dados de Requisições, Termos, Compras e Locação";
+      const m = document.getElementById('dxMeta'); if (m && document.activeElement !== m) m.value = D.metaH;
+      const R = D.R, T = D.T, C = D.C, L = D.L;
+      const kpi = (cor, ic, lbl, num, sub) => `<div class="dsh-kpi" style="--c:${cor};"><div class="dsh-kpi-lbl"><i class="fa-solid ${ic}"></i> ${lbl}</div><div class="dsh-kpi-num">${num}</div><div class="dsh-kpi-sub">${sub}</div></div>`;
+      setHtml('dxKpis',
+        kpi("#3b82f6", "fa-clipboard-check", "Requisições atendidas", locNum(R.atendidas), R.total ? `de ${R.total} abertas · taxa ${R.taxa === null ? "-" : R.taxa + "%"}` : "sem requisições no período") +
+        kpi("#06b6d4", "fa-stopwatch", "Tempo de atendimento", duracaoExec(R.mediana), R.nTempos ? `mediana · média ${duracaoExec(R.media)}` : "sem atendimentos no período") +
+        kpi(R.pctMeta === null ? "#94a3b8" : R.pctMeta >= 80 ? "#10b981" : R.pctMeta >= 60 ? "#f59e0b" : "#ef4444", "fa-bullseye", `Dentro da meta (${D.metaH}h)`, R.pctMeta === null ? "-" : R.pctMeta + "%", R.nTempos ? `${R.naMeta} de ${R.nTempos} atendimentos` : "-") +
+        kpi("#6366f1", "fa-file-signature", "Termos rastreáveis", locNum(T.comPdf), T.total ? `${T.pctPdf}% dos ${T.total} termos com PDF e protocolo` : "sem termos no período") +
+        kpi(T.pctRetrab ? "#f59e0b" : "#10b981", "fa-rotate", "Retrabalho", T.pctRetrab === null ? "-" : T.pctRetrab + "%", T.total ? `${T.reemitidos} termo(s) reemitido(s) · ${T.cancelados} cancelado(s)` : "-") +
+        kpi("#a855f7", "fa-scale-balanced", "Compras com comparação", locNum(C.cotComparadas), C.cotComparadas ? `diferença de ${moedaBR(C.diferenca)} entre orçamentos` : "sem cotações com 2+ orçamentos"));
+
+      // Evolução: barras da mediana por mês + % na meta
+      const ev = D.evol.filter(e => e.abertas);
+      if (!ev.length) setHtml('dxEvolucao', '<div class="dsh-vazio">Sem requisições registradas.</div>');
+      else {
+        const max = Math.max(1, ...ev.map(e => e.mediana || 0));
+        const prim = ev.find(e => e.mediana !== null), ult = ev.slice().reverse().find(e => e.mediana !== null);
+        let tend = "";
+        if (prim && ult && prim !== ult) {
+          const d = ult.mediana - prim.mediana;
+          tend = `<div class="dx-tend ${d <= 0 ? "bom" : "ruim"}"><i class="fa-solid ${d <= 0 ? "fa-arrow-trend-down" : "fa-arrow-trend-up"}"></i> ${nomeMesDash(prim.mes)}: ${duracaoExec(prim.mediana)} → ${nomeMesDash(ult.mes)}: ${duracaoExec(ult.mediana)} (mediana)</div>`;
+        }
+        setHtml('dxEvolucao', tend + `<div class="dx-colunas">` + ev.map(e => `
+          <div class="dx-col" title="${nomeMesLongoDash(e.mes)}: ${e.abertas} aberta(s), ${e.n} atendida(s) com tempo · mediana ${duracaoExec(e.mediana)} · média ${duracaoExec(e.media)}">
+            <div class="dx-col-val">${duracaoExec(e.mediana)}</div>
+            <div class="dx-col-trilho"><div class="dx-col-barra" style="height:${e.mediana === null ? 0 : Math.max(4, e.mediana / max * 100)}%; background:${e.pctMeta === null ? "#94a3b8" : e.pctMeta >= 80 ? "#10b981" : e.pctMeta >= 60 ? "#f59e0b" : "#ef4444"};"></div></div>
+            <div class="dx-col-mes">${nomeMesDash(e.mes)}</div>
+            <div class="dx-col-sub">${e.pctMeta === null ? "-" : e.pctMeta + "% na meta"}<br>${e.abertas} req.</div>
+          </div>`).join("") + `</div><div class="dx-legenda"><span><i style="background:#10b981"></i>80%+ na meta</span><span><i style="background:#f59e0b"></i>60–79%</span><span><i style="background:#ef4444"></i>abaixo de 60%</span></div>`);
+      }
+
+      setHtml('dxAntesAgora', antesAgoraExecHtml(D));
+
+      const linha = (rot, val) => `<div class="dx-linha"><span>${rot}</span><b>${val}</b></div>`;
+      setHtml('dxQual',
+        linha("Requisições abertas", locNum(R.total)) + linha("Atendidas", locNum(R.atendidas)) + linha("Recusadas", locNum(R.recusadas)) +
+        linha("Pendentes agora", locNum(R.pendentes) + (R.pendAtraso ? ` <small class="dsh-down">(${R.pendAtraso} há + de ${PRAZO_REQ.atencao} dias)</small>` : "")) +
+        linha("Termos emitidos", locNum(T.total)) +
+        (R.semTempo ? `<div class="dx-obs">${R.semTempo} atendimento(s) sem tempo calculável (termo vinculado antes da requisição) ficaram fora do tempo.</div>` : "") +
+        (R.tipos.length ? `<div class="dx-sub-tit">Por tipo de solicitação</div>` + barrasDash(R.tipos, "#3b82f6", "") : ""));
+      setHtml('dxCmp',
+        linha("Itens solicitados", locNum(C.solicitados)) + linha("Compras registradas", locNum(C.comprados)) + linha("Gasto registrado", moedaBR(C.gasto)) +
+        linha("Tempo pedido → compra", C.tempoDias === null ? "-" : (C.tempoDias < 1 ? "< 1 dia" : C.tempoDias.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + " dias")) +
+        linha("Cotações abertas no período", locNum(C.cotacoes)) +
+        linha("Diferença entre orçamentos", C.cotComparadas ? moedaBR(C.diferenca) + (C.pctDif !== null ? ` <small>(${C.pctDif}%)</small>` : "") : "-") +
+        `<div class="dx-obs">Diferença entre o maior orçamento e o escolhido, nas cotações aprovadas com 2 ou mais orçamentos. Indica o ganho de comparar preços; não é economia garantida.</div>`);
+      const card = document.getElementById('dxLocCard');
+      if (card) card.style.display = L ? "" : "none";
+      if (L) setHtml('dxLoc',
+        linha("Contratos ativos", locNum(L.contratos)) + linha("Clientes / unidades", locNum(L.clientes) + " / " + locNum(L.unidades)) + linha("Equipamentos sob contrato", locNum(L.equip)) +
+        linha("Conferência com o Neovero", L.confTot ? `${L.pctConf}% <small>(${L.confOk} de ${L.confTot} unidades OK)</small>` : "-") +
+        linha("Alterações registradas", locNum(L.alteracoes) + " <small>com motivo e usuário</small>"));
+    }
+
+    function antesAgoraExecHtml(D) {
+      const R = D.R, T = D.T, C = D.C, L = D.L;
+      const lin = [
+        ["Pedido de troca de equipamento", "Por mensagem/telefone, sem registro", `${locNum(D.reqsTotalSistema)} requisições com protocolo, data e solicitante`],
+        ["Prazo de atendimento", "Não era medido", R.mediana === null ? "Medido em cada atendimento" : `Medido: mediana de ${duracaoExec(R.mediana)}${R.pctMeta !== null ? `, ${R.pctMeta}% na meta` : ""}`],
+        ["Termo de entrega", "Sem padrão e sem protocolo", `${locNum(D.termosTotalSistema)} termos em PDF padronizado, com protocolo`],
+        ["Pendências", "Dependiam da memória", `${locNum(R.pendentes)} pendente(s) visíveis com a idade de cada uma`],
+        ["Compras", "Sem comparação registrada", `${locNum(C.cotacoes)} cotação(ões) no período, com orçamentos e aprovação registrados`]
+      ];
+      if (L) lin.push(["Contratos de locação", "Planilha solta", `${locNum(L.contratos)} contratos e ${locNum(L.equip)} equipamentos com histórico e conferência`]);
+      return `<div class="dx-aa">` + lin.map(([o, a, b]) => `<div class="dx-aa-l"><div class="dx-aa-o">${o}</div><div class="dx-aa-a">${a}</div><div class="dx-aa-b">${b}</div></div>`).join("") +
+        `<div class="dx-obs">"Antes" descreve o processo manual, que não tinha registros; por isso não há números de antes do sistema.</div></div>`;
+    }
+
+    // Relatório limpo (impressão / salvar em PDF) com os mesmos números do painel
+    function imprimirResumoExec() {
+      const D = dadosResumoExec(), R = D.R, T = D.T, C = D.C, L = D.L, e = escReq;
+      const agora = new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+      const card = (lbl, num, sub) => `<div class="k"><div class="kl">${lbl}</div><div class="kn">${num}</div><div class="ks">${sub}</div></div>`;
+      const ev = D.evol.filter(x => x.abertas);
+      const prim = ev.find(x => x.mediana !== null), ult = ev.slice().reverse().find(x => x.mediana !== null);
+      const tend = prim && ult && prim !== ult ? `<p class="tend">Tendência: ${nomeMesLongoDash(prim.mes)} ${duracaoExec(prim.mediana)} → ${nomeMesLongoDash(ult.mes)} ${duracaoExec(ult.mediana)} (mediana do tempo de atendimento).</p>` : "";
+      const tmp = document.createElement('div'); tmp.innerHTML = antesAgoraExecHtml(D);
+      const aa = [...tmp.querySelectorAll('.dx-aa-l')].map(l => `<tr><td><b>${l.children[0].innerHTML}</b></td><td>${l.children[1].innerHTML}</td><td>${l.children[2].innerHTML}</td></tr>`).join("");
+      const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title>DMA SYS - Resumo executivo</title><style>
+        body{font-family:Arial,Helvetica,sans-serif;color:#0f172a;margin:28px;font-size:12px}
+        h1{font-size:20px;margin:0}.sub{color:#475569;margin:4px 0 14px}.escopo{background:#f1f5f9;border-radius:8px;padding:8px 10px;color:#334155;margin-bottom:14px}
+        .ks0{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}.k{border:1px solid #cbd5e1;border-top:3px solid #1d4ed8;border-radius:8px;padding:8px 10px}
+        .kl{font-size:10px;text-transform:uppercase;color:#475569;font-weight:bold}.kn{font-size:22px;font-weight:bold;margin:2px 0}.ks{font-size:10.5px;color:#475569}
+        h2{font-size:13px;margin:16px 0 6px;border-bottom:2px solid #1d4ed8;padding-bottom:3px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #e2e8f0;padding:5px 7px;text-align:left;vertical-align:top}th{background:#f8fafc}
+        .tend{font-weight:bold;color:#065f46}.obs{color:#64748b;font-size:10.5px;margin-top:8px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+        @media print{body{margin:12mm}.noprint{display:none}}</style></head><body>
+        <button class="noprint" onclick="window.print()" style="float:right;padding:8px 14px;">Imprimir / Salvar PDF</button>
+        <h1>DMA SYS · Resumo executivo</h1><div class="sub">Período: <b>${e(D.periodo)}</b> · gerado em ${agora} · meta de atendimento: ${D.metaH}h</div>
+        <div class="escopo">Mede o que o DMA SYS controla: da solicitação até a liberação do termo para a expedição. Transporte, OS, calibração e segurança elétrica ficam no Neovero.</div>
+        <div class="ks0">
+          ${card("Requisições atendidas", locNum(R.atendidas), R.total ? `de ${R.total} abertas · taxa ${R.taxa === null ? "-" : R.taxa + "%"}` : "-")}
+          ${card("Tempo de atendimento (mediana)", duracaoExec(R.mediana), "média " + duracaoExec(R.media))}
+          ${card(`Dentro da meta (${D.metaH}h)`, R.pctMeta === null ? "-" : R.pctMeta + "%", R.nTempos ? `${R.naMeta} de ${R.nTempos} atendimentos` : "-")}
+          ${card("Termos rastreáveis", locNum(T.comPdf), T.total ? `${T.pctPdf}% com PDF e protocolo` : "-")}
+          ${card("Retrabalho", T.pctRetrab === null ? "-" : T.pctRetrab + "%", `${T.reemitidos} reemitido(s) · ${T.cancelados} cancelado(s)`)}
+          ${card("Compras com comparação", locNum(C.cotComparadas), C.cotComparadas ? `diferença de ${moedaBR(C.diferenca)} entre orçamentos` : "-")}
+        </div>
+        ${tend}
+        <h2>Tempo de atendimento mês a mês</h2>
+        <table><tr><th>Mês</th><th>Requisições</th><th>Mediana</th><th>Média</th><th>% na meta</th></tr>
+        ${ev.map(x => `<tr><td>${nomeMesLongoDash(x.mes)}</td><td>${x.abertas}</td><td>${duracaoExec(x.mediana)}</td><td>${duracaoExec(x.media)}</td><td>${x.pctMeta === null ? "-" : x.pctMeta + "%"}</td></tr>`).join("")}</table>
+        <h2>Antes × Agora</h2><table><tr><th>Processo</th><th>Antes (manual)</th><th>Agora (DMA SYS)</th></tr>${aa}</table>
+        <div class="obs">"Antes" descreve o processo manual, que não tinha registros; por isso não há números de antes do sistema.</div>
+        <h2>Por área</h2><div class="grid3">
+          <div><b>Requisições e termos</b><br>Abertas: ${R.total} · Atendidas: ${R.atendidas} · Recusadas: ${R.recusadas}<br>Pendentes agora: ${R.pendentes}${R.pendAtraso ? ` (${R.pendAtraso} há + de ${PRAZO_REQ.atencao} dias)` : ""}<br>Termos emitidos: ${T.total}</div>
+          <div><b>Compras</b><br>Itens solicitados: ${C.solicitados} · Compras: ${C.comprados}<br>Gasto registrado: ${moedaBR(C.gasto)}<br>Pedido → compra: ${C.tempoDias === null ? "-" : C.tempoDias.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + " dias"}</div>
+          ${L ? `<div><b>Locação</b><br>Contratos ativos: ${L.contratos} · Equipamentos: ${L.equip}<br>Clientes / unidades: ${L.clientes} / ${L.unidades}<br>Conferência com o Neovero: ${L.confTot ? L.pctConf + "%" : "-"}</div>` : ""}
+        </div>
+        <div class="obs">Números calculados a partir dos registros do DMA SYS, com as mesmas regras dos painéis do sistema. Tempo em horas corridas, da abertura da requisição até o termo válido; atendimentos com termo vinculado antes da requisição não entram no tempo. "Diferença entre orçamentos" = maior orçamento − escolhido, nas cotações aprovadas com 2+ orçamentos; não é economia garantida.</div>
+        </body></html>`;
+      const w = window.open("", "_blank");
+      if (!w) { alert("O navegador bloqueou a janela do relatório. Permita pop-ups para o DMA SYS e tente de novo."); return; }
+      w.document.open(); w.document.write(html); w.document.close();
     }
 
     function atualizarDashboardQualidade() {
