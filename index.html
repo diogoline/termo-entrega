@@ -658,6 +658,24 @@
     .dl-conf-leg i { width:10px; height:10px; border-radius:3px; display:inline-block; }
     .dl-conf-rod { display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px 16px; margin-top:12px; padding-top:10px; border-top:1px dashed var(--borda); font-size:12px; color:var(--txt2); }
     .dl-conf-cli { max-height:260px; overflow-y:auto; padding-right:4px; }
+    .jan-bts { display:inline-flex; align-items:center; gap:14px; }
+    .jan-bt-min { cursor:pointer; color:#888; font-size:13px; }
+    .jan-bt-min:hover { color:#1d4ed8; }
+    .jan-dock { position:fixed; left:12px; right:84px; bottom:40px; z-index:1001; display:flex; gap:8px; align-items:center; overflow-x:auto; padding:6px; background:rgba(15,23,42,.92); border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,.25); backdrop-filter:blur(4px); }
+    .jan-aba { display:flex; align-items:center; gap:8px; flex:0 0 auto; max-width:260px; padding:6px 8px 6px 10px; background:#1e293b; color:#e2e8f0; border:1px solid #334155; border-radius:9px; cursor:pointer; transition:background .15s, border-color .15s; }
+    .jan-aba:hover { background:#273449; border-color:#3b82f6; }
+    .jan-aba > i { color:#60a5fa; font-size:13px; }
+    .jan-aba-txt { display:flex; flex-direction:column; min-width:0; line-height:1.15; }
+    .jan-aba-txt b { font-size:12px; white-space:nowrap; }
+    .jan-aba-txt small { font-size:10.5px; color:#94a3b8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px; }
+    .jan-aba em { font-style:normal; font-size:10px; color:#fca5a5; text-transform:uppercase; }
+    .jan-aba-x { color:#94a3b8; padding:2px 4px; border-radius:5px; }
+    .jan-aba-x:hover { color:#fff; background:#ef4444; }
+    .jan-limpar { color:#94a3b8; cursor:pointer; padding:6px 8px; margin-left:auto; flex:0 0 auto; }
+    .jan-limpar:hover { color:#fff; }
+    body.jan-dock-on { padding-bottom:110px; }
+    body.jan-dock-on .modal-overlay { padding-bottom:96px; box-sizing:border-box; }
+    body.jan-dock-on .modal-overlay .modal-box { max-height:calc(100vh - 120px); }
     .loc-sem-acesso { display:flex; flex-direction:column; align-items:center; gap:8px; padding:60px 20px; color:#64748b; text-align:center; }
     .loc-sem-acesso i { font-size:34px; color:#94a3b8; }
     .loc-sem-acesso b { font-size:18px; color:#334155; }
@@ -1758,7 +1776,7 @@
     <div class="modal-box" style="width:900px;">
       <div class="modal-title">
         <span id="fichaLocTitulo">Contrato</span>
-        <span onclick="fecharFichaLoc()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+        <span class="jan-bts"><span class="jan-bt-min" onclick="minimizarFichaLoc()" title="Minimizar (fica numa aba no rodapé)"><i class="fa-solid fa-window-minimize"></i></span><span onclick="fecharFichaLoc()" style="cursor:pointer; color:#888;" title="Fechar"><i class="fa-solid fa-xmark"></i></span></span>
       </div>
       <div id="fichaLocCorpo"></div>
     </div>
@@ -6651,6 +6669,7 @@
         }
         [...aba.children].forEach(el => { if (el.id === 'locSemAcesso') el.style.display = ok ? "none" : ""; else el.style.display = ok ? (el.dataset.locDisp || "") : "none"; });
       }
+      if (!ok) DockJanelas.removerModulo('locacao');
       if (!ok && typeof moduloDash !== "undefined" && moduloDash === "LOC") { moduloDash = "QUAL"; try { localStorage.setItem('dmaModuloDash', "QUAL"); } catch (e) {} }
       return ok;
     }
@@ -6840,6 +6859,7 @@
       const lista = locContratosFiltrados(false);
       if (subabaLoc === "conf") renderizarConferenciaLoc(); else if (subabaLoc === "familias") renderizarFamiliasLoc(); else renderizarCardsLoc(lista);
       if (fichaLocAberta && document.getElementById('modalFichaLoc')?.classList.contains('active')) desenharFichaLoc(fichaLocAberta);
+      if (DockJanelas.itens.length) DockJanelas.desenhar();
     }
 
     function renderizarCardsLoc(lista) {
@@ -7359,14 +7379,70 @@
       });
     }
 
+    // ---------- Janelas minimizadas (componente reutilizável) ----------
+    // Qualquer módulo pode usar: DockJanelas.minimizar({ chave, modulo, icone, rotulo: () => ({titulo, sub, alerta}) | null, reabrir })
+    // modulo = nome usado em mudarAba(). As abas ficam no rodapé em todas as telas; clicar volta ao módulo e reabre a janela.
+    var DockJanelas = {
+      MAX: 8,
+      itens: [],
+      minimizar(item) {
+        this.itens = this.itens.filter(x => x.chave !== item.chave);
+        this.itens.push(item);
+        if (this.itens.length > this.MAX) this.itens.shift();   // passou do limite: sai a mais antiga
+        this.desenhar();
+      },
+      remover(chave) { const n = this.itens.length; this.itens = this.itens.filter(x => x.chave !== chave); if (n !== this.itens.length) this.desenhar(); },
+      removerModulo(modulo) { const n = this.itens.length; this.itens = this.itens.filter(x => x.modulo !== modulo); if (n !== this.itens.length) this.desenhar(); },
+      restaurar(chave) {
+        const item = this.itens.find(x => x.chave === chave);
+        if (!item) return;
+        // há outra janela por cima (formulário, motivo etc.)? termina ela primeiro para não misturar contratos
+        const outra = [...document.querySelectorAll('.modal-overlay.active')].find(m => m.id !== 'modalFichaLoc');
+        if (outra) { alert("Conclua ou feche a janela aberta antes de trocar de contrato."); return; }
+        this.itens = this.itens.filter(x => x !== item);
+        const aba = document.querySelector('.tab-content.active');
+        if (item.modulo && (!aba || aba.id.toLowerCase() !== ('aba' + item.modulo).toLowerCase())) mudarAba(item.modulo);
+        this.desenhar();
+        item.reabrir();
+      },
+      desenhar() {
+        let el = document.getElementById('dockJanelas');
+        if (!el) { el = document.createElement('div'); el.id = 'dockJanelas'; el.className = 'jan-dock'; document.body.appendChild(el); }
+        const vis = [];
+        this.itens = this.itens.filter(x => { let r = null; try { r = x.rotulo(); } catch (e) {} if (r) vis.push([x, r]); return !!r; });   // some se o registro deixou de existir
+        el.style.display = vis.length ? "" : "none";
+        document.body.classList.toggle('jan-dock-on', vis.length > 0);
+        el.innerHTML = vis.map(([x, r]) => `
+          <div class="jan-aba" onclick="DockJanelas.restaurar('${locJsq(x.chave)}')" title="Reabrir ${escReq(r.titulo)}${r.sub ? " · " + escReq(r.sub) : ""}">
+            <i class="fa-solid ${escReq(x.icone || "fa-window-maximize")}"></i>
+            <span class="jan-aba-txt"><b>${escReq(r.titulo)}</b>${r.sub ? `<small>${escReq(r.sub)}</small>` : ""}</span>
+            ${r.alerta ? `<em>${escReq(r.alerta)}</em>` : ""}
+            <span class="jan-aba-x" onclick="event.stopPropagation(); DockJanelas.remover('${locJsq(x.chave)}')" title="Fechar"><i class="fa-solid fa-xmark"></i></span>
+          </div>`).join("") + (vis.length > 1 ? `<span class="jan-limpar" onclick="DockJanelas.itens = []; DockJanelas.desenhar();" title="Fechar todas"><i class="fa-solid fa-broom"></i></span>` : "");
+      }
+    };
+
     // ---------- Ficha do contrato ----------
     function abrirFichaLoc(id) {
       if (!locContrato(id)) return;
+      // outra ficha aberta? ela vai para o rodapé em vez de se perder
+      if (fichaLocAberta && fichaLocAberta !== id && document.getElementById('modalFichaLoc').classList.contains('active')) minimizarFichaLoc();
+      DockJanelas.remover('loc:' + id);
       fichaLocAberta = id;
       desenharFichaLoc(id);
       document.getElementById('modalFichaLoc').classList.add('active');
     }
     function fecharFichaLoc() { fichaLocAberta = ""; document.getElementById('modalFichaLoc').classList.remove('active'); }
+    function minimizarFichaLoc() {
+      const id = fichaLocAberta;
+      if (!id) return;
+      DockJanelas.minimizar({
+        chave: 'loc:' + id, modulo: 'locacao', icone: 'fa-file-contract',
+        rotulo: () => { const c = locContrato(id); return c ? { titulo: c.numContrato || c.id, sub: c.unidade, alerta: locInativo(c) ? String(c.status).toLowerCase() : "" } : null; },
+        reabrir: () => abrirFichaLoc(id)
+      });
+      fecharFichaLoc();
+    }
     function fecharModalLoc(id) { document.getElementById(id)?.classList.remove('active'); }
 
     function textoEventoLoc(h, itensPorId) {
