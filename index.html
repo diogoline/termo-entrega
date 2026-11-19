@@ -708,6 +708,11 @@
     .dx-obs { font-size:11px; color:var(--txt2); margin-top:8px; line-height:1.4; }
     .dx-rodape { font-size:11px; color:var(--txt2); text-align:center; margin:6px 0 4px; }
     .cot-falta-esc { color:#b45309; font-weight:bold; }
+    .cmp-linha-aprovada td { background:#f0fdf4 !important; }
+    .cmp-linha-aprovada td:first-child { box-shadow:inset 5px 0 0 #16a34a; }
+    .cmp-selo-aprovado { background:#16a34a !important; color:#fff !important; font-weight:bold; letter-spacing:.2px; }
+    .cmp-linha-reprovada td { background:#fff1f2 !important; }
+    .cmp-linha-reprovada td:first-child { box-shadow:inset 5px 0 0 #e11d48; }
     .cot-destaque td { animation:cotPisca 2.6s ease; }
     @keyframes cotPisca { 0%, 60% { background:#fde68a; } 100% { background:transparent; } }
     .cot-aviso-novo { font-size:11.5px; color:#1e40af; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:8px 10px; }
@@ -1065,9 +1070,9 @@
                   <th class="td-center" style="width:70px;">Foto</th>
                   <th class="td-center" style="width:70px;">Nº</th>
                   <th>Item</th>
+                  <th style="width:170px;">Cliente / origem</th>
                   <th class="td-center" style="width:60px;">Qtd</th>
                   <th style="width:120px;">Solicitante</th>
-                  <th style="width:150px;">Cliente</th>
                   <th class="td-center" style="width:85px;">Ref.</th>
                   <th class="td-center" style="width:95px;">Data</th>
                   <th class="td-center" style="width:130px;">Situação</th>
@@ -5117,7 +5122,9 @@
         if (txt && !normalizarTextoReq([i.codigo, i.item, i.solicitante, i.cliente, i.os, i.obs].join(" ")).includes(txt)) return false;
         return true;
       });
-      lista = ordenarItensCompra(lista);
+      // Grade: o registro mais recente fica em cima (data de cadastro; empate pelo nº)
+      const numCmp = c => parseInt(String(c || "").replace(/\D/g, ""), 10) || 0;
+      lista = lista.slice().sort((a, b) => ((tempoDataBR(b.dataHora) || 0) - (tempoDataBR(a.dataHora) || 0)) || (numCmp(b.codigo) - numCmp(a.codigo)));
       listaCmpRenderizada = lista;
 
       if (!lista.length) {
@@ -5145,16 +5152,16 @@
           const compraInfo = i.status !== "PENDENTE" && (i.valorPago !== "" || i.fornecedor)
             ? `<span class="req-enviado" style="color:#1d4ed8;">${i.valorPago !== "" ? "R$ " + Number(i.valorPago).toFixed(2).replace(".", ",") : ""}${i.valorPago !== "" && i.fornecedor ? " · " : ""}${escReq(i.fornecedor || "")}</span>` : "";
           return `
-          <tr${(i.status === "CANCELADO" || i.status === "ENTREGUE") ? ' class="linha-cmp-inativa"' : ''} title="${escReq(i.historico || '')}">
+          <tr class="${(i.status === "CANCELADO" || i.status === "ENTREGUE") ? 'linha-cmp-inativa' : ''} ${i.status === "PENDENTE" && i.validacao === "APROVADO" ? 'cmp-linha-aprovada' : ''} ${i.status === "PENDENTE" && i.validacao === "REPROVADO" ? 'cmp-linha-reprovada' : ''}" title="${escReq(i.historico || '')}">
             <td class="td-center">${i.status === "CANCELADO" ? "" : `<input type="checkbox" class="chk-req" ${selecaoCompras.has(i.codigo) ? "checked" : ""} onchange="alternarSelecaoCompra('${escReq(i.codigo)}', this.checked)">`}</td>
             <td class="td-center">${foto}</td>
             <td class="td-center"><b>${escReq(i.codigo)}</b></td>
             <td><b>${escReq(i.item)}</b><span class="cmp-urg" style="background:${PRIO_CMP[prioCmp(i)].fundo}; color:${PRIO_CMP[prioCmp(i)].cor};">${prioCmp(i)}</span>
               ${i.os ? `<span class="req-enviado" style="color:#475569;">OS ${escReq(i.os)}</span>` : ''}
               ${i.obs ? `<span class="req-enviado" style="color:#64748b;">${escReq(i.obs)}</span>` : ''}${compraInfo}</td>
+            <td>${escReq(i.cliente || "-")}${seloOrigemCompra(i)}</td>
             <td class="td-center"><b>${qtdUnCmp(i.qtd, i.unidade)}</b></td>
             <td>${escReq(i.solicitante || "-")}</td>
-            <td>${escReq(i.cliente || "-")}${seloOrigemCompra(i)}</td>
             <td class="td-center" style="font-size:11px;">${escReq(ref)}</td>
             <td class="td-center">${escReq(String(i.dataHora || "").split(" ")[0] || "-")}</td>
             <td class="td-center"><span class="cmp-st cmp-st-${i.status}">${i.status}</span>${cotacaoAtivaDoItem(i) ? `<span class="selo-dias" style="background:#ede9fe; color:#6d28d9; cursor:pointer;" onclick="irParaCotacaoCmp('${escReq(i.cotacao)}')" title="Abrir a cotação ${escReq(i.cotacao)} no Mapa de Cotação">em cotação ${escReq(i.cotacao)}</span>` : ''}${seloValidacaoCmp(i)}${selo}</td>
@@ -5561,7 +5568,7 @@
     }
 
     function seloValidacaoCmp(i) {
-      if (i.validacao === "APROVADO") return `<span class="selo-dias" style="background:#ecfdf5; color:#047857;" title="${escReq(i.validacaoInfo || '')}">✔ validado</span>`;
+      if (i.validacao === "APROVADO") return `<span class="selo-dias cmp-selo-aprovado" title="${escReq(i.validacaoInfo || '')}">✔ APROVADO</span>`;
       if (i.validacao === "REPROVADO") return `<span class="selo-dias" style="background:#ffe4e6; color:#be123c;" title="${escReq(i.validacaoInfo || '')}">✖ reprovado</span>`;
       if (i.validacao === "AGUARDANDO" && i.status === "PENDENTE") return `<span class="selo-dias" style="background:#f3e8ff; color:#7e22ce;" title="${escReq(i.validacaoInfo || '')}">aguardando validação</span>`;
       return "";
@@ -6576,6 +6583,24 @@
       };
       requestAnimationFrame(passo);
     }
+
+    // ===================== CAIXA ALTA PADRÃO =====================
+    // Tudo o que é digitado em campos de texto vira MAIÚSCULA (sem mexer em dados já gravados).
+    // Exceções: usuário/senha do login, chat, mensagens de WhatsApp, e-mail/site/link, e campos com data-minusculas.
+    (function () {
+      const EXCECOES = /^(loginUsuario|loginSenha|inputMsgChat|msgChatWa|valZapMensagem)$|email|site|link|url/i;
+      document.addEventListener('input', function (e) {
+        const el = e.target;
+        if (!el || e.isComposing) return;
+        const ehTexto = el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && (!el.type || el.type === "text" || el.type === "search"));
+        if (!ehTexto || el.dataset.minusculas !== undefined || EXCECOES.test(el.id || "")) return;
+        const v = el.value, up = v.toLocaleUpperCase('pt-BR');
+        if (v === up || up.length !== v.length) return;
+        const a = el.selectionStart, b = el.selectionEnd;
+        el.value = up;
+        try { el.setSelectionRange(a, b); } catch (x) {}
+      }, true);   // fase de captura: os oninput dos campos já recebem o texto em maiúsculas
+    })();
 
     // ===================== RESUMO EXECUTIVO (Diretoria / gestão) =====================
     // Só leitura. Reaproveita as regras dos painéis existentes para os números baterem:
