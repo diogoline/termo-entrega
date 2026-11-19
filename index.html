@@ -707,6 +707,9 @@
     .dx-var { margin-top:4px; font-size:11px; }
     .dx-obs { font-size:11px; color:var(--txt2); margin-top:8px; line-height:1.4; }
     .dx-rodape { font-size:11px; color:var(--txt2); text-align:center; margin:6px 0 4px; }
+    .cot-destaque td { animation:cotPisca 2.6s ease; }
+    @keyframes cotPisca { 0%, 60% { background:#fde68a; } 100% { background:transparent; } }
+    .cot-aviso-novo { font-size:11.5px; color:#1e40af; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:8px 10px; }
     .loc-sem-acesso { display:flex; flex-direction:column; align-items:center; gap:8px; padding:60px 20px; color:#64748b; text-align:center; }
     .loc-sem-acesso i { font-size:34px; color:#94a3b8; }
     .loc-sem-acesso b { font-size:18px; color:#334155; }
@@ -2141,6 +2144,10 @@
           <label>Quantidade:</label>
           <input type="text" id="cmpQtd" placeholder="Ex: 2">
         </div>
+        <div class="form-group" style="flex:0.8;">
+          <label>Unidade:</label>
+          <input type="text" id="cmpUnidade" list="listUnidadesCmp" placeholder="UN" oninput="this.value=this.value.toUpperCase()">
+        </div>
       </div>
       <div class="form-row">
         <div class="form-group" style="flex:1;">
@@ -2223,6 +2230,7 @@
 
   <datalist id="listSolicitantesCmp"></datalist>
   <datalist id="listCategoriasCmp"></datalist>
+  <datalist id="listUnidadesCmp"></datalist>
   <datalist id="listClientesCmp"></datalist>
   <datalist id="listFornecedoresCmp"></datalist>
 
@@ -2308,10 +2316,24 @@
           <input type="text" id="cotQtd" oninput="calcularCotacaoTela()" placeholder="1">
         </div>
       </div>
+      <div class="form-row" id="boxItemNovoCot">
+        <div class="form-group"><label>Categoria (item novo):</label><input type="text" id="cotCategoria" list="listCategoriasCmp" placeholder="DIVERSOS"></div>
+        <div class="form-group" style="flex:0.6;"><label>Unidade:</label><input type="text" id="cotUnidade" list="listUnidadesCmp" placeholder="UN" oninput="this.value=this.value.toUpperCase()"></div>
+        <div class="form-group" style="flex:2.4; justify-content:flex-end;"><div class="cot-aviso-novo"><i class="fa-solid fa-circle-info"></i> Ao salvar, este produto é cadastrado na Lista de Compras e fica ligado a esta cotação.</div></div>
+      </div>
       <div class="form-row">
         <div class="form-group"><label>Solicitante:</label><input type="text" id="cotSolicitante" list="listSolicitantesCmp"></div>
         <div class="form-group"><label>Nº da OS (opcional):</label><input type="text" id="cotOs"></div>
         <div class="form-group" style="flex:2;"><label>Observação (opcional):</label><input type="text" id="cotObs"></div>
+      </div>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label>Fotos do produto (até 3) — as mesmas do item da lista:</label>
+        <div class="cmp-fotos" id="cotFotosPrevia"></div>
+        <input type="file" id="cotInputFotos" accept="image/*" multiple style="display:none;" onchange="adicionarFotosCot(this.files)">
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn-secundario" id="btnAddFotoCot" style="width:auto; height:36px; padding:0 16px;" onclick="document.getElementById('cotInputFotos').click()"><i class="fa-solid fa-camera"></i> Adicionar foto</button>
+        <span style="font-size:11px; color:#64748b; margin-left:6px;">A 1ª foto sai no mapa impresso (canto superior esquerdo).</span>
+        </div>
       </div>
       <div class="cot-orcs" id="cotOrcs"></div>
       <div id="cotResultado" class="cot-resultado"></div>
@@ -4960,8 +4982,13 @@
     var CATEGORIAS_CMP = [
       "MÉDICA", "ODONTOLOGIA", "OFTALMOLOGIA", "LABORATÓRIO", "FISIOTERAPIA", "RADIOLOGIA / IMAGEM",
       "ESTERILIZAÇÃO", "HOSPITALAR", "VETERINÁRIA", "REFRIGERAÇÃO", "ELETRÔNICA", "ELÉTRICA",
-      "HIDRÁULICA / PNEUMÁTICA", "MECÂNICA", "INFORMÁTICA", "FERRAMENTAS", "INFRAESTRUTURA", "DIVERSOS"
+      "HIDRÁULICA", "PNEUMÁTICA", "MECÂNICA", "INFORMÁTICA", "FERRAMENTAS", "INFRAESTRUTURA", "DIVERSOS"
     ];
+    // Unidades de medida sugeridas (é possível digitar outra)
+    var UNIDADES_CMP = ["UN", "PÇ", "PAR", "JG", "KIT", "CX", "PCT", "M", "KG", "L", "RL"];
+    // Quantidade com unidade (ex.: "2 PÇ"); itens antigos sem unidade mostram só o número
+    function qtdUnCmp(qtd, unidade) { return escReq(qtd) + (unidade ? " " + escReq(unidade) : ""); }
+    function unidadeDaCot(c) { const i = c && c.itemCodigo ? (bancoDados.itensCompra || []).find(x => x.codigo === c.itemCodigo) : null; return i ? (i.unidade || "") : (c && c.unidade) || ""; }
     var PRIO_CMP = { "ALTA": { cor: "#e11d48", fundo: "#ffe4e6", ordem: 3 }, "MÉDIA": { cor: "#b45309", fundo: "#fef3c7", ordem: 2 }, "BAIXA": { cor: "#475569", fundo: "#f1f5f9", ordem: 1 } };
     function prioCmp(i) { return PRIO_CMP[i && i.prioridade] ? i.prioridade : (i && i.urgente ? "ALTA" : "MÉDIA"); }
 
@@ -4986,6 +5013,7 @@
       set('listSolicitantesCmp', unicos([...(bancoDados.usuarios || []).map(u => u.nome), ...itens.map(i => i.solicitante)]));
       const cats = unicos([...CATEGORIAS_CMP, ...itens.map(i => i.categoria)]);
       set('listCategoriasCmp', cats);
+      set('listUnidadesCmp', unicos([...UNIDADES_CMP, ...itens.map(i => i.unidade)]));
       set('listClientesCmp', unicos(["LINEMED", ...(bancoDados.clientes || []), ...itens.map(i => i.cliente)]));
       set('listProdutosCmp', unicos([...itens.map(i => i.item), ...(bancoDados.cotacoes || []).map(c => c.produto)]));
       set('listFornecedoresCmp', unicos([...itens.map(i => i.fornecedor), ...(bancoDados.fornecedores || []).filter(f => f.ativo).map(f => f.nome)]));
@@ -5107,12 +5135,12 @@
             <td><b>${escReq(i.item)}</b><span class="cmp-urg" style="background:${PRIO_CMP[prioCmp(i)].fundo}; color:${PRIO_CMP[prioCmp(i)].cor};">${prioCmp(i)}</span>
               ${i.os ? `<span class="req-enviado" style="color:#475569;">OS ${escReq(i.os)}</span>` : ''}
               ${i.obs ? `<span class="req-enviado" style="color:#64748b;">${escReq(i.obs)}</span>` : ''}${compraInfo}</td>
-            <td class="td-center"><b>${escReq(i.qtd)}</b></td>
+            <td class="td-center"><b>${qtdUnCmp(i.qtd, i.unidade)}</b></td>
             <td>${escReq(i.solicitante || "-")}</td>
             <td>${escReq(i.cliente || "-")}</td>
             <td class="td-center" style="font-size:11px;">${escReq(ref)}</td>
             <td class="td-center">${escReq(String(i.dataHora || "").split(" ")[0] || "-")}</td>
-            <td class="td-center"><span class="cmp-st cmp-st-${i.status}">${i.status}</span>${cotacaoAtivaDoItem(i) ? `<span class="selo-dias" style="background:#ede9fe; color:#6d28d9; cursor:pointer;" onclick="trocarSubabaCompras('mapa')" title="Abrir o Mapa de Cotação">em cotação ${escReq(i.cotacao)}</span>` : ''}${seloValidacaoCmp(i)}${selo}</td>
+            <td class="td-center"><span class="cmp-st cmp-st-${i.status}">${i.status}</span>${cotacaoAtivaDoItem(i) ? `<span class="selo-dias" style="background:#ede9fe; color:#6d28d9; cursor:pointer;" onclick="irParaCotacaoCmp('${escReq(i.cotacao)}')" title="Abrir a cotação ${escReq(i.cotacao)} no Mapa de Cotação">em cotação ${escReq(i.cotacao)}</span>` : ''}${seloValidacaoCmp(i)}${selo}</td>
             <td class="td-center"><div class="cmp-acoes nowrap">${acoes}</div></td>
           </tr>`;
         }).join('');
@@ -5212,6 +5240,7 @@
       document.getElementById('tituloModalItemCompra').innerText = i ? "Editar item " + i.codigo : "Novo Item da Lista de Compras";
       document.getElementById('cmpItem').value = i ? i.item : "";
       document.getElementById('cmpQtd').value = i ? i.qtd : "";
+      document.getElementById('cmpUnidade').value = i ? (i.unidade || "") : "UN";
       document.getElementById('cmpSolicitante').value = i ? i.solicitante : "";
       document.getElementById('cmpCategoria').value = i ? i.categoria : "";
       document.getElementById('cmpCliente').value = i ? i.cliente : "";
@@ -5249,6 +5278,7 @@
         acao: itemCmpEditando ? "ATUALIZAR_ITEM_COMPRA" : "CRIAR_ITEM_COMPRA",
         codigo: itemCmpEditando || "",
         item: item, qtd: qtd,
+        unidade: document.getElementById('cmpUnidade').value.trim().toUpperCase() || "UN",
         solicitante: document.getElementById('cmpSolicitante').value.trim(),
         categoria: document.getElementById('cmpCategoria').value.trim(),
         cliente: document.getElementById('cmpCliente').value.trim(),
@@ -5272,7 +5302,7 @@
         if (res.status !== "sucesso") { alert("Não foi possível salvar: " + (res.mensagem || "erro desconhecido.")); return; }
         if (!bancoDados.itensCompra) bancoDados.itensCompra = [];
         const dadosItem = {
-          item: item.toUpperCase(), qtd: qtd, solicitante: payload.solicitante.toUpperCase(), categoria: (payload.categoria || "DIVERSOS").toUpperCase(),
+          item: item.toUpperCase(), qtd: qtd, unidade: payload.unidade, solicitante: payload.solicitante.toUpperCase(), categoria: (payload.categoria || "DIVERSOS").toUpperCase(),
           cliente: payload.cliente.toUpperCase(), referencia: ref, prioridade: payload.prioridade, urgente: payload.prioridade === "ALTA", os: payload.os, obs: payload.obs, fotos: res.fotos || []
         };
         if (itemCmpEditando) {
@@ -5298,7 +5328,7 @@
       statusCmpAlvo = { codigo: codigo, novo: novo };
       const titulos = { COMPRADO: "Marcar como comprado", ENTREGUE: "Marcar como entregue", CANCELADO: "Cancelar item", PENDENTE: "Voltar para pendente" };
       document.getElementById('tituloStatusCompra').innerText = titulos[novo] + " · " + codigo;
-      document.getElementById('infoStatusCompra').innerHTML = `<b>${escReq(i.item)}</b><br>Qtd: ${escReq(i.qtd)} · Solicitante: ${escReq(i.solicitante || '-')} · Cliente: ${escReq(i.cliente || '-')}`;
+      document.getElementById('infoStatusCompra').innerHTML = `<b>${escReq(i.item)}</b><br>Qtd: ${qtdUnCmp(i.qtd, i.unidade)} · Solicitante: ${escReq(i.solicitante || '-')} · Cliente: ${escReq(i.cliente || '-')}`;
       document.getElementById('camposCompradoCmp').style.display = novo === "COMPRADO" ? "" : "none";
       document.getElementById('campoMotivoCmp').style.display = novo === "CANCELADO" ? "" : "none";
       document.getElementById('cmpValorPago').value = "";
@@ -5370,7 +5400,7 @@
                 ${pendente ? `<span class="prio p-${p === "MÉDIA" ? "MEDIA" : p}">${p === "ALTA" ? "⚠ " : ""}PRIORIDADE ${p}</span>` : ""}
                 ${i.status === "COMPRADO" ? '<span class="jac">JÁ COMPRADO</span>' : ''}
                 ${pendente && i.validacao === "APROVADO" ? '<span class="val">✔ VALIDADO</span>' : ''}
-                <span class="qtd">QTD: <b>${escReq(i.qtd)}</b></span>
+                <span class="qtd">QTD: <b>${qtdUnCmp(i.qtd, i.unidade)}</b></span>
               </div>
               <div class="desc">${escReq(i.item)}</div>
               <div class="meta">Ref.: <b>${escReq(ref)}</b> · Cliente: <b>${escReq(i.cliente || "—")}</b> · Pedido por: <b>${escReq(i.solicitante || "—")}</b>${i.os ? ` · OS <b>${escReq(i.os)}</b>` : ""}</div>
@@ -5678,7 +5708,7 @@
           <td class="td-center"><b>${escReq(c.codigo)}</b></td>
           <td class="td-center">${escReq(String(c.dataHora || '').split(' ')[0])}</td>
           <td><b>${escReq(c.produto)}</b>${c.itemCodigo ? `<span class="req-enviado" style="color:#1d4ed8;">Item da lista Nº ${escReq(c.itemCodigo)}</span>` : ''}${c.os ? `<span class="req-enviado" style="color:#475569;">OS ${escReq(c.os)}</span>` : ''}</td>
-          <td class="td-center"><b>${escReq(c.qtd)}</b></td>
+          <td class="td-center"><b>${qtdUnCmp(c.qtd, unidadeDaCot(c))}</b></td>
           <td class="cot-grid-orc">${orcHtml}</td>
           <td><b>${escReq(esc.fornecedor || '-')}</b><span class="req-enviado" style="color:#0f172a;">${moedaBR(c.status === "COMPRADA" && c.valorFinal !== "" ? c.valorFinal : r.totais[c.escolhido])}</span>${c.justificativa ? `<span class="req-enviado" style="color:#64748b;">${escReq(c.justificativa)}</span>` : ''}</td>
           <td class="td-center">${seloStatusCot(c.status)}${c.aprovacaoInfo ? `<span class="selo-dias dias-neutro" title="${escReq(c.aprovacaoInfo)}">${escReq(c.aprovacaoInfo.split(' em ')[0])}</span>` : ''}</td>
@@ -5690,10 +5720,24 @@
     // ----- Cadastro / edição da cotação -----
     function opcoesItensCotacao(atual) {
       const itens = (bancoDados.itensCompra || []).filter(i => i.status === "PENDENTE" && (!cotacaoAtivaDoItem(i) || i.codigo === atual));
-      return '<option value="">— Cotação avulsa (sem item da lista) —</option>' +
-        ordenarItensCompra(itens).map(i => `<option value="${escReq(i.codigo)}">Nº ${escReq(i.codigo)} · ${escReq(i.item)} (qtd ${escReq(i.qtd)})</option>`).join('');
+      return '<option value="">— Item novo (será cadastrado na lista) —</option>' +
+        ordenarItensCompra(itens).map(i => `<option value="${escReq(i.codigo)}">Nº ${escReq(i.codigo)} · ${escReq(i.item)} (qtd ${qtdUnCmp(i.qtd, i.unidade)})</option>`).join('');
     }
 
+    // Lista → Mapa: abre o Mapa já filtrado na cotação do item e destaca a linha
+    function irParaCotacaoCmp(codigo) {
+      trocarSubabaCompras('mapa');
+      const st = document.getElementById('filtroStatusCot'), tx = document.getElementById('filtroTextoCot');
+      if (st) st.value = "TODAS";
+      if (tx) tx.value = codigo;
+      renderizarCotacoes();
+      const linha = [...document.querySelectorAll('#corpoCotacoes tr')].find(tr => (tr.cells[0] && tr.cells[0].innerText.trim()) === codigo);
+      if (linha) {
+        linha.scrollIntoView({ behavior: "smooth", block: "center" });
+        linha.classList.add('cot-destaque');
+        setTimeout(() => linha.classList.remove('cot-destaque'), 2600);
+      }
+    }
     function abrirModalCotacao(codigo, itemCodigo) {
       const c = codigo ? (bancoDados.cotacoes || []).find(x => x.codigo === codigo) : null;
       cotEditando = c ? c.codigo : null;
@@ -5708,18 +5752,57 @@
       document.getElementById('cotOs').value = c ? c.os : "";
       document.getElementById('cotObs').value = c ? c.obs : "";
       document.getElementById('cotJustificativa').value = c ? c.justificativa : "";
+      document.getElementById('cotCategoria').value = "";
+      document.getElementById('cotUnidade').value = "UN";
+      const itC = c && c.itemCodigo ? (bancoDados.itensCompra || []).find(x => x.codigo === c.itemCodigo) : null;
+      fotosCotManter = itC ? (itC.fotos || []).slice() : (c ? (c.fotos || []).slice() : []);
+      fotosCotNovas = [];
+      desenharFotosCot();
       desenharOrcsCot(c ? c.orcamentos : []);
       if (!c && itemCodigo) aoEscolherItemCotacao();
+      mostrarCamposItemNovoCot();
       calcularCotacaoTela();
       dicaHistorico(document.getElementById('cotProduto').value, 'dicaHistCot');
       document.getElementById('modalCotacao').classList.add('active');
     }
 
-    function fecharModalCotacao() { document.getElementById('modalCotacao').classList.remove('active'); cotEditando = null; }
+    function fecharModalCotacao() { document.getElementById('modalCotacao').classList.remove('active'); cotEditando = null; fotosCotManter = []; fotosCotNovas = []; }
+
+    // ----- Cotação: campos do item novo e fotos (gravadas no item da lista) -----
+    var fotosCotManter = [], fotosCotNovas = [];
+    function mostrarCamposItemNovoCot() {
+      const box = document.getElementById('boxItemNovoCot');
+      const c = cotEditando ? (bancoDados.cotacoes || []).find(x => x.codigo === cotEditando) : null;
+      // só aparece quando a cotação vai criar o item (sem item escolhido e sem item já ligado)
+      if (box) box.style.display = (!document.getElementById('cotItem').value && !(c && c.itemCodigo)) ? "" : "none";
+    }
+    async function adicionarFotosCot(arquivos) {
+      for (const arq of Array.from(arquivos || [])) {
+        if (fotosCotManter.length + fotosCotNovas.length >= MAX_FOTOS_CMP) { alert("Limite de " + MAX_FOTOS_CMP + " fotos por item."); break; }
+        try { fotosCotNovas.push(await comprimirImagemCompra(arq, 1200, 0.8)); } catch (e) { alert(e.message); }
+      }
+      document.getElementById('cotInputFotos').value = "";
+      desenharFotosCot();
+    }
+    function removerFotoCot(tipo, idx) {
+      if (tipo === 'manter') fotosCotManter.splice(idx, 1); else fotosCotNovas.splice(idx, 1);
+      desenharFotosCot();
+    }
+    function desenharFotosCot() {
+      const box = document.getElementById('cotFotosPrevia');
+      if (!box) return;
+      box.innerHTML = fotosCotManter.map((id, i) => `<div class="cmp-foto-item"><img src="${urlFotoCompra(id)}" alt="Foto"><button type="button" onclick="removerFotoCot('manter', ${i})" title="Remover">✕</button></div>`)
+        .concat(fotosCotNovas.map((d, i) => `<div class="cmp-foto-item"><img src="${d}" alt="Foto nova"><button type="button" onclick="removerFotoCot('nova', ${i})" title="Remover">✕</button></div>`)).join('');
+      document.getElementById('btnAddFotoCot').disabled = fotosCotManter.length + fotosCotNovas.length >= MAX_FOTOS_CMP;
+    }
 
     function aoEscolherItemCotacao() {
       const cod = document.getElementById('cotItem').value;
       const i = (bancoDados.itensCompra || []).find(x => x.codigo === cod);
+      mostrarCamposItemNovoCot();
+      // fotos acompanham o item escolhido (as novas ainda não enviadas continuam)
+      fotosCotManter = i ? (i.fotos || []).slice() : [];
+      desenharFotosCot();
       if (!i) return;
       document.getElementById('cotProduto').value = i.item;
       document.getElementById('cotQtd').value = i.qtd;
@@ -5810,24 +5893,36 @@
       if (idxEsc !== r.custoBeneficio && idxEsc !== r.maisBarato && just.length < 5) { alert("O fornecedor escolhido não é o indicado. Informe a justificativa."); return; }
 
       const payload = { acao: "SALVAR_COTACAO", codigo: cotEditando || "", itemCodigo: document.getElementById('cotItem').value, produto, qtd,
+        categoria: document.getElementById('cotCategoria').value.trim(), unidade: document.getElementById('cotUnidade').value.trim().toUpperCase() || "UN",
+        fotosManter: fotosCotManter.slice(), fotosNovas: fotosCotNovas.slice(),
         solicitante: document.getElementById('cotSolicitante').value.trim(), os: document.getElementById('cotOs').value.trim(), obs: document.getElementById('cotObs').value.trim(),
         orcamentos: orcs.map(o => ({ fornecedor: o.fornecedor, valorUnit: o.valorUnit, frete: o.frete, prazo: o.prazo, pagamento: o.pagamento, garantia: o.garantia })),
         escolhido: idxEsc, justificativa: just, usuario: usuarioAtualCmp() };
       const btn = document.getElementById('btnSalvarCot'); const original = btn.innerHTML;
-      btn.disabled = true; btn.innerText = "SALVANDO...";
+      btn.disabled = true; btn.innerText = fotosCotNovas.length ? "ENVIANDO FOTOS..." : "SALVANDO...";
       fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
       .then(x => x.json())
       .then(res => {
         btn.disabled = false; btn.innerHTML = original;
         if (res.status !== "sucesso") { alert("Não foi possível salvar: " + (res.mensagem || "erro desconhecido.")); return; }
         if (!bancoDados.cotacoes) bancoDados.cotacoes = [];
+        if (res.itemCodigo) payload.itemCodigo = res.itemCodigo;
+        if (!bancoDados.itensCompra) bancoDados.itensCompra = [];
+        if (res.itemCriado && !bancoDados.itensCompra.some(i => i.codigo === res.itemCriado)) {
+          bancoDados.itensCompra.push({ codigo: res.itemCriado, dataHora: new Date().toLocaleDateString('pt-BR'), item: produto.toUpperCase(), qtd, unidade: payload.unidade,
+            solicitante: payload.solicitante.toUpperCase(), categoria: (payload.categoria || "DIVERSOS").toUpperCase(), cliente: "", referencia: res.fotos && res.fotos.length ? "FOTO" : "",
+            prioridade: "MÉDIA", urgente: false, os: payload.os, obs: payload.obs, fotos: res.fotos || [], status: "PENDENTE", historico: "", valorPago: "", fornecedor: "", validacao: "", validacaoInfo: "", cotacao: res.codigo });
+        }
         const item = (bancoDados.itensCompra || []).find(i => i.codigo === payload.itemCodigo);
+        if (item && res.fotos) item.fotos = res.fotos.slice();
         const local = { codigo: res.codigo, produto: produto.toUpperCase(), qtd, itemCodigo: payload.itemCodigo, solicitante: payload.solicitante.toUpperCase(), os: payload.os, obs: payload.obs,
           orcamentos: payload.orcamentos.map(o => Object.assign({}, o, { fornecedor: o.fornecedor.toUpperCase() })), escolhido: idxEsc, justificativa: just, status: "EM COTAÇÃO",
           fotos: item ? (item.fotos || []) : [], dataHora: new Date().toLocaleDateString('pt-BR'), historico: "", aprovacaoInfo: "", valorFinal: "" };
         const idx = bancoDados.cotacoes.findIndex(c => c.codigo === res.codigo);
         if (idx >= 0) bancoDados.cotacoes[idx] = Object.assign(bancoDados.cotacoes[idx], local); else bancoDados.cotacoes.push(local);
         if (item) item.cotacao = res.codigo;
+        if (res.aviso) alert(res.aviso);
+        if (res.itemCriado) alert("Produto cadastrado na Lista de Compras como item Nº " + res.itemCriado + ", ligado à cotação " + res.codigo + ".");
         fecharModalCotacao();
         renderizarCotacoes(); renderizarListaCompras();
         buscarAtualizacoesSilenciosas();
@@ -5847,7 +5942,7 @@
       const r = calcularResultadoCot(c.orcamentos || [], c.qtd);
       const esc = (c.orcamentos || [])[c.escolhido] || {};
       document.getElementById('tituloAcaoCot').innerText = ({ APROVACAO: "Registrar aprovação", COMPRAR: "Marcar como comprada", CANCELAR: "Cancelar cotação" })[tipo] + " · " + codigo;
-      document.getElementById('infoAcaoCot').innerHTML = `<b>${escReq(c.produto)}</b> · qtd ${escReq(c.qtd)}<br>Escolhido: <b>${escReq(esc.fornecedor || '-')}</b> · ${moedaBR(r.totais[c.escolhido])}` + (c.itemCodigo ? `<br>Item da lista Nº ${escReq(c.itemCodigo)}` : "");
+      document.getElementById('infoAcaoCot').innerHTML = `<b>${escReq(c.produto)}</b> · qtd ${qtdUnCmp(c.qtd, unidadeDaCot(c))}<br>Escolhido: <b>${escReq(esc.fornecedor || '-')}</b> · ${moedaBR(r.totais[c.escolhido])}` + (c.itemCodigo ? `<br>Item da lista Nº ${escReq(c.itemCodigo)}` : "");
       document.getElementById('camposAprovCot').style.display = tipo === "APROVACAO" ? "" : "none";
       document.getElementById('camposCompraCot').style.display = tipo === "COMPRAR" ? "" : "none";
       document.getElementById('camposCancelCot').style.display = tipo === "CANCELAR" ? "" : "none";
@@ -5942,7 +6037,9 @@
       const orcs = c.orcamentos || [];
       const r = calcularResultadoCot(orcs, c.qtd);
       const col = (fn, cls) => orcs.map((o, k) => `<td class="${k === c.escolhido ? 'esc' : ''} ${cls || ''}">${fn(o, k)}</td>`).join('');
-      const foto = c.fotos && c.fotos[0] ? `<img class="foto" src="${urlFotoCompra(c.fotos[0])}">` : "";
+      const itF = c.itemCodigo ? (bancoDados.itensCompra || []).find(x => x.codigo === c.itemCodigo) : null;
+      const fotosMapa = itF && (itF.fotos || []).length ? itF.fotos : (c.fotos || []);   // foto atual do item (uma fonte só)
+      const foto = fotosMapa[0] ? `<img class="foto" src="${urlFotoCompra(fotosMapa[0])}">` : "";
       const aprovado = ["APROVADA", "COMPRADA", "REPROVADA"].includes(c.status) && c.aprovacaoInfo;
       const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Mapa de Cotação ${escReq(c.codigo)}</title><style>
         @page { size: A4 portrait; margin: 12mm; }
@@ -5972,7 +6069,7 @@
         <div class="cab"><h1>MAPA COMPARATIVO DE COTAÇÃO</h1><div class="cod">${escReq(c.codigo)}<br><span style="font-size:11pt; font-weight:normal;">${escReq(c.dataHora || '')}</span></div></div>
         <div class="prod">${foto}<div>
           <div class="desc">${escReq(c.produto)}</div>
-          <div class="meta">Quantidade: <b style="font-size:16pt;">${escReq(c.qtd)}</b>${c.itemCodigo ? ` · Item da lista Nº <b>${escReq(c.itemCodigo)}</b>` : ''}${c.os ? ` · OS <b>${escReq(c.os)}</b>` : ''}<br>Solicitante: <b>${escReq(c.solicitante || '—')}</b>${c.obs ? `<br>Obs.: ${escReq(c.obs)}` : ''}</div>
+          <div class="meta">Quantidade: <b style="font-size:16pt;">${qtdUnCmp(c.qtd, unidadeDaCot(c))}</b>${c.itemCodigo ? ` · Item da lista Nº <b>${escReq(c.itemCodigo)}</b>` : ''}${c.os ? ` · OS <b>${escReq(c.os)}</b>` : ''}<br>Solicitante: <b>${escReq(c.solicitante || '—')}</b>${c.obs ? `<br>Obs.: ${escReq(c.obs)}` : ''}</div>
         </div></div>
         <table>
           <thead><tr><th class="lbl" style="background:#1e3a8a; color:#fff;"></th>${orcs.map((o, k) => `<th>ORÇAMENTO ${k + 1}</th>`).join('')}</tr></thead>
