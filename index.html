@@ -708,6 +708,18 @@
     .dx-obs { font-size:11px; color:var(--txt2); margin-top:8px; line-height:1.4; }
     .dx-rodape { font-size:11px; color:var(--txt2); text-align:center; margin:6px 0 4px; }
     .cot-falta-esc { color:#b45309; font-weight:bold; }
+    .btn-zap-loc { color:#15803d !important; border-color:#86efac !important; }
+    .btn-zap-loc:hover { background:#f0fdf4 !important; }
+    .loc-p-consulta { background:#dcfce7; color:#15803d; } .loc-p-acordo { background:#ede9fe; color:#6d28d9; }
+    .loc-aviso-consulta { background:#f0fdf4 !important; border-color:#86efac !important; color:#14532d !important; align-items:center; margin:0 0 10px; }
+    .loc-aviso-acordo { background:#f5f3ff !important; border-color:#c4b5fd !important; color:#4c1d95 !important; align-items:center; margin:0 0 10px; }
+    .cons-unidades { max-height:170px; overflow-y:auto; margin-bottom:10px; }
+    .cons-unidades:empty { display:none; }
+    .cons-uni-tit { font-size:11px; font-weight:bold; text-transform:uppercase; color:#64748b; margin-bottom:6px; }
+    .cons-uni { display:flex; align-items:center; gap:8px; padding:6px 8px; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:4px; font-size:12px; cursor:pointer; }
+    .cons-uni span { color:#64748b; } .cons-uni em { color:#15803d; font-style:normal; font-size:11px; margin-left:auto; }
+    .resp-item { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:8px 0; border-bottom:1px dashed #e2e8f0; flex-wrap:wrap; }
+    .resp-sub { font-size:11px; color:#64748b; }
     /* Temas (cor de destaque) */
     body[data-tema-sis="verde"] .header { background:linear-gradient(115deg,#042f2c 0%,#0b5a50 45%,#0f8a73 100%); box-shadow:0 10px 30px rgba(4,47,44,.35),inset 0 1px 0 rgba(255,255,255,.12); }
     body[data-tema-sis="verde"] .nav-tab.active { background:linear-gradient(135deg,#14b8a6,#0b5a50); box-shadow:0 6px 16px rgba(20,184,166,.4); }
@@ -1015,7 +1027,7 @@
           <div class="form-group loc-so-conf" style="flex:0 0 190px;">
             <label>Situação da conferência:</label>
             <select id="locFiltroConf" onchange="renderizarLocacao()">
-              <option value="">Todas</option><option value="pend">Não conferidas</option><option value="aj">Com ajuste no Neovero</option><option value="reconf">Reconferir (contrato mudou)</option><option value="venc">Conferir de novo (prazo vencido)</option><option value="ok">OK</option>
+              <option value="">Todas</option><option value="consulta">Aguardando resposta (WhatsApp)</option><option value="pend">Não conferidas</option><option value="aj">Com ajuste no Neovero</option><option value="reconf">Reconferir (contrato mudou)</option><option value="venc">Conferir de novo (prazo vencido)</option><option value="ok">OK</option>
             </select>
           </div>
           <div class="form-group loc-so-ctr" style="flex:1 1 180px; display:none;">
@@ -2193,6 +2205,44 @@
       <div style="display:flex; gap:8px; justify-content:flex-end;">
         <button type="button" class="btn-secundario" onclick="fecharModalCancelarTermo()">Voltar</button>
         <button type="button" id="btnConfirmarCancelTermo" class="btn-negar" style="height:auto; padding:8px 16px; font-size:12px;" onclick="confirmarCancelamentoTermo()"><i class="fa-solid fa-rotate-left"></i> Confirmar Cancelamento</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalConsultaLoc" class="modal-overlay">
+    <div class="modal-box" style="width:760px; max-width:96vw;">
+      <div class="modal-title"><span><i class="fa-brands fa-whatsapp" style="color:#16a34a;"></i> <span id="consLocTitulo">Consultar por WhatsApp</span></span><span onclick="fecharModalLoc('modalConsultaLoc')" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span></div>
+      <div class="form-row" style="align-items:flex-end;">
+        <div class="form-group" style="flex:1.4;"><label>Enviar para:</label><select id="consLocContato" onchange="aoTrocarContatoConsultaLoc()"></select></div>
+        <div id="consLocNovo" style="display:contents;">
+          <div class="form-group" style="flex:1.2;"><label>Nome:</label><input type="text" id="consLocNome" placeholder="Ex.: CARLOS SILVA" oninput="montarMensagemConsultaLoc()"></div>
+          <div class="form-group" style="flex:1;"><label>Celular (com DDD):</label><input type="text" id="consLocFone" placeholder="11 98765-4321"></div>
+        </div>
+      </div>
+      <div id="consLocUnidades" class="cons-unidades"></div>
+      <div class="form-group" style="margin-bottom:6px;">
+        <label>Mensagem (pode editar antes de enviar):</label>
+        <textarea id="consLocMsg" data-minusculas style="height:300px; font-family:Consolas,'Courier New',monospace; font-size:12px; line-height:1.4;"></textarea>
+      </div>
+      <div style="font-size:11px; color:#64748b; margin-bottom:10px;"><span id="consLocResumo"></span> · No WhatsApp, *texto* fica em <b>negrito</b> e _texto_ em <i>itálico</i>. Ao enviar, a consulta fica registrada no histórico do contrato e a unidade passa a mostrar "aguardando resposta".</div>
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button type="button" class="btn-secundario" onclick="fecharModalLoc('modalConsultaLoc')">Cancelar</button>
+        <button type="button" class="btn-submit" id="btnEnviarConsLoc" style="background:linear-gradient(135deg,#22c55e,#15803d);" onclick="enviarConsultaLoc()"><i class="fa-brands fa-whatsapp"></i> Abrir WhatsApp e registrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalRespostaLoc" class="modal-overlay">
+    <div class="modal-box" style="width:640px; max-width:96vw;">
+      <div class="modal-title"><span><i class="fa-solid fa-reply"></i> Registrar resposta da consulta</span><span onclick="fecharModalLoc('modalRespostaLoc')" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span></div>
+      <div id="respLocInfo" class="aviso-atual-info"></div>
+      <div class="form-group" style="margin-bottom:10px;"><label>Colar a resposta recebida (opcional):</label><input type="text" id="respLocColar" placeholder="Ex.: 1A 2B" oninput="colarRespostaLoc()"></div>
+      <div id="respLocItens"></div>
+      <div class="form-group" style="margin:10px 0;"><label>Observação (opcional):</label><input type="text" id="respLocObs" placeholder="Ex.: acordo feito pelo comercial em outubro"></div>
+      <div style="font-size:11px; color:#64748b; margin-bottom:10px;">A resposta fica no histórico do contrato. O contrato <b>não</b> é alterado automaticamente: nos itens com acordo (B), atualize a quantidade pela ficha.</div>
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button type="button" class="btn-secundario" onclick="fecharModalLoc('modalRespostaLoc')">Cancelar</button>
+        <button type="button" class="btn-submit" id="btnSalvarRespLoc" onclick="salvarRespostaLoc()"><i class="fa-solid fa-floppy-disk"></i> Registrar resposta</button>
       </div>
     </div>
   </div>
@@ -6669,6 +6719,211 @@
       requestAnimationFrame(passo);
     }
 
+    // ===================== LOCAÇÃO: CONSULTA POR WHATSAPP =====================
+    // Monta uma mensagem padronizada com as divergências da conferência, abre o WhatsApp e registra no histórico.
+    // A resposta (A = ajustar o Neovero / B = acordo com a unidade) é registrada à mão; o contrato NÃO é alterado.
+    var CONSULTA_OPCOES_LOC = { A: "o contrato está certo → ajusto o Neovero", B: "existe acordo com a unidade → atualizo o contrato" };
+    var consultaLocAtual = null;   // { modo, unidades:[k], ... }
+
+    function locDivergencias(u) {
+      const n = locConfNeo[u.k] || {}, out = [];
+      Object.keys(u.fam).sort((a, b) => a.localeCompare(b, 'pt-BR')).forEach(f => {
+        if (locVazio(n[f])) return;
+        const q = Number(u.fam[f]) || 0, v = Number(n[f]) || 0;
+        if (q !== v) out.push({ familia: f, contrato: q, neovero: v });
+      });
+      (locConfExtra[u.k] || []).forEach(e => { if (e.familia && Number(e.qtd) > 0) out.push({ familia: e.familia, contrato: 0, neovero: Number(e.qtd) }); });
+      return out;
+    }
+    function locContratoPrincipal(u) { return (u.ctrs.find(c => !locInativo(c)) || u.ctrs[0] || {}).id || ""; }
+    // Última consulta da unidade e se já tem resposta
+    function locConsultaDaUnidade(u) {
+      const ids = new Set(u.ctrs.map(c => c.id));
+      const hist = (locDados().historico || []).filter(h => ids.has(h.contrato));
+      const env = hist.filter(h => h.acao === "CONSULTA ENVIADA");
+      if (!env.length) return null;
+      const e = env[env.length - 1];
+      const resp = hist.filter(h => h.acao === "RESPOSTA REGISTRADA" && h.de === e.para).pop() || null;
+      const itens = [...String(e.motivo || "").matchAll(/(\d+)\) (.+?): contrato (\d+) \| Neovero (\d+)/g)].map(m => ({ n: Number(m[1]), familia: m[2], contrato: Number(m[3]), neovero: Number(m[4]) }));
+      const dias = Math.max(0, Math.floor((Date.now() - (tempoDataBR(e.data) || Date.now())) / 86400000));
+      return { id: e.para, data: e.data, dest: String(e.de || "").split(" · ")[0], contrato: e.contrato, itens, dias, resp };
+    }
+    function locPillConsulta(u) {
+      const c = locConsultaDaUnidade(u);
+      if (!c) return "";
+      if (!c.resp) return `<span class="loc-pill loc-p-consulta" title="Consulta enviada a ${escReq(c.dest)} em ${escReq(c.data)}"><i class="fa-brands fa-whatsapp"></i> aguardando resposta${c.dias ? " há " + c.dias + " dia(s)" : ""}</span>`;
+      return /B/.test(c.resp.para) ? `<span class="loc-pill loc-p-acordo" title="Resposta: ${escReq(c.resp.para)}">acordo: atualizar contrato</span>` : "";
+    }
+    function locAvisoConsultaHtml(u) {
+      const c = locConsultaDaUnidade(u);
+      if (!c) return "";
+      const kq = locJsq(u.k);
+      if (!c.resp) return `<div class="loc-aviso loc-aviso-consulta"><i class="fa-brands fa-whatsapp" style="margin-top:2px;"></i><div style="flex:1;"><b>Aguardando resposta</b> de ${escReq(c.dest)} · consulta enviada em ${escReq(c.data)}${c.dias ? ` (há ${c.dias} dia(s))` : ""}.</div>
+        <button type="button" class="btn-submit" style="padding:5px 12px;" onclick="abrirRespostaConsultaLoc('${kq}')"><i class="fa-solid fa-reply"></i> Registrar resposta</button></div>`;
+      const bs = c.itens.filter(i => new RegExp("\\b" + i.n + "B\\b").test(c.resp.para));
+      if (!bs.length) return `<div class="loc-nota" style="margin:0 0 10px;"><i class="fa-brands fa-whatsapp"></i> Resposta de ${escReq(c.dest)} em ${escReq(c.resp.data)}: <b>${escReq(c.resp.para)}</b> — ajustar o Neovero.</div>`;
+      return `<div class="loc-aviso loc-aviso-acordo"><i class="fa-solid fa-handshake" style="margin-top:2px;"></i><div style="flex:1;"><b>Resposta de ${escReq(c.dest)}</b> (${escReq(c.resp.data)}): existe acordo com a unidade em ${bs.map(i => `<b>${escReq(i.familia)}</b> (Neovero ${i.neovero})`).join(", ")}. Atualize a quantidade no contrato.</div>
+        <button type="button" class="btn-secundario" style="padding:5px 10px;" onclick="abrirFichaLoc('${escReq(locContratoPrincipal(u))}')"><i class="fa-solid fa-file-contract"></i> Abrir contrato</button></div>`;
+    }
+
+    // Contatos: os já usados em consultas (para todos os usuários) + o último deste navegador
+    function locContatosConsulta() {
+      const mapa = {};
+      (locDados().historico || []).filter(h => h.acao === "CONSULTA ENVIADA" && h.de).forEach(h => {
+        const [nome, fone] = String(h.de).split(" · ");
+        if (nome) mapa[nome] = fone || mapa[nome] || "";
+      });
+      return Object.keys(mapa).sort((a, b) => a.localeCompare(b, 'pt-BR')).map(n => ({ nome: n, fone: mapa[n] }));
+    }
+
+    function abrirConsultaLoc(modo, k) {
+      const todas = locUnidadesConf(locContratosFiltrados(true));
+      let candidatas;
+      if (modo === "UMA") {
+        const u = todas.find(x => x.k === k);
+        if (!u || !locDivergencias(u).length) { alert("Esta unidade não tem divergência entre o contrato e o Neovero."); return; }
+        candidatas = [u];
+      } else {
+        const visiveis = new Set(locConfListaAtual || []);
+        candidatas = todas.filter(u => visiveis.has(u.k) && locDivergencias(u).length);
+        if (!candidatas.length) { alert("Nenhuma unidade da lista atual tem divergência para consultar."); return; }
+      }
+      consultaLocAtual = { modo, candidatas: candidatas.map(u => u.k) };
+      const contatos = locContatosConsulta();
+      let ultimo = ""; try { ultimo = localStorage.getItem('dmaUltimoContatoConsulta') || ""; } catch (e) {}
+      const sel = document.getElementById('consLocContato');
+      sel.innerHTML = contatos.map(c => `<option value="${escReq(c.nome)}" data-fone="${escReq(c.fone)}">${escReq(c.nome)}${c.fone ? " · " + escReq(c.fone) : ""}</option>`).join('') + '<option value="__novo">+ Novo contato…</option>';
+      sel.value = contatos.some(c => c.nome === ultimo) ? ultimo : (contatos[0] ? contatos[0].nome : "__novo");
+      document.getElementById('consLocNome').value = ""; document.getElementById('consLocFone').value = "";
+      document.getElementById('consLocUnidades').innerHTML = modo === "UMA" ? "" :
+        `<div class="cons-uni-tit">Unidades com divergência na lista atual (${candidatas.length}):</div>` +
+        candidatas.map(u => `<label class="cons-uni"><input type="checkbox" value="${escReq(u.k)}" checked onchange="montarMensagemConsultaLoc()"> <b>${escReq(u.unidade)}</b> <span>${escReq(u.cliente)} · ${locDivergencias(u).length} divergência(s)</span>${locConsultaDaUnidade(u) && !locConsultaDaUnidade(u).resp ? ' <em>já aguardando resposta</em>' : ''}</label>`).join('');
+      document.getElementById('consLocTitulo').innerText = modo === "UMA" ? "Consultar por WhatsApp" : "Consultar várias unidades por WhatsApp";
+      aoTrocarContatoConsultaLoc();
+      document.getElementById('modalConsultaLoc').classList.add('active');
+    }
+    function aoTrocarContatoConsultaLoc() {
+      const novo = document.getElementById('consLocContato').value === "__novo";
+      document.getElementById('consLocNovo').style.display = novo ? "" : "none";
+      montarMensagemConsultaLoc();
+    }
+    function contatoConsultaLoc() {
+      const sel = document.getElementById('consLocContato');
+      if (sel.value === "__novo") return { nome: document.getElementById('consLocNome').value.trim().toUpperCase(), fone: document.getElementById('consLocFone').value.replace(/\D/g, "") };
+      return { nome: sel.value, fone: (sel.selectedOptions[0] && sel.selectedOptions[0].dataset.fone || "").replace(/\D/g, "") };
+    }
+    function unidadesConsultaLoc() {
+      const todas = locUnidadesConf(locContratosFiltrados(true));
+      if (!consultaLocAtual) return [];
+      const ks = consultaLocAtual.modo === "UMA" ? consultaLocAtual.candidatas : [...document.querySelectorAll('#consLocUnidades input:checked')].map(i => i.value);
+      return ks.map(k => todas.find(u => u.k === k)).filter(Boolean);
+    }
+    function nomeProprioLoc(s) { return String(s || "").toLowerCase().replace(/(^|\s)\S/g, m => m.toUpperCase()); }
+    // Monta a mensagem (formatação do WhatsApp: *negrito*, _itálico_) e a numeração única
+    function textoConsultaLoc(unidades, contato) {
+      const SEP = "━━━━━━━━━━━━━━━";
+      const hoje = new Date().toLocaleDateString('pt-BR');
+      const autor = nomeProprioLoc(usuarioLogado ? usuarioLogado.nome : "");
+      let n = 0;
+      const blocos = unidades.map(u => {
+        const ctr = locContrato(locContratoPrincipal(u));
+        const itens = locDivergencias(u).map(d => {
+          d.n = ++n;
+          const dif = d.neovero - d.contrato;
+          const expl = d.contrato === 0 ? "_está no Neovero, mas não no contrato_" : dif > 0 ? `_${dif} a mais no Neovero_` : `_${-dif} a menos no Neovero_`;
+          return `*${d.n}) ${d.familia}*\n     Contrato: *${d.contrato}*  |  Neovero: *${d.neovero}*\n     ➜ ${expl}`;
+        });
+        u.__itens = locDivergencias(u).map((d, i) => ({ ...d, n: n - locDivergencias(u).length + i + 1 }));
+        return `🏥 *${u.unidade}*\n${u.cliente} · ${[...u.locais].join(' / ') || '-'}\nContrato: *${ctr ? (ctr.numContrato || ctr.id) : "-"}*\n\n` + itens.join("\n\n");
+      });
+      const saud = contato && contato.nome ? `Olá, ${nomeProprioLoc(contato.nome.split(" ")[0])}! Preciso confirmar a conferência abaixo.\n\n` : "";
+      const titulo = unidades.length > 1 ? `⚠️ *${n} divergência(s) em ${unidades.length} unidades*` : `⚠️ *${n} divergência${n > 1 ? "s" : ""} encontrada${n > 1 ? "s" : ""}*`;
+      const exemplo = Array.from({ length: Math.min(n, 3) }, (_, i) => (i + 1) + (i % 2 ? "B" : "A")).join(" ");
+      return `📋 *CONFERÊNCIA DE LOCAÇÃO*\n_Locação × Neovero_\n\n${saud}${titulo}\n\n${SEP}\n\n` + blocos.join(`\n\n${SEP}\n\n`) +
+        `\n\n${SEP}\n\n❓ *Como devo proceder?*\n\n*A* = ${CONSULTA_OPCOES_LOC.A}\n*B* = ${CONSULTA_OPCOES_LOC.B}\n\n✍️ Responda assim: *${exemplo}*\n\n_Enviado por ${autor} · DMA SYS · ${hoje}_`;
+    }
+    function montarMensagemConsultaLoc() {
+      const us = unidadesConsultaLoc();
+      const txt = us.length ? textoConsultaLoc(us, contatoConsultaLoc()) : "";
+      document.getElementById('consLocMsg').value = txt;
+      document.getElementById('consLocResumo').innerText = us.length ? `${us.length} unidade(s) · ${us.reduce((t, u) => t + locDivergencias(u).length, 0)} divergência(s)` : "Marque ao menos uma unidade.";
+    }
+    function enviarConsultaLoc() {
+      const us = unidadesConsultaLoc(), ct = contatoConsultaLoc(), msg = document.getElementById('consLocMsg').value;
+      if (!us.length) { alert("Marque ao menos uma unidade."); return; }
+      if (!ct.nome) { alert("Informe o nome do contato."); return; }
+      let fone = ct.fone;
+      if (fone && fone.length <= 11) fone = "55" + fone;
+      if (fone.length < 12) { alert("Informe o celular com DDD (ex.: 11 98765-4321)."); return; }
+      // abre o WhatsApp já (o navegador só permite abrir janela no próprio clique)
+      window.open("https://wa.me/" + fone + "?text=" + encodeURIComponent(msg), "_blank");
+      textoConsultaLoc(us, ct);   // garante a numeração em u.__itens igual à da mensagem
+      const consultaId = "CL" + Date.now();
+      const payload = { acao: "LOC_CONSULTA", operacao: "ENVIADA", consultaId, destinatario: ct.nome, telefone: fone,
+        unidades: us.map(u => ({ contrato: locContratoPrincipal(u), itens: u.__itens.map(d => `${d.n}) ${d.familia}: contrato ${d.contrato} | Neovero ${d.neovero}`).join(" ; ") })),
+        usuario: usuarioLogado ? usuarioLogado.nome : "", login: usuarioLogado ? usuarioLogado.usuario : "" };
+      try { localStorage.setItem('dmaUltimoContatoConsulta', ct.nome); } catch (e) {}
+      const btn = document.getElementById('btnEnviarConsLoc'), orig = btn.innerHTML;
+      btn.disabled = true; btn.innerText = "REGISTRANDO...";
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r => r.json()).then(res => {
+        btn.disabled = false; btn.innerHTML = orig;
+        if (res.status !== "sucesso") { alert("O WhatsApp foi aberto, mas a consulta não foi registrada no sistema: " + (res.mensagem || "erro") + "\nFeche e tente de novo."); return; }
+        if (res.locacao) bancoDados.locacao = res.locacao;
+        fecharModalLoc('modalConsultaLoc');
+        renderizarLocacao();
+      }).catch(() => { btn.disabled = false; btn.innerHTML = orig; alert("O WhatsApp foi aberto, mas houve falha de conexão ao registrar a consulta. Tente de novo."); });
+    }
+
+    // ----- Registrar a resposta -----
+    var respostaLocAtual = null;
+    function abrirRespostaConsultaLoc(k) {
+      const u = locUnidadesConf(locContratosFiltrados(true)).find(x => x.k === k);
+      const c = u && locConsultaDaUnidade(u);
+      if (!c || c.resp) return;
+      respostaLocAtual = { u, c };
+      document.getElementById('respLocInfo').innerHTML = `<b>${escReq(u.unidade)}</b><br>Consulta enviada a <b>${escReq(c.dest)}</b> em ${escReq(c.data)}`;
+      document.getElementById('respLocColar').value = "";
+      document.getElementById('respLocObs').value = "";
+      document.getElementById('respLocItens').innerHTML = c.itens.length ? c.itens.map(i => `
+        <div class="resp-item"><div><b>${i.n}) ${escReq(i.familia)}</b><div class="resp-sub">Contrato ${i.contrato} · Neovero ${i.neovero}</div></div>
+          <div class="req-tipo-grupo">
+            <label class="req-tipo-opcao" data-cor="#2563eb"><input type="radio" name="respLoc${i.n}" value="A" onchange="pintarRespostaLoc()"><span><b>A</b> · ajustar o Neovero</span></label>
+            <label class="req-tipo-opcao" data-cor="#7c3aed"><input type="radio" name="respLoc${i.n}" value="B" onchange="pintarRespostaLoc()"><span><b>B</b> · acordo (atualizar contrato)</span></label>
+          </div></div>`).join('') : '<div class="loc-vazio">Não foi possível ler os itens desta consulta.</div>';
+      pintarRespostaLoc();
+      document.getElementById('modalRespostaLoc').classList.add('active');
+    }
+    function colarRespostaLoc() {
+      const t = document.getElementById('respLocColar').value.toUpperCase();
+      [...t.matchAll(/(\d+)\s*([AB])/g)].forEach(m => { const r = document.querySelector(`input[name="respLoc${m[1]}"][value="${m[2]}"]`); if (r) r.checked = true; });
+      pintarRespostaLoc();
+    }
+    function pintarRespostaLoc() {
+      document.querySelectorAll('#respLocItens .req-tipo-opcao').forEach(op => { const on = op.querySelector('input').checked; op.querySelector('span').style.background = on ? op.dataset.cor : ""; op.querySelector('span').style.color = on ? "#fff" : ""; });
+    }
+    function salvarRespostaLoc() {
+      const { u, c } = respostaLocAtual || {};
+      if (!c) return;
+      const escolhas = c.itens.map(i => ({ i, v: document.querySelector(`input[name="respLoc${i.n}"]:checked`)?.value || "" }));
+      const falta = escolhas.filter(e => !e.v);
+      if (falta.length) { alert("Marque A ou B para: " + falta.map(e => e.i.n + ") " + e.i.familia).join(", ")); return; }
+      const obs = document.getElementById('respLocObs').value.trim();
+      const payload = { acao: "LOC_CONSULTA", operacao: "RESPOSTA", contrato: c.contrato, consultaId: c.id,
+        resposta: escolhas.map(e => e.i.n + e.v).join(" "),
+        detalhe: escolhas.map(e => `${e.i.n}) ${e.i.familia}: ${e.v} = ${e.v === "A" ? "ajustar o Neovero" : "acordo com a unidade (atualizar o contrato)"}`).join(" ; ") + ` ; Respondido por ${c.dest}` + (obs ? ` ; Obs.: ${obs}` : ""),
+        usuario: usuarioLogado ? usuarioLogado.nome : "", login: usuarioLogado ? usuarioLogado.usuario : "" };
+      const btn = document.getElementById('btnSalvarRespLoc'), orig = btn.innerHTML;
+      btn.disabled = true; btn.innerText = "SALVANDO...";
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r => r.json()).then(res => {
+        btn.disabled = false; btn.innerHTML = orig;
+        if (res.status !== "sucesso") { alert(res.mensagem || "Não foi possível registrar a resposta."); return; }
+        if (res.locacao) bancoDados.locacao = res.locacao;
+        fecharModalLoc('modalRespostaLoc');
+        renderizarLocacao();
+        if (escolhas.some(e => e.v === "B")) alert("Resposta registrada. Para os itens com acordo (B), atualize a quantidade no contrato pela ficha — o sistema não altera o contrato sozinho.");
+      }).catch(() => { btn.disabled = false; btn.innerHTML = orig; alert("Falha de conexão ao registrar a resposta."); });
+    }
+
     // ===================== TEMAS (cor de destaque) =====================
     // Só muda a cor de identidade (cabeçalho, menu, botões, títulos). Cores de situação, PDFs e impressões não mudam.
     function aplicarTemaSistema(t) {
@@ -6862,7 +7117,7 @@
         const r = (locSerieMensal([fim]) || [])[0] || {};
         let ok = 0, tot = 0;
         try { locCarregarConfDaPlanilha(); locUnidadesConf(locDados().contratos).forEach(u => { tot++; if (locEstadoConf(u).t === "ok") ok++; }); } catch (e) {}
-        const hist = (locDados().historico || []).filter(h => h.acao !== LOC_ACAO.IMPORTADO && !locEventoPadronizacao(h) && noPer(h.data));
+        const hist = (locDados().historico || []).filter(h => h.acao !== LOC_ACAO.IMPORTADO && h.acao !== LOC_ACAO.CONSULTA && h.acao !== LOC_ACAO.RESPOSTA && !locEventoPadronizacao(h) && noPer(h.data));
         Lc = { contratos: r.contratos || 0, clientes: r.clientes || 0, unidades: r.unidades || 0, equip: r.equip || 0, confOk: ok, confTot: tot, pctConf: pctExec(ok, tot), alteracoes: hist.length };
       }
 
@@ -7310,7 +7565,8 @@
       ITEM_REMOVIDO: "ITEM REMOVIDO", ITEM_REATIVADO: "ITEM REATIVADO", ITEM_OBS: "OBS DO ITEM",
       FAM_RENOMEADA: "FAMÍLIA RENOMEADA", FAM_UNIFICADA: "FAMÍLIA UNIFICADA", FAM_SOMADA: "FAMÍLIAS UNIFICADAS",
       FAM_NOVA: "FAMÍLIA INCLUÍDA", FAM_ATIVADA: "FAMÍLIA ATIVADA", FAM_DESATIVADA: "FAMÍLIA DESATIVADA",
-      ITEM_TRANSFERIDO: "ITEM TRANSFERIDO", QTD_UNIF: "QUANTIDADE SOMADA"
+      ITEM_TRANSFERIDO: "ITEM TRANSFERIDO", QTD_UNIF: "QUANTIDADE SOMADA",
+      CONSULTA: "CONSULTA ENVIADA", RESPOSTA: "RESPOSTA REGISTRADA"
     };
     var MOTIVO_UNIFICACAO_LOC = "Unificado no contrato ";   // contrato absorvido por outro da mesma unidade
     // Configurações vêm do Script (ADMINS_LOCACAO e DIAS_VALIDADE_CONFERENCIA_LOC)
@@ -7800,7 +8056,7 @@
       const ativo = document.activeElement, focoFam = ativo && ativo.classList && ativo.classList.contains('loc-neo') ? ativo.dataset.fam : null;
       const stF = document.getElementById('locFiltroConf')?.value || "";
       const todas = locUnidadesConf(locContratosFiltrados(true));
-      const lista = todas.filter(u => !stF || locEstadoConf(u).t === stF);
+      const lista = todas.filter(u => !stF || (stF === "consulta" ? (() => { const c = locConsultaDaUnidade(u); return c && !c.resp; })() : locEstadoConf(u).t === stF));
       const sts = lista.map(locEstadoConf);
       if (!lista.find(u => u.k === locConfSel)) locConfSel = lista.length ? lista[0].k : "";
       locConfListaAtual = lista.map(u => u.k);
@@ -7809,10 +8065,11 @@
           <span class="ok"><b>${sts.filter(s => s.t === 'ok').length}</b> OK</span><span class="aj"><b>${sts.filter(s => s.t === 'aj').length}</b> com ajuste</span>
           ${sts.some(s => s.t === 'reconf') ? `<span class="rc"><b>${sts.filter(s => s.t === 'reconf').length}</b> reconferir</span>` : ""}
           ${sts.some(s => s.t === 'venc') ? `<span class="rc"><b>${sts.filter(s => s.t === 'venc').length}</b> prazo vencido</span>` : ""}
-          <span><b>${sts.filter(s => s.t === 'pend').length}</b> não conferidas</span></div>`;
+          <span><b>${sts.filter(s => s.t === 'pend').length}</b> não conferidas</span>
+          ${lista.some(u => locDivergencias(u).length) ? `<button type="button" class="btn-secundario btn-zap-loc" style="margin-left:auto; padding:4px 10px;" onclick="abrirConsultaLoc('VARIAS')"><i class="fa-brands fa-whatsapp"></i> Consultar várias por WhatsApp</button>` : ""}</div>`;
       const itensLista = lista.length ? lista.map((u, i) => `
         <div class="loc-conf-uni${u.k === locConfSel ? ' on' : ''}" data-k="${escReq(u.k)}" onclick="selecionarUnidadeConfLoc('${locJsq(u.k)}')">
-          <div style="min-width:0;"><div class="n">${escReq(u.unidade)}</div><div class="s">${escReq(u.cliente)} · ${escReq([...u.locais].join(' / ') || '-')}</div><div style="margin-top:4px;">${locPillConf(sts[i])} ${locIdadeConf(sts[i])}</div></div>
+          <div style="min-width:0;"><div class="n">${escReq(u.unidade)}</div><div class="s">${escReq(u.cliente)} · ${escReq([...u.locais].join(' / ') || '-')}</div><div style="margin-top:4px;">${locPillConf(sts[i])} ${locIdadeConf(sts[i])} ${locPillConsulta(u)}</div></div>
           <div class="q"><b>${locNum(u.total)}</b><span>equip.</span></div>
         </div>`).join('') : '<div class="loc-vazio">Nenhuma unidade para o filtro.</div>';
       const nAntigo = locConfLocalAntigo ? new Set(Object.keys(locConfLocalAntigo.neo).concat(Object.keys(locConfLocalAntigo.extra))).size : 0;
@@ -7861,8 +8118,10 @@
               ${locEhAdmin() ? `<button type="button" class="btn-secundario" style="padding:5px 10px;" onclick="limparConfLoc('${kq}')">Limpar</button>` : ""}
               <button type="button" class="btn-submit" style="padding:5px 12px;" onclick="salvarAgoraConfLoc('${kq}')" title="Salva já esta unidade na planilha (o salvamento também é automático)"><i class="fa-solid fa-floppy-disk"></i> Salvar agora</button>
               <button type="button" class="btn-secundario" id="btnProximaConfLoc" style="padding:5px 10px;" onclick="proximaPendenteConfLoc()" title="Vai para a próxima unidade da lista que precisa de conferência">Próxima pendente <i class="fa-solid fa-arrow-right"></i></button>
-            </div></div>
+            </div>
+            ${locDivergencias(u).length ? `<div style="margin-top:6px;"><button type="button" class="btn-secundario btn-zap-loc" onclick="abrirConsultaLoc('UMA', '${kq}')" title="Envia a situação desta unidade para alguém confirmar"><i class="fa-brands fa-whatsapp"></i> Consultar por WhatsApp</button></div>` : ""}</div>
         </div>
+        ${locAvisoConsultaHtml(u)}
         ${s.t === 'reconf' ? `<div class="loc-aviso" style="margin:0 0 10px;"><i class="fa-solid fa-triangle-exclamation"></i><div>O contrato mudou depois da conferência (${s.mudou.length} família(s), marcadas abaixo). Confira de novo no Neovero, corrija o que for preciso e clique em <b>Salvar agora</b>.</div></div>` : ""}
         ${s.t === 'venc' ? `<div class="loc-aviso" style="margin:0 0 10px;"><i class="fa-solid fa-clock-rotate-left"></i><div>Última conferência há ${s.dias} dias (prazo: ${locConfig().dias}). Confira de novo no Neovero e clique em <b>Salvar agora</b>, mesmo que nada tenha mudado.</div></div>` : ""}
         <table class="loc-tab-itens loc-tab-conf">
@@ -8148,6 +8407,8 @@
       if (h.acao === A.FAM_SOMADA) return [fam + ": quantidade " + h.de + " → " + h.para + " (famílias unificadas)", "#8b5cf6", "fa-object-group"];
       if (h.acao === A.ITEM_TRANSFERIDO) return [fam + " transferido do contrato " + h.de + " (mesma unidade)", "#0ea5e9", "fa-right-to-bracket"];
       if (h.acao === A.QTD_UNIF) return [fam + ": quantidade " + h.de + " → " + h.para + " (lançamentos da mesma unidade somados)", "#0ea5e9", "fa-object-group"];
+      if (h.acao === A.CONSULTA) return ["Consulta enviada por WhatsApp a " + String(h.de || "").split(" · ")[0], "#16a34a", "fa-paper-plane"];
+      if (h.acao === A.RESPOSTA) return ["Resposta da consulta registrada: " + h.para, "#7c3aed", "fa-reply"];
       return [h.acao + (h.para ? ": " + h.para : ""), "#64748b", "fa-circle"];
     }
 
@@ -8190,7 +8451,7 @@
         return `<div class="loc-ev" style="--c:${cor};">
           <div class="loc-ev-top"><b>${escReq(h.data)}</b> · ${escReq(h.usuario || "-")}</div>
           <div class="loc-ev-txt"><i class="fa-solid ${ico}" style="color:${cor}; width:14px;"></i> ${escReq(txt)}</div>
-          ${h.motivo ? `<div class="loc-ev-mot">Motivo: ${escReq(h.motivo)}</div>` : ""}
+          ${h.motivo ? `<div class="loc-ev-mot">${h.acao === LOC_ACAO.CONSULTA || h.acao === LOC_ACAO.RESPOSTA ? "" : "Motivo: "}${escReq(h.motivo)}</div>` : ""}
         </div>`;
       }).join('');
 
@@ -8748,7 +9009,7 @@
       const noPer = d => geral || mesKeyDash(d) === ref;
       const itensPorId = {}; L.itens.forEach(i => itensPorId[i.id] = i);
       const A = LOC_ACAO;
-      const evs = L.historico.filter(h => h.acao !== A.IMPORTADO && h.contrato !== LOC_HIST_FAMILIAS && !locEventoPadronizacao(h) && noPer(h.data));
+      const evs = L.historico.filter(h => h.acao !== A.IMPORTADO && h.acao !== A.CONSULTA && h.acao !== A.RESPOSTA && h.contrato !== LOC_HIST_FAMILIAS && !locEventoPadronizacao(h) && noPer(h.data));
       let mais = 0, menos = 0;
       evs.forEach(h => {
         if (h.acao === A.QTD) { const d = (Number(h.para) || 0) - (Number(h.de) || 0); if (d > 0) mais += d; else menos -= d; }
@@ -8765,7 +9026,7 @@
       setHtml('dlAlteracoes', evs.length ? barrasDash(linhasAlt.filter(x => x[1] > 0), "#3b82f6", "", locNum) : '<div class="dsh-vazio">Nenhuma alteração no período.</div>');
 
       // Últimas movimentações (todas, mais recentes primeiro)
-      const ultimas = L.historico.filter(h => h.acao !== A.IMPORTADO && h.acao.indexOf(A.EDITADO) !== 0 && h.contrato !== LOC_HIST_FAMILIAS && !locEventoPadronizacao(h)).slice(-6).reverse();
+      const ultimas = L.historico.filter(h => h.acao !== A.IMPORTADO && h.acao !== A.CONSULTA && h.acao !== A.RESPOSTA && h.acao.indexOf(A.EDITADO) !== 0 && h.contrato !== LOC_HIST_FAMILIAS && !locEventoPadronizacao(h)).slice(-6).reverse();
       setHtml('dlUltimas', ultimas.length ? ultimas.map(h => {
         const c = locContrato(h.contrato) || {};
         const [txt, cor] = textoEventoLoc(h, itensPorId);
