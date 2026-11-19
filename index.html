@@ -707,9 +707,17 @@
     .dx-var { margin-top:4px; font-size:11px; }
     .dx-obs { font-size:11px; color:var(--txt2); margin-top:8px; line-height:1.4; }
     .dx-rodape { font-size:11px; color:var(--txt2); text-align:center; margin:6px 0 4px; }
+    .cot-falta-esc { color:#b45309; font-weight:bold; }
     .cot-destaque td { animation:cotPisca 2.6s ease; }
     @keyframes cotPisca { 0%, 60% { background:#fde68a; } 100% { background:transparent; } }
     .cot-aviso-novo { font-size:11.5px; color:#1e40af; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:8px 10px; }
+    .org-box { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 12px 2px; margin-bottom:12px; }
+    .org-box .form-group { margin-bottom:8px; }
+    .org-g-origem { flex:1 1 300px; } .org-g-base { flex:1 1 170px; } .org-g-os { flex:0 1 150px; } .org-g-cli { flex:1 1 200px; }
+    .org-obr::after { content:" *"; color:#e11d48; }
+    .org-selo { display:inline-block; margin-top:3px; font-size:10px; font-weight:bold; padding:1px 7px; border-radius:6px; white-space:nowrap; }
+    .org-selo.neo { background:#dbeafe; color:#1d4ed8; } .org-selo.eff { background:#ede9fe; color:#6d28d9; }
+    .org-selo.est { background:#ccfbf1; color:#0f766e; } .org-selo.sem { background:#fef3c7; color:#92400e; font-weight:normal; }
     .loc-sem-acesso { display:flex; flex-direction:column; align-items:center; gap:8px; padding:60px 20px; color:#64748b; text-align:center; }
     .loc-sem-acesso i { font-size:34px; color:#94a3b8; }
     .loc-sem-acesso b { font-size:18px; color:#334155; }
@@ -1029,6 +1037,10 @@
             <div class="form-group" style="flex:0 0 170px; margin-bottom:0;">
               <label>Categoria:</label>
               <select id="filtroCategoriaCmp" onchange="renderizarListaCompras()"><option value="">Todas</option></select>
+            </div>
+            <div class="form-group" style="flex:0 0 150px; margin-bottom:0;">
+              <label>Origem:</label>
+              <select id="filtroOrigemCmp" onchange="renderizarListaCompras()"><option value="">Todas</option><option value="NEOVERO">Neovero</option><option value="EFFORT">Effort</option><option value="ESTOQUE">Estoque</option><option value="SEM">Não informada</option></select>
             </div>
             <div class="form-group" style="flex:1; min-width:220px; margin-bottom:0;">
               <label>Buscar (nº, item, solicitante, cliente, OS):</label>
@@ -2158,10 +2170,12 @@
           <label>Categoria:</label>
           <input type="text" id="cmpCategoria" list="listCategoriasCmp" placeholder="DIVERSOS">
         </div>
-        <div class="form-group" style="flex:1.4;">
-          <label>Cliente:</label>
-          <input type="text" id="cmpCliente" list="listClientesCmp" placeholder="Ex: LINEMED">
-        </div>
+      </div>
+      <div class="org-box" id="cmpOrigemBox">
+        <div class="form-group org-g-origem"><label class="org-obr">Origem da compra:</label><div class="req-tipo-grupo" id="cmpGrpOrigem"><label class="req-tipo-opcao" data-cor="#2563eb"><input type="radio" name="cmpOrigem" value="NEOVERO" onchange="aoMudarOrigemCompra('cmp')"><span>Neovero</span></label><label class="req-tipo-opcao" data-cor="#7c3aed"><input type="radio" name="cmpOrigem" value="EFFORT" onchange="aoMudarOrigemCompra('cmp')"><span>Effort</span></label><label class="req-tipo-opcao" data-cor="#0f766e"><input type="radio" name="cmpOrigem" value="ESTOQUE" onchange="aoMudarOrigemCompra('cmp')"><span><i class="fa-solid fa-boxes-stacked"></i> Estoque</span></label></div></div>
+        <div class="form-group org-g-base" id="cmpBaseBox"><label class="org-obr">Base do Neovero:</label><select id="cmpBase"></select></div>
+        <div class="form-group org-g-os" id="cmpOsBox"><label class="org-obr">Nº da OS:</label><input type="text" id="cmpOs" placeholder="Ex: 202614537"></div>
+        <div class="form-group org-g-cli" id="cmpCliBox"><label class="org-obr">Cliente:</label><input type="text" id="cmpCliente" list="listClientesCmp" placeholder="Escolha ou digite" oninput="this.value=this.value.toUpperCase()"></div>
       </div>
       <div class="form-row" style="align-items:flex-end;">
         <div class="form-group" style="flex:1.6;">
@@ -2172,10 +2186,6 @@
             <label class="req-tipo-opcao" data-cor="#0f766e"><input type="radio" name="cmpRef" value="A/F" onchange="pintarOpcoesCmp()"><span><i class="fa-solid fa-layer-group"></i> Amostra + Foto</span></label>
             <label class="req-tipo-opcao" data-cor="#64748b"><input type="radio" name="cmpRef" value="" onchange="pintarOpcoesCmp()"><span>Nenhuma</span></label>
           </div>
-        </div>
-        <div class="form-group" style="flex:0.7;">
-          <label>Nº da OS (opcional):</label>
-          <input type="text" id="cmpOs" placeholder="Ex: 202614537">
         </div>
       </div>
       <div class="form-group" style="margin-bottom:12px;">
@@ -2323,8 +2333,13 @@
       </div>
       <div class="form-row">
         <div class="form-group"><label>Solicitante:</label><input type="text" id="cotSolicitante" list="listSolicitantesCmp"></div>
-        <div class="form-group"><label>Nº da OS (opcional):</label><input type="text" id="cotOs"></div>
         <div class="form-group" style="flex:2;"><label>Observação (opcional):</label><input type="text" id="cotObs"></div>
+      </div>
+      <div class="org-box" id="cotOrigemBox">
+        <div class="form-group org-g-origem"><label class="org-obr">Origem da compra:</label><div class="req-tipo-grupo" id="cotGrpOrigem"><label class="req-tipo-opcao" data-cor="#2563eb"><input type="radio" name="cotOrigem" value="NEOVERO" onchange="aoMudarOrigemCompra('cot')"><span>Neovero</span></label><label class="req-tipo-opcao" data-cor="#7c3aed"><input type="radio" name="cotOrigem" value="EFFORT" onchange="aoMudarOrigemCompra('cot')"><span>Effort</span></label><label class="req-tipo-opcao" data-cor="#0f766e"><input type="radio" name="cotOrigem" value="ESTOQUE" onchange="aoMudarOrigemCompra('cot')"><span><i class="fa-solid fa-boxes-stacked"></i> Estoque</span></label></div></div>
+        <div class="form-group org-g-base" id="cotBaseBox"><label class="org-obr">Base do Neovero:</label><select id="cotBase"></select></div>
+        <div class="form-group org-g-os" id="cotOsBox"><label class="org-obr">Nº da OS:</label><input type="text" id="cotOs" placeholder="Ex: 202614537"></div>
+        <div class="form-group org-g-cli" id="cotCliBox"><label class="org-obr">Cliente:</label><input type="text" id="cotCliente" list="listClientesCmp" placeholder="Escolha ou digite" oninput="this.value=this.value.toUpperCase()"></div>
       </div>
       <div class="form-group" style="margin-bottom:10px;">
         <label>Fotos do produto (até 3) — as mesmas do item da lista:</label>
@@ -5014,7 +5029,7 @@
       const cats = unicos([...CATEGORIAS_CMP, ...itens.map(i => i.categoria)]);
       set('listCategoriasCmp', cats);
       set('listUnidadesCmp', unicos([...UNIDADES_CMP, ...itens.map(i => i.unidade)]));
-      set('listClientesCmp', unicos(["LINEMED", ...(bancoDados.clientes || []), ...itens.map(i => i.cliente)]));
+      set('listClientesCmp', unicos(["LINEMED", ...(bancoDados.clientes || []), ...((bancoDados.locacao && bancoDados.locacao.contratos) || []).map(c => c.cliente), ...itens.map(i => i.cliente).filter(c => c && c !== "ESTOQUE")]));
       set('listProdutosCmp', unicos([...itens.map(i => i.item), ...(bancoDados.cotacoes || []).map(c => c.produto)]));
       set('listFornecedoresCmp', unicos([...itens.map(i => i.fornecedor), ...(bancoDados.fornecedores || []).filter(f => f.ativo).map(f => f.nome)]));
       const sel = document.getElementById('filtroCategoriaCmp');
@@ -5097,6 +5112,8 @@
         if (st === "VALIDADOS" && !(i.status === "PENDENTE" && i.validacao === "APROVADO")) return false;
         if (["PENDENTE", "COMPRADO", "ENTREGUE", "CANCELADO"].includes(st) && i.status !== st) return false;
         if (cat && (i.categoria || "").toUpperCase() !== cat) return false;
+        const fOrg = document.getElementById('filtroOrigemCmp')?.value || "";
+        if (fOrg && (fOrg === "SEM" ? !!i.origem : i.origem !== fOrg)) return false;
         if (txt && !normalizarTextoReq([i.codigo, i.item, i.solicitante, i.cliente, i.os, i.obs].join(" ")).includes(txt)) return false;
         return true;
       });
@@ -5137,7 +5154,7 @@
               ${i.obs ? `<span class="req-enviado" style="color:#64748b;">${escReq(i.obs)}</span>` : ''}${compraInfo}</td>
             <td class="td-center"><b>${qtdUnCmp(i.qtd, i.unidade)}</b></td>
             <td>${escReq(i.solicitante || "-")}</td>
-            <td>${escReq(i.cliente || "-")}</td>
+            <td>${escReq(i.cliente || "-")}${seloOrigemCompra(i)}</td>
             <td class="td-center" style="font-size:11px;">${escReq(ref)}</td>
             <td class="td-center">${escReq(String(i.dataHora || "").split(" ")[0] || "-")}</td>
             <td class="td-center"><span class="cmp-st cmp-st-${i.status}">${i.status}</span>${cotacaoAtivaDoItem(i) ? `<span class="selo-dias" style="background:#ede9fe; color:#6d28d9; cursor:pointer;" onclick="irParaCotacaoCmp('${escReq(i.cotacao)}')" title="Abrir a cotação ${escReq(i.cotacao)} no Mapa de Cotação">em cotação ${escReq(i.cotacao)}</span>` : ''}${seloValidacaoCmp(i)}${selo}</td>
@@ -5234,6 +5251,52 @@
     }
 
     // ----- Cadastro / edição -----
+    // ----- Origem da compra (Neovero/Effort/Estoque) — mesmo bloco no item e na cotação -----
+    function basesNeoveroCmp() {
+      const v = (bancoDados && bancoDados.configSistema && bancoDados.configSistema.BASES_NEOVERO) || "BASE CONTRATOS; ELBER MEDICAL; MONTE AZUL; CLIENTES";
+      return String(v).split(/[;\n]/).map(b => b.trim().toUpperCase()).filter(Boolean);
+    }
+    function preencherOrigemCompra(p, d) {
+      d = d || {};
+      document.querySelectorAll(`input[name="${p}Origem"]`).forEach(r => { r.checked = r.value === (d.origem || ""); });
+      const bases = basesNeoveroCmp();
+      if (d.base && !bases.includes(d.base)) bases.push(d.base);
+      document.getElementById(p + 'Base').innerHTML = '<option value="">— escolha —</option>' + bases.map(b => `<option value="${escReq(b)}">${escReq(b)}</option>`).join("");
+      document.getElementById(p + 'Base').value = d.base || "";
+      document.getElementById(p + 'Os').value = d.origem === "ESTOQUE" ? "" : (d.os || "");
+      document.getElementById(p + 'Cliente').value = d.origem === "ESTOQUE" ? "" : (d.cliente || "");
+      aoMudarOrigemCompra(p);
+    }
+    function aoMudarOrigemCompra(p) {
+      const o = document.querySelector(`input[name="${p}Origem"]:checked`)?.value || "";
+      document.getElementById(p + 'BaseBox').style.display = o === "NEOVERO" ? "" : "none";
+      document.getElementById(p + 'OsBox').style.display = (o === "NEOVERO" || o === "EFFORT") ? "" : "none";
+      document.getElementById(p + 'CliBox').style.display = (o === "NEOVERO" || o === "EFFORT") ? "" : "none";
+      document.querySelectorAll(`#${p}GrpOrigem .req-tipo-opcao`).forEach(op => { op.querySelector('span').style.background = op.querySelector('input').checked ? op.dataset.cor : ""; op.querySelector('span').style.color = op.querySelector('input').checked ? "#fff" : ""; });
+    }
+    function lerOrigemCompra(p) {
+      const origem = document.querySelector(`input[name="${p}Origem"]:checked`)?.value || "";
+      if (!origem) return { erro: "Informe a origem da compra: Neovero, Effort ou Estoque." };
+      if (origem === "ESTOQUE") return { origem, base: "", os: "", cliente: "ESTOQUE" };
+      const base = origem === "NEOVERO" ? document.getElementById(p + 'Base').value : "";
+      const os = document.getElementById(p + 'Os').value.trim(), cliente = document.getElementById(p + 'Cliente').value.trim().toUpperCase();
+      if (origem === "NEOVERO" && !base) return { erro: "Escolha a base do Neovero." };
+      if (!os) return { erro: "Informe o Nº da OS (" + (origem === "NEOVERO" ? "Neovero" : "Effort") + ")." };
+      if (!cliente) return { erro: "Informe o cliente." };
+      return { origem, base, os, cliente };
+    }
+    function seloOrigemCompra(i) {
+      if (!i.origem) return `<div class="org-selo sem">origem não informada</div>`;
+      if (i.origem === "ESTOQUE") return `<div class="org-selo est">compra para estoque</div>`;
+      return `<div class="org-selo ${i.origem === "NEOVERO" ? "neo" : "eff"}">${escReq(i.origem)}${i.base ? " · " + escReq(i.base) : ""}</div>`;
+    }
+    function textoOrigemCot(c) {
+      const it = c.itemCodigo ? (bancoDados.itensCompra || []).find(x => x.codigo === c.itemCodigo) : null;
+      if (!it || !it.origem) return "";
+      if (it.origem === "ESTOQUE") return ` · Origem: <b>ESTOQUE</b>`;
+      return ` (${escReq(it.origem)}${it.base ? " / " + escReq(it.base) : ""}) · Cliente: <b>${escReq(it.cliente || "—")}</b>`;
+    }
+
     function abrirModalItemCompra(codigo) {
       const i = codigo ? (bancoDados.itensCompra || []).find(x => x.codigo === codigo) : null;
       itemCmpEditando = i ? i.codigo : null;
@@ -5246,6 +5309,7 @@
       document.getElementById('cmpCliente').value = i ? i.cliente : "";
       document.getElementById('cmpOs').value = i ? i.os : "";
       document.getElementById('cmpObs').value = i ? i.obs : "";
+      preencherOrigemCompra('cmp', i || {});
       const prio = i ? prioCmp(i) : "MÉDIA";
       document.querySelectorAll('input[name="cmpPrio"]').forEach(r => { r.checked = r.value === prio; });
       const ref = i ? (i.referencia || "") : "FOTO";
@@ -5269,6 +5333,8 @@
       const qtd = document.getElementById('cmpQtd').value.trim();
       if (!item) { alert("Informe a descrição do item."); return; }
       if (!qtd) { alert("Informe a quantidade."); return; }
+      const org = lerOrigemCompra('cmp');
+      if (org.erro) { alert(org.erro); return; }
       const ref = document.querySelector('input[name="cmpRef"]:checked')?.value || "";
       if ((ref === "FOTO" || ref === "A/F") && !(fotosCmpManter.length + fotosCmpNovas.length)) {
         if (!confirm("A referência é FOTO, mas nenhuma foto foi adicionada. Salvar mesmo assim?")) return;
@@ -5281,10 +5347,10 @@
         unidade: document.getElementById('cmpUnidade').value.trim().toUpperCase() || "UN",
         solicitante: document.getElementById('cmpSolicitante').value.trim(),
         categoria: document.getElementById('cmpCategoria').value.trim(),
-        cliente: document.getElementById('cmpCliente').value.trim(),
+        cliente: org.cliente, origem: org.origem, base: org.base,
         referencia: ref,
         prioridade: document.querySelector('input[name="cmpPrio"]:checked')?.value || "MÉDIA",
-        os: document.getElementById('cmpOs').value.trim(),
+        os: org.os,
         obs: document.getElementById('cmpObs').value.trim(),
         usuario: usuarioAtualCmp()
       };
@@ -5303,7 +5369,7 @@
         if (!bancoDados.itensCompra) bancoDados.itensCompra = [];
         const dadosItem = {
           item: item.toUpperCase(), qtd: qtd, unidade: payload.unidade, solicitante: payload.solicitante.toUpperCase(), categoria: (payload.categoria || "DIVERSOS").toUpperCase(),
-          cliente: payload.cliente.toUpperCase(), referencia: ref, prioridade: payload.prioridade, urgente: payload.prioridade === "ALTA", os: payload.os, obs: payload.obs, fotos: res.fotos || []
+          cliente: payload.cliente.toUpperCase(), origem: org.origem, base: org.base, referencia: ref, prioridade: payload.prioridade, urgente: payload.prioridade === "ALTA", os: payload.os, obs: payload.obs, fotos: res.fotos || []
         };
         if (itemCmpEditando) {
           const alvo = bancoDados.itensCompra.find(x => x.codigo === itemCmpEditando);
@@ -5707,7 +5773,7 @@
         return `<tr${["CANCELADA", "REPROVADA", "COMPRADA"].includes(c.status) ? ' class="linha-cmp-inativa"' : ''} title="${escReq(c.historico || '')}">
           <td class="td-center"><b>${escReq(c.codigo)}</b></td>
           <td class="td-center">${escReq(String(c.dataHora || '').split(' ')[0])}</td>
-          <td><b>${escReq(c.produto)}</b>${c.itemCodigo ? `<span class="req-enviado" style="color:#1d4ed8;">Item da lista Nº ${escReq(c.itemCodigo)}</span>` : ''}${c.os ? `<span class="req-enviado" style="color:#475569;">OS ${escReq(c.os)}</span>` : ''}</td>
+          <td><b>${escReq(c.produto)}</b>${c.itemCodigo ? `<span class="req-enviado" style="color:#1d4ed8;">Item da lista Nº ${escReq(c.itemCodigo)}</span>` : ''}${(() => { const it = c.itemCodigo ? (bancoDados.itensCompra || []).find(x => x.codigo === c.itemCodigo) : null; return it && it.origem ? `<span class="req-enviado" style="color:#475569;">Cliente: ${escReq(it.cliente || "—")}</span>` + seloOrigemCompra(it) : (c.os ? `<span class="req-enviado" style="color:#475569;">OS ${escReq(c.os)}</span>` : ''); })()}</td>
           <td class="td-center"><b>${qtdUnCmp(c.qtd, unidadeDaCot(c))}</b></td>
           <td class="cot-grid-orc">${orcHtml}</td>
           <td><b>${escReq(esc.fornecedor || '-')}</b><span class="req-enviado" style="color:#0f172a;">${moedaBR(c.status === "COMPRADA" && c.valorFinal !== "" ? c.valorFinal : r.totais[c.escolhido])}</span>${c.justificativa ? `<span class="req-enviado" style="color:#64748b;">${escReq(c.justificativa)}</span>` : ''}</td>
@@ -5759,6 +5825,7 @@
       fotosCotNovas = [];
       desenharFotosCot();
       desenharOrcsCot(c ? c.orcamentos : []);
+      preencherOrigemCompra('cot', itC || (c ? { os: c.os } : {}));
       if (!c && itemCodigo) aoEscolherItemCotacao();
       mostrarCamposItemNovoCot();
       calcularCotacaoTela();
@@ -5808,6 +5875,7 @@
       document.getElementById('cotQtd').value = i.qtd;
       document.getElementById('cotSolicitante').value = i.solicitante || "";
       document.getElementById('cotOs').value = i.os || "";
+      preencherOrigemCompra('cot', i);   // origem/cliente/OS vêm do item (fonte única)
       dicaHistorico(i.item, 'dicaHistCot');
       calcularCotacaoTela();
     }
@@ -5854,9 +5922,9 @@
         document.getElementById('cotTot' + o.card).innerText = moedaBR(r.totais[i]);
         document.getElementById('cotSelos' + o.card).innerHTML = (i === r.maisBarato ? '<span class="cot-selo s-barato">🟢 Mais barato</span>' : '') + (i === r.custoBeneficio ? '<span class="cot-selo s-cb">⭐ Custo-benefício</span>' : '');
       });
-      // Escolhido: o manual (se ainda válido) ou o melhor custo-benefício
+      // Escolhido: só o que o usuário marcou (nada vem marcado; a escolha é obrigatória para salvar)
       let escCard = cotEscolhaManual;
-      if (escCard === null || !validos.some(o => o.card === escCard)) escCard = validos.length ? validos[r.custoBeneficio].card : null;
+      if (escCard !== null && !validos.some(o => o.card === escCard)) escCard = null;
       document.querySelectorAll('input[name="cotEsc"]').forEach(x => { x.checked = Number(x.value) === escCard; });
       if (escCard !== null) document.getElementById('cotCard' + escCard).classList.add('escolhido');
 
@@ -5872,9 +5940,10 @@
         txt += `<br>⭐ <b>Melhor custo-benefício:</b> ${escReq(cb.fornecedor)} — entrega ${dias > 0 ? dias + " dia(s) antes" : "em prazo melhor"} por ${moedaBR(dif)} (${pct}%) a mais.`;
       }
       if (validos.length === 1) txt += `<br><span style="color:#b45309;">Só um orçamento: o ideal é comparar com pelo menos mais um.</span>`;
+      if (escCard === null) txt += `<br><span class="cot-falta-esc"><i class="fa-solid fa-hand-pointer"></i> Marque "Escolher este fornecedor" no orçamento escolhido.</span>`;
       res.innerHTML = txt;
       const idxEsc = validos.findIndex(o => o.card === escCard);
-      document.getElementById('boxJustCot').style.display = (idxEsc !== r.custoBeneficio && idxEsc !== r.maisBarato) ? "" : "none";
+      document.getElementById('boxJustCot').style.display = (idxEsc >= 0 && idxEsc !== r.custoBeneficio && idxEsc !== r.maisBarato) ? "" : "none";
     }
 
     function salvarCotacaoTela() {
@@ -5882,20 +5951,22 @@
       const qtd = document.getElementById('cotQtd').value.trim();
       if (!produto) { alert("Informe o produto."); return; }
       if (!qtd) { alert("Informe a quantidade."); return; }
+      const org = lerOrigemCompra('cot');
+      if (org.erro) { alert(org.erro); return; }
       const orcs = lerOrcsTela();
       for (const o of orcs) if (!o.fornecedor || !(o.valorUnit > 0)) { alert("Orçamento " + (o.card + 1) + ": informe fornecedor e valor unitário (ou deixe o cartão vazio)."); return; }
       if (!orcs.length) { alert("Informe ao menos um orçamento."); return; }
       const r = calcularResultadoCot(orcs, qtd);
-      let escCard = document.querySelector('input[name="cotEsc"]:checked');
-      let idxEsc = escCard ? orcs.findIndex(o => o.card === Number(escCard.value)) : r.custoBeneficio;
-      if (idxEsc < 0) idxEsc = r.custoBeneficio;
+      const escCard = document.querySelector('input[name="cotEsc"]:checked');
+      const idxEsc = escCard ? orcs.findIndex(o => o.card === Number(escCard.value)) : -1;
+      if (idxEsc < 0) { alert('Escolha o fornecedor: marque "Escolher este fornecedor" em um dos orçamentos.'); return; }
       const just = document.getElementById('cotJustificativa').value.trim();
       if (idxEsc !== r.custoBeneficio && idxEsc !== r.maisBarato && just.length < 5) { alert("O fornecedor escolhido não é o indicado. Informe a justificativa."); return; }
 
       const payload = { acao: "SALVAR_COTACAO", codigo: cotEditando || "", itemCodigo: document.getElementById('cotItem').value, produto, qtd,
         categoria: document.getElementById('cotCategoria').value.trim(), unidade: document.getElementById('cotUnidade').value.trim().toUpperCase() || "UN",
         fotosManter: fotosCotManter.slice(), fotosNovas: fotosCotNovas.slice(),
-        solicitante: document.getElementById('cotSolicitante').value.trim(), os: document.getElementById('cotOs').value.trim(), obs: document.getElementById('cotObs').value.trim(),
+        solicitante: document.getElementById('cotSolicitante').value.trim(), os: org.os, origem: org.origem, base: org.base, cliente: org.cliente, obs: document.getElementById('cotObs').value.trim(),
         orcamentos: orcs.map(o => ({ fornecedor: o.fornecedor, valorUnit: o.valorUnit, frete: o.frete, prazo: o.prazo, pagamento: o.pagamento, garantia: o.garantia })),
         escolhido: idxEsc, justificativa: just, usuario: usuarioAtualCmp() };
       const btn = document.getElementById('btnSalvarCot'); const original = btn.innerHTML;
@@ -5915,6 +5986,7 @@
         }
         const item = (bancoDados.itensCompra || []).find(i => i.codigo === payload.itemCodigo);
         if (item && res.fotos) item.fotos = res.fotos.slice();
+        if (item) Object.assign(item, { origem: org.origem, base: org.base, cliente: org.cliente, os: org.os });
         const local = { codigo: res.codigo, produto: produto.toUpperCase(), qtd, itemCodigo: payload.itemCodigo, solicitante: payload.solicitante.toUpperCase(), os: payload.os, obs: payload.obs,
           orcamentos: payload.orcamentos.map(o => Object.assign({}, o, { fornecedor: o.fornecedor.toUpperCase() })), escolhido: idxEsc, justificativa: just, status: "EM COTAÇÃO",
           fotos: item ? (item.fotos || []) : [], dataHora: new Date().toLocaleDateString('pt-BR'), historico: "", aprovacaoInfo: "", valorFinal: "" };
@@ -6069,7 +6141,7 @@
         <div class="cab"><h1>MAPA COMPARATIVO DE COTAÇÃO</h1><div class="cod">${escReq(c.codigo)}<br><span style="font-size:11pt; font-weight:normal;">${escReq(c.dataHora || '')}</span></div></div>
         <div class="prod">${foto}<div>
           <div class="desc">${escReq(c.produto)}</div>
-          <div class="meta">Quantidade: <b style="font-size:16pt;">${qtdUnCmp(c.qtd, unidadeDaCot(c))}</b>${c.itemCodigo ? ` · Item da lista Nº <b>${escReq(c.itemCodigo)}</b>` : ''}${c.os ? ` · OS <b>${escReq(c.os)}</b>` : ''}<br>Solicitante: <b>${escReq(c.solicitante || '—')}</b>${c.obs ? `<br>Obs.: ${escReq(c.obs)}` : ''}</div>
+          <div class="meta">Quantidade: <b style="font-size:16pt;">${qtdUnCmp(c.qtd, unidadeDaCot(c))}</b>${c.itemCodigo ? ` · Item da lista Nº <b>${escReq(c.itemCodigo)}</b>` : ''}${c.os ? ` · OS <b>${escReq(c.os)}</b>` : ''}${textoOrigemCot(c)}<br>Solicitante: <b>${escReq(c.solicitante || '—')}</b>${c.obs ? `<br>Obs.: ${escReq(c.obs)}` : ''}</div>
         </div></div>
         <table>
           <thead><tr><th class="lbl" style="background:#1e3a8a; color:#fff;"></th>${orcs.map((o, k) => `<th>ORÇAMENTO ${k + 1}</th>`).join('')}</tr></thead>
