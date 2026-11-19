@@ -708,6 +708,47 @@
     .dx-obs { font-size:11px; color:var(--txt2); margin-top:8px; line-height:1.4; }
     .dx-rodape { font-size:11px; color:var(--txt2); text-align:center; margin:6px 0 4px; }
     .cot-falta-esc { color:#b45309; font-weight:bold; }
+    /* Temas (cor de destaque) */
+    body[data-tema-sis="verde"] .header { background:linear-gradient(115deg,#042f2c 0%,#0b5a50 45%,#0f8a73 100%); box-shadow:0 10px 30px rgba(4,47,44,.35),inset 0 1px 0 rgba(255,255,255,.12); }
+    body[data-tema-sis="verde"] .nav-tab.active { background:linear-gradient(135deg,#14b8a6,#0b5a50); box-shadow:0 6px 16px rgba(20,184,166,.4); }
+    body[data-tema-sis="verde"] .nav-tab:hover { background:#ccfbf1; color:#0b5a50; }
+    body[data-tema-sis="verde"] .card { box-shadow:0 1px 2px rgba(4,47,44,.05),0 10px 28px rgba(4,47,44,.07),inset 0 3px 0 0 #14b8a6; }
+    body[data-tema-sis="verde"] th { background:linear-gradient(180deg,#f0fdfa,#d5f5ee); color:#042f2c; border-bottom-color:#14b8a6; }
+    body[data-tema-sis="verde"] .btn-submit { background:linear-gradient(135deg,#14b8a6,#0b5a50); box-shadow:0 8px 18px rgba(20,184,166,.32); }
+    body[data-tema-sis="verde"] .btn-submit:hover { background:linear-gradient(135deg,#2dd4bf,#0a4d45); }
+    body[data-tema-sis="verde"] .modal-title { border-image:linear-gradient(90deg,#14b8a6,#22c55e 60%,#84cc16) 1; }
+    body[data-tema-sis="verde"] .cmp-subaba.ativa { background:#0b5a50; border-color:#0b5a50; }
+    body[data-tema-sis="grafite"] .header { background:linear-gradient(115deg,#0f172a 0%,#1f2937 45%,#3f3f73 100%); box-shadow:0 10px 30px rgba(15,23,42,.4),inset 0 1px 0 rgba(255,255,255,.1); }
+    body[data-tema-sis="grafite"] .nav-tab.active { background:linear-gradient(135deg,#6366f1,#312e81); box-shadow:0 6px 16px rgba(99,102,241,.4); }
+    body[data-tema-sis="grafite"] .nav-tab:hover { background:#e0e7ff; color:#312e81; }
+    body[data-tema-sis="grafite"] .card { box-shadow:0 1px 2px rgba(15,23,42,.05),0 10px 28px rgba(15,23,42,.08),inset 0 3px 0 0 #6366f1; }
+    body[data-tema-sis="grafite"] th { background:linear-gradient(180deg,#f5f5ff,#e4e4f7); color:#1e1b4b; border-bottom-color:#6366f1; }
+    body[data-tema-sis="grafite"] .btn-submit { background:linear-gradient(135deg,#6366f1,#312e81); box-shadow:0 8px 18px rgba(99,102,241,.32); }
+    body[data-tema-sis="grafite"] .btn-submit:hover { background:linear-gradient(135deg,#818cf8,#2a2770); }
+    body[data-tema-sis="grafite"] .modal-title { border-image:linear-gradient(90deg,#6366f1,#a855f7 60%,#ec4899) 1; }
+    body[data-tema-sis="grafite"] .cmp-subaba.ativa { background:#312e81; border-color:#312e81; }
+    .menu-tema { padding:10px 14px; border-top:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; }
+    .menu-tema-tit { font-size:12px; font-weight:600; color:#1e293b; margin-bottom:8px; display:flex; gap:10px; align-items:center; }
+    .menu-tema-tit i { color:#7c3aed; }
+    .menu-tema-ops { display:flex; gap:6px; }
+    .tema-op { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; background:#fff; border:2px solid #e2e8f0; border-radius:9px; padding:6px 4px; font-size:11px; font-weight:bold; color:#334155; cursor:pointer; }
+    .tema-op span { width:30px; height:16px; border-radius:5px; display:block; }
+    .tema-op.on { border-color:#0f172a; }
+    /* Aviso geral */
+    #avisoGeralTopo:empty { display:none; }
+    .aviso-geral { display:flex; gap:12px; align-items:flex-start; border-radius:12px; padding:11px 14px; margin-bottom:12px; border:1px solid; box-shadow:0 4px 14px rgba(15,23,42,.06); }
+    .aviso-ic { font-size:18px; margin-top:2px; }
+    .aviso-corpo { flex:1; min-width:0; }
+    .aviso-msg { font-size:13.5px; font-weight:600; line-height:1.45; word-wrap:break-word; }
+    .aviso-rod { font-size:11px; opacity:.75; margin-top:3px; }
+    .aviso-x { background:none; border:none; cursor:pointer; font-size:15px; opacity:.6; padding:2px 6px; color:inherit; }
+    .aviso-x:hover { opacity:1; }
+    .aviso-info { background:#eff6ff; border-color:#bfdbfe; color:#1e3a8a; } .aviso-info .aviso-ic { color:#2563eb; }
+    .aviso-atencao { background:#fffbeb; border-color:#fcd34d; color:#78350f; } .aviso-atencao .aviso-ic { color:#d97706; }
+    .aviso-urgente { background:#fef2f2; border-color:#fca5a5; color:#7f1d1d; } .aviso-urgente .aviso-ic { color:#dc2626; animation:avisoPulso 1.6s ease-in-out infinite; }
+    @keyframes avisoPulso { 0%,100% { transform:scale(1); } 50% { transform:scale(1.18); } }
+    .aviso-atual-info { font-size:12px; color:#475569; background:#f8fafc; border:1px solid #e2e8f0; border-radius:9px; padding:8px 10px; margin-bottom:10px; }
+    .aviso-vazio { font-size:12px; color:#94a3b8; border:1px dashed #cbd5e1; border-radius:10px; padding:14px; text-align:center; }
     .cmp-linha-aprovada td { background:#f0fdf4 !important; }
     .cmp-linha-aprovada td:first-child { box-shadow:inset 5px 0 0 #16a34a; }
     .cmp-selo-aprovado { background:#16a34a !important; color:#fff !important; font-weight:bold; letter-spacing:.2px; }
@@ -814,6 +855,17 @@
           <div class="menu-ajuda-dropdown" id="menuAjudaDropdown">
             <div class="menu-ajuda-item" onclick="abrirModalManual()">
               <i class="fa-solid fa-book-bookmark" style="color:#1a4d80;"></i> Material de Apoio
+            </div>
+            <div class="menu-tema" onclick="event.stopPropagation()">
+              <div class="menu-tema-tit"><i class="fa-solid fa-palette"></i> Tema</div>
+              <div class="menu-tema-ops">
+                <button type="button" class="tema-op" data-tema="azul" onclick="aplicarTemaSistema('azul')"><span style="background:linear-gradient(135deg,#2563eb,#0b2545);"></span>Azul</button>
+                <button type="button" class="tema-op" data-tema="verde" onclick="aplicarTemaSistema('verde')"><span style="background:linear-gradient(135deg,#14b8a6,#064e45);"></span>Verde</button>
+                <button type="button" class="tema-op" data-tema="grafite" onclick="aplicarTemaSistema('grafite')"><span style="background:linear-gradient(135deg,#6366f1,#1f2937);"></span>Grafite</button>
+              </div>
+            </div>
+            <div class="menu-ajuda-item" id="menuAvisoGeral" style="display:none;" onclick="abrirModalAvisoGeral()">
+              <i class="fa-solid fa-bullhorn" style="color:#d97706;"></i> Aviso geral (administrador)
             </div>
             <div class="mem-box" id="memBox" style="display:none;"></div>
           </div>
@@ -2141,6 +2193,39 @@
       <div style="display:flex; gap:8px; justify-content:flex-end;">
         <button type="button" class="btn-secundario" onclick="fecharModalCancelarTermo()">Voltar</button>
         <button type="button" id="btnConfirmarCancelTermo" class="btn-negar" style="height:auto; padding:8px 16px; font-size:12px;" onclick="confirmarCancelamentoTermo()"><i class="fa-solid fa-rotate-left"></i> Confirmar Cancelamento</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalAvisoGeral" class="modal-overlay">
+    <div class="modal-box" style="width:620px; max-width:96vw;">
+      <div class="modal-title"><span><i class="fa-solid fa-bullhorn"></i> Aviso geral para todos os usuários</span><span onclick="fecharModalAvisoGeral()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span></div>
+      <div id="avisoAtualInfo" class="aviso-atual-info"></div>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label>Mensagem:</label>
+        <textarea id="avisoTexto" data-minusculas maxlength="600" style="height:96px;" placeholder="Ex.: Amanhã (20/11) o sistema ficará fora do ar das 12h às 13h para manutenção." oninput="previaAvisoGeral()"></textarea>
+        <div style="font-size:11px; color:#64748b; text-align:right;"><span id="avisoContador">0</span>/600</div>
+      </div>
+      <div class="form-row" style="align-items:flex-end;">
+        <div class="form-group" style="flex:2;">
+          <label>Tipo:</label>
+          <div class="req-tipo-grupo" id="grpTipoAviso">
+            <label class="req-tipo-opcao" data-cor="#2563eb"><input type="radio" name="avisoTipo" value="INFORMATIVO" checked onchange="previaAvisoGeral()"><span><i class="fa-solid fa-circle-info"></i> Informativo</span></label>
+            <label class="req-tipo-opcao" data-cor="#d97706"><input type="radio" name="avisoTipo" value="ATENCAO" onchange="previaAvisoGeral()"><span><i class="fa-solid fa-triangle-exclamation"></i> Atenção</span></label>
+            <label class="req-tipo-opcao" data-cor="#dc2626"><input type="radio" name="avisoTipo" value="URGENTE" onchange="previaAvisoGeral()"><span><i class="fa-solid fa-bell"></i> Urgente</span></label>
+          </div>
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>Mostrar até (opcional):</label>
+          <input type="date" id="avisoValidade" onchange="previaAvisoGeral()">
+        </div>
+      </div>
+      <div style="font-size:11px; color:#64748b; margin:-4px 0 6px;">Prévia (é assim que todos vão ver, no topo do sistema). Informativo e Atenção podem ser fechados por cada usuário; Urgente fica fixo até você encerrar.</div>
+      <div id="avisoPrevia"></div>
+      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap;">
+        <button type="button" class="btn-secundario" id="btnEncerrarAviso" style="margin-right:auto; color:#b91c1c; border-color:#fecaca;" onclick="enviarAvisoGeral('ENCERRAR')"><i class="fa-solid fa-ban"></i> Encerrar aviso atual</button>
+        <button type="button" class="btn-secundario" onclick="fecharModalAvisoGeral()">Cancelar</button>
+        <button type="button" class="btn-submit" id="btnPublicarAviso" onclick="enviarAvisoGeral('PUBLICAR')"><i class="fa-solid fa-paper-plane"></i> Publicar para todos</button>
       </div>
     </div>
   </div>
@@ -6582,6 +6667,97 @@
         requestAnimationFrame(passo);
       };
       requestAnimationFrame(passo);
+    }
+
+    // ===================== TEMAS (cor de destaque) =====================
+    // Só muda a cor de identidade (cabeçalho, menu, botões, títulos). Cores de situação, PDFs e impressões não mudam.
+    function aplicarTemaSistema(t) {
+      const tema = ["azul", "verde", "grafite"].includes(t) ? t : "azul";
+      if (tema === "azul") document.body.removeAttribute('data-tema-sis'); else document.body.setAttribute('data-tema-sis', tema);
+      document.querySelectorAll('.tema-op').forEach(b => b.classList.toggle('on', b.dataset.tema === tema));
+      try { localStorage.setItem('dmaTemaSistema', tema); } catch (e) {}
+    }
+    (function () { const ap = () => { let t = "azul"; try { t = localStorage.getItem('dmaTemaSistema') || "azul"; } catch (e) {} aplicarTemaSistema(t); };
+      if (document.readyState === "loading") document.addEventListener('DOMContentLoaded', ap); else ap(); })();
+
+    // ===================== AVISO GERAL =====================
+    // Publicado só pelo administrador do sistema (ADMINS_SISTEMA no Script). Aparece no topo para todos.
+    function adminSistemaTela() {
+      const adm = ((typeof bancoDados !== "undefined" && bancoDados && bancoDados.sistema && bancoDados.sistema.admins) || []).map(a => String(a).trim().toLowerCase());
+      if (!usuarioLogado || !adm.length) return false;
+      return [usuarioLogado.usuario, usuarioLogado.nome].some(v => adm.includes(String(v || "").trim().toLowerCase()));
+    }
+    function htmlAvisoGeral(a, previa) {
+      const cfg = { INFORMATIVO: ["info", "fa-circle-info", "Informativo"], ATENCAO: ["atencao", "fa-triangle-exclamation", "Atenção"], URGENTE: ["urgente", "fa-bell", "Urgente"] }[a.tipo] || ["info", "fa-circle-info", "Informativo"];
+      const fechavel = a.tipo !== "URGENTE" && !previa;
+      return `<div class="aviso-geral aviso-${cfg[0]}">
+        <i class="fa-solid ${cfg[1]} aviso-ic"></i>
+        <div class="aviso-corpo"><div class="aviso-msg">${escReq(a.mensagem).replace(/\n/g, "<br>")}</div>
+          <div class="aviso-rod">${cfg[2]}${a.autor ? " · " + escReq(a.autor) : ""}${a.publicadoEm ? " · " + escReq(a.publicadoEm) : ""}${a.validoAte ? " · até " + escReq(a.validoAte.split(" ")[0]) : ""}</div></div>
+        ${fechavel ? `<button type="button" class="aviso-x" onclick="fecharAvisoGeral('${escReq(a.id)}')" title="Fechar (só para você)"><i class="fa-solid fa-xmark"></i></button>` : ""}
+      </div>`;
+    }
+    var avisoGeralChave = null;
+    function renderizarAvisoGeral() {
+      if (typeof bancoDados === "undefined" || !bancoDados) return;
+      let box = document.getElementById('avisoGeralTopo');
+      if (!box) {
+        const nav = document.querySelector('.nav-tabs');
+        if (!nav) return;
+        box = document.createElement('div'); box.id = 'avisoGeralTopo';
+        nav.parentNode.insertBefore(box, nav);
+      }
+      const a = bancoDados.sistema ? bancoDados.sistema.aviso : null;
+      let fechado = ""; try { fechado = localStorage.getItem('dmaAvisoFechado') || ""; } catch (e) {}
+      const mostrar = !!a && !!usuarioLogado && (a.tipo === "URGENTE" || fechado !== a.id);
+      const adm = adminSistemaTela();
+      const chave = (mostrar ? JSON.stringify(a) : "") + "|" + adm;
+      if (chave === avisoGeralChave) return;
+      avisoGeralChave = chave;
+      box.innerHTML = mostrar ? htmlAvisoGeral(a, false) : "";
+      const m = document.getElementById('menuAvisoGeral'); if (m) m.style.display = adm ? "" : "none";
+    }
+    function fecharAvisoGeral(id) { try { localStorage.setItem('dmaAvisoFechado', id); } catch (e) {} avisoGeralChave = null; renderizarAvisoGeral(); }
+    setInterval(() => { try { renderizarAvisoGeral(); } catch (e) {} }, 2000);   // acompanha a atualização automática sem mexer nela
+
+    function abrirModalAvisoGeral() {
+      if (!adminSistemaTela()) { alert("Somente o administrador do sistema pode publicar avisos."); return; }
+      document.getElementById("menuAjudaDropdown")?.classList.remove("ativo");
+      const a = bancoDados.sistema && bancoDados.sistema.aviso;
+      document.getElementById('avisoAtualInfo').innerHTML = a ? `<b>Aviso no ar:</b> publicado em ${escReq(a.publicadoEm)}${a.validoAte ? " · até " + escReq(a.validoAte.split(" ")[0]) : " · sem data para sair"}. Publicar um novo substitui este.` : "Nenhum aviso no ar no momento.";
+      document.getElementById('avisoTexto').value = a ? a.mensagem : "";
+      document.querySelectorAll('input[name="avisoTipo"]').forEach(r => { r.checked = r.value === (a ? a.tipo : "INFORMATIVO"); });
+      document.getElementById('avisoValidade').value = "";
+      document.getElementById('avisoValidade').min = new Date().toISOString().slice(0, 10);
+      document.getElementById('btnEncerrarAviso').style.display = a ? "" : "none";
+      previaAvisoGeral();
+      document.getElementById('modalAvisoGeral').classList.add('active');
+    }
+    function fecharModalAvisoGeral() { document.getElementById('modalAvisoGeral').classList.remove('active'); }
+    function previaAvisoGeral() {
+      const msg = document.getElementById('avisoTexto').value;
+      document.getElementById('avisoContador').innerText = msg.length;
+      const tipo = document.querySelector('input[name="avisoTipo"]:checked')?.value || "INFORMATIVO";
+      document.querySelectorAll('#grpTipoAviso .req-tipo-opcao').forEach(op => { const on = op.querySelector('input').checked; op.querySelector('span').style.background = on ? op.dataset.cor : ""; op.querySelector('span').style.color = on ? "#fff" : ""; });
+      const v = document.getElementById('avisoValidade').value;
+      document.getElementById('avisoPrevia').innerHTML = msg.trim() ? htmlAvisoGeral({ tipo, mensagem: msg, autor: usuarioLogado ? usuarioLogado.nome : "", publicadoEm: "agora", validoAte: v ? v.split("-").reverse().join("/") : "" }, true) : '<div class="aviso-vazio">A prévia aparece aqui.</div>';
+    }
+    function enviarAvisoGeral(op) {
+      const payload = { acao: "AVISO_GERAL", operacao: op, mensagem: document.getElementById('avisoTexto').value.trim(),
+        tipo: document.querySelector('input[name="avisoTipo"]:checked')?.value || "INFORMATIVO", validoAte: document.getElementById('avisoValidade').value,
+        usuario: usuarioLogado ? usuarioLogado.nome : "", login: usuarioLogado ? usuarioLogado.usuario : "" };
+      if (op === "PUBLICAR" && payload.mensagem.length < 3) { alert("Escreva a mensagem do aviso."); return; }
+      if (op === "ENCERRAR" && !confirm("Encerrar o aviso atual? Ele some para todos.")) return;
+      const btn = document.getElementById(op === "PUBLICAR" ? 'btnPublicarAviso' : 'btnEncerrarAviso'), orig = btn.innerHTML;
+      btn.disabled = true; btn.innerText = "ENVIANDO...";
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r => r.json()).then(res => {
+        btn.disabled = false; btn.innerHTML = orig;
+        if (res.status !== "sucesso") { alert(res.mensagem || "Não foi possível salvar o aviso."); return; }
+        if (!bancoDados.sistema) bancoDados.sistema = { admins: [] };
+        bancoDados.sistema.aviso = res.aviso || null;
+        avisoGeralChave = null; renderizarAvisoGeral();
+        fecharModalAvisoGeral();
+      }).catch(() => { btn.disabled = false; btn.innerHTML = orig; alert("Falha de conexão ao salvar o aviso."); });
     }
 
     // ===================== CAIXA ALTA PADRÃO =====================
