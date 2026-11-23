@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Aprovação de compra · DMA SYS</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Roboto, Arial, sans-serif; background: #eef2f5; color: #1e293b; }
+  header { background: linear-gradient(135deg, #0f766e, #115e59); color: #fff; padding: 16px 18px; }
+  header .t { font-size: 17px; font-weight: 700; }
+  header .s { font-size: 12px; opacity: .85; margin-top: 2px; }
+  main { max-width: 620px; margin: 0 auto; padding: 14px; }
+  .card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.08); padding: 16px; margin-bottom: 12px; }
+  .cod { display: inline-block; background: #ede9fe; color: #6d28d9; font-weight: 700; font-size: 12px; padding: 3px 9px; border-radius: 99px; }
+  .prod { font-size: 18px; font-weight: 700; margin: 10px 0 6px; line-height: 1.3; }
+  .topo { display: flex; gap: 14px; align-items: flex-start; }
+  .topo img { width: 96px; height: 96px; object-fit: cover; border-radius: 10px; border: 1px solid #e2e8f0; flex-shrink: 0; cursor: zoom-in; background: #f8fafc; }
+  .meta { font-size: 13.5px; color: #475569; line-height: 1.7; }
+  .meta b { color: #1e293b; }
+  .fotos { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .fotos img { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; cursor: zoom-in; }
+  h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; margin: 0 0 10px; }
+  .orc { border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 8px; }
+  .orc.esc { border-color: #16a34a; background: #f0fdf4; }
+  .orc .l1 { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  .orc .f { font-weight: 700; font-size: 15px; }
+  .orc .v { font-weight: 800; font-size: 17px; white-space: nowrap; }
+  .orc .d { font-size: 12.5px; color: #64748b; margin-top: 4px; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; margin: 6px 4px 0 0; }
+  .tg-esc { background: #16a34a; color: #fff; } .tg-mb { background: #dcfce7; color: #166534; } .tg-cb { background: #fef3c7; color: #92400e; }
+  .just { font-size: 13px; background: #f8fafc; border-left: 3px solid #94a3b8; padding: 8px 10px; border-radius: 6px; margin-top: 8px; color: #334155; }
+  label { font-size: 13px; font-weight: 600; color: #334155; display: block; margin-bottom: 6px; }
+  textarea { width: 100%; min-height: 70px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; font: inherit; font-size: 14px; }
+  .botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  button { border: 0; border-radius: 10px; padding: 15px 10px; font-size: 15px; font-weight: 700; cursor: pointer; color: #fff; }
+  .b-ok { background: linear-gradient(135deg, #22c55e, #15803d); }
+  .b-no { background: linear-gradient(135deg, #f43f5e, #be123c); }
+  button:disabled { opacity: .55; cursor: wait; }
+  .msg { text-align: center; padding: 34px 18px; }
+  .msg .ic { font-size: 46px; }
+  .msg .tt { font-size: 18px; font-weight: 700; margin: 10px 0 6px; }
+  .msg .tx { font-size: 14px; color: #475569; }
+  .rodape { text-align: center; font-size: 11px; color: #94a3b8; padding: 10px 0 24px; }
+  #zoom { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 9; }
+  #zoom img { max-width: 94vw; max-height: 90vh; border-radius: 8px; }
+</style>
+</head>
+<body>
+<header><div class="t">🛒 Aprovação de compra</div><div class="s">DMA SYS · Linemed</div></header>
+<main id="app"><div class="card msg"><div class="ic">⏳</div><div class="tt">Carregando…</div></div></main>
+<div class="rodape">DMA SYS · link pessoal e de uso único</div>
+<div id="zoom" onclick="this.style.display='none'"><img id="zoomImg" alt=""></div>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbyO2lc933am-wANUezHCGcURMZjDeHE2HLaNC0HseSxIH92A9PfqO8QgMFZC6pOCRV_/exec";
+  const token = new URLSearchParams(location.search).get("t") || "";
+  const app = document.getElementById("app");
+  let dados = null;
+
+  const esc = v => String(v == null ? "" : v).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+  const moeda = v => (Number(v) || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const foto = id => "https://lh3.googleusercontent.com/d/" + encodeURIComponent(id);
+  function zoom(src) { document.getElementById("zoomImg").src = src; document.getElementById("zoom").style.display = "flex"; }
+
+  function tela(ic, tt, tx) { app.innerHTML = `<div class="card msg"><div class="ic">${ic}</div><div class="tt">${esc(tt)}</div><div class="tx">${tx || ""}</div></div>`; }
+
+  function carregar() {
+    if (!token) { tela("⚠️", "Link incompleto", "Peça um novo link para quem enviou."); return; }
+    const cb = "cbCot" + Date.now();
+    const s = document.createElement("script");
+    const timer = setTimeout(() => tela("📶", "Não foi possível carregar", "Verifique a internet e abra o link de novo."), 20000);
+    window[cb] = r => { clearTimeout(timer); delete window[cb]; s.remove(); mostrar(r); };
+    s.onerror = () => { clearTimeout(timer); tela("📶", "Não foi possível carregar", "Verifique a internet e abra o link de novo."); };
+    s.src = API_URL + "?acao=COTACAO_LER&t=" + encodeURIComponent(token) + "&callback=" + cb;
+    document.body.appendChild(s);
+  }
+
+  function mostrar(r) {
+    if (!r || r.status === "erro") return tela("⚠️", "Link inválido", esc((r && r.mensagem) || "Peça um novo link para quem enviou."));
+    if (r.status === "expirado") return tela("⌛", "Link expirado", "Peça um novo link para quem enviou.");
+    if (r.status === "respondido") return tela("✅", "Já respondido", esc(r.resumo || "") + (r.respondidoEm ? "<br>em " + esc(r.respondidoEm) : ""));
+    dados = r;
+    const c = r.cotacao;
+    const fotos = c.fotos || [];
+    const origem = String(c.origem || "").toUpperCase();
+    const destino = origem === "ESTOQUE" ? "Estoque (sem OS)"
+      : [c.cliente, c.os ? "OS " + c.os : "", origem ? (origem === "NEOVERO" && c.base ? "Neovero · " + c.base : origem) : ""].filter(Boolean).join(" · ");
+    const orcs = (c.orcamentos || []).slice().sort((a, b) => a.total - b.total);
+    const menor = orcs.length ? orcs[0].total : 0;
+
+    app.innerHTML = `
+      <div class="card">
+        <span class="cod">${esc(c.codigo)}</span>${c.prioridade === "ALTA" ? ' <span class="tag" style="background:#ffe4e6;color:#be123c;margin:0;">PRIORIDADE ALTA</span>' : ""}
+        <div class="topo" style="margin-top:10px;">
+          ${fotos.length ? `<img src="${foto(fotos[0])}" alt="Foto" onclick="zoom(this.src)">` : ""}
+          <div style="min-width:0;">
+            <div class="prod" style="margin-top:0;">${esc(c.produto)}</div>
+            <div class="meta">
+              <b>Quantidade:</b> ${esc(c.qtd)} ${esc(c.unidade || "")}<br>
+              ${destino ? `<b>Destino:</b> ${esc(destino)}<br>` : ""}
+              <b>Solicitante:</b> ${esc(c.solicitante || "—")}
+            </div>
+          </div>
+        </div>
+        ${fotos.length > 1 ? `<div class="fotos">${fotos.slice(1).map(f => `<img src="${foto(f)}" alt="Foto" onclick="zoom(this.src)">`).join("")}</div>` : ""}
+        ${c.obs ? `<div class="just">Obs.: ${esc(c.obs)}</div>` : ""}
+      </div>
+
+      <div class="card">
+        <h3>Orçamentos (${orcs.length})</h3>
+        ${orcs.map(o => `
+          <div class="orc${o.escolhido ? " esc" : ""}">
+            <div class="l1"><span class="f">${esc(o.fornecedor)}</span><span class="v">${moeda(o.total)}</span></div>
+            <div class="d">${moeda(o.valorUnit)}/un${o.frete ? " + frete " + moeda(o.frete) : " · frete grátis"}${o.prazo ? " · prazo " + esc(o.prazo) + " dias" : ""}${o.garantia ? " · garantia " + esc(o.garantia) + " dias" : ""}</div>
+            ${o.escolhido ? '<span class="tag tg-esc">✔ ESCOLHIDO</span>' : ""}${o.total === menor ? '<span class="tag tg-mb">🟢 mais barato</span>' : ""}${o.fornecedor === c.custoBeneficio && o.total !== menor ? '<span class="tag tg-cb">⭐ custo-benefício</span>' : ""}
+            ${o.escolhido && o.total > menor ? `<div class="d" style="color:#b45309;">${moeda(o.total - menor)} acima do mais barato</div>` : ""}
+          </div>`).join("")}
+        ${c.justificativa ? `<div class="just"><b>Justificativa da escolha:</b> ${esc(c.justificativa)}</div>` : ""}
+      </div>
+
+      <div class="card">
+        <label for="coment">Comentário <span style="font-weight:400;color:#64748b;">(obrigatório para recusar)</span></label>
+        <textarea id="coment" maxlength="300" placeholder="Ex.: pode comprar / aguardar o próximo mês…"></textarea>
+        <div class="botoes">
+          <button type="button" class="b-no" id="bNo" onclick="responder('REPROVAR')">✖ Não comprar</button>
+          <button type="button" class="b-ok" id="bOk" onclick="responder('APROVAR')">✔ Aprovar</button>
+        </div>
+        <div class="d" style="font-size:12px;color:#64748b;margin-top:10px;text-align:center;">Enviado para <b>${esc(r.aprovador)}</b> em ${esc(r.criadoEm)} · válido até ${esc(r.expiraEm)}</div>
+      </div>`;
+  }
+
+  function responder(decisao) {
+    const c = dados.cotacao;
+    const comentario = document.getElementById("coment").value.trim();
+    if (decisao === "REPROVAR" && comentario.length < 3) { alert("Escreva o motivo para não comprar."); document.getElementById("coment").focus(); return; }
+    const esc0 = (c.orcamentos || []).find(o => o.escolhido) || {};
+    if (!confirm(decisao === "APROVAR" ? `Aprovar a compra de ${c.produto} com ${esc0.fornecedor} por ${moeda(esc0.total)}?` : "Confirmar: NÃO comprar este item?")) return;
+    document.getElementById("bOk").disabled = document.getElementById("bNo").disabled = true;
+    fetch(API_URL, { method: "POST", body: JSON.stringify({ acao: "RESPONDER_VALIDACAO_COTACAO", token, decisao, comentario }) })
+      .then(r => r.json())
+      .then(res => {
+        if (res.status !== "sucesso") { alert(res.mensagem || "Não foi possível registrar."); document.getElementById("bOk").disabled = document.getElementById("bNo").disabled = false; return; }
+        decisao === "APROVAR" ? tela("✅", "Compra aprovada", "Obrigado! A aprovação já está registrada no sistema.") : tela("🛑", "Compra recusada", "Obrigado! A decisão já está registrada no sistema.");
+      })
+      .catch(() => { alert("Falha de conexão. Tente de novo."); document.getElementById("bOk").disabled = document.getElementById("bNo").disabled = false; });
+  }
+
+  carregar();
+</script>
+</body>
+</html>
