@@ -710,6 +710,19 @@
     .cot-falta-esc { color:#b45309; font-weight:bold; }
     .btn-zap-loc { color:#15803d !important; border-color:#86efac !important; }
     .btn-zap-loc:hover { background:#f0fdf4 !important; }
+    .ocor-link { font-size:10.5px; color:#c2410c; cursor:pointer; text-decoration:underline; }
+    .loc-conf-resumo .oc { background:#ffedd5; color:#c2410c; border-color:#fdba74; }
+    .loc-p-ocor { background:#ffedd5; color:#c2410c; font-weight:bold; }
+    .ocor-sec { margin-top:12px; border:1px solid #fed7aa; background:#fff7ed; border-radius:12px; padding:10px 12px; }
+    .ocor-sec-tit { font-size:12px; font-weight:bold; color:#c2410c; text-transform:uppercase; margin-bottom:6px; }
+    .ocor-l { background:#fff; border:1px solid #fed7aa; border-left:4px solid #ea580c; border-radius:9px; padding:8px 10px; margin-bottom:6px; font-size:12.5px; }
+    .ocor-l.fechada { border-left-color:#94a3b8; opacity:.75; }
+    .ocor-l-dt { float:right; font-size:11px; color:#64748b; }
+    .ocor-l-desc { color:#334155; margin:4px 0; }
+    .ocor-l-tags { display:flex; gap:8px; flex-wrap:wrap; align-items:center; font-size:11px; color:#475569; }
+    .ocor-l-tags span { background:#f1f5f9; padding:1px 7px; border-radius:6px; } .ocor-l-tags .falta { background:#fef3c7; color:#92400e; }
+    .ocor-l-tags .enc { background:#e2e8f0; } .ocor-l-tags button { margin-left:auto; }
+    .btn-ocor-loc { color:#c2410c !important; border-color:#fdba74 !important; }
     .loc-p-consulta { background:#dcfce7; color:#15803d; } .loc-p-acordo { background:#ede9fe; color:#6d28d9; }
     .loc-aviso-consulta { background:#f0fdf4 !important; border-color:#86efac !important; color:#14532d !important; align-items:center; margin:0 0 10px; }
     .loc-aviso-acordo { background:#f5f3ff !important; border-color:#c4b5fd !important; color:#4c1d95 !important; align-items:center; margin:0 0 10px; }
@@ -1027,7 +1040,7 @@
           <div class="form-group loc-so-conf" style="flex:0 0 190px;">
             <label>Situação da conferência:</label>
             <select id="locFiltroConf" onchange="renderizarLocacao()">
-              <option value="">Todas</option><option value="consulta">Aguardando resposta (WhatsApp)</option><option value="pend">Não conferidas</option><option value="aj">Com ajuste no Neovero</option><option value="reconf">Reconferir (contrato mudou)</option><option value="venc">Conferir de novo (prazo vencido)</option><option value="ok">OK</option>
+              <option value="">Todas</option><option value="ocorr">Com ocorrência aberta</option><option value="consulta">Aguardando resposta (WhatsApp)</option><option value="pend">Não conferidas</option><option value="aj">Com ajuste no Neovero</option><option value="reconf">Reconferir (contrato mudou)</option><option value="venc">Conferir de novo (prazo vencido)</option><option value="ok">OK</option>
             </select>
           </div>
           <div class="form-group loc-so-ctr" style="flex:1 1 180px; display:none;">
@@ -2205,6 +2218,50 @@
       <div style="display:flex; gap:8px; justify-content:flex-end;">
         <button type="button" class="btn-secundario" onclick="fecharModalCancelarTermo()">Voltar</button>
         <button type="button" id="btnConfirmarCancelTermo" class="btn-negar" style="height:auto; padding:8px 16px; font-size:12px;" onclick="confirmarCancelamentoTermo()"><i class="fa-solid fa-rotate-left"></i> Confirmar Cancelamento</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalOcorLoc" class="modal-overlay">
+    <div class="modal-box" style="width:680px; max-width:96vw;">
+      <div class="modal-title"><span><i class="fa-solid fa-triangle-exclamation" style="color:#ea580c;"></i> <span id="ocorLocTitulo">Registrar ocorrência</span></span><span onclick="fecharModalLoc('modalOcorLoc')" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span></div>
+      <div id="ocorLocInfo" class="aviso-atual-info"></div>
+      <div class="ocor-so-abrir">
+        <div class="form-row">
+          <div class="form-group" style="flex:2;"><label class="org-obr">Família:</label><select id="ocorLocFamilia"></select></div>
+          <div class="form-group" style="flex:0.6;"><label class="org-obr">Quantidade:</label><input type="number" id="ocorLocQtd" min="1" step="1"></div>
+        </div>
+        <div class="form-group"><label class="org-obr">Tipo:</label>
+          <div class="req-tipo-grupo" id="grpOcorTipo">
+            <label class="req-tipo-opcao" data-cor="#ea580c"><input type="radio" name="ocorLocTipo" value="DESAPARECIDO" onchange="pintarTipoOcorLoc()"><span>Desaparecido</span></label>
+            <label class="req-tipo-opcao" data-cor="#b91c1c"><input type="radio" name="ocorLocTipo" value="FURTO/ROUBO" onchange="pintarTipoOcorLoc()"><span>Furto/roubo</span></label>
+            <label class="req-tipo-opcao" data-cor="#a16207"><input type="radio" name="ocorLocTipo" value="DANIFICADO PELO CLIENTE" onchange="pintarTipoOcorLoc()"><span>Danificado pelo cliente</span></label>
+            <label class="req-tipo-opcao" data-cor="#475569"><input type="radio" name="ocorLocTipo" value="OUTRO" onchange="pintarTipoOcorLoc()"><span>Outro</span></label>
+          </div></div>
+      </div>
+      <div class="ocor-so-dados">
+        <div class="form-row">
+          <div class="form-group" style="flex:1;"><label>Nº patrimônio / série (opcional):</label><input type="text" id="ocorLocPat"></div>
+          <div class="form-group" style="flex:1;"><label>Nº do B.O. (opcional):</label><input type="text" id="ocorLocBo"></div>
+        </div>
+        <div class="form-group"><label class="org-obr">O que aconteceu:</label><textarea id="ocorLocDesc" style="height:80px;" placeholder="Ex.: equipamento não foi localizado na unidade em 10/11; enfermeira responsável (fulana) não soube informar..."></textarea></div>
+        <div class="form-row">
+          <div class="form-group" style="flex:1;"><label>Cobrança do cliente:</label><select id="ocorLocCobr"><option>NÃO AVALIADA</option><option>A COBRAR</option><option>COBRADA</option><option>NÃO COBRAR</option></select></div>
+          <div class="form-group" style="flex:1;"><label>Valor (R$, opcional):</label><input type="text" id="ocorLocValor" placeholder="Ex.: 12.500,00"></div>
+        </div>
+      </div>
+      <div class="ocor-so-enc">
+        <div class="form-group"><label class="org-obr">Como foi resolvida:</label><select id="ocorLocRes"><option value="">Escolha...</option><option>EQUIPAMENTO LOCALIZADO</option><option>COBRADO DO CLIENTE / INDENIZADO</option><option>BAIXA SEM COBRANÇA</option><option>OUTRO</option></select></div>
+        <div class="form-row">
+          <div class="form-group" style="flex:1;"><label>Cobrança (final):</label><select id="ocorLocCobrEnc"><option value="">(manter)</option><option>NÃO AVALIADA</option><option>A COBRAR</option><option>COBRADA</option><option>NÃO COBRAR</option></select></div>
+          <div class="form-group" style="flex:1;"><label>Valor (R$, opcional):</label><input type="text" id="ocorLocValorEnc" placeholder="(manter)"></div>
+        </div>
+        <div class="form-group"><label class="org-obr">Detalhes do encerramento:</label><textarea id="ocorLocObsEnc" style="height:70px;" placeholder="Ex.: equipamento encontrado no CME em 25/11; ou: cobrança enviada ao cliente pela NF..."></textarea></div>
+        <div style="font-size:11px; color:#64748b; margin-bottom:8px;">Encerrar não altera o contrato nem a conferência. Se o equipamento não volta, ajuste o contrato e o Neovero depois.</div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:6px;">
+        <button type="button" class="btn-secundario" onclick="fecharModalLoc('modalOcorLoc')">Cancelar</button>
+        <button type="button" class="btn-submit" id="btnSalvarOcorLoc" style="background:linear-gradient(135deg,#f97316,#c2410c);" onclick="salvarOcorLoc()"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
       </div>
     </div>
   </div>
@@ -6719,6 +6776,123 @@
       requestAnimationFrame(passo);
     }
 
+    // ===================== LOCAÇÃO: OCORRÊNCIAS =====================
+    // Equipamento desaparecido, furto/roubo, dano pelo cliente... A ocorrência ABERTA "explica" a divergência:
+    // a quantidade coberta deixa de aparecer como ajuste (vermelho) e passa a aparecer como ocorrência (laranja).
+    var TIPOS_OCOR_LOC = [["DESAPARECIDO", "Desaparecido"], ["FURTO/ROUBO", "Furto/roubo"], ["DANIFICADO PELO CLIENTE", "Danificado pelo cliente"], ["OUTRO", "Outro"]];
+    var COBRANCAS_OCOR_LOC = ["NÃO AVALIADA", "A COBRAR", "COBRADA", "NÃO COBRAR"];
+    var RESOLUCOES_OCOR_LOC = ["EQUIPAMENTO LOCALIZADO", "COBRADO DO CLIENTE / INDENIZADO", "BAIXA SEM COBRANÇA", "OUTRO"];
+    function locOcorrencias() { return (bancoDados && bancoDados.locacao && bancoDados.locacao.ocorrencias) || []; }
+    function locOcorAbertas(u, f) {
+      const ids = new Set(u.ctrs.map(c => c.id));
+      return locOcorrencias().filter(o => o.status === "ABERTA" && ids.has(o.contrato) && (!f || o.familia === f));
+    }
+    function locDiasOcor(o) { const t = tempoDataBR(o.abertaEm); return t ? Math.max(0, Math.floor((Date.now() - t) / 86400000)) : 0; }
+    // Quantidade do Neovero "efetiva": desconta a parte da divergência explicada por ocorrência aberta
+    function locCoberturaOcor(u, f, q, nraw) {
+      if (locVazio(nraw)) return { nEf: nraw, coberto: 0, ocs: locOcorAbertas(u, f) };
+      const ocs = locOcorAbertas(u, f), qOc = ocs.reduce((t, o) => t + o.qtd, 0);
+      const d = Number(nraw) - q, coberto = Math.min(Math.abs(d), qOc);
+      return { nEf: Number(nraw) - Math.sign(d) * coberto, coberto, ocs };
+    }
+    function locAcaoComOcor(u, f, q, nraw) {
+      const c = locCoberturaOcor(u, f, q, nraw);
+      if (!c.ocs.length) return locAcaoNeovero(q, nraw);
+      const pill = `<span class="loc-pill loc-p-ocor" title="${escReq(c.ocs.map(o => o.id + ": " + o.tipo + " · " + o.qtd + " · aberta em " + o.abertaEm).join("\n"))}"><i class="fa-solid fa-triangle-exclamation"></i> ocorrência: ${escReq(c.ocs.map(o => o.tipo.toLowerCase() + " (" + o.qtd + ")").join(", "))} · ${locDiasOcor(c.ocs[0]) ? "há " + locDiasOcor(c.ocs[0]) + "d" : "hoje"}</span>`;
+      const resto = locVazio(nraw) ? "" : (Number(c.nEf) === q ? "" : "<br>" + locAcaoNeovero(q, c.nEf));
+      return pill + resto;
+    }
+    function locPillOcorUnidade(u) {
+      const n = locOcorAbertas(u).length;
+      return n ? `<span class="loc-pill loc-p-ocor"><i class="fa-solid fa-triangle-exclamation"></i> ${n} ocorrência${n > 1 ? "s" : ""} aberta${n > 1 ? "s" : ""}</span>` : "";
+    }
+    function locSecaoOcorHtml(u) {
+      const todas = locOcorrencias().filter(o => u.ctrs.some(c => c.id === o.contrato));
+      const abertas = todas.filter(o => o.status === "ABERTA"), fechadas = todas.filter(o => o.status !== "ABERTA").slice(-3).reverse();
+      if (!todas.length) return "";
+      const linha = o => `<div class="ocor-l ${o.status === "ABERTA" ? "aberta" : "fechada"}">
+          <div class="ocor-l-top"><b>${escReq(o.id)} · ${escReq(o.tipo)}</b> · ${o.qtd} ${escReq(o.familia)}${o.patrimonio ? ` · pat./série ${escReq(o.patrimonio)}` : ""}
+            <span class="ocor-l-dt">aberta em ${escReq(o.abertaEm.split(" ")[0])} por ${escReq(o.abertaPor)}${o.status === "ABERTA" ? ` · há ${locDiasOcor(o)} dia(s)` : ""}</span></div>
+          <div class="ocor-l-desc">${escReq(o.descricao)}</div>
+          <div class="ocor-l-tags">${o.bo ? `<span>B.O. ${escReq(o.bo)}</span>` : `<span class="falta">sem B.O.</span>`}<span>cobrança: ${escReq(o.cobranca.toLowerCase())}${o.valor !== "" ? " · " + moedaBR(o.valor) : ""}</span>
+            ${o.status === "ABERTA" ? `<button type="button" class="loc-mini azul" onclick="abrirOcorLoc('EDITAR', '${escReq(o.id)}')"><i class="fa-solid fa-pen"></i> Atualizar</button>${locEhAdmin() ? `<button type="button" class="loc-mini verde" onclick="abrirOcorLoc('ENCERRAR', '${escReq(o.id)}')"><i class="fa-solid fa-flag-checkered"></i> Encerrar</button>` : ""}`
+              : `<span class="enc">encerrada em ${escReq(o.encerradaEm.split(" ")[0])}: ${escReq(o.resolucao.toLowerCase())}</span>`}</div>
+        </div>`;
+      return `<div class="ocor-sec"><div class="ocor-sec-tit"><i class="fa-solid fa-triangle-exclamation"></i> Ocorrências${abertas.length ? ` · ${abertas.length} aberta(s)` : ""}</div>${abertas.map(linha).join("")}${fechadas.map(linha).join("")}</div>`;
+    }
+
+    var ocorLocAtual = null;
+    function abrirOcorLoc(modo, ref, familia) {
+      const box = document.getElementById('modalOcorLoc');
+      let u = null, o = null;
+      if (modo === "ABRIR") {
+        u = locUnidadesConf(locContratosFiltrados(true)).find(x => x.k === ref);
+        if (!u) return;
+      } else {
+        o = locOcorrencias().find(x => x.id === ref);
+        if (!o) return;
+        if (modo === "ENCERRAR" && !locEhAdmin()) { alert("Somente administradores da Locação podem encerrar ocorrências."); return; }
+      }
+      ocorLocAtual = { modo, u, o };
+      document.getElementById('ocorLocTitulo').innerText = modo === "ABRIR" ? "Registrar ocorrência" : modo === "EDITAR" ? "Atualizar ocorrência " + o.id : "Encerrar ocorrência " + o.id;
+      document.getElementById('ocorLocInfo').innerHTML = u ? `<b>${escReq(u.unidade)}</b><br>${escReq(u.cliente)} · contrato ${escReq((locContrato(locContratoPrincipal(u)) || {}).numContrato || "")}`
+        : `<b>${escReq(o.unidade)}</b> · ${escReq(o.cliente)}<br>${escReq(o.tipo)} · ${o.qtd} ${escReq(o.familia)} · aberta em ${escReq(o.abertaEm)} por ${escReq(o.abertaPor)}`;
+      const fams = u ? [...new Set([...Object.keys(u.fam), ...(locConfExtra[u.k] || []).map(e => e.familia).filter(Boolean)])].sort((a, b) => a.localeCompare(b, 'pt-BR')) : [];
+      document.getElementById('ocorLocFamilia').innerHTML = '<option value="">Escolha a família...</option>' + fams.map(f => `<option value="${escReq(f)}">${escReq(f)}</option>`).join('');
+      document.getElementById('ocorLocFamilia').value = familia || "";
+      document.getElementById('ocorLocQtd').value = "";
+      if (u && familia) { const c = locCoberturaOcor(u, familia, u.fam[familia] || 0, (locConfNeo[u.k] || {})[familia]); const d = locVazio((locConfNeo[u.k] || {})[familia]) ? 0 : Math.abs(Number(c.nEf) - (u.fam[familia] || 0)); document.getElementById('ocorLocQtd').value = d || 1; }
+      document.querySelectorAll('input[name="ocorLocTipo"]').forEach(r => { r.checked = false; });
+      document.getElementById('ocorLocPat').value = o ? o.patrimonio : "";
+      document.getElementById('ocorLocDesc').value = o ? o.descricao : "";
+      document.getElementById('ocorLocBo').value = o ? o.bo : "";
+      document.getElementById('ocorLocCobr').value = o ? o.cobranca : "NÃO AVALIADA";
+      document.getElementById('ocorLocValor').value = o && o.valor !== "" ? String(o.valor).replace(".", ",") : "";
+      document.getElementById('ocorLocRes').value = "";
+      document.getElementById('ocorLocObsEnc').value = "";
+      box.querySelectorAll('.ocor-so-abrir').forEach(e => e.style.display = modo === "ABRIR" ? "" : "none");
+      box.querySelectorAll('.ocor-so-dados').forEach(e => e.style.display = modo === "ENCERRAR" ? "none" : "");
+      box.querySelectorAll('.ocor-so-enc').forEach(e => e.style.display = modo === "ENCERRAR" ? "" : "none");
+      document.getElementById('btnSalvarOcorLoc').innerHTML = modo === "ENCERRAR" ? '<i class="fa-solid fa-flag-checkered"></i> Encerrar ocorrência' : '<i class="fa-solid fa-floppy-disk"></i> Salvar';
+      pintarTipoOcorLoc();
+      box.classList.add('active');
+    }
+    function pintarTipoOcorLoc() {
+      document.querySelectorAll('#grpOcorTipo .req-tipo-opcao').forEach(op => { const on = op.querySelector('input').checked; op.querySelector('span').style.background = on ? op.dataset.cor : ""; op.querySelector('span').style.color = on ? "#fff" : ""; });
+    }
+    function salvarOcorLoc() {
+      const a = ocorLocAtual; if (!a) return;
+      const v = id => document.getElementById(id).value.trim();
+      const base = { acao: "LOC_OCORRENCIA", usuario: usuarioLogado ? usuarioLogado.nome : "", login: usuarioLogado ? usuarioLogado.usuario : "",
+        patrimonio: v('ocorLocPat'), descricao: v('ocorLocDesc'), bo: v('ocorLocBo'), cobranca: v('ocorLocCobr'), valor: v('ocorLocValor') };
+      let payload;
+      if (a.modo === "ABRIR") {
+        const tipo = document.querySelector('input[name="ocorLocTipo"]:checked')?.value || "";
+        if (!v('ocorLocFamilia')) { alert("Escolha a família."); return; }
+        if (!(parseInt(v('ocorLocQtd'), 10) > 0)) { alert("Informe a quantidade envolvida."); return; }
+        if (!tipo) { alert("Escolha o tipo da ocorrência."); return; }
+        if (base.descricao.length < 5) { alert("Descreva o que aconteceu."); return; }
+        payload = Object.assign(base, { operacao: "ABRIR", contrato: locContratoPrincipal(a.u), cliente: a.u.cliente, unidade: a.u.unidade, familia: v('ocorLocFamilia'), qtd: v('ocorLocQtd'), tipo });
+      } else if (a.modo === "EDITAR") {
+        if (base.descricao.length < 5) { alert("Descreva o que aconteceu."); return; }
+        payload = Object.assign(base, { operacao: "ATUALIZAR", id: a.o.id });
+      } else {
+        if (!v('ocorLocRes')) { alert("Escolha como a ocorrência foi resolvida."); return; }
+        if (v('ocorLocObsEnc').length < 5) { alert("Descreva o encerramento."); return; }
+        payload = { acao: "LOC_OCORRENCIA", operacao: "ENCERRAR", id: a.o.id, resolucao: v('ocorLocRes'), obs: v('ocorLocObsEnc'), cobranca: v('ocorLocCobrEnc') || a.o.cobranca, valor: v('ocorLocValorEnc') !== "" ? v('ocorLocValorEnc') : (a.o.valor === "" ? "" : String(a.o.valor)),
+          usuario: base.usuario, login: base.login };
+      }
+      const btn = document.getElementById('btnSalvarOcorLoc'), orig = btn.innerHTML;
+      btn.disabled = true; btn.innerText = "SALVANDO...";
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(r => r.json()).then(res => {
+        btn.disabled = false; btn.innerHTML = orig;
+        if (res.status !== "sucesso") { alert(res.mensagem || "Não foi possível salvar a ocorrência."); return; }
+        if (res.locacao) bancoDados.locacao = res.locacao;
+        fecharModalLoc('modalOcorLoc');
+        renderizarLocacao();
+      }).catch(() => { btn.disabled = false; btn.innerHTML = orig; alert("Falha de conexão ao salvar a ocorrência."); });
+    }
+
     // ===================== LOCAÇÃO: CONSULTA POR WHATSAPP =====================
     // Monta uma mensagem padronizada com as divergências da conferência, abre o WhatsApp e registra no histórico.
     // A resposta (A = ajustar o Neovero / B = acordo com a unidade) é registrada à mão; o contrato NÃO é alterado.
@@ -6730,9 +6904,9 @@
       Object.keys(u.fam).sort((a, b) => a.localeCompare(b, 'pt-BR')).forEach(f => {
         if (locVazio(n[f])) return;
         const q = Number(u.fam[f]) || 0, v = Number(n[f]) || 0;
-        if (q !== v) out.push({ familia: f, contrato: q, neovero: v });
+        if (q !== Number(locCoberturaOcor(u, f, q, v).nEf)) out.push({ familia: f, contrato: q, neovero: v });
       });
-      (locConfExtra[u.k] || []).forEach(e => { if (e.familia && Number(e.qtd) > 0) out.push({ familia: e.familia, contrato: 0, neovero: Number(e.qtd) }); });
+      (locConfExtra[u.k] || []).forEach(e => { if (e.familia && Number(e.qtd) > 0 && locCoberturaOcor(u, e.familia, 0, Number(e.qtd)).nEf > 0) out.push({ familia: e.familia, contrato: 0, neovero: Number(e.qtd) }); });
       return out;
     }
     function locContratoPrincipal(u) { return (u.ctrs.find(c => !locInativo(c)) || u.ctrs[0] || {}).id || ""; }
@@ -7117,8 +7291,9 @@
         const r = (locSerieMensal([fim]) || [])[0] || {};
         let ok = 0, tot = 0;
         try { locCarregarConfDaPlanilha(); locUnidadesConf(locDados().contratos).forEach(u => { tot++; if (locEstadoConf(u).t === "ok") ok++; }); } catch (e) {}
-        const hist = (locDados().historico || []).filter(h => h.acao !== LOC_ACAO.IMPORTADO && h.acao !== LOC_ACAO.CONSULTA && h.acao !== LOC_ACAO.RESPOSTA && !locEventoPadronizacao(h) && noPer(h.data));
-        Lc = { contratos: r.contratos || 0, clientes: r.clientes || 0, unidades: r.unidades || 0, equip: r.equip || 0, confOk: ok, confTot: tot, pctConf: pctExec(ok, tot), alteracoes: hist.length };
+        const hist = (locDados().historico || []).filter(h => h.acao !== LOC_ACAO.IMPORTADO && h.acao !== LOC_ACAO.CONSULTA && h.acao !== LOC_ACAO.RESPOSTA && h.acao.indexOf("OCORRÊNCIA") !== 0 && !locEventoPadronizacao(h) && noPer(h.data));
+        const ocAb = locOcorrencias().filter(o => o.status === "ABERTA");
+        Lc = { ocorAbertas: ocAb.length, ocorMaisAntiga: ocAb.length ? Math.max(...ocAb.map(locDiasOcor)) : 0, ocorValor: ocAb.reduce((t, o) => t + (Number(o.valor) || 0), 0), contratos: r.contratos || 0, clientes: r.clientes || 0, unidades: r.unidades || 0, equip: r.equip || 0, confOk: ok, confTot: tot, pctConf: pctExec(ok, tot), alteracoes: hist.length };
       }
 
       const inicio = meses[0] || "";
@@ -7201,7 +7376,8 @@
       if (L) setHtml('dxLoc',
         linha("Contratos ativos", locNum(L.contratos)) + linha("Clientes / unidades", locNum(L.clientes) + " / " + locNum(L.unidades)) + linha("Equipamentos sob contrato", locNum(L.equip)) +
         linha("Conferência com o Neovero", L.confTot ? `${L.pctConf}% <small>(${L.confOk} de ${L.confTot} unidades OK)</small>` : "-") +
-        linha("Alterações registradas", locNum(L.alteracoes) + " <small>com motivo e usuário</small>"));
+        linha("Alterações registradas", locNum(L.alteracoes) + " <small>com motivo e usuário</small>") +
+        linha("Ocorrências abertas", L.ocorAbertas ? `<span style="color:#ea580c;">${L.ocorAbertas}</span> <small>(mais antiga há ${L.ocorMaisAntiga} dia(s)${L.ocorValor ? " · " + moedaBR(L.ocorValor) : ""})</small>` : "0"));
     }
 
     function antesAgoraExecHtml(D) {
@@ -7566,7 +7742,8 @@
       FAM_RENOMEADA: "FAMÍLIA RENOMEADA", FAM_UNIFICADA: "FAMÍLIA UNIFICADA", FAM_SOMADA: "FAMÍLIAS UNIFICADAS",
       FAM_NOVA: "FAMÍLIA INCLUÍDA", FAM_ATIVADA: "FAMÍLIA ATIVADA", FAM_DESATIVADA: "FAMÍLIA DESATIVADA",
       ITEM_TRANSFERIDO: "ITEM TRANSFERIDO", QTD_UNIF: "QUANTIDADE SOMADA",
-      CONSULTA: "CONSULTA ENVIADA", RESPOSTA: "RESPOSTA REGISTRADA"
+      CONSULTA: "CONSULTA ENVIADA", RESPOSTA: "RESPOSTA REGISTRADA",
+      OCOR_ABERTA: "OCORRÊNCIA ABERTA", OCOR_ATUALIZADA: "OCORRÊNCIA ATUALIZADA", OCOR_ENCERRADA: "OCORRÊNCIA ENCERRADA"
     };
     var MOTIVO_UNIFICACAO_LOC = "Unificado no contrato ";   // contrato absorvido por outro da mesma unidade
     // Configurações vêm do Script (ADMINS_LOCACAO e DIAS_VALIDADE_CONFERENCIA_LOC)
@@ -8015,8 +8192,9 @@
       const n = locConfNeo[u.k] || {}, ex = (locConfExtra[u.k] || []).filter(e => e.familia && e.qtd > 0);
       const fams = Object.keys(u.fam);
       let conf = 0, aj = 0;
-      fams.forEach(f => { if (!locVazio(n[f])) { conf++; if (Number(n[f]) !== u.fam[f]) aj++; } });
-      aj += ex.length;
+      fams.forEach(f => { if (!locVazio(n[f])) { conf++; if (Number(locCoberturaOcor(u, f, u.fam[f], n[f]).nEf) !== u.fam[f]) aj++; } });
+      aj += ex.filter(e => locCoberturaOcor(u, e.familia, 0, e.qtd).nEf !== 0).length;
+      const ocorAb = locOcorAbertas(u).length;
       // Contrato mudou depois da conferência (a qtd do DMA SYS registrada é diferente da atual)
       const reg = locConfDmaReg[u.k] || {};
       const mudou = locConfPend[u.k] ? [] : Object.keys(reg).filter(f => !locVazio(n[f]) && reg[f] !== (u.fam[f] || 0));
@@ -8027,12 +8205,13 @@
       if (!conf && !ex.length) return Object.assign(base, { t: "pend", txt: "não conferida" });
       if (mudou.length) return Object.assign(base, { t: "reconf", txt: "reconferir: contrato mudou" });
       if (aj) return Object.assign(base, { t: "aj", txt: aj + " ajuste(s) no Neovero" });
+      if (ocorAb) return Object.assign(base, { t: "ocorr", txt: ocorAb + " ocorrência(s) aberta(s)" });
       if (vencida) return Object.assign(base, { t: "venc", txt: "conferir de novo (" + dias + " dias)" });
       if (conf < fams.length) return Object.assign(base, { t: "pend", txt: conf + " de " + fams.length + " conferidas" });
       return Object.assign(base, { t: "ok", txt: "OK" });
     }
     function locPillConf(s) {
-      const cls = s.t === 'ok' ? 'loc-p-ok' : s.t === 'aj' ? 'loc-p-ret' : (s.t === 'reconf' || s.t === 'venc') ? 'loc-p-inc' : 'loc-p-pend';
+      const cls = s.t === 'ok' ? 'loc-p-ok' : s.t === 'aj' ? 'loc-p-ret' : s.t === 'ocorr' ? 'loc-p-ocor' : (s.t === 'reconf' || s.t === 'venc') ? 'loc-p-inc' : 'loc-p-pend';
       return `<span class="loc-pill ${cls}">${escReq(s.txt)}</span>`;
     }
     function locIdadeConf(s) {
@@ -8056,20 +8235,21 @@
       const ativo = document.activeElement, focoFam = ativo && ativo.classList && ativo.classList.contains('loc-neo') ? ativo.dataset.fam : null;
       const stF = document.getElementById('locFiltroConf')?.value || "";
       const todas = locUnidadesConf(locContratosFiltrados(true));
-      const lista = todas.filter(u => !stF || (stF === "consulta" ? (() => { const c = locConsultaDaUnidade(u); return c && !c.resp; })() : locEstadoConf(u).t === stF));
+      const lista = todas.filter(u => !stF || stF === "ocorr" ? (!stF || locOcorAbertas(u).length > 0) : (stF === "consulta" ? (() => { const c = locConsultaDaUnidade(u); return c && !c.resp; })() : locEstadoConf(u).t === stF));
       const sts = lista.map(locEstadoConf);
       if (!lista.find(u => u.k === locConfSel)) locConfSel = lista.length ? lista[0].k : "";
       locConfListaAtual = lista.map(u => u.k);
       const resumo = `<div class="loc-conf-resumo">
           <span><b>${lista.length}</b> unidade(s)</span><span><b>${locNum(lista.reduce((s, u) => s + u.total, 0))}</b> equip. esperados no Neovero</span>
           <span class="ok"><b>${sts.filter(s => s.t === 'ok').length}</b> OK</span><span class="aj"><b>${sts.filter(s => s.t === 'aj').length}</b> com ajuste</span>
+          ${sts.some(s => s.t === 'ocorr') ? `<span class="oc"><b>${sts.filter(s => s.t === 'ocorr').length}</b> com ocorrência</span>` : ""}
           ${sts.some(s => s.t === 'reconf') ? `<span class="rc"><b>${sts.filter(s => s.t === 'reconf').length}</b> reconferir</span>` : ""}
           ${sts.some(s => s.t === 'venc') ? `<span class="rc"><b>${sts.filter(s => s.t === 'venc').length}</b> prazo vencido</span>` : ""}
           <span><b>${sts.filter(s => s.t === 'pend').length}</b> não conferidas</span>
           ${lista.some(u => locDivergencias(u).length) ? `<button type="button" class="btn-secundario btn-zap-loc" style="margin-left:auto; padding:4px 10px;" onclick="abrirConsultaLoc('VARIAS')"><i class="fa-brands fa-whatsapp"></i> Consultar várias por WhatsApp</button>` : ""}</div>`;
       const itensLista = lista.length ? lista.map((u, i) => `
         <div class="loc-conf-uni${u.k === locConfSel ? ' on' : ''}" data-k="${escReq(u.k)}" onclick="selecionarUnidadeConfLoc('${locJsq(u.k)}')">
-          <div style="min-width:0;"><div class="n">${escReq(u.unidade)}</div><div class="s">${escReq(u.cliente)} · ${escReq([...u.locais].join(' / ') || '-')}</div><div style="margin-top:4px;">${locPillConf(sts[i])} ${locIdadeConf(sts[i])} ${locPillConsulta(u)}</div></div>
+          <div style="min-width:0;"><div class="n">${escReq(u.unidade)}</div><div class="s">${escReq(u.cliente)} · ${escReq([...u.locais].join(' / ') || '-')}</div><div style="margin-top:4px;">${locPillConf(sts[i])} ${locIdadeConf(sts[i])} ${locPillConsulta(u)} ${sts[i].t !== 'ocorr' ? locPillOcorUnidade(u) : ''}</div></div>
           <div class="q"><b>${locNum(u.total)}</b><span>equip.</span></div>
         </div>`).join('') : '<div class="loc-vazio">Nenhuma unidade para o filtro.</div>';
       const nAntigo = locConfLocalAntigo ? new Set(Object.keys(locConfLocalAntigo.neo).concat(Object.keys(locConfLocalAntigo.extra))).size : 0;
@@ -8131,20 +8311,25 @@
             <td><b>${escReq(f)}</b>${u.emp[f] ? `<div style="font-size:10.5px; color:#6d28d9;">inclui ${u.emp[f]} em empréstimo</div>` : ""}${u.orf && u.orf[f] ? `<div style="font-size:10.5px; color:#be123c; font-weight:bold;">não está mais no contrato: retirar do Neovero</div>` : s.mudou.includes(f) ? `<div style="font-size:10.5px; color:#b45309; font-weight:bold;">contrato mudou: na conferência era ${(locConfDmaReg[u.k] || {})[f]}</div>` : ""}</td>
             <td class="td-center" style="font-size:15px; font-weight:800;">${locNum(q)}</td>
             <td class="td-center"><input type="number" class="loc-neo" min="0" step="1" value="${locVazio(n[f]) ? "" : n[f]}" data-fam="${escReq(f)}" oninput="digitarNeoLoc('${kq}', this)" onkeydown="teclaConfLoc(event, this)"></td>
-            <td class="td-center loc-acao-cel">${locAcaoNeovero(q, n[f])}</td></tr>`).join('')
+            <td class="td-center loc-acao-cel">${locAcaoComOcor(u, f, q, n[f])}${!locVazio(n[f]) && Number(n[f]) !== q && !locOcorAbertas(u, f).length ? `<div><a class="ocor-link" onclick="abrirOcorLoc('ABRIR', '${kq}', '${locJsq(f)}')">é ocorrência?</a></div>` : ""}</td></tr>`).join('')
             : '<tr><td colspan="4" class="td-center" style="color:#94a3b8;">Nenhum item em vigor nesta unidade (contrato suspenso ou sem itens).</td></tr>'}
           ${ex.map((e, i) => `<tr class="loc-extra">
             <td><select onchange="extraConfLoc('${kq}', ${i}, 'familia', this.value)"><option value="">Família que está no Neovero...</option>${opcExtra.map(f => `<option value="${escReq(f)}"${f === e.familia ? " selected" : ""}>${escReq(f)}</option>`).join('')}</select>
               <div style="font-size:10.5px; color:#be123c;">não consta no contrato</div></td>
             <td class="td-center" style="color:#94a3b8;">0</td>
             <td class="td-center"><input type="number" class="loc-neo" min="0" step="1" value="${e.qtd || ""}" onchange="extraConfLoc('${kq}', ${i}, 'qtd', this.value)"></td>
-            <td class="td-center">${e.familia && e.qtd > 0 ? `<span class="loc-pill loc-p-ret">Retirar ${e.qtd} do Neovero</span>` : '<span class="loc-pill loc-p-pend">informe família e qtd</span>'}
+            <td class="td-center">${e.familia && e.qtd > 0 ? (locOcorAbertas(u, e.familia).length ? locAcaoComOcor(u, e.familia, 0, e.qtd) : `<span class="loc-pill loc-p-ret">Retirar ${e.qtd} do Neovero</span><div><a class="ocor-link" onclick="abrirOcorLoc('ABRIR', '${kq}', '${locJsq(e.familia)}')">é ocorrência?</a></div>`) : '<span class="loc-pill loc-p-pend">informe família e qtd</span>'}
               <button type="button" class="loc-mini vermelho" onclick="tirarExtraConfLoc('${kq}', ${i})" title="Tirar linha"><i class="fa-solid fa-xmark"></i></button></td></tr>`).join('')}
           </tbody>
           <tfoot><tr><td>Total da unidade</td><td class="td-center">${locNum(u.total)}</td><td class="td-center">${s.conf || ex.length ? locNum(totN) : "-"}</td>
-            <td class="td-center">${!(s.conf || ex.length) ? "" : (s.conf < s.total ? '<span class="loc-pill loc-p-pend">conferência parcial</span>' : locAcaoNeovero(u.total, totN))}</td></tr></tfoot>
+            <td class="td-center">${!(s.conf || ex.length) ? "" : (s.conf < s.total ? '<span class="loc-pill loc-p-pend">conferência parcial</span>' : (() => {
+              const totEf = fams.reduce((t, [f, q]) => t + (locVazio(n[f]) ? 0 : Number(locCoberturaOcor(u, f, q, n[f]).nEf)), 0) + ex.reduce((t, e) => t + (e.familia ? Number(locCoberturaOcor(u, e.familia, 0, Number(e.qtd) || 0).nEf) : (Number(e.qtd) || 0)), 0);
+              return locAcaoNeovero(u.total, totEf) + (totEf !== totN ? `<div style="font-size:10.5px; color:#c2410c; margin-top:3px;">${Math.abs(totN - totEf)} em ocorrência</div>` : "");
+            })())}</td></tr></tfoot>
         </table>
         <button type="button" class="btn-secundario" style="margin-top:8px;" onclick="addExtraConfLoc('${kq}')"><i class="fa-solid fa-plus"></i> Família que está no Neovero e não está no contrato</button>
+        <button type="button" class="btn-secundario btn-ocor-loc" style="margin-top:8px;" onclick="abrirOcorLoc('ABRIR', '${kq}')"><i class="fa-solid fa-triangle-exclamation"></i> Registrar ocorrência</button>
+        ${locSecaoOcorHtml(u)}
         <div class="loc-nota" style="margin-top:10px; background:#f8fafc; color:#475569;">As quantidades do Neovero são <b>salvas automaticamente na planilha</b> e aparecem para todos os usuários. Elas não alteram o contrato.${Object.keys(u.emp).length ? " Equipamentos em empréstimo entram no esperado do Neovero." : ""}</div>`;
     }
     function digitarNeoLoc(k, inp) {
@@ -8153,7 +8338,7 @@
       agendarSalvarConfLoc(k);
       const u = locUnidadesConf(locDados().contratos).find(x => x.k === k);
       const cel = inp.closest('tr').querySelector('.loc-acao-cel');
-      if (u && cel) cel.innerHTML = locAcaoNeovero(u.fam[f], locConfNeo[k][f]);
+      if (u && cel) cel.innerHTML = locAcaoComOcor(u, f, u.fam[f], locConfNeo[k][f]);
       clearTimeout(window.__tConfLoc);
       window.__tConfLoc = setTimeout(() => {   // redesenha (totais e lista) sem tirar o foco do campo em uso
         const foco = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.fam : null;
@@ -8176,11 +8361,13 @@
       locUnidadesConf(locContratosFiltrados(true)).forEach(u => {
         const n = locConfNeo[u.k] || {}, aj = [];
         Object.keys(u.fam).sort((a, b) => a.localeCompare(b, 'pt-BR')).forEach(f => {
-          if (locVazio(n[f]) || Number(n[f]) === u.fam[f]) return;
-          const d = u.fam[f] - Number(n[f]);
+          if (locVazio(n[f])) return;
+          const nEf = Number(locCoberturaOcor(u, f, u.fam[f], n[f]).nEf);
+          if (nEf === u.fam[f]) return;
+          const d = u.fam[f] - nEf;
           aj.push({ familia: f, dma: u.fam[f], neo: Number(n[f]), acao: d > 0 ? "INCLUIR " + d : "RETIRAR " + (-d) });
         });
-        (locConfExtra[u.k] || []).filter(e => e.familia && e.qtd > 0).forEach(e => aj.push({ familia: e.familia, dma: 0, neo: e.qtd, acao: "RETIRAR " + e.qtd + " (não contratada)" }));
+        (locConfExtra[u.k] || []).filter(e => e.familia && e.qtd > 0).forEach(e => { const r = locCoberturaOcor(u, e.familia, 0, e.qtd).nEf; if (r > 0) aj.push({ familia: e.familia, dma: 0, neo: e.qtd, acao: "RETIRAR " + r + " (não contratada)" }); });
         if (aj.length) out.push({ u, aj });
       });
       return out;
@@ -8407,6 +8594,9 @@
       if (h.acao === A.FAM_SOMADA) return [fam + ": quantidade " + h.de + " → " + h.para + " (famílias unificadas)", "#8b5cf6", "fa-object-group"];
       if (h.acao === A.ITEM_TRANSFERIDO) return [fam + " transferido do contrato " + h.de + " (mesma unidade)", "#0ea5e9", "fa-right-to-bracket"];
       if (h.acao === A.QTD_UNIF) return [fam + ": quantidade " + h.de + " → " + h.para + " (lançamentos da mesma unidade somados)", "#0ea5e9", "fa-object-group"];
+      if (h.acao === A.OCOR_ABERTA) return ["Ocorrência " + h.de + " aberta: " + h.para, "#ea580c", "fa-triangle-exclamation"];
+      if (h.acao === A.OCOR_ATUALIZADA) return ["Ocorrência " + h.de + " atualizada: " + h.para, "#f97316", "fa-pen"];
+      if (h.acao === A.OCOR_ENCERRADA) return ["Ocorrência " + h.de + " encerrada: " + h.para, "#64748b", "fa-flag-checkered"];
       if (h.acao === A.CONSULTA) return ["Consulta enviada por WhatsApp a " + String(h.de || "").split(" · ")[0], "#16a34a", "fa-paper-plane"];
       if (h.acao === A.RESPOSTA) return ["Resposta da consulta registrada: " + h.para, "#7c3aed", "fa-reply"];
       return [h.acao + (h.para ? ": " + h.para : ""), "#64748b", "fa-circle"];
@@ -8451,7 +8641,7 @@
         return `<div class="loc-ev" style="--c:${cor};">
           <div class="loc-ev-top"><b>${escReq(h.data)}</b> · ${escReq(h.usuario || "-")}</div>
           <div class="loc-ev-txt"><i class="fa-solid ${ico}" style="color:${cor}; width:14px;"></i> ${escReq(txt)}</div>
-          ${h.motivo ? `<div class="loc-ev-mot">${h.acao === LOC_ACAO.CONSULTA || h.acao === LOC_ACAO.RESPOSTA ? "" : "Motivo: "}${escReq(h.motivo)}</div>` : ""}
+          ${h.motivo ? `<div class="loc-ev-mot">${[LOC_ACAO.CONSULTA, LOC_ACAO.RESPOSTA, LOC_ACAO.OCOR_ABERTA, LOC_ACAO.OCOR_ENCERRADA].includes(h.acao) ? "" : "Motivo: "}${escReq(h.motivo)}</div>` : ""}
         </div>`;
       }).join('');
 
@@ -8461,7 +8651,9 @@
       if (["CANCELADO", "ENCERRADO", "SUSPENSO"].includes(c.status) && !locUnificado(c) && locEhAdmin()) botoes.push(`<button type="button" class="btn-atender" style="height:34px; padding:0 14px;" onclick="abrirMotivoLoc('REATIVAR', '${escReq(c.id)}')"><i class="fa-solid fa-rotate-left"></i> Reativar contrato</button>`);
       if (c.status !== "CANCELADO" && locEhAdmin()) botoes.push(`<button type="button" class="btn-negar" style="height:34px; padding:0 14px;" onclick="abrirMotivoLoc('CANCELAR', '${escReq(c.id)}')"><i class="fa-solid fa-ban"></i> Cancelar contrato</button>`);
 
-      corpo.innerHTML = avisoVazio + `
+      const ocAb = locOcorrencias().filter(o => o.contrato === c.id && o.status === "ABERTA");
+      const avisoOcor = ocAb.length ? `<div class="loc-aviso" style="margin-bottom:12px; background:#fff7ed; border-color:#fdba74; color:#9a3412;"><i class="fa-solid fa-triangle-exclamation" style="margin-top:2px;"></i><div><b>${ocAb.length} ocorrência(s) aberta(s):</b> ${ocAb.map(o => `${escReq(o.id)} · ${escReq(o.tipo.toLowerCase())} · ${o.qtd} ${escReq(o.familia)} (há ${locDiasOcor(o)} dia(s)${o.bo ? ", B.O. " + escReq(o.bo) : ", sem B.O."})`).join("; ")}. Detalhes e encerramento na Conferência.</div></div>` : "";
+      corpo.innerHTML = avisoVazio + avisoOcor + `
         <div class="loc-ficha-cab">
           <div><span>Cliente</span>${escReq(c.cliente)}</div>
           <div><span>Unidade</span>${escReq(c.unidade)}</div>
@@ -8905,22 +9097,22 @@
       locCarregarConfDaPlanilha();
       const us = locUnidadesConf(locDados().contratos);
       if (!us.length) { el.innerHTML = '<div class="dsh-vazio">Nenhuma unidade com equipamento para conferir.</div>'; if (elC) elC.innerHTML = ""; return; }
-      const G = { ok: 0, aj: 0, rc: 0, vc: 0, pend: 0 }, porCli = {};
+      const G = { ok: 0, aj: 0, oc: 0, rc: 0, vc: 0, pend: 0 }, porCli = {};
       let inc = 0, ret = 0, ultimo = null;
       us.forEach(u => {
         const s = locEstadoConf(u);
-        const g = s.t === "ok" ? "ok" : s.t === "aj" ? "aj" : s.t === "reconf" ? "rc" : s.t === "venc" ? "vc" : "pend";
+        const g = s.t === "ok" ? "ok" : s.t === "aj" ? "aj" : s.t === "ocorr" ? "oc" : s.t === "reconf" ? "rc" : s.t === "venc" ? "vc" : "pend";
         G[g]++;
         const c = porCli[u.cliente] || (porCli[u.cliente] = { tot: 0, ok: 0, aj: 0 });
         c.tot++; if (g === "ok") c.ok++; if (g === "aj") c.aj++;
         const n = locConfNeo[u.k] || {};
-        Object.keys(u.fam).forEach(f => { if (locVazio(n[f])) return; const d = u.fam[f] - Number(n[f]); if (d > 0) inc += d; else ret -= d; });
-        (locConfExtra[u.k] || []).forEach(e => { if (e.familia && e.qtd > 0) ret += Number(e.qtd); });
+        Object.keys(u.fam).forEach(f => { if (locVazio(n[f])) return; const d = u.fam[f] - Number(locCoberturaOcor(u, f, u.fam[f], n[f]).nEf); if (d > 0) inc += d; else ret -= d; });
+        (locConfExtra[u.k] || []).forEach(e => { if (e.familia && e.qtd > 0) ret += Number(locCoberturaOcor(u, e.familia, 0, Number(e.qtd)).nEf); });
         const inf = locConfInfo[u.k];
         if (inf && inf.t && (!ultimo || inf.t > ultimo.t)) ultimo = inf;
       });
       const tot = us.length, conferidas = tot - G.pend, pct = v => Math.round(v / tot * 100);
-      const seg = [["ok", G.ok, "#10b981", "OK"], ["aj", G.aj, "#ef4444", "Com ajuste no Neovero"], ["reconf", G.rc, "#f59e0b", "Reconferir (contrato mudou)"], ["venc", G.vc, "#fb923c", "Prazo vencido"], ["pend", G.pend, "#64748b", "Não conferidas"]];
+      const seg = [["ok", G.ok, "#10b981", "OK"], ["aj", G.aj, "#ef4444", "Com ajuste no Neovero"], ["ocorr", G.oc, "#ea580c", "Com ocorrência"], ["reconf", G.rc, "#f59e0b", "Reconferir (contrato mudou)"], ["venc", G.vc, "#fb923c", "Prazo vencido"], ["pend", G.pend, "#64748b", "Não conferidas"]];
       el.innerHTML = `
         <div class="dl-conf-topo">
           <div><div class="dl-conf-pct">${pct(G.ok)}%</div><div class="dl-conf-pct-sub">das unidades OK (${G.ok} de ${tot})</div></div>
@@ -9009,7 +9201,7 @@
       const noPer = d => geral || mesKeyDash(d) === ref;
       const itensPorId = {}; L.itens.forEach(i => itensPorId[i.id] = i);
       const A = LOC_ACAO;
-      const evs = L.historico.filter(h => h.acao !== A.IMPORTADO && h.acao !== A.CONSULTA && h.acao !== A.RESPOSTA && h.contrato !== LOC_HIST_FAMILIAS && !locEventoPadronizacao(h) && noPer(h.data));
+      const evs = L.historico.filter(h => h.acao !== A.IMPORTADO && h.acao !== A.CONSULTA && h.acao !== A.RESPOSTA && h.acao.indexOf("OCORRÊNCIA") !== 0 && h.contrato !== LOC_HIST_FAMILIAS && !locEventoPadronizacao(h) && noPer(h.data));
       let mais = 0, menos = 0;
       evs.forEach(h => {
         if (h.acao === A.QTD) { const d = (Number(h.para) || 0) - (Number(h.de) || 0); if (d > 0) mais += d; else menos -= d; }
@@ -9026,7 +9218,7 @@
       setHtml('dlAlteracoes', evs.length ? barrasDash(linhasAlt.filter(x => x[1] > 0), "#3b82f6", "", locNum) : '<div class="dsh-vazio">Nenhuma alteração no período.</div>');
 
       // Últimas movimentações (todas, mais recentes primeiro)
-      const ultimas = L.historico.filter(h => h.acao !== A.IMPORTADO && h.acao !== A.CONSULTA && h.acao !== A.RESPOSTA && h.acao.indexOf(A.EDITADO) !== 0 && h.contrato !== LOC_HIST_FAMILIAS && !locEventoPadronizacao(h)).slice(-6).reverse();
+      const ultimas = L.historico.filter(h => h.acao !== A.IMPORTADO && h.acao !== A.CONSULTA && h.acao !== A.RESPOSTA && h.acao.indexOf("OCORRÊNCIA") !== 0 && h.acao.indexOf(A.EDITADO) !== 0 && h.contrato !== LOC_HIST_FAMILIAS && !locEventoPadronizacao(h)).slice(-6).reverse();
       setHtml('dlUltimas', ultimas.length ? ultimas.map(h => {
         const c = locContrato(h.contrato) || {};
         const [txt, cor] = textoEventoLoc(h, itensPorId);
@@ -9038,6 +9230,7 @@
       // Alertas: vigência, suspensos, empréstimos
       const alertas = [];
       L.contratos.filter(locSemEquipamento).forEach(c => alertas.push([c, "sem equip.", "#ef4444", "em uso sem equipamento: cancelar se foi devolvido"]));
+      locOcorrencias().filter(o => o.status === "ABERTA").sort((a, b) => locDiasOcor(b) - locDiasOcor(a)).forEach(o => { const c = locContrato(o.contrato); if (c) alertas.push([c, "ocorrência", "#ea580c", `${o.tipo.toLowerCase()}: ${o.qtd} ${o.familia} · há ${locDiasOcor(o)} dia(s)${o.bo ? "" : " · sem B.O."}`]); });
       locAlertasVigencia().forEach(x => alertas.push([x.c, x.d < 0 ? "vencido" : x.d + " dias", x.d < 0 ? "#f43f5e" : "#f59e0b", "vigência até " + x.c.fim]));
       L.contratos.filter(c => c.status === "SUSPENSO").forEach(c => alertas.push([c, "suspenso", "#f59e0b", "contrato suspenso"]));
       L.contratos.filter(c => c.status === "EMPRÉSTIMO").forEach(c => alertas.push([c, "empréstimo", "#8b5cf6", "equipamento emprestado"]));
