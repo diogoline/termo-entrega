@@ -7969,7 +7969,11 @@
         if (f.cli && c.cliente !== f.cli) return false;
         if (f.loc && c.localizacao !== f.loc) return false;
         if (!ignorarSit) {
-          if (f.sit && c.status !== f.sit) return false;
+          if (f.sit === "EMPRÉSTIMO") {
+            // Empréstimo: contrato todo em empréstimo OU contrato ativo com item emprestado
+            const temItemEmp = !locInativo(c) && itens.some(i => i.contrato === c.id && i.status === "EMPRÉSTIMO");
+            if (c.status !== "EMPRÉSTIMO" && !temItemEmp) return false;
+          } else if (f.sit && c.status !== f.sit) return false;
           if (!f.sit && !f.enc && locInativo(c)) return false;
         }
         if (f.fam && !itens.some(i => i.contrato === c.id && i.familia === f.fam && i.status !== "CANCELADO")) return false;
@@ -9094,7 +9098,7 @@
       const num = v => v === "" || v === null || v === undefined ? "" : String(Math.round(Number(v) * 100) / 100).replace(".", ",");
       const linhas = [["ID", "Nº CONTRATO", "CLIENTE", "UNIDADE", "LOCALIZAÇÃO", "SITUAÇÃO CONTRATO", "INÍCIO", "FIM", "FAMÍLIA", "QTD", "VALOR UNIT.", "SUBTOTAL", "SITUAÇÃO ITEM", "CONTA NO CONTRATADO", "OBS ITEM", "OBS CONTRATO"]];
       lista.slice().sort((a, b) => a.cliente.localeCompare(b.cliente, 'pt-BR') || a.unidade.localeCompare(b.unidade, 'pt-BR') || a.id.localeCompare(b.id)).forEach(c => {
-        locItensDe(c.id).filter(i => !f.fam || i.familia === f.fam).forEach(i => {
+        locItensDe(c.id).filter(i => (!f.fam || i.familia === f.fam) && (f.sit !== "EMPRÉSTIMO" || c.status === "EMPRÉSTIMO" || i.status === "EMPRÉSTIMO")).forEach(i => {
           linhas.push([c.id, c.numContrato, c.cliente, c.unidade, c.localizacao, c.status, c.inicio, c.fim, i.familia, i.qtd, num(i.valorUnit),
                        i.valorUnit ? num(i.qtd * i.valorUnit) : "", i.status, locConta(c, i) ? "SIM" : "NÃO", i.obs, c.obs]);
         });
