@@ -8343,6 +8343,7 @@
     }
     const locJsq = v => escReq(v).replace(/\\/g, "\\\\").replace(/&#39;/g, "\\&#39;");   // texto seguro dentro de onclick='...'
 
+    var locConfFiltroAnt = null;
     function renderizarConferenciaLoc() {
       const el = document.getElementById('locPainelConf');
       if (!el) return;
@@ -8352,7 +8353,10 @@
       const ativo = document.activeElement, focoFam = ativo && ativo.classList && ativo.classList.contains('loc-neo') ? ativo.dataset.fam : null;
       const stF = document.getElementById('locFiltroConf')?.value || "";
       const todas = locUnidadesConf(locContratosFiltrados(true));
-      const lista = todas.filter(u => !stF || stF === "ocorr" ? (!stF || locOcorAbertas(u).length > 0) : (stF === "consulta" ? (() => { const c = locConsultaDaUnidade(u); return c && !c.resp; })() : locEstadoConf(u).t === stF));
+      // Com filtro, a unidade em que você está mexendo fica na lista até trocar de unidade ou de filtro (a tela não "pula")
+      const fixa = (stF && stF === locConfFiltroAnt) ? locConfSel : "";
+      locConfFiltroAnt = stF;
+      const lista = todas.filter(u => u.k === fixa || (!stF || stF === "ocorr" ? (!stF || locOcorAbertas(u).length > 0) : (stF === "consulta" ? (() => { const c = locConsultaDaUnidade(u); return c && !c.resp; })() : locEstadoConf(u).t === stF)));
       const sts = lista.map(locEstadoConf);
       if (!lista.find(u => u.k === locConfSel)) locConfSel = lista.length ? lista[0].k : "";
       locConfListaAtual = lista.map(u => u.k);
