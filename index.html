@@ -7617,7 +7617,7 @@
 
     function locDados() {
       const L = bancoDados && bancoDados.locacao;
-      return { contratos: (L && L.contratos) || [], itens: (L && L.itens) || [], historico: (L && L.historico) || [], familias: (L && L.familias) || [] };
+      return { contratos: (L && L.contratos) || [], itens: (L && L.itens) || [], historico: (L && L.historico) || [], familias: ((L && L.familias) || []).slice().sort((a, b) => a.localeCompare(b, 'pt-BR')) };   // ordem alfabética em todas as listas (família nova entra no lugar certo)
     }
     function locContrato(id) { return locDados().contratos.find(c => c.id === id); }
     function locItensDe(id) { return locDados().itens.filter(i => i.contrato === id); }
