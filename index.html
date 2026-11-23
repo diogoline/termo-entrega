@@ -2560,6 +2560,34 @@
     </div>
   </div>
 
+  <div id="modalZapCot" class="modal-overlay">
+    <div class="modal-box" style="width: 540px;">
+      <div class="modal-title">
+        <span><i class="fa-brands fa-whatsapp" style="color:#16a34a;"></i> Aprovação da cotação pelo WhatsApp</span>
+        <span onclick="fecharZapCot()" style="cursor:pointer; color:#888;"><i class="fa-solid fa-xmark"></i></span>
+      </div>
+      <div id="zapCotPasso1">
+        <div id="zapCotInfo" class="manual-dica" style="margin-top:0;"></div>
+        <div class="form-row">
+          <div class="form-group"><label>Quem vai aprovar:</label><input type="text" id="zapCotAprovador" placeholder="Nome do gestor"></div>
+          <div class="form-group"><label>WhatsApp dele (opcional):</label><input type="text" id="zapCotFone" placeholder="Ex: 11 99999-9999"></div>
+        </div>
+        <div style="font-size:11px; color:#64748b; margin-bottom:14px;">O gestor abre o link, vê os orçamentos e aprova ou recusa. A resposta entra sozinha no sistema. O link vale uma vez e expira em 7 dias.</div>
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+          <button type="button" class="btn-secundario" onclick="fecharZapCot()">Cancelar</button>
+          <button type="button" id="btnGerarLinkCot" class="btn-submit" onclick="gerarLinkCot()"><i class="fa-solid fa-link"></i> Gerar link</button>
+        </div>
+      </div>
+      <div id="zapCotPasso2" style="display:none;">
+        <div class="form-group"><label>Mensagem:</label><textarea id="zapCotMensagem" data-minusculas style="height:230px; text-transform:none;"></textarea></div>
+        <div style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+          <button type="button" class="btn-secundario" onclick="copiarZapCot()"><i class="fa-solid fa-copy"></i> Copiar</button>
+          <button type="button" class="btn-submit" style="background:linear-gradient(135deg,#22c55e,#15803d);" onclick="abrirWhatsAppCot()"><i class="fa-brands fa-whatsapp"></i> Abrir WhatsApp</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="modalAcaoCot" class="modal-overlay">
     <div class="modal-box" style="width: 500px;">
       <div class="modal-title">
@@ -2577,7 +2605,7 @@
         </div>
         <div class="form-row">
           <div class="form-group"><label>Aprovado por:</label><input type="text" id="cotAprovador" placeholder="Nome do gestor"></div>
-          <div class="form-group"><label>Como:</label><select id="cotVia"><option value="PAPEL">Assinou o mapa impresso</option><option value="VERBAL">Verbal / telefone</option></select></div>
+          <div class="form-group"><label>Como:</label><select id="cotVia"><option value="PAPEL">Assinou o mapa impresso</option><option value="VERBAL">Verbal / telefone</option><option value="WHATSAPP">Respondeu pelo WhatsApp</option></select></div>
         </div>
         <div class="form-group"><label>Comentário (opcional):</label><input type="text" id="cotComentario"></div>
         <div class="form-group"><label>Foto do mapa assinado (opcional):</label><input type="file" id="cotFotoFolha" accept="image/*"></div>
@@ -5200,11 +5228,15 @@
     var UNIDADES_CMP = ["UN", "PÇ", "PAR", "JG", "KIT", "CX", "PCT", "M", "KG", "L", "RL"];
     // Quantidade com unidade (ex.: "2 PÇ"); itens antigos sem unidade mostram só o número
     function qtdUnCmp(qtd, unidade) { return escReq(qtd) + (unidade ? " " + escReq(unidade) : ""); }
-    function unidadeDaCot(c) { const i = c && c.itemCodigo ? (bancoDados.itensCompra || []).find(x => x.codigo === c.itemCodigo) : null; return i ? (i.unidade || "") : (c && c.unidade) || ""; }
+    function unidadeDaCot(c) { const i = c && c.itemCodigo ? itemCompraPorCod(c.itemCodigo) : null; return i ? (i.unidade || "") : (c && c.unidade) || ""; }
     var PRIO_CMP = { "ALTA": { cor: "#e11d48", fundo: "#ffe4e6", ordem: 3 }, "MÉDIA": { cor: "#b45309", fundo: "#fef3c7", ordem: 2 }, "BAIXA": { cor: "#475569", fundo: "#f1f5f9", ordem: 1 } };
     function prioCmp(i) { return PRIO_CMP[i && i.prioridade] ? i.prioridade : (i && i.urgente ? "ALTA" : "MÉDIA"); }
 
     function urlFotoCompra(id) { return "https://lh3.googleusercontent.com/d/" + encodeURIComponent(id); }
+    // Código do item: a planilha guarda "002" como 2. Compara sempre pela forma canônica.
+    function codItemCanon(v) { const s = String(v == null ? "" : v).trim(); return /^\d+$/.test(s) ? String(parseInt(s, 10)) : s; }
+    function mesmoCodItem(a, b) { const x = codItemCanon(a); return !!x && x === codItemCanon(b); }
+    function itemCompraPorCod(cod) { return cod ? (bancoDados.itensCompra || []).find(x => mesmoCodItem(x.codigo, cod)) || null : null; }
     function usuarioAtualCmp() { return usuarioLogado ? (usuarioLogado.nome || usuarioLogado.usuario || "") : ""; }
 
     function trocarSubabaCompras(qual) {
@@ -5490,7 +5522,7 @@
       return `<div class="org-selo ${i.origem === "NEOVERO" ? "neo" : "eff"}">${escReq(i.origem)}${i.base ? " · " + escReq(i.base) : ""}</div>`;
     }
     function textoOrigemCot(c) {
-      const it = c.itemCodigo ? (bancoDados.itensCompra || []).find(x => x.codigo === c.itemCodigo) : null;
+      const it = c.itemCodigo ? itemCompraPorCod(c.itemCodigo) : null;
       if (!it || !it.origem) return "";
       if (it.origem === "ESTOQUE") return ` · Origem: <b>ESTOQUE</b>`;
       return ` (${escReq(it.origem)}${it.base ? " / " + escReq(it.base) : ""}) · Cliente: <b>${escReq(it.cliente || "—")}</b>`;
@@ -5965,6 +5997,7 @@
         const esc = (c.orcamentos || [])[c.escolhido] || {};
         let acoes = `<button type="button" class="cmp-b-edit" onclick="imprimirMapaCotacao('${escReq(c.codigo)}')" title="Imprimir mapa"><i class="fa-solid fa-print"></i></button>`;
         if (c.status === "EM COTAÇÃO") acoes += `<button type="button" class="cmp-b-edit" onclick="abrirModalCotacao('${escReq(c.codigo)}')" title="Editar"><i class="fa-solid fa-pen"></i></button>`;
+        if (["EM COTAÇÃO", "AGUARDANDO APROVAÇÃO"].includes(c.status)) acoes += `<button type="button" class="cmp-b-edit" style="color:#16a34a;" onclick="abrirZapCot('${escReq(c.codigo)}')" title="Enviar para aprovação pelo WhatsApp (link)"><i class="fa-brands fa-whatsapp"></i></button>`;
         if (["EM COTAÇÃO", "AGUARDANDO APROVAÇÃO"].includes(c.status)) acoes += `<button type="button" class="cmp-b-ent" onclick="abrirAcaoCot('${escReq(c.codigo)}','APROVACAO')"><i class="fa-solid fa-user-check"></i> Aprovação</button>`;
         if (c.status === "APROVADA") acoes += `<button type="button" class="cmp-b-comp" onclick="abrirAcaoCot('${escReq(c.codigo)}','COMPRAR')"><i class="fa-solid fa-bag-shopping"></i> Comprado</button>`;
         if (STATUS_COT_ATIVOS.includes(c.status)) acoes += `<button type="button" class="cmp-b-canc" onclick="abrirAcaoCot('${escReq(c.codigo)}','CANCELAR')" title="Cancelar"><i class="fa-solid fa-xmark"></i></button>`;
@@ -5972,7 +6005,7 @@
         return `<tr${["CANCELADA", "REPROVADA", "COMPRADA"].includes(c.status) ? ' class="linha-cmp-inativa"' : ''} title="${escReq(c.historico || '')}">
           <td class="td-center"><b>${escReq(c.codigo)}</b></td>
           <td class="td-center">${escReq(String(c.dataHora || '').split(' ')[0])}</td>
-          <td><b>${escReq(c.produto)}</b>${c.itemCodigo ? `<span class="req-enviado" style="color:#1d4ed8;">Item da lista Nº ${escReq(c.itemCodigo)}</span>` : ''}${(() => { const it = c.itemCodigo ? (bancoDados.itensCompra || []).find(x => x.codigo === c.itemCodigo) : null; return it && it.origem ? `<span class="req-enviado" style="color:#475569;">Cliente: ${escReq(it.cliente || "—")}</span>` + seloOrigemCompra(it) : (c.os ? `<span class="req-enviado" style="color:#475569;">OS ${escReq(c.os)}</span>` : ''); })()}</td>
+          <td><b>${escReq(c.produto)}</b>${c.itemCodigo ? `<span class="req-enviado" style="color:#1d4ed8;">Item da lista Nº ${escReq(c.itemCodigo)}</span>` : ''}${(() => { const it = c.itemCodigo ? itemCompraPorCod(c.itemCodigo) : null; return it && it.origem ? `<span class="req-enviado" style="color:#475569;">Cliente: ${escReq(it.cliente || "—")}</span>` + seloOrigemCompra(it) : (c.os ? `<span class="req-enviado" style="color:#475569;">OS ${escReq(c.os)}</span>` : ''); })()}</td>
           <td class="td-center"><b>${qtdUnCmp(c.qtd, unidadeDaCot(c))}</b></td>
           <td class="cot-grid-orc">${orcHtml}</td>
           <td><b>${escReq(esc.fornecedor || '-')}</b><span class="req-enviado" style="color:#0f172a;">${moedaBR(c.status === "COMPRADA" && c.valorFinal !== "" ? c.valorFinal : r.totais[c.escolhido])}</span>${c.justificativa ? `<span class="req-enviado" style="color:#64748b;">${escReq(c.justificativa)}</span>` : ''}</td>
@@ -5984,7 +6017,7 @@
 
     // ----- Cadastro / edição da cotação -----
     function opcoesItensCotacao(atual) {
-      const itens = (bancoDados.itensCompra || []).filter(i => i.status === "PENDENTE" && (!cotacaoAtivaDoItem(i) || i.codigo === atual));
+      const itens = (bancoDados.itensCompra || []).filter(i => i.status === "PENDENTE" && (!cotacaoAtivaDoItem(i) || mesmoCodItem(i.codigo, atual)));
       return '<option value="">— Item novo (será cadastrado na lista) —</option>' +
         ordenarItensCompra(itens).map(i => `<option value="${escReq(i.codigo)}">Nº ${escReq(i.codigo)} · ${escReq(i.item)} (qtd ${qtdUnCmp(i.qtd, i.unidade)})</option>`).join('');
     }
@@ -6010,7 +6043,7 @@
       document.getElementById('tituloModalCotacao').innerText = c ? "Editar cotação " + c.codigo : "Nova Cotação";
       const sel = document.getElementById('cotItem');
       sel.innerHTML = opcoesItensCotacao(c ? c.itemCodigo : itemCodigo);
-      sel.value = c ? (c.itemCodigo || "") : (itemCodigo || "");
+      { const alvoIt = itemCompraPorCod(c ? c.itemCodigo : itemCodigo); sel.value = alvoIt ? alvoIt.codigo : ""; }
       document.getElementById('cotProduto').value = c ? c.produto : "";
       document.getElementById('cotQtd').value = c ? c.qtd : "";
       document.getElementById('cotSolicitante').value = c ? c.solicitante : "";
@@ -6019,7 +6052,7 @@
       document.getElementById('cotJustificativa').value = c ? c.justificativa : "";
       document.getElementById('cotCategoria').value = "";
       document.getElementById('cotUnidade').value = "UN";
-      const itC = c && c.itemCodigo ? (bancoDados.itensCompra || []).find(x => x.codigo === c.itemCodigo) : null;
+      const itC = c && c.itemCodigo ? itemCompraPorCod(c.itemCodigo) : null;
       fotosCotManter = itC ? (itC.fotos || []).slice() : (c ? (c.fotos || []).slice() : []);
       fotosCotNovas = [];
       desenharFotosCot();
@@ -6183,7 +6216,7 @@
             solicitante: payload.solicitante.toUpperCase(), categoria: (payload.categoria || "DIVERSOS").toUpperCase(), cliente: "", referencia: res.fotos && res.fotos.length ? "FOTO" : "",
             prioridade: "MÉDIA", urgente: false, os: payload.os, obs: payload.obs, fotos: res.fotos || [], status: "PENDENTE", historico: "", valorPago: "", fornecedor: "", validacao: "", validacaoInfo: "", cotacao: res.codigo });
         }
-        const item = (bancoDados.itensCompra || []).find(i => i.codigo === payload.itemCodigo);
+        const item = itemCompraPorCod(payload.itemCodigo);
         if (item && res.fotos) item.fotos = res.fotos.slice();
         if (item) Object.assign(item, { origem: org.origem, base: org.base, cliente: org.cliente, os: org.os });
         const local = { codigo: res.codigo, produto: produto.toUpperCase(), qtd, itemCodigo: payload.itemCodigo, solicitante: payload.solicitante.toUpperCase(), os: payload.os, obs: payload.obs,
@@ -6204,6 +6237,86 @@
     // ----- Ações: aprovação (papel/verbal), comprado, cancelar, reabrir -----
     function pintarDecCot() {
       document.querySelectorAll('#grpDecCot .req-tipo-opcao').forEach(op => { op.querySelector('span').style.background = op.querySelector('input').checked ? op.dataset.cor : ""; });
+    }
+
+    // ----- Aprovação da cotação por link no WhatsApp -----
+    var zapCotAlvo = null;
+    function abrirZapCot(codigo) {
+      const c = (bancoDados.cotacoes || []).find(x => x.codigo === codigo);
+      if (!c) return;
+      zapCotAlvo = codigo;
+      const r = calcularResultadoCot(c.orcamentos || [], c.qtd);
+      const esc = (c.orcamentos || [])[c.escolhido] || {};
+      document.getElementById('zapCotInfo').innerHTML = `<b>${escReq(c.codigo)}</b> · ${escReq(c.produto)}<br>Escolhido: <b>${escReq(esc.fornecedor || '-')}</b> · ${moedaBR(r.totais[c.escolhido])}` +
+        (c.status === "AGUARDANDO APROVAÇÃO" ? `<br><span style="color:#7e22ce;">Já foi enviada antes. Um novo link pode ser gerado; o primeiro que responder vale.</span>` : "");
+      try {
+        document.getElementById('zapCotAprovador').value = localStorage.getItem('dmaAprovadorCompras') || "";
+        document.getElementById('zapCotFone').value = localStorage.getItem('dmaFoneAprovador') || "";
+      } catch (e) {}
+      document.getElementById('zapCotPasso1').style.display = "";
+      document.getElementById('zapCotPasso2').style.display = "none";
+      document.getElementById('modalZapCot').classList.add('active');
+    }
+    function fecharZapCot() { zapCotAlvo = null; document.getElementById('modalZapCot').classList.remove('active'); }
+
+    function textoZapCot(c, link, expira, aprovador) {
+      const r = calcularResultadoCot(c.orcamentos || [], c.qtd);
+      const it = itemCompraPorCod(c.itemCodigo);
+      const un = unidadeDaCot(c);
+      const nome = (aprovador.split(" ")[0] || "").toLowerCase(); const nomeFmt = nome.charAt(0).toUpperCase() + nome.slice(1);
+      const ordem = (c.orcamentos || []).map((o, k) => k).sort((a, b) => (r.totais[a] || 0) - (r.totais[b] || 0));
+      const linhas = ordem.map(k => {
+        const o = c.orcamentos[k];
+        const tags = (k === r.maisBarato ? " 🟢 mais barato" : "") + (k === r.custoBeneficio && k !== r.maisBarato ? " ⭐ custo-benefício" : "");
+        const txt = `${o.fornecedor}: ${moedaBR(r.totais[k])}${o.prazo ? ` (prazo ${o.prazo} dias)` : ""}${tags}`;
+        return k === c.escolhido ? `✅ *${txt}* ← escolhido` : `▫️ ${txt}`;
+      }).join("\n");
+      let origem = "";
+      if (it) {
+        const o = normalizarTextoReq(it.origem || "");
+        origem = o === "ESTOQUE" ? "Estoque (sem OS)" : `${it.cliente || "—"}${it.os ? " · OS " + it.os : ""}${o ? " (" + (o === "NEOVERO" && it.base ? "Neovero · " + it.base : o.charAt(0) + o.slice(1).toLowerCase()) + ")" : ""}`;
+      } else if (c.os) origem = "OS " + c.os;
+      return `${nomeFmt}, tudo bem?\n\n🛒 *APROVAÇÃO DE COMPRA · ${c.codigo}*\n\n` +
+        `*Produto:* ${c.produto}\n*Qtd:* ${c.qtd}${un ? " " + un : ""}\n` +
+        (origem ? `*Destino:* ${origem}\n` : "") + `*Solicitante:* ${c.solicitante || "—"}\n\n` +
+        `*Orçamentos:*\n${linhas}\n` + (c.justificativa ? `\n_Justificativa: ${c.justificativa}_\n` : "") +
+        `\nPara ver as fotos e *aprovar ou recusar*, toque no link:\n${link}\n\n_(Link válido até ${expira})_`;
+    }
+
+    function gerarLinkCot() {
+      const c = (bancoDados.cotacoes || []).find(x => x.codigo === zapCotAlvo);
+      if (!c) return;
+      const aprovador = document.getElementById('zapCotAprovador').value.trim();
+      const fone = document.getElementById('zapCotFone').value.trim();
+      if (!aprovador) { alert("Informe quem vai aprovar."); return; }
+      try { localStorage.setItem('dmaAprovadorCompras', aprovador); localStorage.setItem('dmaFoneAprovador', fone); } catch (e) {}
+      const btn = document.getElementById('btnGerarLinkCot'); const original = btn.innerHTML;
+      btn.disabled = true; btn.innerText = "GERANDO...";
+      fetch(API_URL, { method: 'POST', body: JSON.stringify({ acao: "CRIAR_VALIDACAO_COTACAO", codigo: c.codigo, aprovador: aprovador, usuario: usuarioAtualCmp() }) })
+      .then(r => r.json())
+      .then(res => {
+        btn.disabled = false; btn.innerHTML = original;
+        if (res.status !== "sucesso") { alert("Não foi possível gerar o link: " + (res.mensagem || "erro desconhecido.")); return; }
+        c.status = "AGUARDANDO APROVAÇÃO"; c.aprovacaoInfo = res.info || c.aprovacaoInfo;
+        try { renderizarCotacoes(); } catch (e) {}
+        const link = location.origin + location.pathname.replace(/[^/]*$/, "") + "aprovar-cotacao.html?t=" + res.token;
+        document.getElementById('zapCotMensagem').value = textoZapCot(c, link, res.expiraEm, aprovador);
+        document.getElementById('zapCotPasso1').style.display = "none";
+        document.getElementById('zapCotPasso2').style.display = "";
+      })
+      .catch(() => { btn.disabled = false; btn.innerHTML = original; alert("Falha de conexão ao gerar o link."); });
+    }
+    function abrirWhatsAppCot() {
+      const msg = document.getElementById('zapCotMensagem').value;
+      let fone = (document.getElementById('zapCotFone').value || "").replace(/\D/g, "");
+      if (fone && fone.length <= 11) fone = "55" + fone;
+      window.open("https://wa.me/" + fone + "?text=" + encodeURIComponent(msg), "_blank");
+    }
+    function copiarZapCot() {
+      const t = document.getElementById('zapCotMensagem');
+      (navigator.clipboard ? navigator.clipboard.writeText(t.value) : Promise.reject())
+        .then(() => alert("Mensagem copiada."))
+        .catch(() => { t.select(); document.execCommand('copy'); alert("Mensagem copiada."); });
     }
 
     function abrirAcaoCot(codigo, tipo) {
@@ -6266,7 +6379,7 @@
         if (btn) { btn.disabled = false; btn.innerHTML = original; }
         if (res.status !== "sucesso") { alert("Não foi possível concluir: " + (res.mensagem || "erro desconhecido.")); return; }
         const c = (bancoDados.cotacoes || []).find(x => x.codigo === payload.codigo);
-        const item = c && c.itemCodigo ? (bancoDados.itensCompra || []).find(i => i.codigo === c.itemCodigo) : null;
+        const item = c && c.itemCodigo ? itemCompraPorCod(c.itemCodigo) : null;
         if (c) {
           c.status = res.novoStatus;
           if (payload.acaoCotacao === "APROVAR" || payload.acaoCotacao === "REPROVAR") c.aprovacaoInfo = res.novoStatus + " por " + payload.aprovador.toUpperCase() + " em " + new Date().toLocaleDateString('pt-BR');
@@ -6308,7 +6421,7 @@
       const orcs = c.orcamentos || [];
       const r = calcularResultadoCot(orcs, c.qtd);
       const col = (fn, cls) => orcs.map((o, k) => `<td class="${k === c.escolhido ? 'esc' : ''} ${cls || ''}">${fn(o, k)}</td>`).join('');
-      const itF = c.itemCodigo ? (bancoDados.itensCompra || []).find(x => x.codigo === c.itemCodigo) : null;
+      const itF = c.itemCodigo ? itemCompraPorCod(c.itemCodigo) : null;
       const fotosMapa = itF && (itF.fotos || []).length ? itF.fotos : (c.fotos || []);   // foto atual do item (uma fonte só)
       const foto = fotosMapa[0] ? `<img class="foto" src="${urlFotoCompra(fotosMapa[0])}">` : "";
       const aprovado = ["APROVADA", "COMPRADA", "REPROVADA"].includes(c.status) && c.aprovacaoInfo;
