@@ -532,6 +532,16 @@
     .kpi-loc-uni .req-kpi-icone { background:#cffafe; color:#0e7490; }
     .kpi-loc-eq .req-kpi-icone { background:#dbeafe; color:#1d4ed8; }
     .kpi-loc-emp .req-kpi-icone { background:#f3e8ff; color:#7e22ce; }
+    .loc-emp-topo { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:8px; }
+    .loc-emp-num { font-size:13px; color:var(--texto, #1e293b); } .loc-emp-num span { font-size:11.5px; color:#64748b; }
+    .loc-emp-barra { height:6px; border-radius:99px; background:#dbeafe; overflow:hidden; margin-bottom:10px; } .loc-emp-barra > span { display:block; height:100%; background:#a855f7; }
+    .loc-emp-tab { width:100%; border-collapse:collapse; font-size:12.5px; }
+    .loc-emp-tab th { text-align:left; font-size:11px; text-transform:uppercase; color:#64748b; padding:8px; border-bottom:2px solid #e9d5ff; }
+    .loc-emp-tab td { padding:7px 8px; border-bottom:1px solid #f1f5f9; }
+    .loc-emp-tab th.td-center { text-align:center; }
+    .loc-emp-tab tr.loc-emp-grupo td { background:#faf5ff; border-top:1px solid #e9d5ff; } .loc-emp-tab tr.loc-emp-grupo span { font-size:11px; color:#64748b; margin-left:8px; }
+    .loc-emp-tab tfoot td { font-weight:bold; background:#f8fafc; border-top:2px solid #e9d5ff; }
+    .loc-emp-velho { color:#b45309; font-weight:bold; }
     .kpi-loc-barra { height:5px; border-radius:99px; background:#dbeafe; overflow:hidden; margin-top:5px; width:120px; max-width:100%; }
     .kpi-loc-barra > span { display:block; height:100%; background:#a855f7; }
     .req-kpi.kpi-sem-acao { cursor:default; }
@@ -8102,6 +8112,7 @@
     function renderizarCardsLoc(lista) {
       const el = document.getElementById('locPainelCtr');
       if (!el) return;
+      if (locValoresFiltro().sit === "EMPRÉSTIMO") { renderizarEmprestimosLoc(el); return; }   // filtro Empréstimo: grade só dos itens emprestados
       if (!lista.length) { el.innerHTML = '<div class="loc-vazio">Nenhum contrato para o filtro escolhido.</div>'; return; }
       const itens = locDados().itens;
       const ordemSt = { "ATIVO": 0, "EMPRÉSTIMO": 1, "SUSPENSO": 2, "ENCERRADO": 3, "CANCELADO": 4 };
@@ -9065,6 +9076,128 @@
     }
 
     // ---------- Impressão do quantitativo por cliente ----------
+
+    // ---------- Empréstimos: grade, impressão e WhatsApp (filtro Situação = Empréstimo) ----------
+    function locLinhasEmprestimo() {
+      const f = locValoresFiltro();
+      const D = locDados(), hoje = Date.now();
+      const linhas = [];
+      locContratosFiltrados(true).forEach(c => {
+        D.itens.filter(i => i.contrato === c.id && (!f.fam || i.familia === f.fam) && locEmprestado(c, i)).forEach(i => {
+          const hs = D.historico.filter(h => h.item === i.id).sort((a, b) => tempoDataBR(a.data) - tempoDataBR(b.data));
+          const inc = hs.find(h => h.acao === LOC_ACAO.ITEM_INCLUIDO) || hs[0];
+          const desde = inc ? String(inc.data).slice(0, 10) : (c.inicio || String(c.criadoEm || "").slice(0, 10));
+          const ult = hs.length ? hs[hs.length - 1] : null;
+          let motivo = String(inc && inc.motivo || "").replace(/^Empréstimo:\s*/i, "").trim();
+          if (/^(Padroniza|Importa)/i.test(motivo)) motivo = "";   // registro técnico, não é motivo do empréstimo
+          const t = tempoDataBR(desde);
+          linhas.push({ c, i, cliente: c.cliente, unidade: c.unidade, local: c.localizacao || "", contrato: c.numContrato || c.id, familia: i.familia, qtd: Number(i.qtd) || 0,
+            desde, dias: t ? Math.max(0, Math.floor((hoje - t) / 86400000)) : null, motivo, obs: i.obs || "",
+            ultima: ult && ult !== inc ? String(ult.data).slice(0, 10) : "" });
+        });
+      });
+      return linhas.sort((a, b) => a.cliente.localeCompare(b.cliente, 'pt-BR') || a.unidade.localeCompare(b.unidade, 'pt-BR') || a.familia.localeCompare(b.familia, 'pt-BR'));
+    }
+    function locResumoEmprestimo(linhas) {
+      const f = locValoresFiltro(); let loc = 0;
+      locContratosFiltrados(true).forEach(c => locDados().itens.filter(i => i.contrato === c.id && (!f.fam || i.familia === f.fam)).forEach(i => { if (locConta(c, i)) loc += Number(i.qtd) || 0; }));
+      const emp = linhas.reduce((s, l) => s + l.qtd, 0), tot = loc + emp;
+      const pct = v => tot ? (Math.round(v / tot * 1000) / 10).toLocaleString('pt-BR') + "%" : "0%";
+      return { emp, loc, tot, pctEmp: pct(emp), pctLoc: pct(loc), unidades: new Set(linhas.map(l => l.cliente + "|" + l.unidade)).size, clientes: new Set(linhas.map(l => l.cliente)).size };
+    }
+    function locTxtDias(d) { return d === null ? "-" : d === 0 ? "hoje" : d === 1 ? "1 dia" : d + " dias"; }
+
+    function renderizarEmprestimosLoc(el) {
+      const linhas = locLinhasEmprestimo();
+      if (!linhas.length) { el.innerHTML = '<div class="loc-vazio">Nenhum equipamento em empréstimo para o filtro escolhido.</div>'; return; }
+      const r = locResumoEmprestimo(linhas), e = escReq;
+      let ant = "";
+      const corpo = linhas.map(l => {
+        const grupo = l.cliente + "|" + l.unidade, novo = grupo !== ant; ant = grupo;
+        const sub = linhas.filter(x => x.cliente + "|" + x.unidade === grupo).reduce((s, x) => s + x.qtd, 0);
+        return (novo ? `<tr class="loc-emp-grupo"><td colspan="6"><b>${e(l.unidade)}</b><span>${e(l.cliente)}${l.local ? " · " + e(l.local) : ""}</span></td><td class="td-center"><b>${locNum(sub)}</b></td><td></td></tr>` : "") +
+          `<tr><td style="padding-left:18px;">${e(l.familia)}</td><td><span class="loc-ctr-chip" style="cursor:pointer;" onclick="abrirFichaLoc('${e(l.c.id)}')" title="Abrir ficha do contrato">${e(l.contrato)}</span></td>
+            <td class="td-center">${e(l.desde || "-")}</td><td class="td-center${l.dias > 60 ? " loc-emp-velho" : ""}">${locTxtDias(l.dias)}</td>
+            <td style="font-size:11.5px; color:#475569;">${l.motivo ? e(l.motivo) : ""}${l.obs && l.obs !== l.motivo ? `<div style="${l.motivo ? "color:#94a3b8;" : ""}">${e(l.obs)}</div>` : ""}${!l.motivo && !l.obs ? "-" : ""}</td>
+            <td class="td-center" style="font-size:11px; color:#94a3b8;">${e(l.ultima || "")}</td>
+            <td class="td-center"><b>${locNum(l.qtd)}</b></td>
+            <td class="td-center"><button type="button" class="btn-secundario" style="padding:3px 8px;" onclick="abrirFichaLoc('${e(l.c.id)}')" title="Abrir ficha"><i class="fa-solid fa-up-right-from-square"></i></button></td></tr>`;
+      }).join('');
+      el.innerHTML = `
+        <div class="loc-emp-topo">
+          <div class="loc-emp-num"><b>${locNum(r.emp)}</b> equip. em empréstimo · <b>${r.pctEmp}</b> do total no cliente (${locNum(r.loc)} locados = ${r.pctLoc})<br>
+            <span>${r.unidades} unidade(s) · ${r.clientes} cliente(s) · ${linhas.length} item(ns)</span></div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn-secundario" onclick="imprimirEmprestimosLoc()"><i class="fa-solid fa-print"></i> Imprimir</button>
+            <button type="button" class="btn-secundario btn-zap-loc" onclick="zapEmprestimosLoc()"><i class="fa-brands fa-whatsapp"></i> Enviar por WhatsApp</button>
+            <button type="button" class="btn-secundario" onclick="filtrarLocPorKpi('')" title="Voltar para todos os contratos"><i class="fa-solid fa-xmark"></i> Tirar filtro</button>
+          </div>
+        </div>
+        <div class="loc-emp-barra"><span style="width:${r.tot ? r.emp / r.tot * 100 : 0}%"></span></div>
+        <div style="overflow-x:auto;"><table class="loc-emp-tab">
+          <thead><tr><th style="width:24%;">Família</th><th style="width:11%;">Contrato</th><th class="td-center" style="width:10%;">Desde</th><th class="td-center" style="width:8%;">Há</th><th>Motivo / observação</th><th class="td-center" style="width:11%;">Últ. alteração</th><th class="td-center" style="width:6%;">Qtd</th><th style="width:50px;"></th></tr></thead>
+          <tbody>${corpo}</tbody>
+          <tfoot><tr><td colspan="6">Total em empréstimo</td><td class="td-center">${locNum(r.emp)}</td><td></td></tr></tfoot>
+        </table></div>
+        <div class="loc-nota" style="margin-top:8px;">Empréstimo não entra no contratado nem no valor. Itens há mais de 60 dias ficam destacados: avalie com o financeiro se devem entrar na cobrança.</div>`;
+    }
+
+    function imprimirEmprestimosLoc() {
+      const linhas = locLinhasEmprestimo();
+      if (!linhas.length) { alert("Nenhum equipamento em empréstimo para o filtro escolhido."); return; }
+      const r = locResumoEmprestimo(linhas), e = escReq, f = locValoresFiltro();
+      const agora = new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+      const filtroTxt = [f.cli && "Cliente: " + f.cli, f.loc && "Localização: " + f.loc, f.fam && "Família: " + f.fam].filter(Boolean).join(" · ") || "Todos os clientes";
+      const grupos = {};
+      linhas.forEach(l => { const k = l.cliente + "|" + l.unidade; (grupos[k] = grupos[k] || { l, itens: [] }).itens.push(l); });
+      const corpo = Object.values(grupos).map(g => `<table><thead><tr><th colspan="6">${e(g.l.unidade)}<small>${e(g.l.cliente)}${g.l.local ? " · " + e(g.l.local) : ""}</small></th></tr>
+          <tr class="sub"><th style="width:26%;">Família</th><th style="width:11%;">Contrato</th><th class="c" style="width:10%;">Desde</th><th class="c" style="width:8%;">Há</th><th>Motivo / observação</th><th class="c" style="width:6%;">Qtd</th></tr></thead><tbody>` +
+        g.itens.map(l => `<tr><td>${e(l.familia)}</td><td>${e(l.contrato)}</td><td class="c">${e(l.desde || "-")}</td><td class="c${l.dias > 60 ? " velho" : ""}">${locTxtDias(l.dias)}</td><td>${e([l.motivo, l.obs !== l.motivo ? l.obs : ""].filter(Boolean).join(" · ") || "-")}</td><td class="q">${locNum(l.qtd)}</td></tr>`).join('') +
+        `</tbody><tfoot><tr><td colspan="5">Total da unidade</td><td class="q">${locNum(g.itens.reduce((s, x) => s + x.qtd, 0))}</td></tr></tfoot></table>`).join('');
+      const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Equipamentos em empréstimo - DMA SYS</title><style>
+        @page { size: A4 landscape; margin: 11mm; }
+        body { font-family: Arial, Helvetica, sans-serif; color:#0f172a; font-size:10.5px; margin:0; }
+        header { display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid #6d28d9; padding-bottom:6px; margin-bottom:10px; }
+        header h1 { font-size:16px; color:#6d28d9; margin:0; } header div { font-size:9.5px; color:#64748b; text-align:right; }
+        .resumo { display:flex; gap:10px; margin-bottom:12px; }
+        .resumo div { flex:1; border:1px solid #e2e8f0; border-radius:6px; padding:7px 9px; } .resumo b { display:block; font-size:16px; color:#0f172a; } .resumo span { font-size:9.5px; color:#64748b; text-transform:uppercase; }
+        table { width:100%; border-collapse:collapse; margin-bottom:9px; page-break-inside:avoid; table-layout:fixed; }
+        th { text-align:left; background:#f5f3ff; border:1px solid #ddd6fe; padding:5px 7px; font-size:11px; }
+        tr.sub th { background:#f8fafc; border-color:#e2e8f0; font-size:9.5px; color:#475569; text-transform:uppercase; }
+        th small { display:block; font-weight:normal; color:#64748b; font-size:9.5px; margin-top:2px; }
+        td { border:1px solid #e2e8f0; padding:4px 7px; vertical-align:top; } .c { text-align:center; width:70px; } td.q, th.q { width:50px; text-align:center; font-weight:bold; }
+        td.velho { color:#b45309; font-weight:bold; }
+        tfoot td { background:#f1f5f9; font-weight:bold; }
+        .total { text-align:right; font-size:12px; font-weight:bold; margin-top:4px; }
+        footer { margin-top:12px; font-size:9px; color:#94a3b8; text-align:center; border-top:1px solid #e2e8f0; padding-top:5px; }
+      </style></head><body>
+        <header><h1>Equipamentos em Empréstimo</h1><div>LINEMED HOSPITALAR · DMA SYS<br>Emitido em ${e(agora)} por ${e(usuarioAtualCmp() || "-")}<br>${e(filtroTxt)}</div></header>
+        <div class="resumo"><div><b>${locNum(r.emp)}</b><span>Em empréstimo (${r.pctEmp})</span></div><div><b>${locNum(r.loc)}</b><span>Locados (${r.pctLoc})</span></div><div><b>${locNum(r.tot)}</b><span>Total no cliente</span></div><div><b>${r.unidades}</b><span>Unidade(s)</span></div></div>
+        ${corpo}
+        <div class="total">Total em empréstimo: ${locNum(r.emp)} equipamento(s)</div>
+        <footer>Equipamentos em empréstimo não entram no quantitativo contratado nem no valor mensal. Destacados: há mais de 60 dias.</footer>
+        <script>window.onload = function () { window.print(); };<\/script>
+      </body></html>`;
+      const w = window.open("", "_blank");
+      if (!w) { alert("O navegador bloqueou a janela de impressão. Libere pop-ups para este site."); return; }
+      w.document.open(); w.document.write(html); w.document.close();
+    }
+
+    function zapEmprestimosLoc() {
+      const linhas = locLinhasEmprestimo();
+      if (!linhas.length) { alert("Nenhum equipamento em empréstimo para o filtro escolhido."); return; }
+      const r = locResumoEmprestimo(linhas), f = locValoresFiltro();
+      const grupos = {};
+      linhas.forEach(l => { const k = l.cliente + "|" + l.unidade; (grupos[k] = grupos[k] || { l, itens: [] }).itens.push(l); });
+      const blocos = Object.values(grupos).map(g => `📍 *${g.l.unidade}*\n_${g.l.cliente}_\n` +
+        g.itens.map(l => `• ${l.familia}: *${locNum(l.qtd)}* (desde ${l.desde || "-"}${l.contrato ? " · " + l.contrato : ""})`).join("\n")).join("\n\n");
+      const txt = `📦 *EQUIPAMENTOS EM EMPRÉSTIMO*\n${f.cli ? "Cliente: " + f.cli + "\n" : ""}Posição em ${new Date().toLocaleDateString('pt-BR')}\n\n` +
+        `*Total:* ${locNum(r.emp)} equipamento(s) em ${r.unidades} unidade(s)\n*Locados:* ${locNum(r.loc)} (${r.pctLoc}) · *Empréstimo:* ${locNum(r.emp)} (${r.pctEmp})\n\n` +
+        blocos + `\n\n_Avaliar se devem entrar na cobrança de locação._`;
+      if (txt.length > 6000 && !confirm("A lista ficou grande (" + linhas.length + " itens). O WhatsApp pode cortar mensagens longas. Para enviar tudo, prefira Imprimir e mandar o PDF. Abrir assim mesmo?")) return;
+      window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank");
+    }
+
     function imprimirQuantitativoLoc() {
       const f = locValoresFiltro();
       const lista = locContratosFiltrados(true).filter(c => c.status === "ATIVO");
