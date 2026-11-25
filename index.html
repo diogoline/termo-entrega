@@ -533,15 +533,24 @@
     .kpi-loc-eq .req-kpi-icone { background:#dbeafe; color:#1d4ed8; }
     .kpi-loc-emp .req-kpi-icone { background:#f3e8ff; color:#7e22ce; }
     .loc-emp-topo { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:8px; }
-    .loc-emp-num { font-size:13px; color:var(--texto, #1e293b); } .loc-emp-num span { font-size:11.5px; color:#64748b; }
-    .loc-emp-barra { height:6px; border-radius:99px; background:#dbeafe; overflow:hidden; margin-bottom:10px; } .loc-emp-barra > span { display:block; height:100%; background:#a855f7; }
-    .loc-emp-tab { width:100%; border-collapse:collapse; font-size:12.5px; }
-    .loc-emp-tab th { text-align:left; font-size:11px; text-transform:uppercase; color:#64748b; padding:8px; border-bottom:2px solid #e9d5ff; }
-    .loc-emp-tab td { padding:7px 8px; border-bottom:1px solid #f1f5f9; }
-    .loc-emp-tab th.td-center { text-align:center; }
-    .loc-emp-tab tr.loc-emp-grupo td { background:#faf5ff; border-top:1px solid #e9d5ff; } .loc-emp-tab tr.loc-emp-grupo span { font-size:11px; color:#64748b; margin-left:8px; }
-    .loc-emp-tab tfoot td { font-weight:bold; background:#f8fafc; border-top:2px solid #e9d5ff; }
-    .loc-emp-velho { color:#b45309; font-weight:bold; }
+    .loc-emp-stats { display:flex; gap:22px; flex-wrap:wrap; }
+    .loc-emp-stat b { display:block; font-size:22px; line-height:1.1; } .loc-emp-stat span { font-size:11px; color:#64748b; text-transform:uppercase; font-weight:bold; }
+    .loc-emp-barra { height:6px; border-radius:99px; background:#dbeafe; overflow:hidden; margin-bottom:14px; } .loc-emp-barra > span { display:block; height:100%; background:#a855f7; }
+    .loc-emp-cli { margin-bottom:16px; }
+    .loc-emp-cli-cab { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:8px 12px; border-radius:8px; background:linear-gradient(135deg,#7e22ce,#6d28d9); color:#fff; font-weight:bold; font-size:13px; margin-bottom:8px; }
+    .loc-emp-cli-cab span:last-child { font-weight:normal; font-size:12px; opacity:.95; }
+    .loc-emp-unis { display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:10px; }
+    .loc-emp-uni { border:1px solid #e9d5ff; border-radius:10px; background:var(--card-bg, #fff); overflow:hidden; }
+    .loc-emp-uni-cab { display:flex; justify-content:space-between; gap:10px; padding:9px 12px; background:#faf5ff; border-bottom:1px solid #f3e8ff; }
+    .loc-emp-uni-cab .n { font-weight:bold; font-size:12.5px; } .loc-emp-uni-cab .s { font-size:11px; color:#64748b; margin-top:2px; }
+    .loc-emp-uni-cab .s a { color:#6d28d9; cursor:pointer; text-decoration:underline; }
+    .loc-emp-uni-cab .t { font-size:20px; font-weight:800; color:#7e22ce; }
+    .loc-emp-uni table { width:100%; border-collapse:collapse; font-size:12.5px; }
+    .loc-emp-uni td { padding:6px 12px; border-bottom:1px solid #f8fafc; vertical-align:top; }
+    .loc-emp-uni td.q { width:44px; font-weight:800; color:#7e22ce; white-space:nowrap; }
+    .loc-emp-uni td .m { font-size:11px; color:#94a3b8; margin-top:2px; }
+    .loc-emp-uni td.d { width:118px; text-align:right; font-size:11px; color:#64748b; white-space:nowrap; } .loc-emp-uni td.d span { font-size:10.5px; color:#94a3b8; }
+    .loc-emp-uni td.d.velho, .loc-emp-uni td.d.velho span { color:#b45309; font-weight:bold; }
     .kpi-loc-barra { height:5px; border-radius:99px; background:#dbeafe; overflow:hidden; margin-top:5px; width:120px; max-width:100%; }
     .kpi-loc-barra > span { display:block; height:100%; background:#a855f7; }
     .req-kpi.kpi-sem-acao { cursor:default; }
@@ -9107,75 +9116,92 @@
     }
     function locTxtDias(d) { return d === null ? "-" : d === 0 ? "hoje" : d === 1 ? "1 dia" : d + " dias"; }
 
+    // Agrupa as linhas: cliente → unidade → famílias
+    function locGruposEmprestimo(linhas) {
+      const cls = {};
+      linhas.forEach(l => {
+        const c = cls[l.cliente] = cls[l.cliente] || { nome: l.cliente, total: 0, unidades: {} };
+        const u = c.unidades[l.unidade] = c.unidades[l.unidade] || { nome: l.unidade, local: l.local, total: 0, contratos: new Map(), itens: [] };
+        u.itens.push(l); u.total += l.qtd; c.total += l.qtd; u.contratos.set(l.c.id, l.contrato);
+      });
+      return Object.values(cls).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR')).map(c => Object.assign(c, {
+        unidades: Object.values(c.unidades).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
+          .map(u => Object.assign(u, { itens: u.itens.sort((a, b) => a.familia.localeCompare(b.familia, 'pt-BR')) })) }));
+    }
+    function locTxtDesde(l) { return l.desde ? l.desde + (l.dias ? " · " + locTxtDias(l.dias) : " · hoje") : "-"; }
+
     function renderizarEmprestimosLoc(el) {
       const linhas = locLinhasEmprestimo();
       if (!linhas.length) { el.innerHTML = '<div class="loc-vazio">Nenhum equipamento em empréstimo para o filtro escolhido.</div>'; return; }
-      const r = locResumoEmprestimo(linhas), e = escReq;
-      let ant = "";
-      const corpo = linhas.map(l => {
-        const grupo = l.cliente + "|" + l.unidade, novo = grupo !== ant; ant = grupo;
-        const sub = linhas.filter(x => x.cliente + "|" + x.unidade === grupo).reduce((s, x) => s + x.qtd, 0);
-        return (novo ? `<tr class="loc-emp-grupo"><td colspan="6"><b>${e(l.unidade)}</b><span>${e(l.cliente)}${l.local ? " · " + e(l.local) : ""}</span></td><td class="td-center"><b>${locNum(sub)}</b></td><td></td></tr>` : "") +
-          `<tr><td style="padding-left:18px;">${e(l.familia)}</td><td><span class="loc-ctr-chip" style="cursor:pointer;" onclick="abrirFichaLoc('${e(l.c.id)}')" title="Abrir ficha do contrato">${e(l.contrato)}</span></td>
-            <td class="td-center">${e(l.desde || "-")}</td><td class="td-center${l.dias > 60 ? " loc-emp-velho" : ""}">${locTxtDias(l.dias)}</td>
-            <td style="font-size:11.5px; color:#475569;">${l.motivo ? e(l.motivo) : ""}${l.obs && l.obs !== l.motivo ? `<div style="${l.motivo ? "color:#94a3b8;" : ""}">${e(l.obs)}</div>` : ""}${!l.motivo && !l.obs ? "-" : ""}</td>
-            <td class="td-center" style="font-size:11px; color:#94a3b8;">${e(l.ultima || "")}</td>
-            <td class="td-center"><b>${locNum(l.qtd)}</b></td>
-            <td class="td-center"><button type="button" class="btn-secundario" style="padding:3px 8px;" onclick="abrirFichaLoc('${e(l.c.id)}')" title="Abrir ficha"><i class="fa-solid fa-up-right-from-square"></i></button></td></tr>`;
-      }).join('');
+      const r = locResumoEmprestimo(linhas), e = escReq, grupos = locGruposEmprestimo(linhas);
+      const stat = (v, t, cor) => `<div class="loc-emp-stat"><b style="color:${cor};">${v}</b><span>${t}</span></div>`;
+      const corpo = grupos.map(c => `
+        <div class="loc-emp-cli">
+          <div class="loc-emp-cli-cab"><span>${e(c.nome)}</span><span>${c.unidades.length} unidade(s) · <b>${locNum(c.total)}</b> equip.</span></div>
+          <div class="loc-emp-unis">${c.unidades.map(u => `
+            <div class="loc-emp-uni">
+              <div class="loc-emp-uni-cab">
+                <div style="min-width:0;"><div class="n">${e(u.nome)}</div><div class="s">${e(u.local || "-")} · ${[...u.contratos].map(([id, num]) => `<a onclick="abrirFichaLoc('${e(id)}')" title="Abrir ficha do contrato">${e(num)}</a>`).join(", ")}</div></div>
+                <div class="t">${locNum(u.total)}</div>
+              </div>
+              <table><tbody>${u.itens.map(l => `
+                <tr><td class="q">${locNum(l.qtd)}×</td><td>${e(l.familia)}${l.motivo || l.obs ? `<div class="m">${e([l.motivo, l.obs !== l.motivo ? l.obs : ""].filter(Boolean).join(" · "))}</div>` : ""}</td>
+                <td class="d${l.dias > 60 ? " velho" : ""}">desde ${e(l.desde || "-")}<br><span>${locTxtDias(l.dias)}</span></td></tr>`).join('')}
+              </tbody></table>
+            </div>`).join('')}
+          </div>
+        </div>`).join('');
       el.innerHTML = `
         <div class="loc-emp-topo">
-          <div class="loc-emp-num"><b>${locNum(r.emp)}</b> equip. em empréstimo · <b>${r.pctEmp}</b> do total no cliente (${locNum(r.loc)} locados = ${r.pctLoc})<br>
-            <span>${r.unidades} unidade(s) · ${r.clientes} cliente(s) · ${linhas.length} item(ns)</span></div>
+          <div class="loc-emp-stats">${stat(locNum(r.emp), "em empréstimo · " + r.pctEmp, "#7e22ce")}${stat(locNum(r.loc), "locados · " + r.pctLoc, "#1d4ed8")}${stat(r.unidades, r.unidades === 1 ? "unidade" : "unidades", "#0f766e")}${stat(r.clientes, r.clientes === 1 ? "cliente" : "clientes", "#475569")}</div>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <button type="button" class="btn-secundario" onclick="imprimirEmprestimosLoc()"><i class="fa-solid fa-print"></i> Imprimir</button>
-            <button type="button" class="btn-secundario btn-zap-loc" onclick="zapEmprestimosLoc()"><i class="fa-brands fa-whatsapp"></i> Enviar por WhatsApp</button>
+            <button type="button" class="btn-secundario btn-zap-loc" onclick="zapEmprestimosLoc()"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
             <button type="button" class="btn-secundario" onclick="filtrarLocPorKpi('')" title="Voltar para todos os contratos"><i class="fa-solid fa-xmark"></i> Tirar filtro</button>
           </div>
         </div>
-        <div class="loc-emp-barra"><span style="width:${r.tot ? r.emp / r.tot * 100 : 0}%"></span></div>
-        <div style="overflow-x:auto;"><table class="loc-emp-tab">
-          <thead><tr><th style="width:24%;">Família</th><th style="width:11%;">Contrato</th><th class="td-center" style="width:10%;">Desde</th><th class="td-center" style="width:8%;">Há</th><th>Motivo / observação</th><th class="td-center" style="width:11%;">Últ. alteração</th><th class="td-center" style="width:6%;">Qtd</th><th style="width:50px;"></th></tr></thead>
-          <tbody>${corpo}</tbody>
-          <tfoot><tr><td colspan="6">Total em empréstimo</td><td class="td-center">${locNum(r.emp)}</td><td></td></tr></tfoot>
-        </table></div>
-        <div class="loc-nota" style="margin-top:8px;">Empréstimo não entra no contratado nem no valor. Itens há mais de 60 dias ficam destacados: avalie com o financeiro se devem entrar na cobrança.</div>`;
+        <div class="loc-emp-barra" title="Locados x emprestados"><span style="width:${r.tot ? r.emp / r.tot * 100 : 0}%"></span></div>
+        ${corpo}
+        <div class="loc-nota" style="margin-top:8px;">Empréstimo não entra no contratado nem no valor. Datas em laranja: há mais de 60 dias, avalie com o financeiro se devem entrar na cobrança.</div>`;
     }
 
     function imprimirEmprestimosLoc() {
       const linhas = locLinhasEmprestimo();
       if (!linhas.length) { alert("Nenhum equipamento em empréstimo para o filtro escolhido."); return; }
-      const r = locResumoEmprestimo(linhas), e = escReq, f = locValoresFiltro();
+      const r = locResumoEmprestimo(linhas), e = escReq, f = locValoresFiltro(), grupos = locGruposEmprestimo(linhas);
       const agora = new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
       const filtroTxt = [f.cli && "Cliente: " + f.cli, f.loc && "Localização: " + f.loc, f.fam && "Família: " + f.fam].filter(Boolean).join(" · ") || "Todos os clientes";
-      const grupos = {};
-      linhas.forEach(l => { const k = l.cliente + "|" + l.unidade; (grupos[k] = grupos[k] || { l, itens: [] }).itens.push(l); });
-      const corpo = Object.values(grupos).map(g => `<table><thead><tr><th colspan="6">${e(g.l.unidade)}<small>${e(g.l.cliente)}${g.l.local ? " · " + e(g.l.local) : ""}</small></th></tr>
-          <tr class="sub"><th style="width:26%;">Família</th><th style="width:11%;">Contrato</th><th class="c" style="width:10%;">Desde</th><th class="c" style="width:8%;">Há</th><th>Motivo / observação</th><th class="c" style="width:6%;">Qtd</th></tr></thead><tbody>` +
-        g.itens.map(l => `<tr><td>${e(l.familia)}</td><td>${e(l.contrato)}</td><td class="c">${e(l.desde || "-")}</td><td class="c${l.dias > 60 ? " velho" : ""}">${locTxtDias(l.dias)}</td><td>${e([l.motivo, l.obs !== l.motivo ? l.obs : ""].filter(Boolean).join(" · ") || "-")}</td><td class="q">${locNum(l.qtd)}</td></tr>`).join('') +
-        `</tbody><tfoot><tr><td colspan="5">Total da unidade</td><td class="q">${locNum(g.itens.reduce((s, x) => s + x.qtd, 0))}</td></tr></tfoot></table>`).join('');
+      const corpo = grupos.map(c => `<section><h2>${e(c.nome)}<span>${c.unidades.length} unidade(s) · ${locNum(c.total)} equipamento(s)</span></h2>
+        <table><colgroup><col style="width:34%"><col style="width:7%"><col style="width:33%"><col style="width:14%"><col style="width:12%"></colgroup>
+        <thead><tr><th>Unidade / família</th><th class="c">Qtd</th><th>Motivo / observação</th><th class="c">Desde</th><th class="c">Contrato</th></tr></thead><tbody>` +
+        c.unidades.map(u => `<tr class="uni"><td colspan="2">${e(u.nome)}<small>${e(u.local || "")}</small></td><td></td><td></td><td class="c">${locNum(u.total)} equip.</td></tr>` +
+          u.itens.map(l => `<tr><td class="fam">${e(l.familia)}</td><td class="c q">${locNum(l.qtd)}</td><td class="m">${e([l.motivo, l.obs !== l.motivo ? l.obs : ""].filter(Boolean).join(" · "))}</td><td class="c${l.dias > 60 ? " velho" : ""}">${e(l.desde || "-")}</td><td class="c">${e(l.contrato)}</td></tr>`).join('')).join('') +
+        `</tbody></table></section>`).join('');
       const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Equipamentos em empréstimo - DMA SYS</title><style>
-        @page { size: A4 landscape; margin: 11mm; }
+        @page { size: A4 portrait; margin: 12mm; }
         body { font-family: Arial, Helvetica, sans-serif; color:#0f172a; font-size:10.5px; margin:0; }
         header { display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid #6d28d9; padding-bottom:6px; margin-bottom:10px; }
-        header h1 { font-size:16px; color:#6d28d9; margin:0; } header div { font-size:9.5px; color:#64748b; text-align:right; }
-        .resumo { display:flex; gap:10px; margin-bottom:12px; }
-        .resumo div { flex:1; border:1px solid #e2e8f0; border-radius:6px; padding:7px 9px; } .resumo b { display:block; font-size:16px; color:#0f172a; } .resumo span { font-size:9.5px; color:#64748b; text-transform:uppercase; }
-        table { width:100%; border-collapse:collapse; margin-bottom:9px; page-break-inside:avoid; table-layout:fixed; }
-        th { text-align:left; background:#f5f3ff; border:1px solid #ddd6fe; padding:5px 7px; font-size:11px; }
-        tr.sub th { background:#f8fafc; border-color:#e2e8f0; font-size:9.5px; color:#475569; text-transform:uppercase; }
-        th small { display:block; font-weight:normal; color:#64748b; font-size:9.5px; margin-top:2px; }
-        td { border:1px solid #e2e8f0; padding:4px 7px; vertical-align:top; } .c { text-align:center; width:70px; } td.q, th.q { width:50px; text-align:center; font-weight:bold; }
-        td.velho { color:#b45309; font-weight:bold; }
-        tfoot td { background:#f1f5f9; font-weight:bold; }
-        .total { text-align:right; font-size:12px; font-weight:bold; margin-top:4px; }
+        header h1 { font-size:16px; color:#6d28d9; margin:0; } header div { font-size:9.5px; color:#64748b; text-align:right; line-height:1.4; }
+        .resumo { display:flex; gap:8px; margin-bottom:14px; }
+        .resumo div { flex:1; border:1px solid #e2e8f0; border-radius:6px; padding:7px 9px; } .resumo b { display:block; font-size:17px; } .resumo span { font-size:9px; color:#64748b; text-transform:uppercase; }
+        section { margin-bottom:14px; page-break-inside:auto; }
+        h2 { font-size:12.5px; color:#fff; background:#6d28d9; padding:6px 9px; margin:0; display:flex; justify-content:space-between; page-break-after:avoid; }
+        h2 span { font-size:10px; font-weight:normal; }
+        table { width:100%; border-collapse:collapse; table-layout:fixed; }
+        th { background:#f5f3ff; color:#5b21b6; font-size:9px; text-transform:uppercase; text-align:left; padding:5px 7px; border-bottom:1px solid #ddd6fe; }
+        td { padding:4px 7px; border-bottom:1px solid #eef2f7; vertical-align:top; }
+        tr.uni td { background:#f8fafc; font-weight:bold; font-size:11px; border-top:1px solid #cbd5e1; padding-top:6px; } tr.uni small { font-weight:normal; color:#64748b; font-size:9px; margin-left:6px; }
+        tr { page-break-inside:avoid; }
+        td.fam { padding-left:16px; } td.q { font-weight:bold; font-size:11.5px; } td.m { color:#475569; font-size:9.5px; }
+        .c { text-align:center; } .velho { color:#b45309; font-weight:bold; }
+        .total { text-align:right; font-size:12px; font-weight:bold; margin-top:6px; border-top:2px solid #6d28d9; padding-top:5px; }
         footer { margin-top:12px; font-size:9px; color:#94a3b8; text-align:center; border-top:1px solid #e2e8f0; padding-top:5px; }
       </style></head><body>
-        <header><h1>Equipamentos em Empréstimo</h1><div>LINEMED HOSPITALAR · DMA SYS<br>Emitido em ${e(agora)} por ${e(usuarioAtualCmp() || "-")}<br>${e(filtroTxt)}</div></header>
-        <div class="resumo"><div><b>${locNum(r.emp)}</b><span>Em empréstimo (${r.pctEmp})</span></div><div><b>${locNum(r.loc)}</b><span>Locados (${r.pctLoc})</span></div><div><b>${locNum(r.tot)}</b><span>Total no cliente</span></div><div><b>${r.unidades}</b><span>Unidade(s)</span></div></div>
+        <header><h1>Equipamentos em Empréstimo</h1><div>LINEMED HOSPITALAR · DMA SYS<br>${e(filtroTxt)}<br>Emitido em ${e(agora)} por ${e(usuarioAtualCmp() || "-")}</div></header>
+        <div class="resumo"><div><b style="color:#7e22ce;">${locNum(r.emp)}</b><span>Em empréstimo (${r.pctEmp})</span></div><div><b style="color:#1d4ed8;">${locNum(r.loc)}</b><span>Locados (${r.pctLoc})</span></div><div><b>${locNum(r.tot)}</b><span>Total no cliente</span></div><div><b>${r.unidades}</b><span>Unidade(s)</span></div></div>
         ${corpo}
-        <div class="total">Total em empréstimo: ${locNum(r.emp)} equipamento(s)</div>
-        <footer>Equipamentos em empréstimo não entram no quantitativo contratado nem no valor mensal. Destacados: há mais de 60 dias.</footer>
+        <div class="total">Total em empréstimo: ${locNum(r.emp)} equipamento(s) em ${r.unidades} unidade(s)</div>
+        <footer>Empréstimo não entra no quantitativo contratado nem no valor mensal. Datas em laranja: há mais de 60 dias.</footer>
         <script>window.onload = function () { window.print(); };<\/script>
       </body></html>`;
       const w = window.open("", "_blank");
@@ -9186,13 +9212,11 @@
     function zapEmprestimosLoc() {
       const linhas = locLinhasEmprestimo();
       if (!linhas.length) { alert("Nenhum equipamento em empréstimo para o filtro escolhido."); return; }
-      const r = locResumoEmprestimo(linhas), f = locValoresFiltro();
-      const grupos = {};
-      linhas.forEach(l => { const k = l.cliente + "|" + l.unidade; (grupos[k] = grupos[k] || { l, itens: [] }).itens.push(l); });
-      const blocos = Object.values(grupos).map(g => `📍 *${g.l.unidade}*\n_${g.l.cliente}_\n` +
-        g.itens.map(l => `• ${l.familia}: *${locNum(l.qtd)}* (desde ${l.desde || "-"}${l.contrato ? " · " + l.contrato : ""})`).join("\n")).join("\n\n");
-      const txt = `📦 *EQUIPAMENTOS EM EMPRÉSTIMO*\n${f.cli ? "Cliente: " + f.cli + "\n" : ""}Posição em ${new Date().toLocaleDateString('pt-BR')}\n\n` +
-        `*Total:* ${locNum(r.emp)} equipamento(s) em ${r.unidades} unidade(s)\n*Locados:* ${locNum(r.loc)} (${r.pctLoc}) · *Empréstimo:* ${locNum(r.emp)} (${r.pctEmp})\n\n` +
+      const r = locResumoEmprestimo(linhas), f = locValoresFiltro(), grupos = locGruposEmprestimo(linhas);
+      const blocos = grupos.map(c => `━━━━━━━━━━━━━━━\n🏥 *${c.nome}*  (${locNum(c.total)} equip.)\n━━━━━━━━━━━━━━━\n` +
+        c.unidades.map(u => `\n📍 *${u.nome}*\n` + u.itens.map(l => `   ${locNum(l.qtd)}× ${l.familia}`).join("\n")).join("\n")).join("\n\n");
+      const txt = `📦 *EQUIPAMENTOS EM EMPRÉSTIMO*\n_Posição em ${new Date().toLocaleDateString('pt-BR')}${f.cli ? " · " + f.cli : ""}_\n\n` +
+        `▪️ *Em empréstimo:* ${locNum(r.emp)} (${r.pctEmp})\n▪️ *Locados:* ${locNum(r.loc)} (${r.pctLoc})\n▪️ *Unidades:* ${r.unidades}\n\n` +
         blocos + `\n\n_Avaliar se devem entrar na cobrança de locação._`;
       if (txt.length > 6000 && !confirm("A lista ficou grande (" + linhas.length + " itens). O WhatsApp pode cortar mensagens longas. Para enviar tudo, prefira Imprimir e mandar o PDF. Abrir assim mesmo?")) return;
       window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank");
