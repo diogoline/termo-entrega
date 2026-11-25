@@ -531,6 +531,9 @@
     .kpi-loc-valor .req-kpi-icone { background:#ede9fe; color:#6d28d9; }
     .kpi-loc-uni .req-kpi-icone { background:#cffafe; color:#0e7490; }
     .kpi-loc-eq .req-kpi-icone { background:#dbeafe; color:#1d4ed8; }
+    .kpi-loc-emp .req-kpi-icone { background:#f3e8ff; color:#7e22ce; }
+    .kpi-loc-barra { height:5px; border-radius:99px; background:#dbeafe; overflow:hidden; margin-top:5px; width:120px; max-width:100%; }
+    .kpi-loc-barra > span { display:block; height:100%; background:#a855f7; }
     .req-kpi.kpi-sem-acao { cursor:default; }
     .loc-filtros { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin:14px 0 12px; }
     .loc-filtros .form-group { margin-bottom:0; }
@@ -1017,7 +1020,8 @@
           <div class="req-kpi kpi-atendido" onclick="filtrarLocPorKpi('ATIVO')" title="Ver contratos ativos"><div class="req-kpi-icone"><i class="fa-solid fa-file-contract"></i></div><div><div class="req-kpi-num" id="kpiLocContratos">0</div><div class="req-kpi-lbl">Contratos ativos</div></div></div>
           <div class="req-kpi kpi-total kpi-sem-acao"><div class="req-kpi-icone"><i class="fa-solid fa-hospital"></i></div><div><div class="req-kpi-num" id="kpiLocClientes">0</div><div class="req-kpi-lbl">Clientes</div></div></div>
           <div class="req-kpi kpi-loc-uni kpi-sem-acao"><div class="req-kpi-icone"><i class="fa-solid fa-location-dot"></i></div><div><div class="req-kpi-num" id="kpiLocUnidades">0</div><div class="req-kpi-lbl">Unidades</div></div></div>
-          <div class="req-kpi kpi-loc-eq kpi-sem-acao"><div class="req-kpi-icone"><i class="fa-solid fa-truck-medical"></i></div><div><div class="req-kpi-num" id="kpiLocEquip">0</div><div class="req-kpi-lbl">Equip. contratados</div><div class="req-kpi-sub" id="kpiLocEquipSub"></div></div></div>
+          <div class="req-kpi kpi-loc-eq" onclick="filtrarLocPorKpi('ATIVO')" title="Ver contratos ativos (equipamentos locados)"><div class="req-kpi-icone"><i class="fa-solid fa-truck-medical"></i></div><div><div class="req-kpi-num" id="kpiLocEquip">0</div><div class="req-kpi-lbl">Equip. locados</div><div class="req-kpi-sub" id="kpiLocEquipSub"></div></div></div>
+          <div class="req-kpi kpi-loc-emp" onclick="filtrarLocPorKpi('EMPRÉSTIMO')" title="Ver somente os equipamentos em empréstimo"><div class="req-kpi-icone"><i class="fa-solid fa-right-left"></i></div><div><div class="req-kpi-num" id="kpiLocEmp">0</div><div class="req-kpi-lbl">Em empréstimo</div><div class="req-kpi-sub" id="kpiLocEmpSub"></div><div class="kpi-loc-barra" id="kpiLocEmpBarra" title="Locados x emprestados"><span style="width:0%"></span></div></div></div>
           <div class="req-kpi kpi-loc-valor kpi-sem-acao" id="kpiLocValorBox" style="display:none;"><div class="req-kpi-icone"><i class="fa-solid fa-sack-dollar"></i></div><div><div class="req-kpi-num" id="kpiLocValor">R$ 0</div><div class="req-kpi-lbl">Valor mensal</div><div class="req-kpi-sub" id="kpiLocValorSub"></div></div></div>
         </div>
         <div id="locAvisoVigencia"></div>
@@ -8054,20 +8058,26 @@
 
       // Indicadores (sempre só o que está ativo, dentro do filtro de cliente/unidade/família/busca)
       const base = locContratosFiltrados(true);
-      let equip = 0, valor = 0, comValor = 0, emprest = 0;
+      let equip = 0, valor = 0, comValor = 0, emprest = 0; const uniEmp = new Set();
       const ativos = base.filter(c => c.status === "ATIVO");
       const cli = new Set(), uni = new Set();
       ativos.forEach(c => { cli.add(c.cliente); uni.add(c.cliente + "|" + c.unidade); });
       base.forEach(c => itens.filter(i => i.contrato === c.id && (!f.fam || i.familia === f.fam)).forEach(i => {
         if (locConta(c, i)) { equip += i.qtd; if (i.valorUnit) { valor += i.qtd * i.valorUnit; comValor++; } }
-        else if (locEmprestado(c, i)) emprest += i.qtd;
+        else if (locEmprestado(c, i)) { emprest += i.qtd; uniEmp.add(c.cliente + "|" + c.unidade); }
       }));
       const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = v; };
       setTxt('kpiLocContratos', locNum(ativos.length));
       setTxt('kpiLocClientes', locNum(cli.size));
       setTxt('kpiLocUnidades', locNum(uni.size));
       setTxt('kpiLocEquip', locNum(equip));
-      setTxt('kpiLocEquipSub', emprest ? "+ " + locNum(emprest) + " em empréstimo" : "");
+      // Locados x emprestados: % sobre o total de equipamentos no cliente
+      const totCli = equip + emprest, pct = v => totCli ? (Math.round(v / totCli * 1000) / 10).toLocaleString('pt-BR') + "%" : "0%";
+      setTxt('kpiLocEquipSub', totCli ? pct(equip) + " de " + locNum(totCli) + " no cliente" : "");
+      setTxt('kpiLocEmp', locNum(emprest));
+      setTxt('kpiLocEmpSub', emprest ? pct(emprest) + " · " + uniEmp.size + (uniEmp.size === 1 ? " unidade" : " unidades") : "nenhum no momento");
+      const barraEmp = document.querySelector('#kpiLocEmpBarra > span');
+      if (barraEmp) barraEmp.style.width = (totCli ? emprest / totCli * 100 : 0) + "%";
       const boxValor = document.getElementById('kpiLocValorBox');
       if (boxValor) boxValor.style.display = valor > 0 ? "" : "none";
       setTxt('kpiLocValor', locMoeda(valor));
