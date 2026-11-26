@@ -7062,7 +7062,12 @@
       const c = locConsultaDaUnidade(u);
       if (!c) return "";
       if (!c.resp) return `<span class="loc-pill loc-p-consulta" title="Consulta enviada a ${escReq(c.dest)} em ${escReq(c.data)}"><i class="fa-brands fa-whatsapp"></i> aguardando resposta${c.dias ? " há " + c.dias + " dia(s)" : ""}</span>`;
-      return /B/.test(c.resp.para) ? `<span class="loc-pill loc-p-acordo" title="Resposta: ${escReq(c.resp.para)}">acordo: atualizar contrato</span>` : "";
+      const pend = locItensConsultaPendentes(u, c);
+      return pend.some(i => new RegExp("\\b" + i.n + "B\\b").test(c.resp.para)) ? `<span class="loc-pill loc-p-acordo" title="Resposta: ${escReq(c.resp.para)}">acordo: atualizar contrato</span>` : "";
+    }
+    function locItensConsultaPendentes(u, c) {
+      const div = new Set(locDivergencias(u).map(d => d.familia));
+      return c.itens.filter(i => div.has(i.familia));
     }
     function locAvisoConsultaHtml(u) {
       const c = locConsultaDaUnidade(u);
@@ -7070,7 +7075,10 @@
       const kq = locJsq(u.k);
       if (!c.resp) return `<div class="loc-aviso loc-aviso-consulta"><i class="fa-brands fa-whatsapp" style="margin-top:2px;"></i><div style="flex:1;"><b>Aguardando resposta</b> de ${escReq(c.dest)} · consulta enviada em ${escReq(c.data)}${c.dias ? ` (há ${c.dias} dia(s))` : ""}.</div>
         <button type="button" class="btn-submit" style="padding:5px 12px;" onclick="abrirRespostaConsultaLoc('${kq}')"><i class="fa-solid fa-reply"></i> Registrar resposta</button></div>`;
-      const bs = c.itens.filter(i => new RegExp("\\b" + i.n + "B\\b").test(c.resp.para));
+      // Só avisa o que ainda está divergente: depois de alinhar contrato/Neovero, o aviso some
+      const pend = locItensConsultaPendentes(u, c);
+      if (!pend.length) return "";
+      const bs = pend.filter(i => new RegExp("\\b" + i.n + "B\\b").test(c.resp.para));
       if (!bs.length) return `<div class="loc-nota" style="margin:0 0 10px;"><i class="fa-brands fa-whatsapp"></i> Resposta de ${escReq(c.dest)} em ${escReq(c.resp.data)}: <b>${escReq(c.resp.para)}</b> — ajustar o Neovero.</div>`;
       return `<div class="loc-aviso loc-aviso-acordo"><i class="fa-solid fa-handshake" style="margin-top:2px;"></i><div style="flex:1;"><b>Resposta de ${escReq(c.dest)}</b> (${escReq(c.resp.data)}): existe acordo com a unidade em ${bs.map(i => `<b>${escReq(i.familia)}</b> (Neovero ${i.neovero})`).join(", ")}. Atualize a quantidade no contrato.</div>
         <button type="button" class="btn-secundario" style="padding:5px 10px;" onclick="abrirFichaLoc('${escReq(locContratoPrincipal(u))}')"><i class="fa-solid fa-file-contract"></i> Abrir contrato</button></div>`;
